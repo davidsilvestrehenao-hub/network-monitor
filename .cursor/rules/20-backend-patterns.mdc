@@ -1,0 +1,144 @@
+---
+alwaysApply: true
+type: Auto Attached
+globs: "src/{server,lib}/**/*.ts"
+description: Provides rules for building tRPC backend procedures and services.
+---
+
+# Backend Development Patterns
+
+## Core Principles
+
+1. **Service Layer Architecture:** All tRPC routers must call **services**, not repositories directly. The proper layering is: Router → Service → Repository → Database.
+
+2. **Repository Pattern:** All database interactions must go through **repository interfaces** (`ITargetRepository`, `ISpeedTestRepository`, `IAlertRepository`, `INotificationRepository`, `IUserRepository`). Never use Prisma Client directly in business logic. The Prisma client should never leave the repository layer.
+
+3. **Dependency Injection:** All services must be resolved from the DI container (`src/lib/container/`). Never manually instantiate services.
+
+4. **Authentication:** By default, all tRPC procedures must be protected. Use the `protectedProcedure` helper from our tRPC setup to ensure only authenticated users can access them. Public procedures are the exception and must be explicitly justified.
+
+## Service Architecture
+
+5. **Service Organization:** Services must be organized in the following structure:
+
+   ```
+   src/lib/services/
+   ├── interfaces/          # Service contracts
+   ├── concrete/            # Production implementations
+   └── mocks/              # Test implementations
+   ```
+
+6. **Interface-First Design:** Always define interfaces before implementations. All services must depend on abstractions, not concrete classes.
+
+7. **Service Layer Responsibilities:** Services contain business logic and orchestrate operations. They call repositories for data access and emit events for communication.
+
+8. **tRPC Context Services:** Only expose services in the tRPC context (`AppContext`), never repositories. Routers should only have access to business logic services.
+
+## Database Patterns
+
+9. **Repository Abstraction:** Create repository interfaces for all database operations:
+
+   ```typescript
+   // ✅ Good: Repository pattern
+   const target = await this.targetRepository.findById(id);
+
+   // ❌ Bad: Direct Prisma calls
+   const target = await this.databaseService.getClient().monitoringTarget.findUnique({...});
+   ```
+
+10. **Type Safety:** All repository methods must return properly typed interfaces, not raw Prisma objects.
+
+11. **Data Mapping:** Repositories must convert between Prisma models and common domain types:
+
+```typescript
+// ✅ Good: Repository with data mapping
+async findById(id: string): Promise<Target | null> {
+  const target = await this.databaseService.getClient().monitoringTarget.findUnique({
+    where: { id },
+    include: { speedTestResults: true, alertRules: true },
+  });
+  return target ? this.mapToTarget(target) : null;
+}
+
+private mapToTarget(prismaTarget: PrismaTarget): Target {
+  return {
+    id: prismaTarget.id,
+    name: prismaTarget.name,
+    address: prismaTarget.address,
+    speedTestResults: prismaTarget.speedTestResults?.map(this.mapToSpeedTestResult) || [],
+    alertRules: prismaTarget.alertRules?.map(this.mapToAlertRule) || [],
+  };
+}
+```
+
+12. **Mock Repositories:** Every repository must have a corresponding mock implementation for testing:
+
+```typescript
+// ✅ Good: Mock repository with seeded data
+export class MockTargetRepository implements ITargetRepository {
+  private targets: Target[] = [];
+
+  constructor(private logger?: ILogger) {
+    // Auto-seed with test data
+    this.seedTargets(TestDataSeeder.generateTargets());
+  }
+
+  async findById(id: string): Promise<Target | null> {
+    return this.targets.find(target => target.id === id) || null;
+  }
+}
+```
+
+## Router Implementation Patterns
+
+13. **Service Layer Calls:** Routers must call services, not repositories directly:
+
+```typescript
+// ✅ Good: Router calling service
+const target = await ctx.services.monitor.getTarget(id);
+
+// ❌ Bad: Router calling repository directly
+const target = await ctx.services.targetRepository.findById(id);
+```
+
+14. **Service Interface Methods:** Services must implement all methods needed by routers:
+
+```typescript
+// ✅ Good: Service interface with all required methods
+export interface IMonitorService {
+  createTarget(data: CreateTargetData): Promise<MonitoringTarget>;
+  getTarget(id: string): Promise<MonitoringTarget | null>;
+  getTargets(userId: string): Promise<MonitoringTarget[]>;
+  updateTarget(id: string, data: UpdateTargetData): Promise<MonitoringTarget>;
+  deleteTarget(id: string): Promise<void>;
+}
+```
+
+15. **Service Implementation:** Services call repositories internally:
+
+```typescript
+// ✅ Good: Service calling repository
+async getTarget(id: string): Promise<MonitoringTarget | null> {
+  return await this.targetRepository.findById(id);
+}
+```
+
+## Configuration Management
+
+16. **Service Configuration:** All service implementations must be configurable via `service-config.json` in the project root.
+
+17. **Environment-Specific Configs:** Use environment-specific configuration files for different deployment environments.
+
+18. **Mock Services:** Provide mock implementations for all services to enable isolated testing.
+
+## Quality Standards
+
+19. **Zero Direct Dependencies:** Services must never directly call other services. All communication must be event-driven.
+
+20. **Type Safety:** Never use `any` types. Always provide proper TypeScript interfaces and type guards.
+
+21. **Error Handling:** Use the logger service for all error logging and proper error propagation through events.
+
+22. **Testing:** Each service must have comprehensive unit tests with mock dependencies.
+
+23. **Architecture Layering:** Maintain proper layering: Router → Service → Repository → Database. Never skip layers.

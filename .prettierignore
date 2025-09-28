@@ -1,0 +1,14 @@
+node_modules
+.vinxi
+.output
+dist
+build
+coverage
+*.log
+.env
+.env.local
+.env.production
+.env.development
+public/icons
+*.db
+*.sqlite

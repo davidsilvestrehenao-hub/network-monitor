@@ -1,0 +1,376 @@
+---
+description: API Design Patterns and Standards
+globs: "src/server/api/**/*.ts, src/server/trpc/**/*.ts"
+alwaysApply: true
+type: Auto Attached
+---
+
+# API Design Patterns & Standards
+
+## 🎯 **API Architecture Overview**
+
+The PWA Connection Monitor uses a **hybrid API approach** combining tRPC for type-safe communication with custom API endpoints for specific use cases.
+
+### **API Layers**
+
+```
+Frontend Components
+        ↓
+Frontend Services (IAPIClient)
+        ↓
+API Endpoints (src/server/api/)
+        ↓
+Service Layer (Business Logic)
+        ↓
+Repository Layer (Data Access)
+        ↓
+Database (Prisma)
+```
+
+## 🔧 **API Design Principles**
+
+### **1. Type Safety First**
+
+All API endpoints must be fully type-safe from frontend to database:
+
+```typescript
+// ✅ Good: Type-safe API endpoint
+export const apiCaller = {
+  createTarget: async (data: { name: string; address: string }) => {
+    const ctx = createAppContext();
+    const target = await ctx.services.monitor.createTarget({
+      ...data,
+      ownerId: "mock-user",
+    });
+    return target; // Fully typed return
+  },
+};
+
+// ❌ Bad: Untyped API
+export const apiCaller = {
+  createTarget: async (data: any) => {
+    return await someService.create(data); // No type safety
+  },
+};
+```
+
+### **2. Consistent Response Patterns**
+
+All API responses follow consistent patterns:
+
+```typescript
+// ✅ Good: Consistent response structure
+interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  success: boolean;
+  timestamp: string;
+}
+
+// Single item responses
+const target = await apiCaller.getTarget(id); // Returns Target | null
+
+// List responses
+const targets = await apiCaller.getTargets(params); // Returns Target[]
+
+// Action responses
+await apiCaller.deleteTarget(id); // Returns void
+```
+
+### **3. Error Handling Standards**
+
+```typescript
+// ✅ Good: Proper error handling
+async createTarget(data: CreateTargetData) {
+  try {
+    const ctx = createAppContext();
+    ctx.services.logger.info("API: Creating target", data);
+
+    const target = await ctx.services.monitor.createTarget({
+      ...data,
+      ownerId: "mock-user",
+    });
+
+    return target;
+  } catch (error) {
+    ctx.services.logger.error("API: Target creation failed", { error, data });
+    throw new Error(`Failed to create target: ${error.message}`);
+  }
+}
+```
+
+## 📊 **API Endpoint Categories**
+
+### **Target Management**
+
+```typescript
+// Target CRUD operations
+createTarget(data: CreateTargetData): Promise<Target>
+getTarget(id: string): Promise<Target>
+getTargets(params: QueryParams): Promise<Target[]>
+updateTarget(id: string, data: UpdateTargetData): Promise<Target>
+deleteTarget(id: string): Promise<void>
+
+// Target monitoring
+startMonitoring(targetId: string, intervalMs: number): Promise<void>
+stopMonitoring(targetId: string): Promise<void>
+getActiveTargets(): Promise<string[]>
+```
+
+### **Performance Data**
+
+```typescript
+// Speed test results
+getResults(params: ResultsQuery): Promise<SpeedTestResult[]>
+getLatestResult(targetId: string): Promise<SpeedTestResult | null>
+runSpeedTest(params: SpeedTestConfig): Promise<SpeedTestResult>
+getTargetStats(targetId: string): Promise<TargetStats>
+
+// Chart data
+getChartData(params: ChartQuery): Promise<ChartDataPoint[]>
+```
+
+### **Alerting System**
+
+```typescript
+// Alert rules
+createAlertRule(data: AlertRuleData): Promise<AlertRule>
+updateAlertRule(id: number, data: Partial<AlertRuleData>): Promise<AlertRule>
+deleteAlertRule(id: number): Promise<void>
+getAlertRules(params: AlertRuleQuery): Promise<AlertRule[]>
+
+// Incidents
+getIncidents(params: IncidentQuery): Promise<Incident[]>
+getAllIncidents(params: IncidentQuery): Promise<Incident[]>
+resolveIncident(id: number): Promise<void>
+getIncidentStats(): Promise<IncidentStats>
+```
+
+### **Notifications**
+
+```typescript
+// Push subscriptions
+createPushSubscription(data: PushSubscriptionData): Promise<PushSubscription>
+deletePushSubscription(id: string): Promise<void>
+getPushSubscriptions(): Promise<PushSubscription[]>
+getPushSubscriptionStatus(): Promise<SubscriptionStatus>
+
+// Notifications
+getNotifications(params: NotificationQuery): Promise<Notification[]>
+markNotificationRead(id: string): Promise<void>
+markAllNotificationsRead(): Promise<void>
+sendTestNotification(data: TestNotificationData): Promise<void>
+getNotificationStats(): Promise<NotificationStats>
+```
+
+## 🔒 **Security & Authentication**
+
+### **Authentication Requirements**
+
+```typescript
+// ✅ Good: Protected endpoints
+export const protectedApiCaller = createCaller.use(async ({ event$ }) => {
+  const session = await getSession(event$.request, authOptions);
+  if (!session) {
+    return error$("Unauthorized", { status: 401 });
+  }
+  return { session, ...apiCaller };
+});
+
+// ❌ Bad: Unprotected sensitive data
+export const publicApiCaller = {
+  getUserData: async (userId: string) => {
+    // No authentication check
+    return await getUserData(userId);
+  },
+};
+```
+
+### **Input Validation**
+
+```typescript
+// ✅ Good: Input validation
+async createTarget(data: { name: string; address: string }) {
+  // Validate input
+  if (!data.name || data.name.trim().length === 0) {
+    throw new Error("Target name is required");
+  }
+
+  if (!data.address || !isValidUrl(data.address)) {
+    throw new Error("Valid target address is required");
+  }
+
+  // Process request
+  return await this.processTargetCreation(data);
+}
+```
+
+## 📈 **Performance Standards**
+
+### **Response Time Requirements**
+
+- **Simple Queries**: < 100ms
+- **Complex Queries**: < 500ms
+- **Data Transformations**: < 200ms
+- **Error Responses**: < 50ms
+
+### **Caching Strategy**
+
+```typescript
+// ✅ Good: Appropriate caching
+async getTargets(params: QueryParams) {
+  const cacheKey = `targets:${JSON.stringify(params)}`;
+
+  // Check cache first
+  const cached = await this.cache.get(cacheKey);
+  if (cached) return cached;
+
+  // Fetch from database
+  const targets = await this.targetRepository.findByUserId(userId);
+
+  // Cache for 5 minutes
+  await this.cache.set(cacheKey, targets, 300);
+
+  return targets;
+}
+```
+
+## 🧪 **Testing API Endpoints**
+
+### **Unit Testing**
+
+```typescript
+// ✅ Good: API endpoint testing
+describe("Target API", () => {
+  it("should create a target", async () => {
+    const mockTarget = { id: "1", name: "Test", address: "https://test.com" };
+    const mockService = {
+      createTarget: jest.fn().mockResolvedValue(mockTarget),
+    };
+
+    const result = await apiCaller.createTarget({
+      name: "Test",
+      address: "https://test.com",
+    });
+
+    expect(result).toEqual(mockTarget);
+    expect(mockService.createTarget).toHaveBeenCalledWith({
+      name: "Test",
+      address: "https://test.com",
+      ownerId: "mock-user",
+    });
+  });
+});
+```
+
+### **Integration Testing**
+
+```typescript
+// ✅ Good: Integration testing
+describe("API Integration", () => {
+  it("should handle complete target lifecycle", async () => {
+    // Create target
+    const target = await apiCaller.createTarget({
+      name: "Test Target",
+      address: "https://test.com",
+    });
+
+    // Get target
+    const retrieved = await apiCaller.getTarget(target.id);
+    expect(retrieved).toEqual(target);
+
+    // Update target
+    const updated = await apiCaller.updateTarget(target.id, {
+      name: "Updated Target",
+    });
+    expect(updated.name).toBe("Updated Target");
+
+    // Delete target
+    await apiCaller.deleteTarget(target.id);
+    const deleted = await apiCaller.getTarget(target.id);
+    expect(deleted).toBeNull();
+  });
+});
+```
+
+## 📋 **API Documentation Standards**
+
+### **Endpoint Documentation**
+
+````typescript
+/**
+ * Creates a new monitoring target
+ *
+ * @param data - Target creation data
+ * @param data.name - Human-readable target name
+ * @param data.address - URL or IP address to monitor
+ * @returns Promise<Target> - Created target with generated ID
+ * @throws Error - If target creation fails
+ *
+ * @example
+ * ```typescript
+ * const target = await apiCaller.createTarget({
+ *   name: "Google DNS",
+ *   address: "https://8.8.8.8"
+ * });
+ * ```
+ */
+async createTarget(data: CreateTargetData): Promise<Target> {
+  // Implementation
+}
+````
+
+### **Error Documentation**
+
+```typescript
+/**
+ * @throws {ValidationError} When input data is invalid
+ * @throws {AuthenticationError} When user is not authenticated
+ * @throws {PermissionError} When user lacks required permissions
+ * @throws {DatabaseError} When database operation fails
+ */
+```
+
+## 🚫 **API Anti-Patterns**
+
+### **Avoid These Patterns**
+
+```typescript
+// ❌ Bad: Inconsistent response types
+async getTargets() {
+  return { targets: [...], count: 10 }; // Sometimes object
+}
+
+async getTarget(id: string) {
+  return target; // Sometimes direct value
+}
+
+// ❌ Bad: Exposing internal errors
+async createTarget(data: any) {
+  try {
+    return await this.service.create(data);
+  } catch (error) {
+    throw error; // Exposes internal implementation details
+  }
+}
+
+// ❌ Bad: No input validation
+async updateTarget(id: string, data: any) {
+  return await this.service.update(id, data); // No validation
+}
+```
+
+## ✅ **Best Practices Summary**
+
+1. **Type Safety**: All APIs must be fully typed
+2. **Consistency**: Use consistent response patterns
+3. **Validation**: Validate all inputs
+4. **Error Handling**: Proper error handling and logging
+5. **Documentation**: Document all endpoints and errors
+6. **Testing**: Comprehensive test coverage
+7. **Performance**: Meet response time requirements
+8. **Security**: Protect sensitive endpoints
+9. **Caching**: Use appropriate caching strategies
+10. **Monitoring**: Log all API operations
+
+Remember: **APIs are the contract between frontend and backend. They must be reliable, consistent, and well-documented.**

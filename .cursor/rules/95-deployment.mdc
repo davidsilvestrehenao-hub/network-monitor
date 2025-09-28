@@ -1,0 +1,601 @@
+---
+description: Deployment and Production Guidelines
+globs: "**/*.{ts,tsx,js,jsx,json,md}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Deployment & Production Guidelines
+
+## 🚀 **Deployment Overview**
+
+The PWA Connection Monitor is designed for **flexible deployment** across multiple environments with **zero-downtime deployments** and **automatic scaling**.
+
+### **Deployment Architecture**
+
+```
+Internet
+    ↓
+Load Balancer (Optional)
+    ↓
+Application Server (Bun)
+    ↓
+Database (PostgreSQL)
+    ↓
+File Storage (Optional)
+```
+
+## 🌍 **Environment Configuration**
+
+### **Environment Variables**
+
+```bash
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/network_monitor"
+
+# Authentication
+AUTH_SECRET="your-secret-key-here"
+AUTH_URL="https://yourdomain.com"
+
+# Application
+NODE_ENV="production"
+PORT="3000"
+HOST="0.0.0.0"
+
+# Monitoring
+LOG_LEVEL="info"
+ENABLE_METRICS="true"
+METRICS_PORT="9090"
+
+# PWA
+VITE_APP_NAME="Network Monitor"
+VITE_APP_DESCRIPTION="Monitor your internet connection"
+VITE_APP_VERSION="1.0.0"
+```
+
+### **Environment-Specific Configs**
+
+```typescript
+// src/config/environments.ts
+export const environments = {
+  development: {
+    database: {
+      url: process.env.DATABASE_URL || "file:./dev.db",
+      provider: "sqlite",
+    },
+    logging: {
+      level: "debug",
+      enableConsole: true,
+    },
+    features: {
+      enableMockAuth: true,
+      enableDebugMode: true,
+    },
+  },
+
+  production: {
+    database: {
+      url: process.env.DATABASE_URL!,
+      provider: "postgresql",
+    },
+    logging: {
+      level: "info",
+      enableConsole: false,
+    },
+    features: {
+      enableMockAuth: false,
+      enableDebugMode: false,
+    },
+  },
+
+  test: {
+    database: {
+      url: "file:./test.db",
+      provider: "sqlite",
+    },
+    logging: {
+      level: "error",
+      enableConsole: false,
+    },
+    features: {
+      enableMockAuth: true,
+      enableDebugMode: false,
+    },
+  },
+};
+```
+
+## 🐳 **Docker Deployment**
+
+### **Dockerfile**
+
+```dockerfile
+# Multi-stage build for production
+FROM oven/bun:1.0-alpine AS base
+WORKDIR /app
+
+# Install dependencies
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
+
+# Build stage
+FROM base AS build
+COPY . .
+RUN bun run build
+
+# Production stage
+FROM oven/bun:1.0-alpine AS production
+WORKDIR /app
+
+# Copy built application
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S bun -u 1001
+USER bun
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Start application
+CMD ["bun", "run", "start"]
+```
+
+### **Docker Compose**
+
+```yaml
+# docker-compose.yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/network_monitor
+      - NODE_ENV=production
+    depends_on:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=network_monitor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+## ☁️ **Cloud Deployment**
+
+### **Vercel Deployment**
+
+```json
+// vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "AUTH_SECRET": "@auth_secret"
+  }
+}
+```
+
+### **Railway Deployment**
+
+```toml
+# railway.toml
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "bun run start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+
+[environments.production]
+variables = { NODE_ENV = "production" }
+```
+
+### **Docker Swarm**
+
+```yaml
+# docker-stack.yml
+version: "3.8"
+
+services:
+  app:
+    image: network-monitor:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=production
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=network_monitor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: overlay
+
+volumes:
+  postgres_data:
+```
+
+## 📊 **Monitoring & Observability**
+
+### **Health Checks**
+
+```typescript
+// src/server/health.ts
+export async function healthCheck(): Promise<HealthStatus> {
+  const checks = await Promise.allSettled([
+    checkDatabase(),
+    checkRedis(),
+    checkExternalServices(),
+  ]);
+
+  const status = checks.every(check => check.status === "fulfilled")
+    ? "healthy"
+    : "unhealthy";
+
+  return {
+    status,
+    timestamp: new Date().toISOString(),
+    checks: checks.map((check, index) => ({
+      name: ["database", "redis", "external"][index],
+      status: check.status,
+      duration: check.status === "fulfilled" ? check.value.duration : 0,
+    })),
+  };
+}
+```
+
+### **Metrics Collection**
+
+```typescript
+// src/server/metrics.ts
+import { createPrometheusMetrics } from "prom-client";
+
+export const metrics = {
+  httpRequests: new Counter({
+    name: "http_requests_total",
+    help: "Total number of HTTP requests",
+    labelNames: ["method", "route", "status_code"],
+  }),
+
+  responseTime: new Histogram({
+    name: "http_request_duration_seconds",
+    help: "HTTP request duration in seconds",
+    labelNames: ["method", "route"],
+    buckets: [0.1, 0.5, 1, 2, 5],
+  }),
+
+  activeConnections: new Gauge({
+    name: "active_connections",
+    help: "Number of active connections",
+  }),
+};
+```
+
+### **Logging Configuration**
+
+```typescript
+// src/server/logging.ts
+import winston from "winston";
+
+export const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+    new winston.transports.File({
+      filename: "logs/error.log",
+      level: "error",
+    }),
+    new winston.transports.File({
+      filename: "logs/combined.log",
+    }),
+  ],
+});
+```
+
+## 🔒 **Security Configuration**
+
+### **Security Headers**
+
+```typescript
+// src/server/security.ts
+import helmet from "helmet";
+
+export const securityMiddleware = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+});
+```
+
+### **Rate Limiting**
+
+```typescript
+// src/server/rate-limit.ts
+import rateLimit from "express-rate-limit";
+
+export const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 auth requests per windowMs
+  message: "Too many authentication attempts",
+});
+```
+
+## 📈 **Performance Optimization**
+
+### **Caching Strategy**
+
+```typescript
+// src/server/cache.ts
+import Redis from "ioredis";
+
+const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+
+export class CacheService {
+  async get<T>(key: string): Promise<T | null> {
+    const value = await redis.get(key);
+    return value ? JSON.parse(value) : null;
+  }
+
+  async set<T>(key: string, value: T, ttl: number = 3600): Promise<void> {
+    await redis.setex(key, ttl, JSON.stringify(value));
+  }
+
+  async del(key: string): Promise<void> {
+    await redis.del(key);
+  }
+}
+```
+
+### **Database Optimization**
+
+```sql
+-- Performance indexes
+CREATE INDEX idx_monitoring_targets_owner_id ON monitoring_targets(owner_id);
+CREATE INDEX idx_speed_test_results_target_id ON speed_test_results(target_id);
+CREATE INDEX idx_speed_test_results_created_at ON speed_test_results(created_at);
+CREATE INDEX idx_alert_rules_target_id ON alert_rules(target_id);
+CREATE INDEX idx_incident_events_target_id ON incident_events(target_id);
+CREATE INDEX idx_incident_events_timestamp ON incident_events(timestamp);
+```
+
+## 🔄 **CI/CD Pipeline**
+
+### **GitHub Actions**
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun run test
+      - run: bun run type-check
+      - run: bun run lint:check
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
+      - name: Deploy to production
+        run: |
+          # Deploy to your platform
+          echo "Deploying to production..."
+```
+
+## 📋 **Deployment Checklist**
+
+### **Pre-Deployment**
+
+- [ ] All tests passing
+- [ ] TypeScript compilation successful
+- [ ] Linting passes
+- [ ] Security scan completed
+- [ ] Performance tests passed
+- [ ] Database migrations ready
+- [ ] Environment variables configured
+- [ ] SSL certificates valid
+- [ ] Backup strategy in place
+
+### **Deployment**
+
+- [ ] Deploy to staging first
+- [ ] Run smoke tests
+- [ ] Deploy to production
+- [ ] Verify health checks
+- [ ] Monitor error rates
+- [ ] Check performance metrics
+- [ ] Verify all features working
+
+### **Post-Deployment**
+
+- [ ] Monitor application logs
+- [ ] Check error rates
+- [ ] Verify performance metrics
+- [ ] Test critical user flows
+- [ ] Monitor resource usage
+- [ ] Check backup status
+- [ ] Update documentation
+
+## 🚨 **Rollback Strategy**
+
+### **Automated Rollback**
+
+```typescript
+// src/server/rollback.ts
+export async function rollbackToPreviousVersion() {
+  // 1. Stop current application
+  await stopApplication();
+
+  // 2. Restore previous database backup
+  await restoreDatabaseBackup();
+
+  // 3. Deploy previous version
+  await deployPreviousVersion();
+
+  // 4. Start application
+  await startApplication();
+
+  // 5. Verify rollback success
+  await verifyRollback();
+}
+```
+
+### **Manual Rollback**
+
+```bash
+# 1. Stop current deployment
+docker-compose down
+
+# 2. Restore previous version
+git checkout previous-stable-tag
+bun run build
+
+# 3. Deploy previous version
+docker-compose up -d
+
+# 4. Verify deployment
+curl http://localhost:3000/api/health
+```
+
+## ✅ **Best Practices Summary**
+
+1. **Environment Separation**: Use different configs for each environment
+2. **Security First**: Implement proper security measures
+3. **Monitoring**: Set up comprehensive monitoring and alerting
+4. **Automation**: Automate deployment and rollback processes
+5. **Testing**: Test in staging before production
+6. **Documentation**: Keep deployment docs up to date
+7. **Backup**: Regular backups and disaster recovery plans
+8. **Performance**: Monitor and optimize performance continuously
+
+Remember: **Deployment is not the end—it's the beginning of monitoring and maintaining a production system.**

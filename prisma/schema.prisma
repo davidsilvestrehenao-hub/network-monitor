@@ -1,0 +1,137 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+// --- AUTH.JS MODELS (FROM STARTER) ---
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- MERGED USER & APPLICATION MODELS ---
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  
+  // Relations from starter
+  accounts      Account[]
+  sessions      Session[]
+
+  // Relations for our application
+  monitoringTargets  MonitoringTarget[]
+  pushSubscriptions  PushSubscription[]
+  notifications      Notification[]
+}
+
+model MonitoringTarget {
+  id               String            @id @default(cuid())
+  name             String
+  address          String
+  
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId          String
+  
+  speedTestResults SpeedTestResult[]
+  incidentEvents   IncidentEvent[]
+  alertRules       AlertRule[]
+}
+
+model SpeedTestResult {
+  id        Int      @id @default(autoincrement())
+  ping      Float?
+  download  Float?
+  status    String   // 'SUCCESS' or 'FAILURE'
+  error     String?
+  createdAt DateTime @default(now())
+  
+  target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  targetId  String
+}
+
+model AlertRule {
+  id        Int      @id @default(autoincrement())
+  name      String
+  metric    String   // 'ping' or 'download'
+  condition String   // 'GREATER_THAN' or 'LESS_THAN'
+  threshold Float
+  enabled   Boolean  @default(true)
+  
+  target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  targetId  String
+  
+  triggeredEvents IncidentEvent[]
+}
+
+model IncidentEvent {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @default(now())
+  type        String   // 'OUTAGE' or 'ALERT'
+  description String
+  resolved    Boolean  @default(false)
+  
+  target      MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  targetId    String
+  
+  triggeredByRule AlertRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+  ruleId          Int?
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  sentAt    DateTime @default(now())
+  read      Boolean  @default(false)
+
+  recipient User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}

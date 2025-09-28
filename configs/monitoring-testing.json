@@ -1,0 +1,45 @@
+{
+  "name": "Monitoring Testing",
+  "description": "Configuration for testing monitoring system with real monitoring service",
+  "environment": "test",
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/concrete/LoggerService",
+      "className": "LoggerService",
+      "description": "Real logger for monitoring testing"
+    },
+    "IEventBus": {
+      "module": "../src/lib/services/concrete/EventBus",
+      "className": "EventBus",
+      "description": "Real event bus for monitoring testing"
+    },
+    "IDatabaseService": {
+      "module": "../src/lib/services/mocks/MockDatabase",
+      "className": "MockDatabase",
+      "isMock": true,
+      "description": "Mock database for monitoring testing"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/concrete/MonitorService",
+      "className": "MonitorService",
+      "description": "Real monitoring for testing monitoring system"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/concrete/AlertingService",
+      "className": "AlertingService",
+      "description": "Real alerting for monitoring testing"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/mocks/MockNotification",
+      "className": "MockNotification",
+      "isMock": true,
+      "description": "Mock notifications for monitoring testing"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/MockAuth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock authentication for monitoring testing"
+    }
+  }
+}

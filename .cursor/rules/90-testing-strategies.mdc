@@ -1,0 +1,562 @@
+---
+description: Testing Strategies and Implementation Guidelines
+globs: "src/**/*.test.ts, src/**/*.spec.ts, tests/**/*.ts"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Testing Strategies & Implementation Guidelines
+
+## 🎯 **Testing Philosophy**
+
+The PWA Connection Monitor follows a **comprehensive testing strategy** that ensures reliability, maintainability, and confidence in deployments. Testing is not optional—it's a core part of the development process.
+
+### **Testing Pyramid**
+
+```
+        E2E Tests (Few)
+       /              \
+      /                \
+   Integration Tests (Some)
+  /                      \
+ /                        \
+Unit Tests (Many)
+```
+
+## 🧪 **Testing Categories**
+
+### **1. Unit Tests**
+
+Test individual functions, methods, and classes in isolation.
+
+```typescript
+// ✅ Good: Unit test example
+describe("TargetRepository", () => {
+  let repository: ITargetRepository;
+  let mockDatabase: jest.Mocked<IDatabaseService>;
+  let mockLogger: jest.Mocked<ILogger>;
+
+  beforeEach(() => {
+    mockDatabase = createMockDatabaseService();
+    mockLogger = createMockLogger();
+    repository = new TargetRepository(mockDatabase, mockLogger);
+  });
+
+  describe("findById", () => {
+    it("should return target when found", async () => {
+      // Arrange
+      const targetId = "target-123";
+      const mockTarget = { id: targetId, name: "Test Target" };
+      mockDatabase
+        .getClient()
+        .monitoringTarget.findUnique.mockResolvedValue(mockTarget);
+
+      // Act
+      const result = await repository.findById(targetId);
+
+      // Assert
+      expect(result).toEqual(mockTarget);
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "TargetRepository: Finding target by ID",
+        { id: targetId }
+      );
+    });
+
+    it("should return null when target not found", async () => {
+      // Arrange
+      const targetId = "nonexistent";
+      mockDatabase
+        .getClient()
+        .monitoringTarget.findUnique.mockResolvedValue(null);
+
+      // Act
+      const result = await repository.findById(targetId);
+
+      // Assert
+      expect(result).toBeNull();
+    });
+  });
+});
+```
+
+### **2. Integration Tests**
+
+Test the interaction between multiple components.
+
+```typescript
+// ✅ Good: Integration test example
+describe("MonitorService Integration", () => {
+  let container: Container;
+  let monitorService: IMonitorService;
+  let targetRepository: ITargetRepository;
+
+  beforeEach(async () => {
+    container = new Container();
+    await setupTestContainer(container);
+    monitorService = container.get(TYPES.IMonitorService);
+    targetRepository = container.get(TYPES.ITargetRepository);
+  });
+
+  it("should create target and start monitoring", async () => {
+    // Arrange
+    const targetData = {
+      name: "Test Target",
+      address: "https://test.com",
+      ownerId: "user-123",
+    };
+
+    // Act
+    const target = await monitorService.createTarget(targetData);
+    monitorService.startMonitoring(target.id, 30000);
+
+    // Assert
+    expect(target).toBeDefined();
+    expect(target.name).toBe(targetData.name);
+    expect(monitorService.getActiveTargets()).toContain(target.id);
+  });
+});
+```
+
+### **3. End-to-End Tests**
+
+Test complete user workflows.
+
+```typescript
+// ✅ Good: E2E test example
+describe("Target Management E2E", () => {
+  let page: Page;
+  let browser: Browser;
+
+  beforeAll(async () => {
+    browser = await chromium.launch();
+    page = await browser.newPage();
+    await page.goto("http://localhost:3000");
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it("should create and manage targets", async () => {
+    // Navigate to targets page
+    await page.click('[data-testid="targets-tab"]');
+
+    // Create new target
+    await page.click('[data-testid="create-target-button"]');
+    await page.fill('[data-testid="target-name-input"]', "Google DNS");
+    await page.fill('[data-testid="target-address-input"]', "https://8.8.8.8");
+    await page.click('[data-testid="save-target-button"]');
+
+    // Verify target appears in list
+    await expect(page.locator('[data-testid="target-list"]')).toContainText(
+      "Google DNS"
+    );
+
+    // Start monitoring
+    await page.click('[data-testid="start-monitoring-button"]');
+    await expect(
+      page.locator('[data-testid="monitoring-status"]')
+    ).toContainText("Active");
+
+    // Delete target
+    await page.click('[data-testid="delete-target-button"]');
+    await page.click('[data-testid="confirm-delete-button"]');
+    await expect(page.locator('[data-testid="target-list"]')).not.toContainText(
+      "Google DNS"
+    );
+  });
+});
+```
+
+## 🔧 **Testing Tools & Setup**
+
+### **Testing Framework**
+
+```typescript
+// package.json
+{
+  "devDependencies": {
+    "bun:test": "latest",
+    "@playwright/test": "^1.40.0",
+    "vitest": "^1.0.0",
+    "msw": "^2.0.0"
+  }
+}
+```
+
+### **Test Configuration**
+
+```typescript
+// vitest.config.ts
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    environment: "node",
+    globals: true,
+    setupFiles: ["./src/test/setup.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      exclude: [
+        "node_modules/",
+        "src/test/",
+        "**/*.d.ts",
+        "**/*.test.ts",
+        "**/*.spec.ts",
+      ],
+    },
+  },
+});
+```
+
+### **Mock Setup**
+
+```typescript
+// src/test/setup.ts
+import { beforeAll, afterEach, afterAll } from "vitest";
+import { server } from "./mocks/server";
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+```
+
+## 📊 **Service Testing Patterns**
+
+### **Repository Testing**
+
+```typescript
+// ✅ Good: Repository test with mocks
+describe("TargetRepository", () => {
+  let repository: TargetRepository;
+  let mockDatabase: jest.Mocked<IDatabaseService>;
+  let mockLogger: jest.Mocked<ILogger>;
+
+  beforeEach(() => {
+    mockDatabase = createMockDatabaseService();
+    mockLogger = createMockLogger();
+    repository = new TargetRepository(mockDatabase, mockLogger);
+  });
+
+  describe("create", () => {
+    it("should create target with proper data mapping", async () => {
+      // Arrange
+      const createData = {
+        name: "Test Target",
+        address: "https://test.com",
+        ownerId: "user-123",
+      };
+      const mockPrismaTarget = {
+        id: "target-123",
+        ...createData,
+        speedTestResults: [],
+        alertRules: [],
+      };
+      mockDatabase
+        .getClient()
+        .monitoringTarget.create.mockResolvedValue(mockPrismaTarget);
+
+      // Act
+      const result = await repository.create(createData);
+
+      // Assert
+      expect(result).toEqual({
+        id: "target-123",
+        name: "Test Target",
+        address: "https://test.com",
+        speedTestResults: [],
+        alertRules: [],
+      });
+      expect(
+        mockDatabase.getClient().monitoringTarget.create
+      ).toHaveBeenCalledWith({
+        data: createData,
+      });
+    });
+  });
+});
+```
+
+### **Service Testing**
+
+```typescript
+// ✅ Good: Service test with dependency injection
+describe("MonitorService", () => {
+  let service: MonitorService;
+  let mockTargetRepository: jest.Mocked<ITargetRepository>;
+  let mockEventBus: jest.Mocked<IEventBus>;
+  let mockLogger: jest.Mocked<ILogger>;
+
+  beforeEach(() => {
+    mockTargetRepository = createMockTargetRepository();
+    mockEventBus = createMockEventBus();
+    mockLogger = createMockLogger();
+    service = new MonitorService(
+      mockTargetRepository,
+      mockEventBus,
+      mockLogger
+    );
+  });
+
+  describe("createTarget", () => {
+    it("should create target and emit event", async () => {
+      // Arrange
+      const targetData = {
+        name: "Test Target",
+        address: "https://test.com",
+        ownerId: "user-123",
+      };
+      const mockTarget = { id: "target-123", ...targetData };
+      mockTargetRepository.create.mockResolvedValue(mockTarget);
+
+      // Act
+      const result = await service.createTarget(targetData);
+
+      // Assert
+      expect(result).toEqual(mockTarget);
+      expect(mockTargetRepository.create).toHaveBeenCalledWith(targetData);
+      expect(mockEventBus.emit).toHaveBeenCalledWith(
+        "TARGET_CREATED",
+        mockTarget
+      );
+    });
+  });
+});
+```
+
+### **API Testing**
+
+```typescript
+// ✅ Good: API endpoint testing
+describe("Target API", () => {
+  let apiCaller: ApiCaller;
+  let mockContext: jest.Mocked<AppContext>;
+
+  beforeEach(() => {
+    mockContext = createMockAppContext();
+    jest.mocked(createAppContext).mockReturnValue(mockContext);
+    apiCaller = createApiCaller();
+  });
+
+  describe("createTarget", () => {
+    it("should create target successfully", async () => {
+      // Arrange
+      const targetData = { name: "Test", address: "https://test.com" };
+      const mockTarget = { id: "target-123", ...targetData };
+      mockContext.services.monitor.createTarget.mockResolvedValue(mockTarget);
+
+      // Act
+      const result = await apiCaller.createTarget(targetData);
+
+      // Assert
+      expect(result).toEqual(mockTarget);
+      expect(mockContext.services.monitor.createTarget).toHaveBeenCalledWith({
+        ...targetData,
+        ownerId: "mock-user",
+      });
+    });
+
+    it("should handle errors gracefully", async () => {
+      // Arrange
+      const targetData = { name: "Test", address: "invalid-url" };
+      mockContext.services.monitor.createTarget.mockRejectedValue(
+        new Error("Invalid URL")
+      );
+
+      // Act & Assert
+      await expect(apiCaller.createTarget(targetData)).rejects.toThrow(
+        "Failed to create target: Invalid URL"
+      );
+    });
+  });
+});
+```
+
+## 🎭 **Mock Strategies**
+
+### **Mock Factories**
+
+```typescript
+// ✅ Good: Mock factory pattern
+export function createMockTargetRepository(): jest.Mocked<ITargetRepository> {
+  return {
+    findById: jest.fn(),
+    findByUserId: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+    getAll: jest.fn(),
+  };
+}
+
+export function createMockLogger(): jest.Mocked<ILogger> {
+  return {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    setLevel: jest.fn(),
+    getLevel: jest.fn(),
+  };
+}
+```
+
+### **Test Data Builders**
+
+```typescript
+// ✅ Good: Test data builder pattern
+export class TargetBuilder {
+  private target: Partial<Target> = {};
+
+  withId(id: string): TargetBuilder {
+    this.target.id = id;
+    return this;
+  }
+
+  withName(name: string): TargetBuilder {
+    this.target.name = name;
+    return this;
+  }
+
+  withAddress(address: string): TargetBuilder {
+    this.target.address = address;
+    return this;
+  }
+
+  build(): Target {
+    return {
+      id: "target-123",
+      name: "Test Target",
+      address: "https://test.com",
+      speedTestResults: [],
+      alertRules: [],
+      ...this.target,
+    };
+  }
+}
+
+// Usage in tests
+const target = new TargetBuilder()
+  .withName("Custom Target")
+  .withAddress("https://custom.com")
+  .build();
+```
+
+## 📈 **Test Coverage Requirements**
+
+### **Coverage Targets**
+
+- **Unit Tests**: 90%+ line coverage
+- **Integration Tests**: 80%+ branch coverage
+- **E2E Tests**: 100% critical user paths
+
+### **Coverage Reporting**
+
+```typescript
+// vitest.config.ts
+export default defineConfig({
+  test: {
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      thresholds: {
+        global: {
+          branches: 80,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
+      },
+    },
+  },
+});
+```
+
+## 🚀 **Performance Testing**
+
+### **Load Testing**
+
+```typescript
+// ✅ Good: Performance test example
+describe("API Performance", () => {
+  it("should handle concurrent target creation", async () => {
+    const promises = Array.from({ length: 100 }, (_, i) =>
+      apiCaller.createTarget({
+        name: `Target ${i}`,
+        address: `https://test${i}.com`,
+      })
+    );
+
+    const start = Date.now();
+    const results = await Promise.all(promises);
+    const duration = Date.now() - start;
+
+    expect(results).toHaveLength(100);
+    expect(duration).toBeLessThan(5000); // Should complete within 5 seconds
+  });
+});
+```
+
+## 🔍 **Test Debugging**
+
+### **Debugging Tools**
+
+```typescript
+// ✅ Good: Test debugging utilities
+describe("Complex Test", () => {
+  it("should debug failing test", async () => {
+    // Enable debug logging
+    process.env.DEBUG = "test:*";
+
+    // Use debug helpers
+    const debug = createDebug("test:complex");
+    debug("Starting complex test");
+
+    // Test implementation
+    const result = await complexOperation();
+
+    // Debug assertions
+    debug("Result:", result);
+    expect(result).toBeDefined();
+  });
+});
+```
+
+## 📋 **Testing Checklist**
+
+### **Before Writing Tests**
+
+- [ ] Understand the component's responsibilities
+- [ ] Identify edge cases and error conditions
+- [ ] Plan test data and mock strategies
+- [ ] Consider integration points
+
+### **While Writing Tests**
+
+- [ ] Follow AAA pattern (Arrange, Act, Assert)
+- [ ] Use descriptive test names
+- [ ] Test both success and failure cases
+- [ ] Verify side effects (events, logging)
+- [ ] Keep tests independent and isolated
+
+### **After Writing Tests**
+
+- [ ] Run tests locally
+- [ ] Check coverage reports
+- [ ] Review test readability
+- [ ] Ensure tests are maintainable
+
+## ✅ **Best Practices Summary**
+
+1. **Test Early**: Write tests as you develop features
+2. **Test Often**: Run tests frequently during development
+3. **Test Everything**: Cover all code paths and edge cases
+4. **Test Fast**: Keep unit tests fast and focused
+5. **Test Clear**: Write readable and maintainable tests
+6. **Test Real**: Use realistic test data and scenarios
+7. **Test Isolated**: Keep tests independent of each other
+8. **Test Documented**: Use tests to document expected behavior
+
+Remember: **Tests are not just for finding bugs—they're for documenting behavior, enabling refactoring, and building confidence in your code.**

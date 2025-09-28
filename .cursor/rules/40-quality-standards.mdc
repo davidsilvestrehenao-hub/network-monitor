@@ -1,0 +1,245 @@
+---
+description: Quality Standards and Code Quality Mandate
+globs: "**/*.{ts,tsx,js,jsx}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Quality Standards & Code Quality Mandate
+
+## 🎯 **Zero Tolerance Policy**
+
+This project maintains **ZERO TOLERANCE** for code quality issues. All code must meet the highest standards before being committed.
+
+### **Mandatory Quality Checks**
+
+1. **Prettier Formatting**: All code must be perfectly formatted
+2. **ESLint Compliance**: Zero warnings or errors allowed
+3. **TypeScript Safety**: No `any` types without proper justification
+4. **ESLint Disable Justification**: All `eslint-disable` comments must have clear justifications
+5. **Interface Compliance**: All implementations must fully implement their interfaces
+
+## 📋 **Code Quality Checklist**
+
+### **Before Every Commit**
+
+```bash
+# Format code
+bun run format
+
+# Check formatting
+bun run format:check
+
+# Lint code
+bun run lint:check
+
+# Type check
+bun run type-check
+
+# All must pass with ZERO errors/warnings
+```
+
+### **TypeScript Standards**
+
+- **Minimal `any` types**: Use proper TypeScript interfaces whenever possible
+- **Justified `any` usage**: When `any` is necessary (e.g., dynamic service loading), provide clear justification
+- **ESLint Disable Justification**: Every `eslint-disable` comment must have a clear explanation
+- **Strict Type Checking**: Enable all strict TypeScript options
+- **Interface-First**: Define interfaces before implementations
+
+### **ESLint Disable Justification Standards**
+
+- **Mandatory Justification**: Every `eslint-disable` comment must be preceded by a clear explanation
+- **Justification Format**: Use `// Justification: [Clear explanation of why the disable is necessary]`
+- **Common Justified Cases**:
+  - Dynamic service loading requiring `any` types
+  - SolidJS reactivity false positives in JSX context
+  - Console usage in logger services and CLI tools
+  - Async createEffect for DI container initialization
+  - Vite plugin type compatibility issues
+- **Positioning**: Place disable comments on the exact line being suppressed
+- **Review Required**: All disable justifications must be reviewed and approved
+
+### **Code Organization**
+
+- **Single Responsibility**: Each function/class has one clear purpose
+- **Dependency Injection**: All services injected via DI container
+- **Event-Driven**: Use events for inter-service communication
+- **Repository Pattern**: Database operations through repository interfaces
+- **Data Abstraction**: Prisma client never leaves repository layer
+- **Type Mapping**: All repository methods return domain types, not Prisma models
+
+## 🧪 **Testing Requirements**
+
+### **Test Coverage**
+
+- **Unit Tests**: Each service must have comprehensive unit tests
+- **Integration Tests**: Event-driven communication testing
+- **Mock Coverage**: All services must have mock implementations
+- **Configuration Testing**: All configuration combinations must be tested
+
+### **Test Organization**
+
+```
+src/lib/services/__tests__/
+├── AlertingService.test.ts
+├── MonitorService.test.ts
+└── ...
+
+src/lib/container/__tests__/
+├── container.test.ts
+├── dynamic-loading.test.ts
+└── ...
+```
+
+## 🏗️ **Architecture Compliance**
+
+### **Loose Coupling (10/10 Score)**
+
+- **Zero Direct Dependencies**: No service directly calls another service
+- **Event-Driven Communication**: All inter-service communication via events
+- **Repository Pattern**: Database operations fully abstracted
+- **Command/Query Separation**: Clear separation of read/write operations
+
+### **Service Organization**
+
+- **Interface-First Design**: Define contracts before implementations
+- **Configuration-Based**: Service implementations loaded from config files
+- **Environment-Specific**: Different implementations per environment
+- **Type-Safe Factories**: Compile-time and runtime type safety
+
+## 🚫 **Anti-Patterns to Avoid**
+
+### **Code Quality Anti-Patterns**
+
+- Using `any` types without proper justification
+- Using `eslint-disable` without clear explanations
+- Unjustified ESLint suppressions
+- Direct service instantiation instead of DI
+- Direct database calls instead of repository pattern
+- Direct service calls instead of event-driven communication
+
+### **Architecture Anti-Patterns**
+
+- Tight coupling between services
+- Synchronous dependencies
+- Hardcoded service implementations
+- Missing interface definitions
+- Inconsistent error handling
+- Direct Prisma usage outside repositories
+- Raw Prisma models returned from services
+- Missing mock repository implementations
+
+## ✅ **Best Practices**
+
+### **Code Quality**
+
+- Write self-documenting code with clear variable names
+- Use TypeScript interfaces for all data structures
+- Implement proper error handling and logging
+- Follow consistent naming conventions
+- Write comprehensive tests for all functionality
+- Justify all ESLint disable comments with clear explanations
+- Document why `any` types are necessary when used
+
+### **Architecture**
+
+- Use dependency injection for all service dependencies
+- Communicate via events instead of direct calls
+- Abstract database operations through repositories
+- Separate commands from queries
+- Use configuration files for service implementations
+- Keep Prisma client isolated to repository layer
+- Map Prisma models to domain types in repositories
+- Provide mock implementations for all repositories
+
+## 🔍 **Code Review Standards**
+
+### **Required Checks**
+
+1. **Formatting**: Code must pass Prettier formatting
+2. **Linting**: Zero ESLint warnings or errors
+3. **Type Safety**: No TypeScript errors, minimal justified `any` types
+4. **ESLint Disable Justification**: All disable comments have clear explanations
+5. **Architecture**: Follows loose coupling principles
+6. **Testing**: Adequate test coverage and quality
+7. **Documentation**: Clear comments and documentation
+
+### **Review Process**
+
+1. Automated checks must pass (format, lint, type-check)
+2. Manual review for architecture compliance
+3. Test coverage verification
+4. Performance impact assessment
+5. Security review for sensitive operations
+
+## 🎯 **Success Metrics**
+
+### **Quality Metrics**
+
+- **0** ESLint warnings or errors
+- **0** TypeScript errors
+- **100%** Prettier formatting compliance
+- **Minimal justified `any` types** in production code
+- **100% justified `eslint-disable` comments** with clear explanations
+
+### **Architecture Metrics**
+
+- **10/10** Loose coupling score
+- **100%** Event-driven communication
+- **100%** Repository pattern usage
+- **100%** Interface compliance
+- **100%** Configuration-based service loading
+
+## 🚀 **Continuous Improvement**
+
+### **Regular Audits**
+
+- Weekly code quality reviews
+- Monthly architecture compliance checks
+- Quarterly performance assessments
+- Annual security audits
+
+### **Tool Integration**
+
+- Pre-commit hooks for quality checks
+- CI/CD pipeline with quality gates
+- Automated testing on every commit
+- Performance monitoring in production
+
+## 🎯 **Recent Quality Achievements**
+
+### **Zero Warnings/Errors Achievement**
+
+- **✅ 0 ESLint warnings** - All 63 warnings eliminated
+- **✅ 0 TypeScript errors** - Perfect type safety maintained
+- **✅ 100% Prettier compliance** - All code perfectly formatted
+- **✅ 100% justified suppressions** - Every ESLint disable has clear justification
+
+### **Key Fixes Implemented**
+
+1. **ESLint Disable Justification System**
+   - Added mandatory justification comments for all suppressions
+   - Standardized format: `// Justification: [explanation]`
+   - Positioned disable comments on correct lines
+
+2. **Dynamic Service Loading Type Safety**
+   - Justified `any` types for runtime service instantiation
+   - Clear explanations for dynamic factory creation
+   - Maintained type safety where possible
+
+3. **SolidJS Reactivity False Positives**
+   - Justified suppressions for JSX context usage
+   - Explained async createEffect necessity for DI
+   - Documented false positive cases
+
+4. **Console Usage Justification**
+   - Justified console usage in logger services
+   - Explained CLI tool console requirements
+   - Documented test setup console mocking
+
+### **Quality Standards Evolution**
+
+The project has evolved from a "zero tolerance" approach to a "justified suppressions" approach, recognizing that some ESLint rules have legitimate false positives or necessary exceptions in specific contexts. This maintains code quality while being pragmatic about real-world development needs.
+
+Remember: **Quality is not negotiable**. Every line of code must meet these standards before being committed to the repository.

@@ -1,0 +1,46 @@
+{
+  "name": "Performance Testing",
+  "description": "Configuration optimized for performance testing with minimal overhead",
+  "environment": "test",
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/mocks/MockLogger",
+      "className": "MockLogger",
+      "isMock": true,
+      "description": "Mock logger for performance testing"
+    },
+    "IEventBus": {
+      "module": "../src/lib/services/concrete/EventBus",
+      "className": "EventBus",
+      "description": "Real event bus for performance testing"
+    },
+    "IDatabaseService": {
+      "module": "../src/lib/services/mocks/MockDatabase",
+      "className": "MockDatabase",
+      "isMock": true,
+      "description": "Mock database for performance testing"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/concrete/MonitorService",
+      "className": "MonitorService",
+      "description": "Real monitoring for performance testing"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/concrete/AlertingService",
+      "className": "AlertingService",
+      "description": "Real alerting for performance testing"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/mocks/MockNotification",
+      "className": "MockNotification",
+      "isMock": true,
+      "description": "Mock notifications for performance testing"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/MockAuth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock authentication for performance testing"
+    }
+  }
+}

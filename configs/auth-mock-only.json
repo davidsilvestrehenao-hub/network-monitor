@@ -1,0 +1,43 @@
+{
+  "name": "Auth Mock Only",
+  "description": "Development configuration with only authentication mocked",
+  "environment": "development",
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/concrete/LoggerService",
+      "className": "LoggerService",
+      "description": "Real logger for development"
+    },
+    "IEventBus": {
+      "module": "../src/lib/services/concrete/EventBus",
+      "className": "EventBus",
+      "description": "Real event bus for development"
+    },
+    "IDatabaseService": {
+      "module": "../src/lib/services/concrete/DatabaseService",
+      "className": "DatabaseService",
+      "description": "Real database for development"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/concrete/MonitorService",
+      "className": "MonitorService",
+      "description": "Real monitoring for development"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/concrete/AlertingService",
+      "className": "AlertingService",
+      "description": "Real alerting for development"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/concrete/NotificationService",
+      "className": "NotificationService",
+      "description": "Real notifications for development"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/MockAuth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock authentication for easy development"
+    }
+  }
+}

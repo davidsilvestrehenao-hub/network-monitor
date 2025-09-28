@@ -1,0 +1,231 @@
+---
+description: PWA Connection Monitor - Functional Requirements and Business Domain
+globs: "**/*.{ts,tsx,js,jsx,md}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# PWA Connection Monitor - Requirements & Business Domain
+
+## 🎯 **Application Overview**
+
+This is a **Progressive Web App (PWA)** that continuously monitors internet connections for multiple user-defined targets. It provides real-time dashboards, historical charts, event logs, and push notification alerts.
+
+### **Core Value Proposition**
+
+- **Continuous Monitoring**: 24/7 monitoring of internet connection quality
+- **Multi-Target Support**: Monitor multiple endpoints simultaneously
+- **Real-Time Alerts**: Instant notifications when connection issues occur
+- **Historical Analysis**: Charts and trends for performance analysis
+- **Offline Capable**: Works even when internet is down (for viewing historical data)
+
+## 🌐 **Target Monitoring**
+
+### **What We Monitor**
+
+- **Ping/Latency**: Response time to target servers
+- **Download Speed**: Bandwidth testing for download performance
+- **Upload Speed**: Bandwidth testing for upload performance
+- **Connection Status**: Success/failure of connection attempts
+- **Uptime**: Availability percentage over time
+
+### **Target Types**
+
+- **Websites**: HTTP/HTTPS endpoints (e.g., `https://google.com`)
+- **APIs**: REST endpoints for monitoring service availability
+- **Custom URLs**: Any reachable internet endpoint
+- **Local Network**: Internal network targets (optional)
+
+### **Monitoring Intervals**
+
+- **Default**: 30 seconds between tests
+- **Configurable**: 1 second to 5 minutes per target
+- **Adaptive**: Adjust based on target response times
+- **Pause/Resume**: Manual control over monitoring
+
+## 📊 **Dashboard Features**
+
+### **Real-Time Dashboard**
+
+- **Live Status**: Current status of all targets
+- **Performance Metrics**: Current ping, download, upload speeds
+- **Alert Indicators**: Visual alerts for problematic targets
+- **Quick Actions**: Start/stop monitoring, run manual tests
+
+### **Historical Charts**
+
+- **Time Series**: Ping, download, upload over time
+- **Trend Analysis**: Performance trends and patterns
+- **Comparison**: Compare multiple targets side-by-side
+- **Zoom/Pan**: Interactive chart controls
+- **Export**: Download chart data as CSV/PNG
+
+### **Event Log**
+
+- **Real-Time Events**: Live stream of monitoring events
+- **Filtering**: Filter by target, event type, time range
+- **Search**: Find specific events or patterns
+- **Export**: Download event logs for analysis
+
+## 🚨 **Alerting System**
+
+### **Alert Rules**
+
+- **Ping Thresholds**: Alert when latency exceeds limits
+- **Speed Thresholds**: Alert when download/upload drops below limits
+- **Uptime Rules**: Alert when availability drops below percentage
+- **Custom Conditions**: Complex rules with multiple criteria
+
+### **Alert Types**
+
+- **Immediate**: Real-time alerts for critical issues
+- **Summary**: Daily/weekly performance summaries
+- **Trend**: Alerts based on performance trends
+- **Recovery**: Notifications when issues are resolved
+
+### **Notification Channels**
+
+- **Push Notifications**: Browser push notifications
+- **In-App Alerts**: Visual alerts within the dashboard
+- **Email**: Email notifications (future enhancement)
+- **Webhook**: Custom webhook integrations (future enhancement)
+
+## 📱 **PWA Features**
+
+### **Installability**
+
+- **App Installation**: Install as native app on devices
+- **Offline Support**: View historical data when offline
+- **App Icon**: Custom app icon on home screen
+- **Splash Screen**: Custom loading screen
+
+### **Performance**
+
+- **Fast Loading**: Optimized for quick startup
+- **Responsive Design**: Works on desktop, tablet, mobile
+- **Background Sync**: Continue monitoring when app is closed
+- **Service Worker**: Offline functionality and caching
+
+### **User Experience**
+
+- **Intuitive Interface**: Easy-to-use dashboard
+- **Dark/Light Mode**: Theme switching capability
+- **Accessibility**: WCAG compliance for accessibility
+- **Keyboard Navigation**: Full keyboard support
+
+## 👤 **User Management**
+
+### **Authentication**
+
+- **Mock Auth**: Simple authentication for development
+- **User Sessions**: Secure user session management
+- **Role-Based Access**: Different permission levels (future)
+- **Multi-User Support**: Multiple users per installation (future)
+
+### **Data Ownership**
+
+- **User-Specific Data**: Each user sees only their targets
+- **Data Privacy**: No data sharing between users
+- **Data Export**: Users can export their data
+- **Data Deletion**: Users can delete their data
+
+## 🔧 **Technical Requirements**
+
+### **Performance**
+
+- **Sub-Second Response**: API responses under 1 second
+- **Real-Time Updates**: Live data updates without refresh
+- **Efficient Monitoring**: Minimal resource usage
+- **Scalable Architecture**: Support for many concurrent users
+
+### **Reliability**
+
+- **High Availability**: 99.9% uptime target
+- **Fault Tolerance**: Graceful handling of failures
+- **Data Persistence**: No data loss during outages
+- **Backup/Recovery**: Regular data backups
+
+### **Security**
+
+- **Data Encryption**: Encrypted data in transit and at rest
+- **Secure Authentication**: Secure user authentication
+- **Input Validation**: All inputs validated and sanitized
+- **Rate Limiting**: Protection against abuse
+
+## 📈 **Success Metrics**
+
+### **User Experience**
+
+- **Dashboard Load Time**: < 2 seconds
+- **Chart Rendering**: < 1 second
+- **Alert Delivery**: < 5 seconds
+- **User Satisfaction**: High user engagement
+
+### **System Performance**
+
+- **Monitoring Accuracy**: 99.9% accurate measurements
+- **Alert Reliability**: 100% alert delivery rate
+- **Data Integrity**: Zero data corruption
+- **System Uptime**: 99.9% availability
+
+## 🎨 **UI/UX Requirements**
+
+### **Design Principles**
+
+- **Clean Interface**: Minimal, uncluttered design
+- **Information Hierarchy**: Clear visual hierarchy
+- **Consistent Styling**: Uniform design language
+- **Responsive Layout**: Adapts to all screen sizes
+
+### **Color Coding**
+
+- **Green**: Healthy/good performance
+- **Yellow**: Warning/attention needed
+- **Red**: Critical/alert conditions
+- **Blue**: Information/neutral states
+- **Gray**: Disabled/inactive states
+
+### **Interactive Elements**
+
+- **Hover States**: Clear hover feedback
+- **Loading States**: Progress indicators
+- **Error States**: Clear error messages
+- **Success States**: Confirmation feedback
+
+## 🔮 **Future Enhancements**
+
+### **Phase 2 Features**
+
+- **Email Notifications**: Email alert delivery
+- **Webhook Integration**: Custom webhook endpoints
+- **Advanced Analytics**: Machine learning insights
+- **Team Collaboration**: Multi-user workspaces
+
+### **Phase 3 Features**
+
+- **Mobile App**: Native mobile applications
+- **API Access**: Public API for integrations
+- **Custom Dashboards**: User-configurable layouts
+- **Advanced Reporting**: PDF reports and analytics
+
+## 📋 **Acceptance Criteria**
+
+### **Core Functionality**
+
+- ✅ User can add/remove monitoring targets
+- ✅ System continuously monitors all targets
+- ✅ Dashboard displays real-time status
+- ✅ Charts show historical performance data
+- ✅ Alerts are triggered based on rules
+- ✅ Push notifications are delivered
+- ✅ App can be installed as PWA
+
+### **Quality Standards**
+
+- ✅ All features work offline (where applicable)
+- ✅ Interface is responsive on all devices
+- ✅ Performance meets specified metrics
+- ✅ Security requirements are met
+- ✅ Code quality standards are maintained
+
+Remember: **Every feature must serve the core purpose of reliable internet connection monitoring with excellent user experience.**

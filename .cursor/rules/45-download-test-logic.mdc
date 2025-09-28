@@ -1,0 +1,58 @@
+---
+globs:"src/server/services/MonitorService.ts"
+alwaysApply: true
+description: Provides the specific implementation details for the download speed test.
+---
+
+# Implementation Guide: Download Speed Test
+
+## 1. Goal
+The objective is to create a method, `measureDownloadSpeed`, within the `MonitorService` that accurately measures the server's download speed in **Megabits per second (Mbps)**. This method will be called by the background service.
+
+## 2. Required Library
+The download must be performed using the **`node-fetch`** library.
+
+## 3. Official Test File URLs
+The test must download a file of a known size from a reliable CDN. Use one of the following URLs. The **100 MB CacheFly file is the preferred default**.
+
+* **CacheFly:**
+    * `http://cachefly.cachefly.net/100mb.test` (100 MB)
+* **ThinkBroadband:**
+    * `http://ipv4.download.thinkbroadband.com/50MB.zip` (50 MB)
+
+## 4. Implementation Steps
+The method must follow these precise steps:
+1.  Record a high-resolution start time.
+2.  Use `fetch(url)` to initiate the download of the chosen test file.
+3.  The entire response body must be consumed into a buffer (e.g., using `await response.buffer()`).
+4.  The size of the downloaded file in bytes must be determined from the buffer's length.
+5.  Record the end time immediately after the buffer is created.
+6.  Calculate the total duration of the download in seconds.
+
+## 5. The Calculation Formula
+The final speed **must** be calculated in Megabits per second (Mbps). Use the following formula:
+
+`speedMbps = (sizeInBytes * 8) / durationInSeconds / 1_000_000`
+
+-   `* 8`: Converts bytes to bits.
+-   `/ 1_000_000`: Converts bits to megabits.
+-   
+
+Support all of these URLS.
+## CacheFly
+CacheFly provides simple, uncompressed test files that are a standard for this kind of testing.
+
+10 MB: http://cachefly.cachefly.net/10mb.test
+
+100 MB: http://cachefly.cachefly.net/100mb.test
+
+1 GB: http://cachefly.cachefly.net/1gb.test
+
+## ThinkBroadband
+ThinkBroadband is a UK-based site that offers a good range of zipped test files.
+
+5 MB: http://ipv4.download.thinkbroadband.com/5MB.zip
+
+50 MB: http://ipv4.download.thinkbroadband.com/50MB.zip
+
+200 MB: http://ipv4.download.thinkbroadband.com/200MB.zip

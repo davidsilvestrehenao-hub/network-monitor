@@ -1,0 +1,88 @@
+{
+  "name": "Auth Mock Only",
+  "description": "Development configuration with only authentication mocked",
+  "environment": "development",
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/concrete/LoggerService",
+      "className": "LoggerService",
+      "description": "Real logger for development"
+    },
+    "IEventBus": {
+      "module": "../src/lib/services/concrete/EventBus",
+      "className": "EventBus",
+      "description": "Real event bus for development"
+    },
+    "IDatabaseService": {
+      "module": "../src/lib/services/concrete/DatabaseService",
+      "className": "DatabaseService",
+      "description": "Real database for development"
+    },
+    "ITargetRepository": {
+      "module": "../src/lib/services/concrete/TargetRepository",
+      "className": "TargetRepository",
+      "description": "Real target repository for development"
+    },
+    "ISpeedTestRepository": {
+      "module": "../src/lib/services/concrete/SpeedTestRepository",
+      "className": "SpeedTestRepository",
+      "description": "Real speed test repository for development"
+    },
+    "IMonitoringTargetRepository": {
+      "module": "../src/lib/services/concrete/MonitoringTargetRepository",
+      "className": "MonitoringTargetRepository",
+      "description": "Real monitoring target repository for development"
+    },
+    "ISpeedTestResultRepository": {
+      "module": "../src/lib/services/concrete/SpeedTestResultRepository",
+      "className": "SpeedTestResultRepository",
+      "description": "Real speed test result repository for development"
+    },
+    "IAlertRuleRepository": {
+      "module": "../src/lib/services/concrete/AlertRuleRepository",
+      "className": "AlertRuleRepository",
+      "description": "Real alert rule repository for development"
+    },
+    "IIncidentEventRepository": {
+      "module": "../src/lib/services/concrete/IncidentEventRepository",
+      "className": "IncidentEventRepository",
+      "description": "Real incident event repository for development"
+    },
+    "IPushSubscriptionRepository": {
+      "module": "../src/lib/services/concrete/PushSubscriptionRepository",
+      "className": "PushSubscriptionRepository",
+      "description": "Real push subscription repository for development"
+    },
+    "INotificationRepository": {
+      "module": "../src/lib/services/concrete/NotificationRepository",
+      "className": "NotificationRepository",
+      "description": "Real notification repository for development"
+    },
+    "IUserRepository": {
+      "module": "../src/lib/services/concrete/UserRepository",
+      "className": "UserRepository",
+      "description": "Real user repository for development"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/concrete/MonitorService",
+      "className": "MonitorService",
+      "description": "Real monitoring for development"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/concrete/AlertingService",
+      "className": "AlertingService",
+      "description": "Real alerting for development"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/concrete/NotificationService",
+      "className": "NotificationService",
+      "description": "Real notifications for development"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/MockAuth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock authentication for easy development"
+    }
+  }
+}

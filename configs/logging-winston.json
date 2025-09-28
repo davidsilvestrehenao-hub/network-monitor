@@ -1,0 +1,8 @@
+{
+  "ILogger": {
+    "factory": "WinstonLoggerService",
+    "dependencies": [],
+    "singleton": true,
+    "description": "Winston logger service for production logging with file output"
+  }
+}

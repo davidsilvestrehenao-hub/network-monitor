@@ -1,0 +1,39 @@
+[Unit]
+Description=Network Monitor PWA
+Documentation=https://github.com/your-username/network-monitor
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/network-monitor
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOST=0.0.0.0
+Environment=DATABASE_URL=file:./prisma/prod.db
+Environment=LOG_LEVEL=info
+ExecStart=/usr/local/bin/bun run start
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=network-monitor
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/network-monitor
+ReadWritePaths=/var/log/network-monitor
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=1G
+CPUQuota=80%
+
+[Install]
+WantedBy=multi-user.target

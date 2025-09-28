@@ -1,0 +1,470 @@
+---
+description: Database Schema and Entity Documentation
+globs: "prisma/**/*.prisma, src/**/*.ts, src/**/*.tsx"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Database Schema & Entity Documentation
+
+## 🗄️ **Database Overview**
+
+The PWA Connection Monitor uses **Prisma ORM** with **SQLite** for development and **PostgreSQL** for production. The database schema is defined exclusively in `prisma/schema.prisma` and serves as the **single source of truth** for all data structures.
+
+### **Database Configuration**
+
+```prisma
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"  // Development
+    url      = env("DATABASE_URL")
+    // provider = "postgresql"  // Production
+}
+```
+
+## 📊 **Entity Relationships**
+
+### **Core Entity Hierarchy**
+
+```
+User (1) ──→ (N) MonitoringTarget
+    │              │
+    │              ├── (N) SpeedTestResult
+    │              ├── (N) AlertRule
+    │              └── (N) IncidentEvent
+    │
+    ├── (N) PushSubscription
+    └── (N) Notification
+```
+
+## 👤 **Authentication Entities**
+
+### **User Model**
+
+The central user entity that connects authentication with application data.
+
+```prisma
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Auth.js relations
+  accounts      Account[]
+  sessions      Session[]
+
+  // Application relations
+  monitoringTargets  MonitoringTarget[]
+  pushSubscriptions  PushSubscription[]
+  notifications      Notification[]
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (CUID)
+- **Authentication**: Integrates with Auth.js for OAuth providers
+- **Data Ownership**: All user data is owned by this entity
+- **Cascade Delete**: All related data is deleted when user is removed
+
+### **Account Model**
+
+OAuth provider account information.
+
+```prisma
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+```
+
+### **Session Model**
+
+User session management.
+
+```prisma
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+```
+
+## 🎯 **Core Application Entities**
+
+### **MonitoringTarget Model**
+
+The primary entity representing monitoring endpoints.
+
+```prisma
+model MonitoringTarget {
+  id               String            @id @default(cuid())
+  name             String
+  address          String
+
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId          String
+
+  speedTestResults SpeedTestResult[]
+  incidentEvents   IncidentEvent[]
+  alertRules       AlertRule[]
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (CUID)
+- **Owner**: Each target belongs to a user
+- **Address**: URL or IP address to monitor
+- **Relations**: Contains all monitoring data and rules
+
+**Business Rules:**
+
+- Targets are user-specific (no sharing between users)
+- Cascade delete removes all related data
+- Address must be a valid URL or IP
+
+### **SpeedTestResult Model**
+
+Performance measurement results.
+
+```prisma
+model SpeedTestResult {
+  id        Int      @id @default(autoincrement())
+  ping      Float?
+  download  Float?
+  status    String   // 'SUCCESS' or 'FAILURE'
+  error     String?
+  createdAt DateTime @default(now())
+
+  target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  targetId  String
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **Metrics**: Ping (latency) and download speed
+- **Status**: Success/failure indicator
+- **Timestamp**: When the test was performed
+- **Error Handling**: Optional error message for failures
+
+**Business Rules:**
+
+- Results are immutable once created
+- Failed tests may have null metrics but must have error message
+- Results are automatically cleaned up when target is deleted
+
+### **AlertRule Model**
+
+Automated alerting configuration.
+
+```prisma
+model AlertRule {
+  id        Int      @id @default(autoincrement())
+  name      String
+  metric    String   // 'ping' or 'download'
+  condition String   // 'GREATER_THAN' or 'LESS_THAN'
+  threshold Float
+  enabled   Boolean  @default(true)
+
+  target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  targetId  String
+
+  triggeredEvents IncidentEvent[]
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **Metric Types**: Only 'ping' or 'download' allowed
+- **Conditions**: 'GREATER_THAN' or 'LESS_THAN' comparisons
+- **Threshold**: Numeric value for comparison
+- **Enabled State**: Can be toggled on/off
+
+**Business Rules:**
+
+- Each target can have multiple alert rules
+- Rules are evaluated on every speed test
+- Disabled rules don't trigger alerts
+- Thresholds must be positive numbers
+
+### **IncidentEvent Model**
+
+Alert and outage tracking.
+
+```prisma
+model IncidentEvent {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @default(now())
+  type        String   // 'OUTAGE' or 'ALERT'
+  description String
+  resolved    Boolean  @default(false)
+
+  target      MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  targetId    String
+
+  triggeredByRule AlertRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+  ruleId          Int?
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **Event Types**: 'OUTAGE' (connection failure) or 'ALERT' (threshold breach)
+- **Resolution**: Tracks whether incident is resolved
+- **Rule Association**: Optional link to triggering alert rule
+
+**Business Rules:**
+
+- Incidents are created when alerts trigger or outages occur
+- Resolution status can be updated manually
+- Rule deletion doesn't delete incidents (SetNull)
+
+## 🔔 **Notification Entities**
+
+### **PushSubscription Model**
+
+Web push notification subscriptions.
+
+```prisma
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (CUID)
+- **Endpoint**: Unique push service endpoint
+- **Security**: p256dh and auth keys for encryption
+- **User Association**: Each subscription belongs to a user
+
+**Business Rules:**
+
+- Endpoints must be unique across all users
+- Subscriptions are cleaned up when user is deleted
+- Used for sending push notifications
+
+### **Notification Model**
+
+In-app notification messages.
+
+```prisma
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  sentAt    DateTime @default(now())
+  read      Boolean  @default(false)
+
+  recipient User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **Message**: Notification content
+- **Read Status**: Tracks whether user has seen notification
+- **Timestamp**: When notification was sent
+
+**Business Rules:**
+
+- Notifications are user-specific
+- Read status can be updated
+- Messages are immutable once sent
+
+## 🔧 **Repository Pattern Implementation**
+
+### **Entity Mapping Rules**
+
+All repository implementations must map Prisma models to domain types:
+
+```typescript
+// ✅ Good: Repository with proper mapping
+async findById(id: string): Promise<Target | null> {
+  const prismaTarget = await this.databaseService
+    .getClient()
+    .monitoringTarget.findUnique({
+      where: { id },
+      include: { speedTestResults: true, alertRules: true },
+    });
+
+  return prismaTarget ? this.mapToTarget(prismaTarget) : null;
+}
+
+private mapToTarget(prismaTarget: PrismaTarget): Target {
+  return {
+    id: prismaTarget.id,
+    name: prismaTarget.name,
+    address: prismaTarget.address,
+    speedTestResults: prismaTarget.speedTestResults?.map(this.mapToSpeedTestResult) || [],
+    alertRules: prismaTarget.alertRules?.map(this.mapToAlertRule) || [],
+  };
+}
+```
+
+### **Type Safety Requirements**
+
+- **Domain Types**: All repository methods return domain types, not Prisma models
+- **Null Handling**: Proper handling of optional fields and relations
+- **Data Transformation**: Convert between Prisma and domain representations
+- **Error Mapping**: Convert database errors to domain errors
+
+## 📋 **Database Operations Guidelines**
+
+### **Query Patterns**
+
+```typescript
+// ✅ Good: Using repository pattern
+const target = await this.targetRepository.findById(id);
+
+// ❌ Bad: Direct Prisma usage
+const target = await prisma.monitoringTarget.findUnique({ where: { id } });
+```
+
+### **Transaction Handling**
+
+```typescript
+// ✅ Good: Repository handles transactions
+async createTargetWithRules(data: CreateTargetData, rules: AlertRuleData[]): Promise<Target> {
+  return await this.databaseService.getClient().$transaction(async (tx) => {
+    const target = await tx.monitoringTarget.create({ data });
+    await tx.alertRule.createMany({
+      data: rules.map(rule => ({ ...rule, targetId: target.id }))
+    });
+    return this.mapToTarget(target);
+  });
+}
+```
+
+### **Data Validation**
+
+- **Input Validation**: All data must be validated before database operations
+- **Constraint Enforcement**: Database constraints are the final validation layer
+- **Type Safety**: TypeScript interfaces ensure compile-time safety
+- **Business Rules**: Repository methods enforce business logic
+
+## 🧪 **Testing Database Operations**
+
+### **Mock Repository Pattern**
+
+```typescript
+// ✅ Good: Mock repository with seeded data
+export class MockTargetRepository implements ITargetRepository {
+  private targets: Target[] = [];
+
+  constructor(private logger?: ILogger) {
+    this.seedTargets(TestDataSeeder.generateTargets());
+  }
+
+  async findById(id: string): Promise<Target | null> {
+    return this.targets.find(t => t.id === id) || null;
+  }
+
+  // Seeding method for test data
+  seedTargets(targets: Target[]): void {
+    this.targets = targets;
+  }
+}
+```
+
+### **Test Data Seeding**
+
+- **Realistic Data**: Use realistic test data that matches production patterns
+- **Edge Cases**: Include boundary conditions and error scenarios
+- **Relationships**: Properly seed related entities
+- **Cleanup**: Tests should clean up after themselves
+
+## 🚫 **Anti-Patterns to Avoid**
+
+### **Direct Prisma Usage**
+
+```typescript
+// ❌ Bad: Direct Prisma usage in business logic
+class MonitorService {
+  async getTarget(id: string) {
+    return await prisma.monitoringTarget.findUnique({ where: { id } });
+  }
+}
+
+// ✅ Good: Using repository pattern
+class MonitorService {
+  constructor(private targetRepository: ITargetRepository) {}
+
+  async getTarget(id: string) {
+    return await this.targetRepository.findById(id);
+  }
+}
+```
+
+### **Raw Prisma Models**
+
+```typescript
+// ❌ Bad: Returning raw Prisma models
+async findById(id: string): Promise<PrismaTarget | null> {
+  return await this.databaseService.getClient().monitoringTarget.findUnique({...});
+}
+
+// ✅ Good: Returning domain types
+async findById(id: string): Promise<Target | null> {
+  const prismaTarget = await this.databaseService.getClient().monitoringTarget.findUnique({...});
+  return prismaTarget ? this.mapToTarget(prismaTarget) : null;
+}
+```
+
+## ✅ **Best Practices**
+
+### **Schema Design**
+
+- **Single Source of Truth**: All schema changes in `prisma/schema.prisma`
+- **Migration Safety**: Always use Prisma migrations for schema changes
+- **Indexing**: Add appropriate indexes for query performance
+- **Constraints**: Use database constraints for data integrity
+
+### **Repository Implementation**
+
+- **Interface-First**: Define repository interfaces before implementations
+- **Data Mapping**: Always map between Prisma and domain types
+- **Error Handling**: Proper error handling and logging
+- **Testing**: Comprehensive test coverage with mock implementations
+
+### **Performance Considerations**
+
+- **Query Optimization**: Use appropriate includes and selects
+- **Pagination**: Implement pagination for large result sets
+- **Caching**: Consider caching for frequently accessed data
+- **Indexing**: Monitor and optimize database indexes
+
+Remember: **The database schema is the foundation of the application. All data access must go through repositories, and the Prisma client should never leave the repository layer.**

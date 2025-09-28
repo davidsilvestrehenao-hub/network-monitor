@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run Prettier to format code
+bun run format
+
+# Run linting
+bun run lint
+
+# Run type checking
+bun run type-check

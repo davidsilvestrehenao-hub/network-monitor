@@ -1,0 +1,251 @@
+---
+description: Core Architecture: PWA Connection Monitor
+globs:
+alwaysApply: true
+---
+
+# Core Architecture: PWA Connection Monitor
+
+## Project Overview
+
+This is a PWA for monitoring internet connections, built with the SolidStart "T3 Stack" on the Bun runtime. The core goal is to provide a dashboard with charts and real-time alerts via push notifications. The architecture emphasizes **perfect loose coupling** through advanced dependency injection, event-driven communication, and configuration-based service management.
+
+## Key Technologies
+
+- **Runtime:** Bun
+- **Framework:** SolidStart (Vite)
+- **API:** tRPC (end-to-end type-safe)
+- **Database:** Prisma ORM (SQLite for dev, PostgreSQL for prod)
+- **Authentication:** Mock Auth (configurable)
+- **Dependency Injection:** Custom flexible container system
+- **Event System:** Event-driven architecture with type-safe event bus
+- **Configuration:** JSON-based service configuration management
+
+## Architecture Principles
+
+### 🏗️ **Perfect Loose Coupling (10/10 Score)**
+
+The entire system is built on the principle of **zero direct dependencies** between services:
+
+- **Event-Driven Communication**: All inter-service communication happens via events
+- **Repository Pattern**: Database operations are abstracted through repository interfaces (all data access goes through repositories, Prisma client never leaves repository layer)
+- **Command/Query Separation**: Clear distinction between read and write operations
+- **Interface-Based Design**: All services depend on abstractions, not concrete implementations
+
+### 🔧 **Advanced Dependency Injection**
+
+- **Flexible Container**: Custom DI container with configuration-based service resolution
+- **Service Registry**: Dynamic service loading from JSON configuration files
+- **Environment-Specific Configs**: Different service implementations per environment
+- **Type-Safe Factories**: Compile-time and runtime type safety for service creation
+
+### 📁 **Organized Service Structure**
+
+```
+src/lib/
+├── services/
+│   ├── interfaces/          # Service contracts
+│   ├── concrete/            # Production implementations
+│   └── mocks/              # Test implementations
+├── frontend/
+│   ├── interfaces/          # Frontend service contracts
+│   ├── services/            # Frontend implementations
+│   └── mocks/              # Frontend test implementations
+└── container/
+    ├── configs/             # Environment-specific configurations
+    └── flexible-container.ts # DI container implementation
+```
+
+### 🎯 **Event-Driven Architecture**
+
+#### Backend Service Flow
+
+```
+tRPC Router → Service Layer → Repository Layer → Database
+     ↓              ↓              ↓              ↓
+  Business      Business        Data Access    Database
+   Logic         Logic           Contract      Layer
+```
+
+#### Frontend Event Flow
+
+```
+Component → Command/Query Service → Event Bus → API Client → Backend
+     ↓              ↓                ↓           ↓
+  Commands    Event-Driven      Event Bus    HTTP/WebSocket
+```
+
+### ⚙️ **Configuration Management**
+
+- **Service Config**: `service-config.json` in project root for active configuration
+- **Environment Configs**: Separate configs for development, test, production
+- **Dynamic Switching**: Runtime service implementation switching
+- **Type Safety**: Full TypeScript support for all configurations
+
+### 🧪 **Testing Architecture**
+
+- **Mock Services**: Complete mock implementations for all services
+- **Isolated Testing**: Each service can be tested independently
+- **Configuration-Based**: Easy switching between real and mock services
+- **Event Testing**: Comprehensive event system testing capabilities
+
+### 📊 **Repository Pattern Implementation**
+
+The repository pattern is a fundamental architectural pattern that abstracts data access logic and provides a uniform interface for accessing data sources.
+
+#### **Core Principles**
+
+- **Data Abstraction**: All database operations are abstracted through repository interfaces
+- **Prisma Isolation**: The Prisma client never leaves the repository layer
+- **Type Safety**: All repository methods return properly typed interfaces, not raw Prisma objects
+- **Mock Support**: Each repository has a corresponding mock implementation for testing
+
+#### **Repository Structure**
+
+```
+src/lib/services/
+├── interfaces/          # Repository contracts
+│   ├── ITargetRepository.ts
+│   ├── ISpeedTestRepository.ts
+│   ├── IAlertRepository.ts
+│   ├── INotificationRepository.ts
+│   └── IUserRepository.ts
+├── concrete/            # Production implementations
+│   ├── TargetRepository.ts
+│   ├── SpeedTestRepository.ts
+│   ├── AlertRepository.ts
+│   ├── NotificationRepository.ts
+│   └── UserRepository.ts
+└── mocks/              # Test implementations
+    ├── MockTargetRepository.ts
+    ├── MockSpeedTestRepository.ts
+    ├── MockAlertRepository.ts
+    ├── MockNotificationRepository.ts
+    └── MockUserRepository.ts
+```
+
+#### **Repository Responsibilities**
+
+- **Data Mapping**: Convert between Prisma models and common domain types
+- **Query Abstraction**: Provide high-level methods for common data operations
+- **Type Safety**: Ensure all returned data matches expected interfaces
+- **Error Handling**: Handle database-specific errors and convert to domain errors
+- **Logging**: Log all database operations for debugging and monitoring
+
+#### **Usage Pattern**
+
+```typescript
+// ✅ Good: Using repository pattern
+const target = await this.targetRepository.findById(id);
+
+// ❌ Bad: Direct Prisma usage
+const target = await this.databaseService.getClient().monitoringTarget.findUnique({...});
+```
+
+#### **Mock Repository Benefits**
+
+- **Test Data Seeding**: Mock repositories can be pre-populated with test data
+- **In-Memory Storage**: Fast, isolated testing without database dependencies
+- **Predictable Behavior**: Controlled test scenarios and edge cases
+- **Development**: Easy development without database setup
+
+## Service Categories
+
+### 🔧 **Backend Services**
+
+- **Core Services**: `ILogger`, `IEventBus`, `IDatabaseService`
+- **Business Logic**: `IMonitorService`, `IAlertingService`, `INotificationService`
+- **Authentication**: `IAuthService` (configurable implementations)
+- **Repositories**: `ITargetRepository`, `ISpeedTestRepository`, `IAlertRepository`, `INotificationRepository`, `IUserRepository`
+
+### 🏗️ **Service Layer Architecture**
+
+The service layer is the **only layer** that routers should interact with. Services contain business logic and orchestrate operations by calling repositories.
+
+#### **Service Layer Responsibilities**
+
+- **Business Logic**: Contains all business rules and operations
+- **Orchestration**: Coordinates between multiple repositories
+- **Data Transformation**: Converts between domain types and repository types
+- **Event Emission**: Emits events for inter-service communication
+- **Error Handling**: Handles business logic errors and validation
+
+#### **Router-Service-Repository Pattern**
+
+```typescript
+// ✅ Correct: Router → Service → Repository
+export const createTarget = createCaller(
+  CreateTargetSchema,
+  async ({ input$, event$: _event$, session$ }) => {
+    const ctx = createAppContext();
+    const { name, address } = input$;
+
+    // Router calls service
+    const target = await ctx.services.monitor.createTarget({
+      name,
+      address,
+      ownerId: session$.user.id,
+    });
+
+    return target;
+  }
+);
+
+// Service implementation
+class MonitorService {
+  async createTarget(data: CreateTargetData): Promise<MonitoringTarget> {
+    // Service calls repository
+    return await this.targetRepository.create(data);
+  }
+}
+```
+
+#### **Anti-Patterns to Avoid**
+
+```typescript
+// ❌ Wrong: Router calling repository directly
+const target = await ctx.services.targetRepository.create(data);
+
+// ❌ Wrong: Router calling database directly
+const target = await ctx.services.database.getClient().monitoringTarget.create({...});
+```
+
+### 🎨 **Frontend Services**
+
+- **Core Services**: `ILogger`, `IEventBus`, `IAPIClient`
+- **Performance**: `IPerformanceMonitor`, `ICacheManager`
+- **PWA Features**: `IPWAService`
+- **Data Flow**: `ICommandQueryService` (Command/Query pattern)
+
+### 📊 **Event System**
+
+- **Type-Safe Events**: `FrontendEvents` interface for compile-time safety
+- **Event Handlers**: Centralized event processing in `EventHandlerService`
+- **Real-time Communication**: Event-driven updates between frontend and backend
+- **Error Handling**: Comprehensive error propagation through events
+
+## Quality Standards
+
+### 🎯 **Code Quality Mandate**
+
+- **Zero Warnings**: No ESLint warnings or TypeScript errors allowed
+- **Perfect Formatting**: All code must pass Prettier formatting
+- **Type Safety**: No `any` types or `eslint-disable` comments
+- **Interface Compliance**: All implementations must fully implement their interfaces
+
+### 🧪 **Testing Requirements**
+
+- **Unit Tests**: Each service must have comprehensive unit tests
+- **Integration Tests**: Event-driven communication testing
+- **Mock Coverage**: All services must have mock implementations
+- **Configuration Testing**: All configuration combinations must be tested
+
+## Golden Rules
+
+1. **Single Source of Truth**: Requirements and architecture are defined in `requirements.md` and `ARCHITECTURE.md`
+2. **Database Schema**: Defined exclusively in `prisma/schema.prisma`
+3. **No Direct Dependencies**: Services must never directly call other services
+4. **Event-Driven Communication**: All inter-service communication via events
+5. **Configuration-Based**: Service implementations loaded from configuration files
+6. **Type Safety**: Full TypeScript support throughout the entire system
+7. **Zero Compromises**: No shortcuts on code quality or architectural principles

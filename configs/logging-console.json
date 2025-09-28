@@ -1,0 +1,8 @@
+{
+  "ILogger": {
+    "factory": "LoggerService",
+    "dependencies": [],
+    "singleton": true,
+    "description": "Console logger service for development and testing"
+  }
+}

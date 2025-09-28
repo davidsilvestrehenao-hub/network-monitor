@@ -1,0 +1,277 @@
+---
+description: Complete Rule Index and Quick Reference
+globs: "**/*"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Complete Rule Index & Quick Reference
+
+## 📚 **Rule Overview**
+
+This document provides a comprehensive index of all rules in the PWA Connection Monitor project, organized by category and purpose.
+
+## 🏗️ **Architecture & Design Rules**
+
+### **Core Architecture**
+
+- **`00-core-architecture.mdc`** - PWA overview, technologies, perfect loose coupling principles
+- **`00-core-blueprint.mdc`** - Project blueprint, vision, sources of truth
+- **`30-di-and-events.mdc`** - Dependency injection and event-driven architecture
+- **`50-advanced-patterns.mdc`** - Advanced architectural patterns and implementation guidelines
+
+### **Database & Data**
+
+- **`70-database-schema.mdc`** - Database schema, entities, and relationships
+- **`60-repository-pattern.mdc`** - Repository pattern implementation guidelines
+
+## 💻 **Development Rules**
+
+### **Frontend Development**
+
+- **`10-frontend-patterns.mdc`** - SolidJS/SolidStart development patterns and best practices
+
+### **Backend Development**
+
+- **`20-backend-patterns.mdc`** - tRPC, services, repositories, and backend patterns
+
+### **API Design**
+
+- **`80-api-design.mdc`** - API design patterns, standards, and best practices
+
+## 🧪 **Quality & Testing**
+
+### **Code Quality**
+
+- **`40-quality-standards.mdc`** - Code quality mandate, zero tolerance policy, best practices
+
+### **Testing**
+
+- **`90-testing-strategies.mdc`** - Testing strategies, unit tests, integration tests, E2E tests
+
+## 🚀 **Operations & Deployment**
+
+### **Deployment**
+
+- **`95-deployment.mdc`** - Deployment strategies, Docker, cloud platforms, monitoring
+
+### **Troubleshooting**
+
+- **`98-troubleshooting.mdc`** - Common issues, debugging, emergency procedures
+
+## 🛠️ **Tooling & Configuration**
+
+### **Runtime & Tools**
+
+- **`use-bun-instead-of-node-vite-npm-pnpm.mdc`** - Bun runtime preferences and tooling
+
+### **Requirements**
+
+- **`05-requirements.mdc`** - Functional requirements and business domain
+
+## 📋 **Quick Reference by Task**
+
+### **Starting Development**
+
+1. Read `00-core-blueprint.mdc` for project overview
+2. Follow `10-frontend-patterns.mdc` for frontend work
+3. Follow `20-backend-patterns.mdc` for backend work
+4. Use `40-quality-standards.mdc` for code quality
+
+### **Working with Data**
+
+1. Check `70-database-schema.mdc` for entity relationships
+2. Follow `60-repository-pattern.mdc` for data access
+3. Use `30-di-and-events.mdc` for service communication
+
+### **Building APIs**
+
+1. Follow `80-api-design.mdc` for API standards
+2. Use `20-backend-patterns.mdc` for tRPC patterns
+3. Check `40-quality-standards.mdc` for error handling
+
+### **Testing Code**
+
+1. Follow `90-testing-strategies.mdc` for test patterns
+2. Use `40-quality-standards.mdc` for test quality
+3. Check `60-repository-pattern.mdc` for mock patterns
+
+### **Deploying Application**
+
+1. Follow `95-deployment.mdc` for deployment strategies
+2. Use `98-troubleshooting.mdc` for issue resolution
+3. Check `40-quality-standards.mdc` for production readiness
+
+## 🎯 **Rule Categories by Priority**
+
+### **Essential (Must Read)**
+
+- `00-core-architecture.mdc` - Core principles
+- `40-quality-standards.mdc` - Code quality
+- `20-backend-patterns.mdc` - Backend development
+- `10-frontend-patterns.mdc` - Frontend development
+
+### **Important (Should Read)**
+
+- `00-core-blueprint.mdc` - Project overview
+- `30-di-and-events.mdc` - Architecture patterns
+- `60-repository-pattern.mdc` - Data access
+- `70-database-schema.mdc` - Database design
+
+### **Useful (When Needed)**
+
+- `80-api-design.mdc` - API development
+- `90-testing-strategies.mdc` - Testing
+- `95-deployment.mdc` - Deployment
+- `98-troubleshooting.mdc` - Problem solving
+
+### **Reference (As Needed)**
+
+- `05-requirements.mdc` - Business requirements
+- `50-advanced-patterns.mdc` - Advanced patterns
+- `use-bun-instead-of-node-vite-npm-pnpm.mdc` - Tooling
+
+## 🔍 **Finding the Right Rule**
+
+### **By File Type**
+
+- **`.tsx` files** → `10-frontend-patterns.mdc`
+- **`.ts` files** → `20-backend-patterns.mdc`
+- **`prisma/` files** → `70-database-schema.mdc`
+- **`test/` files** → `90-testing-strategies.mdc`
+
+### **By Task**
+
+- **Creating components** → `10-frontend-patterns.mdc`
+- **Building services** → `20-backend-patterns.mdc`
+- **Database operations** → `60-repository-pattern.mdc`
+- **API endpoints** → `80-api-design.mdc`
+- **Testing code** → `90-testing-strategies.mdc`
+- **Deploying app** → `95-deployment.mdc`
+
+### **By Problem**
+
+- **TypeScript errors** → `40-quality-standards.mdc`
+- **Build issues** → `98-troubleshooting.mdc`
+- **Performance problems** → `95-deployment.mdc`
+- **Architecture questions** → `30-di-and-events.mdc`
+
+## 📖 **Rule Dependencies**
+
+### **Core Dependencies**
+
+```
+00-core-architecture.mdc
+    ↓
+00-core-blueprint.mdc
+    ↓
+10-frontend-patterns.mdc + 20-backend-patterns.mdc
+    ↓
+30-di-and-events.mdc
+    ↓
+60-repository-pattern.mdc + 70-database-schema.mdc
+```
+
+### **Quality Dependencies**
+
+```
+40-quality-standards.mdc
+    ↓
+90-testing-strategies.mdc
+    ↓
+95-deployment.mdc
+    ↓
+98-troubleshooting.mdc
+```
+
+## 🎨 **Rule Design Principles**
+
+### **Consistency**
+
+- All rules follow the same format and structure
+- Consistent terminology across all rules
+- Standardized code examples and patterns
+
+### **Completeness**
+
+- Every aspect of development is covered
+- No gaps in guidance or best practices
+- Comprehensive coverage of edge cases
+
+### **Clarity**
+
+- Clear, actionable guidance
+- Well-documented examples
+- Easy to find and reference
+
+### **Maintainability**
+
+- Rules are organized and categorized
+- Easy to update and extend
+- Version controlled and tracked
+
+## 🔄 **Rule Updates**
+
+### **When to Update Rules**
+
+- New patterns or best practices discovered
+- Architecture changes or improvements
+- New tools or technologies adopted
+- Issues found in current guidance
+
+### **How to Update Rules**
+
+1. Identify the rule that needs updating
+2. Make the necessary changes
+3. Test the changes with real code
+4. Update this index if needed
+5. Document the changes
+
+### **Rule Versioning**
+
+- Rules are versioned with the project
+- Changes are tracked in git history
+- Breaking changes are documented
+- Migration guides provided when needed
+
+## 📊 **Rule Statistics**
+
+### **Total Rules: 12**
+
+- **Architecture**: 4 rules
+- **Development**: 3 rules
+- **Quality**: 2 rules
+- **Operations**: 2 rules
+- **Tooling**: 1 rule
+
+### **Coverage Areas**
+
+- ✅ Frontend development (SolidJS/SolidStart)
+- ✅ Backend development (tRPC/Prisma)
+- ✅ Database design and operations
+- ✅ API design and standards
+- ✅ Testing strategies and patterns
+- ✅ Code quality and standards
+- ✅ Deployment and operations
+- ✅ Troubleshooting and debugging
+- ✅ Architecture and patterns
+- ✅ Dependency injection and events
+
+## 🎯 **Success Metrics**
+
+### **Rule Effectiveness**
+
+- **Developer Onboarding**: New developers can follow rules to get productive quickly
+- **Code Consistency**: All code follows established patterns and standards
+- **Quality Maintenance**: High code quality maintained across the project
+- **Issue Reduction**: Fewer bugs and issues due to clear guidance
+- **Team Alignment**: All team members follow the same standards
+
+### **Rule Adoption**
+
+- **Usage Tracking**: Rules are referenced during development
+- **Feedback Collection**: Regular feedback on rule effectiveness
+- **Continuous Improvement**: Rules are updated based on experience
+- **Knowledge Sharing**: Rules serve as knowledge base for the team
+
+Remember: **These rules are living documents that evolve with the project. They should be your first reference for any development task, and they should be updated as the project grows and improves.**

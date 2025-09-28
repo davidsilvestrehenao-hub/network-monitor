@@ -1,0 +1,558 @@
+---
+description: Troubleshooting Guide and Common Issues
+globs: "**/*.{ts,tsx,js,jsx,md,log}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Troubleshooting Guide & Common Issues
+
+## 🚨 **Quick Reference**
+
+### **Emergency Commands**
+
+```bash
+# Check application status
+bun run dev --port 3000
+
+# Check logs
+tail -f logs/combined.log
+
+# Check database connection
+bun run db:status
+
+# Restart services
+bun run restart
+
+# Clear cache
+bun run cache:clear
+```
+
+## 🔍 **Common Issues & Solutions**
+
+### **1. Development Server Issues**
+
+#### **Server Won't Start**
+
+```bash
+# Error: Port 3000 already in use
+Error: listen EADDRINUSE: address already in use :::3000
+```
+
+**Solutions:**
+
+```bash
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
+
+# Or use different port
+bun run dev --port 3001
+
+# Or find and kill the process
+ps aux | grep bun
+kill -9 <PID>
+```
+
+#### **Module Resolution Errors**
+
+```bash
+# Error: Cannot resolve module
+Error: Cannot resolve module '~/lib/services/IMonitorService'
+```
+
+**Solutions:**
+
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules bun.lockb
+bun install
+
+# Check tsconfig.json paths
+# Ensure path mapping is correct:
+# "paths": { "~/*": ["./src/*"] }
+
+# Restart TypeScript server
+# In VS Code: Ctrl+Shift+P -> "TypeScript: Restart TS Server"
+```
+
+#### **TypeScript Errors**
+
+```bash
+# Error: Type errors in build
+src/lib/container/container.ts(45,12): error TS2304: Cannot find name 'TYPES'
+```
+
+**Solutions:**
+
+```bash
+# Check imports
+# Ensure TYPES is imported: import { TYPES } from "./types";
+
+# Run type check
+bun run type-check
+
+# Check for circular dependencies
+bun run check-circular
+
+# Clear TypeScript cache
+rm -rf .tsbuildinfo
+```
+
+### **2. Database Issues**
+
+#### **Database Connection Failed**
+
+```bash
+# Error: Database connection failed
+Error: connect ECONNREFUSED 127.0.0.1:5432
+```
+
+**Solutions:**
+
+```bash
+# Check if database is running
+docker ps | grep postgres
+
+# Start database
+docker-compose up -d db
+
+# Check connection string
+echo $DATABASE_URL
+
+# Test connection
+bun run db:test-connection
+
+# Reset database
+bun run db:reset
+```
+
+#### **Migration Issues**
+
+```bash
+# Error: Migration failed
+Error: Migration "20231201_add_targets" failed
+```
+
+**Solutions:**
+
+```bash
+# Check migration status
+bun run db:migrate:status
+
+# Reset migrations
+bun run db:migrate:reset
+
+# Create new migration
+bun run db:migrate:create
+
+# Apply migrations
+bun run db:migrate:deploy
+```
+
+#### **Prisma Client Issues**
+
+```bash
+# Error: Prisma client not generated
+Error: @prisma/client did not initialize yet
+```
+
+**Solutions:**
+
+```bash
+# Generate Prisma client
+bun run db:generate
+
+# Or regenerate everything
+bun run db:reset
+bun run db:seed
+```
+
+### **3. Container & DI Issues**
+
+#### **Container Not Initialized**
+
+```bash
+# Error: Container not initialized
+Error: Container not initialized. Call initialize() first.
+```
+
+**Solutions:**
+
+```typescript
+// Check container initialization
+import { getContainer } from "~/lib/container/flexible-container";
+
+const container = await getContainer();
+await container.initialize();
+
+// Or use synchronous initialization
+import { getContainerSync } from "~/lib/container/flexible-container";
+const container = getContainerSync();
+```
+
+#### **Service Resolution Failed**
+
+```bash
+# Error: Service not found
+Error: Service with key Symbol(ITargetRepository) not found
+```
+
+**Solutions:**
+
+```typescript
+// Check service registration
+const container = getContainer();
+const registeredTypes = container.getRegisteredTypes();
+console.log("Registered services:", registeredTypes);
+
+// Check service configuration
+import { serviceConfig } from "~/lib/container/service-config";
+console.log("Service config:", serviceConfig);
+
+// Verify service factory
+const factory = serviceConfig[TYPES.ITargetRepository];
+console.log("Factory:", factory);
+```
+
+#### **Circular Dependency**
+
+```bash
+# Error: Circular dependency detected
+Error: Circular dependency detected: container.ts -> types.ts -> container.ts
+```
+
+**Solutions:**
+
+```typescript
+// Use dynamic imports
+const { TYPES } = await import("./types");
+
+// Or restructure imports
+// Move shared types to a separate file
+// Use barrel exports carefully
+```
+
+### **4. Frontend Issues**
+
+#### **Build Errors**
+
+```bash
+# Error: Build failed
+Error: Build failed with 5 errors
+```
+
+**Solutions:**
+
+```bash
+# Check for TypeScript errors
+bun run type-check
+
+# Check for linting errors
+bun run lint:check
+
+# Clear build cache
+rm -rf dist .vite
+
+# Rebuild
+bun run build
+```
+
+#### **Runtime Errors**
+
+```bash
+# Error: Cannot read property of undefined
+TypeError: Cannot read property 'createTarget' of undefined
+```
+
+**Solutions:**
+
+```typescript
+// Check service injection
+const apiClient = useAPIClient();
+if (!apiClient) {
+  console.error("APIClient not available");
+  return;
+}
+
+// Check service initialization
+const { services } = useFrontendServices();
+console.log("Available services:", Object.keys(services));
+```
+
+#### **Chart Rendering Issues**
+
+```bash
+# Error: Chart not rendering
+Error: Chart.js not loaded
+```
+
+**Solutions:**
+
+```typescript
+// Check Chart.js registration
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+
+// Check data format
+const chartData = {
+  labels: data.map(d => d.timestamp),
+  datasets: [
+    {
+      data: data.map(d => d.value),
+      // ... other config
+    },
+  ],
+};
+```
+
+### **5. API Issues**
+
+#### **API Endpoints Not Working**
+
+```bash
+# Error: 404 Not Found
+GET /api/targets 404 (Not Found)
+```
+
+**Solutions:**
+
+```typescript
+// Check route registration
+// Ensure routes are properly registered in app.tsx
+
+// Check API caller
+const apiCaller = useAPIClient();
+console.log("API methods:", Object.keys(apiCaller));
+
+// Check network requests
+// Open browser dev tools -> Network tab
+// Look for failed requests
+```
+
+#### **Type Mismatch Errors**
+
+```bash
+# Error: Type mismatch
+Type 'string' is not assignable to type 'number'
+```
+
+**Solutions:**
+
+```typescript
+// Check type definitions
+interface Target {
+  id: string; // Should be string, not number
+  name: string;
+  address: string;
+}
+
+// Check data transformation
+const target = {
+  id: result.id.toString(), // Convert to string
+  name: result.name,
+  address: result.address,
+};
+```
+
+### **6. Performance Issues**
+
+#### **Slow Database Queries**
+
+```bash
+# Issue: Database queries taking too long
+```
+
+**Solutions:**
+
+```sql
+-- Add indexes
+CREATE INDEX idx_targets_owner_id ON monitoring_targets(owner_id);
+CREATE INDEX idx_results_target_id ON speed_test_results(target_id);
+
+-- Check query performance
+EXPLAIN ANALYZE SELECT * FROM monitoring_targets WHERE owner_id = 'user-123';
+
+-- Optimize queries
+-- Use select specific fields instead of SELECT *
+-- Add proper WHERE clauses
+-- Use pagination for large datasets
+```
+
+#### **Memory Leaks**
+
+```bash
+# Issue: Memory usage increasing over time
+```
+
+**Solutions:**
+
+```typescript
+// Check for event listener leaks
+// Remove event listeners in cleanup
+useEffect(() => {
+  const handleEvent = () => {};
+  eventBus.on("EVENT", handleEvent);
+
+  return () => {
+    eventBus.off("EVENT", handleEvent); // Cleanup
+  };
+}, []);
+
+// Check for timer leaks
+useEffect(() => {
+  const interval = setInterval(() => {}, 1000);
+
+  return () => {
+    clearInterval(interval); // Cleanup
+  };
+}, []);
+```
+
+## 🔧 **Debugging Tools**
+
+### **Logging**
+
+```typescript
+// Enable debug logging
+process.env.DEBUG = "app:*";
+process.env.LOG_LEVEL = "debug";
+
+// Use structured logging
+logger.debug("Debug info", {
+  userId: "user-123",
+  action: "createTarget",
+  data: targetData,
+});
+```
+
+### **Browser DevTools**
+
+```typescript
+// Console debugging
+console.log("Debug info:", { data, state, props });
+
+// Network debugging
+// Check Network tab for failed requests
+// Check Console tab for JavaScript errors
+// Check Application tab for storage issues
+```
+
+### **Database Debugging**
+
+```sql
+-- Enable query logging
+SET log_statement = 'all';
+SET log_duration = on;
+
+-- Check active connections
+SELECT * FROM pg_stat_activity;
+
+-- Check slow queries
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+ORDER BY mean_time DESC;
+```
+
+## 📊 **Monitoring & Alerts**
+
+### **Health Checks**
+
+```typescript
+// Check application health
+curl http://localhost:3000/api/health
+
+// Check database health
+curl http://localhost:3000/api/health/database
+
+// Check all services
+curl http://localhost:3000/api/health/all
+```
+
+### **Error Tracking**
+
+```typescript
+// Set up error tracking
+import { ErrorHandlingService } from "~/lib/services/concrete/ErrorHandlingService";
+
+const errorHandler = new ErrorHandlingService(logger);
+
+// Track errors
+try {
+  await riskyOperation();
+} catch (error) {
+  const errorId = errorHandler.handleError(error, {
+    userId: "user-123",
+    operation: "createTarget",
+  });
+  console.log("Error ID:", errorId);
+}
+```
+
+## 🆘 **Emergency Procedures**
+
+### **Application Down**
+
+1. **Check logs** for error messages
+2. **Restart application** if no critical errors
+3. **Check database** connectivity
+4. **Verify environment** variables
+5. **Rollback** to previous version if needed
+
+### **Database Issues**
+
+1. **Check database** service status
+2. **Verify connection** string
+3. **Check disk space** and memory
+4. **Restore from backup** if corrupted
+5. **Run migrations** if schema issues
+
+### **Performance Degradation**
+
+1. **Check resource** usage (CPU, memory)
+2. **Review recent** changes
+3. **Check database** query performance
+4. **Scale resources** if needed
+5. **Optimize** slow queries
+
+## 📞 **Getting Help**
+
+### **Internal Resources**
+
+- **Documentation**: Check project README and rules
+- **Logs**: Review application and system logs
+- **Monitoring**: Check metrics and alerts
+- **Team**: Contact team members for assistance
+
+### **External Resources**
+
+- **Bun Documentation**: https://bun.sh/docs
+- **SolidStart Documentation**: https://solidstart.com
+- **Prisma Documentation**: https://www.prisma.io/docs
+- **TypeScript Documentation**: https://www.typescriptlang.org/docs
+
+## ✅ **Prevention Checklist**
+
+### **Before Making Changes**
+
+- [ ] Run tests locally
+- [ ] Check for TypeScript errors
+- [ ] Review code quality
+- [ ] Test in staging environment
+- [ ] Backup database
+
+### **After Making Changes**
+
+- [ ] Monitor application logs
+- [ ] Check error rates
+- [ ] Verify performance metrics
+- [ ] Test critical functionality
+- [ ] Update documentation
+
+Remember: **Prevention is better than cure. Follow best practices and test thoroughly to avoid issues in production.**

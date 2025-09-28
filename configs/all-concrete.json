@@ -1,0 +1,43 @@
+{
+  "name": "All Concrete Services",
+  "description": "Production-ready configuration with all concrete implementations",
+  "environment": "production",
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/concrete/LoggerService",
+      "className": "LoggerService",
+      "description": "Real console logger for production"
+    },
+    "IEventBus": {
+      "module": "../src/lib/services/concrete/EventBus",
+      "className": "EventBus",
+      "description": "Real event bus for production"
+    },
+    "IDatabaseService": {
+      "module": "../src/lib/services/concrete/DatabaseService",
+      "className": "DatabaseService",
+      "description": "Real database service for production"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/concrete/MonitorService",
+      "className": "MonitorService",
+      "description": "Real network monitoring for production"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/concrete/AlertingService",
+      "className": "AlertingService",
+      "description": "Real alerting system for production"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/concrete/NotificationService",
+      "className": "NotificationService",
+      "description": "Real push notifications for production"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/MockAuth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock auth (replace with real auth service)"
+    }
+  }
+}

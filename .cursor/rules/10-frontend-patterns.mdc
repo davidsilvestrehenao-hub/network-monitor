@@ -1,0 +1,73 @@
+---
+type: Auto Attached
+globs: "src/{routes,components}/**/*.tsx"
+description: Provides rules for building SolidStart frontend components.
+alwaysApply: true
+---
+
+# Frontend Development Patterns
+
+## Core Principles
+
+1. **Framework:** All components must be written in SolidJS and SolidStart. Prioritize reactivity using `createSignal`, `createEffect`, and other primitives. Avoid direct DOM manipulation.
+
+2. **Styling:** All styling must be done using **Tailwind CSS** utility classes. Do not write custom CSS files unless absolutely necessary for a complex animation.
+
+3. **Dependency Injection:** Use the frontend DI container (`src/lib/frontend/container.tsx`) to access services. Never directly instantiate services.
+
+4. **Event-Driven Communication:** Use the `IEventBus` for component communication instead of prop drilling or direct service calls.
+
+## Data Flow Patterns
+
+5. **Command/Query Pattern:** Use `ICommandQueryService` for all data operations:
+   - **Commands** (write operations): `createTarget()`, `updateTarget()`, `deleteTarget()`
+   - **Queries** (read operations): `getTargets()`, `getTarget()`, `getSpeedTestResults()`
+
+6. **Event-Based Data Fetching:** Prefer event-driven data fetching over direct API calls:
+
+   ```typescript
+   // ✅ Good: Event-driven
+   const commandQuery = useCommandQuery();
+   const targets = await commandQuery.getTargets({ limit: 10, offset: 0 });
+
+   // ❌ Bad: Direct API calls
+   const targets = await apiClient.getTargets({ limit: 10, offset: 0 });
+   ```
+
+7. **Service Hooks:** Use individual service hooks for specific functionality:
+   ```typescript
+   const logger = useLogger();
+   const eventBus = useEventBus();
+   const performanceMonitor = usePerformanceMonitor();
+   ```
+
+## Component Architecture
+
+8. **Service Injection:** Always inject services through the DI container:
+
+   ```typescript
+   export function MyComponent() {
+     const logger = useLogger();
+     const commandQuery = useCommandQuery();
+     const eventBus = useEventBus();
+     // ... component logic
+   }
+   ```
+
+9. **Event Handling:** Use type-safe event handling:
+
+   ```typescript
+   eventBus.onTyped("TARGET_CREATED", target => {
+     // Handle target creation
+   });
+   ```
+
+10. **Charts:** All data visualization and charts must be implemented using `Chart.js` via the `solid-chartjs` library.
+
+## Quality Standards
+
+11. **Type Safety:** Never use `any` types. Always provide proper TypeScript interfaces.
+
+12. **Error Handling:** Use the logger service for all error logging and user feedback.
+
+13. **Performance:** Use the performance monitor service for tracking component performance and Core Web Vitals.

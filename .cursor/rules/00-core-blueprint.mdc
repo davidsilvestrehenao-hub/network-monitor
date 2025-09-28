@@ -1,0 +1,84 @@
+---
+description: Project Blueprint: PWA Connection Monitor
+globs:
+alwaysApply: true
+type: Always
+---
+
+# Project Blueprint: PWA Connection Monitor
+
+## 1. Vision & Core Technologies
+
+This is an installable PWA that continuously monitors internet connections for multiple user-defined targets. It features historical charts, an event log, and push notification alerts. The architecture emphasizes **perfect loose coupling** through advanced dependency injection, event-driven communication, and configuration-based service management.
+
+- **Runtime:** Bun
+- **Framework:** SolidStart (using Vite)
+- **API Layer:** tRPC for end-to-end type-safety
+- **Database:** Prisma ORM (SQLite for dev, PostgreSQL for prod)
+- **Authentication:** Mock Auth (configurable)
+- **Dependency Injection:** Custom flexible container system
+- **Event System:** Event-driven architecture with type-safe event bus
+- **Configuration:** JSON-based service configuration management
+- **Styling:** Tailwind CSS
+
+## 2. Core Architectural Patterns
+
+The system is built on **perfect loose coupling (10/10 score)** with **zero direct dependencies** between services.
+
+### 🔧 **Advanced Dependency Injection**
+
+- **Flexible Container**: Custom DI container with configuration-based service resolution
+- **Service Registry**: Dynamic service loading from JSON configuration files
+- **Environment-Specific Configs**: Different service implementations per environment
+- **Type-Safe Factories**: Compile-time and runtime type safety for service creation
+
+### 🎯 **Event-Driven Architecture**
+
+- **Event Bus Communication**: All inter-service communication happens via events
+- **Repository Pattern**: Database operations are abstracted through repository interfaces
+- **Command/Query Separation**: Clear distinction between read and write operations
+- **Interface-Based Design**: All services depend on abstractions, not concrete implementations
+
+## 3. Sources of Truth
+
+The following files are the ground truth for the project's design. Refer to them before generating any code.
+
+- `ARCHITECTURE.md`: The high-level architectural plan
+- `requirements.md`: The detailed functional requirements
+- `prisma/schema.prisma`: The definitive database schema
+- `service-config.json`: Active service configuration in project root
+
+## 4. Backend Structure
+
+- **Services (`src/lib/services/`)**: Organized into `interfaces/`, `concrete/`, and `mocks/` subdirectories
+- **Repositories (`src/lib/services/concrete/`)**: Database abstraction layer (e.g., `TargetRepository`, `SpeedTestRepository`)
+- **Event Handlers (`src/lib/services/concrete/EventHandlerService.ts`)**: Centralized event processing
+- **tRPC Routers (`src/server/trpc/routers/`)**: Event-driven API layer that emits events instead of direct service calls
+- **Container (`src/lib/container/`)**: Flexible DI container with configuration management
+- **Security**: All tRPC procedures must be protected via the `protectedProcedure` helper by default
+
+## 5. Frontend Structure
+
+- **Framework:** SolidJS primitives (`createSignal`, `createEffect`) for state management
+- **Dependency Injection:** Frontend services via SolidJS Context API (`src/lib/frontend/container.tsx`)
+- **Command/Query Pattern:** `ICommandQueryService` for data flow separation
+- **Event Bus:** `IEventBus` for component communication
+- **Data Fetching:** Event-driven communication via `IAPIClient` and `ICommandQueryService`
+- **Charts:** All charts built with `Chart.js` via the `solid-chartjs` library
+
+## 6. Service Organization
+
+```
+src/lib/
+├── services/
+│   ├── interfaces/          # Service contracts
+│   ├── concrete/            # Production implementations
+│   └── mocks/              # Test implementations
+├── frontend/
+│   ├── interfaces/          # Frontend service contracts
+│   ├── services/            # Frontend implementations
+│   └── mocks/              # Frontend test implementations
+└── container/
+    ├── configs/             # Environment-specific configurations
+    └── flexible-container.ts # DI container implementation
+```
