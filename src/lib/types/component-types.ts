@@ -33,8 +33,10 @@ export interface ThemeValue {
 }
 
 // Common component prop types
+import type { JSX } from "solid-js";
+
 export interface ComponentChildren {
-  children: import("solid-js").JSX.Element | import("solid-js").JSX.Element[];
+  children: JSX.Element | JSX.Element[];
 }
 
 // Form submission handlers

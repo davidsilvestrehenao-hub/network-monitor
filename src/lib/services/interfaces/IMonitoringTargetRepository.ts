@@ -38,6 +38,6 @@ export interface IMonitoringTargetRepository {
 }
 
 // Import related types
-import { SpeedTestResult } from "./ISpeedTestResultRepository";
-import { IncidentEvent } from "./IIncidentEventRepository";
-import { AlertRule } from "./IAlertRuleRepository";
+import type { SpeedTestResult } from "./ISpeedTestResultRepository";
+import type { IncidentEvent } from "./IIncidentEventRepository";
+import type { AlertRule } from "./IAlertRuleRepository";

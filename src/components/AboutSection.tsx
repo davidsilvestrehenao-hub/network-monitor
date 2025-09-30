@@ -1,12 +1,12 @@
 export function AboutSection() {
   return (
     <div class="space-y-4">
-      <div class="grid grid-cols-1 md: grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h4 class="text-sm font-medium text-gray-700 mb-2">Application</h4>
           <div class="space-y-1 text-sm text-gray-600">
             <div>
-              <span class="font-medium">Name:</span> PWA Connection: Monitor
+              <span class="font-medium">Name:</span> PWA Connection Monitor
             </div>
             <div>
               <span class="font-medium">Version:</span> 1.0.0
@@ -53,21 +53,19 @@ export function AboutSection() {
             rel="noopener noreferrer"
             class="text-blue-600 hover:text-blue-800 text-sm"
           >
-            GitHub: Repository
+            GitHub Repository
           </a>
           <a
             href="https://docs.example.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-blue-600,
-  hover:text-blue-800 text-sm"
+            class="text-blue-600 hover:text-blue-800 text-sm"
           >
             Documentation
           </a>
           <a
             href="mailto:support@example.com"
-            class="text-blue-600,
-  hover:text-blue-800 text-sm"
+            class="text-blue-600 hover:text-blue-800 text-sm"
           >
             Support
           </a>

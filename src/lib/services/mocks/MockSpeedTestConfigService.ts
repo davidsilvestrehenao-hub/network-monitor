@@ -1,10 +1,10 @@
-import {
+import type {
   ISpeedTestConfigService,
   SpeedTestUrl,
   SpeedTestUrlConfig,
   SpeedTestUrlSelection,
 } from "../interfaces/ISpeedTestConfig";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockSpeedTestConfigService implements ISpeedTestConfigService {
   private config: SpeedTestUrlConfig;

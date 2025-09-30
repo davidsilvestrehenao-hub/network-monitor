@@ -1,4 +1,4 @@
-import { User } from "./IUserRepository";
+import type { User } from "./IUserRepository";
 
 export interface AuthSession {
   user: User;

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class DatabaseService implements IDatabaseService {
   private client: PrismaClient;

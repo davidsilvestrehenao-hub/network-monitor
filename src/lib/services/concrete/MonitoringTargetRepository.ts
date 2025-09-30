@@ -1,11 +1,11 @@
-import {
+import type {
   IMonitoringTargetRepository,
   MonitoringTarget,
   CreateMonitoringTargetData,
   UpdateMonitoringTargetData,
 } from "../interfaces/IMonitoringTargetRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MonitoringTargetRepository implements IMonitoringTargetRepository {
   constructor(

@@ -1,39 +1,19 @@
 import { defineConfig } from "@solidjs/start/config";
 
 export default defineConfig({
-  ssr: false, // Disable SSR to avoid client-only API errors
+  ssr: true,
   server: {
-    preset: "bun",
+    preset: "node-server",
   },
   vite: {
-    ssr: {
-      external: [
-        "@prisma/client",
-        "fs",
-        "path",
-        "os",
-        "util",
-        "zlib",
-        "http",
-        "https",
-        "child_process",
-        "node:async_hooks",
-      ],
+    optimizeDeps: {
+      include: ["solid-js", "@solidjs/router"],
     },
     build: {
-      rollupOptions: {
-        external: [
-          "node:async_hooks",
-          "fs",
-          "path",
-          "os",
-          "util",
-          "zlib",
-          "http",
-          "https",
-          "child_process",
-        ],
-      },
+      target: "esnext",
+    },
+    ssr: {
+      noExternal: ["@solidjs/router"],
     },
   },
 });

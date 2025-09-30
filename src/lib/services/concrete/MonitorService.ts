@@ -1,17 +1,17 @@
-import {
+import type {
   IMonitorService,
   SpeedTestConfig,
 } from "../interfaces/IMonitorService";
-import {
+import type {
   ITargetRepository,
   SpeedTestResult,
   Target,
 } from "../interfaces/ITargetRepository";
-import { ISpeedTestRepository } from "../interfaces/ISpeedTestRepository";
-import { IMonitoringTargetRepository } from "../interfaces/IMonitoringTargetRepository";
-import { ISpeedTestResultRepository } from "../interfaces/ISpeedTestResultRepository";
-import { IEventBus } from "../interfaces/IEventBus";
-import { ILogger } from "../interfaces/ILogger";
+import type { ISpeedTestRepository } from "../interfaces/ISpeedTestRepository";
+import type { IMonitoringTargetRepository } from "../interfaces/IMonitoringTargetRepository";
+import type { ISpeedTestResultRepository } from "../interfaces/ISpeedTestResultRepository";
+import type { IEventBus } from "../interfaces/IEventBus";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MonitorService implements IMonitorService {
   private activeTargets: Map<string, NodeJS.Timeout> = new Map();

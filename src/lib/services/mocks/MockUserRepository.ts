@@ -1,10 +1,10 @@
-import {
+import type {
   IUserRepository,
   User,
   CreateUserData,
   UpdateUserData,
 } from "../interfaces/IUserRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockUserRepository implements IUserRepository {
   private users: User[] = [];

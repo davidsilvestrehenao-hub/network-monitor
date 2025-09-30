@@ -1,7 +1,8 @@
 import winston from "winston";
 import { existsSync, mkdirSync } from "fs";
 import { join } from "path";
-import { ILogger, LogLevel, LogContext } from "../interfaces/ILogger";
+import type { ILogger, LogContext } from "../interfaces/ILogger";
+import { LogLevel } from "../interfaces/ILogger";
 
 export { LogLevel };
 

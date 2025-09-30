@@ -1,9 +1,9 @@
 import { getAppContext } from "~/lib/container/container";
-import {
+import type {
   User,
   UpdateUserData,
 } from "~/lib/services/interfaces/IUserRepository";
-import {
+import type {
   LoginCredentials,
   RegisterData,
   AuthResult,

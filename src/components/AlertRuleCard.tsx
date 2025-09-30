@@ -1,5 +1,8 @@
 import { createSignal } from "solid-js";
-import { AlertRule, Target } from "~/lib/services/interfaces/ITargetRepository";
+import type {
+  AlertRule,
+  Target,
+} from "~/lib/services/interfaces/ITargetRepository";
 
 interface AlertRuleCardProps {
   rule: AlertRule;

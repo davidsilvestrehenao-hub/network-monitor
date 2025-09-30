@@ -1,15 +1,15 @@
-import { IAlertingService } from "../interfaces/IAlertingService";
-import { IAlertRuleRepository } from "../interfaces/IAlertRuleRepository";
-import { IIncidentEventRepository } from "../interfaces/IIncidentEventRepository";
-import { IEventBus, BackendEvents } from "../interfaces/IEventBus";
-import { ILogger } from "../interfaces/ILogger";
-import {
+import type { IAlertingService } from "../interfaces/IAlertingService";
+import type { IAlertRuleRepository } from "../interfaces/IAlertRuleRepository";
+import type { IIncidentEventRepository } from "../interfaces/IIncidentEventRepository";
+import type { IEventBus, BackendEvents } from "../interfaces/IEventBus";
+import type { ILogger } from "../interfaces/ILogger";
+import type {
   AlertRule,
   CreateAlertRuleData,
   UpdateAlertRuleData,
 } from "../interfaces/IAlertRuleRepository";
-import { IncidentEvent } from "../interfaces/IIncidentEventRepository";
-import { SpeedTestResult } from "../interfaces/ITargetRepository";
+import type { IncidentEvent } from "../interfaces/IIncidentEventRepository";
+import type { SpeedTestResult } from "../interfaces/ITargetRepository";
 
 export class AlertingService implements IAlertingService {
   private alertRuleRepository: IAlertRuleRepository;

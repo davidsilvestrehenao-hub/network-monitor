@@ -7,16 +7,15 @@ import {
   type VoidComponent,
 } from "solid-js";
 import { useCommandQuery, useEventBus } from "~/lib/frontend/container";
-import {
+import type {
   Target,
   CreateTargetData,
   UpdateTargetData,
 } from "~/lib/services/interfaces/ITargetRepository";
-import {
+import type {
   FrontendEvents,
   BackendEvents,
 } from "~/lib/services/interfaces/IEventBus";
-import { Navigation } from "~/components/Navigation";
 import { TargetCard } from "~/components/TargetCard";
 import { AddTargetModal } from "~/components/AddTargetModal";
 import { EditTargetModal } from "~/components/EditTargetModal";
@@ -157,8 +156,7 @@ const Targets: VoidComponent = () => {
   });
 
   return (
-    <Navigation>
-      <div class="p-6">
+    <div>
         <div class="mb-8">
           <div class="flex justify-between items-center mb-4">
             <div>
@@ -242,9 +240,10 @@ const Targets: VoidComponent = () => {
           )}
         </Show>
       </div>
+    </div>
 
-      {/* Modals */}
-      <Show when={showAddModal()}>
+    {/* Modals */}
+    <Show when={showAddModal()}>
         <AddTargetModal
           onClose={() => setShowAddModal(false)}
           onSubmit={handleCreateTarget}
@@ -258,7 +257,7 @@ const Targets: VoidComponent = () => {
           onSubmit={handleUpdateTarget}
         />
       </Show>
-    </Navigation>
+    </div>
   );
 };
 

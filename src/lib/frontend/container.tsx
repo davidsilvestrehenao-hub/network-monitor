@@ -1,8 +1,10 @@
-import { createContext, useContext, ParentProps } from "solid-js";
-import { IAPIClient } from "./interfaces/IAPIClient";
-import { ICommandQueryService } from "./interfaces/ICommandQueryService";
-import { IEventBus } from "~/lib/services/interfaces/IEventBus";
-import { ILogger, LogLevel } from "~/lib/services/interfaces/ILogger";
+import type { ParentProps } from "solid-js";
+import { createContext, useContext } from "solid-js";
+import type { IAPIClient } from "./interfaces/IAPIClient";
+import type { ICommandQueryService } from "./interfaces/ICommandQueryService";
+import type { IEventBus } from "~/lib/services/interfaces/IEventBus";
+import type { ILogger } from "~/lib/services/interfaces/ILogger";
+import { LogLevel } from "~/lib/services/interfaces/ILogger";
 import { APIClient } from "./services/APIClient";
 import { CommandQueryService } from "./services/CommandQueryService";
 import { EventBus } from "~/lib/services/concrete/EventBus";

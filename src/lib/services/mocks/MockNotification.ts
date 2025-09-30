@@ -1,17 +1,17 @@
-import { INotificationService } from "../interfaces/INotificationService";
-import { ILogger } from "../interfaces/ILogger";
-import { IEventBus } from "../interfaces/IEventBus";
-import {
+import type { INotificationService } from "../interfaces/INotificationService";
+import type { ILogger } from "../interfaces/ILogger";
+import type { IEventBus } from "../interfaces/IEventBus";
+import type {
   MockNotification as MockNotificationType,
   MockPushSubscription,
   AlertTriggeredEventData,
   NotificationEventData,
 } from "~/lib/types/mock-types";
-import {
+import type {
   Notification,
   CreateNotificationData,
 } from "../interfaces/INotificationRepository";
-import {
+import type {
   PushSubscription,
   CreatePushSubscriptionData,
 } from "../interfaces/IPushSubscriptionRepository";

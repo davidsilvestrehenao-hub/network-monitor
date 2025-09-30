@@ -1,10 +1,10 @@
 import { getAppContext } from "~/lib/container/container";
-import {
+import type {
   CreateNotificationData,
   Notification,
   NotificationQuery,
 } from "~/lib/services/interfaces/INotificationRepository";
-import {
+import type {
   PushSubscription,
   CreatePushSubscriptionData,
 } from "~/lib/services/interfaces/IPushSubscriptionRepository";

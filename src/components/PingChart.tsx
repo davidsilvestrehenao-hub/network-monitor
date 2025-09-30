@@ -1,7 +1,7 @@
 import { createMemo, Show } from "solid-js";
 import { Line } from "solid-chartjs";
-import { ChartData, ChartOptions } from "chart.js";
-import { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type { ChartData, ChartOptions } from "chart.js";
+import type { Target } from "~/lib/services/interfaces/ITargetRepository";
 
 interface PingChartProps {
   targets: Target[];
@@ -72,7 +72,7 @@ export function PingChart(props: PingChartProps) {
         return {
           label: target?.name || `Target ${targetId.slice(-4)}`,
           data: results.map(result => ({
-            x: new Date(result.createdAt),
+            x: new Date(result.createdAt).getTime(),
             y: result.ping ?? 0,
           })),
           borderColor: color.border,

@@ -1,5 +1,5 @@
 import { createSignal, createEffect } from "solid-js";
-import {
+import type {
   Target,
   UpdateTargetData,
 } from "~/lib/services/interfaces/ITargetRepository";

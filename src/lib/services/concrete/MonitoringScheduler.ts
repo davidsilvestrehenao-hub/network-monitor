@@ -1,11 +1,11 @@
-import {
+import type {
   IMonitoringScheduler,
   MonitoringTargetConfig,
   SchedulerStats,
 } from "../interfaces/IMonitoringScheduler";
-import { ISpeedTestService } from "../interfaces/ISpeedTestService";
-import { IEventBus } from "../interfaces/IEventBus";
-import { ILogger } from "../interfaces/ILogger";
+import type { ISpeedTestService } from "../interfaces/ISpeedTestService";
+import type { IEventBus } from "../interfaces/IEventBus";
+import type { ILogger } from "../interfaces/ILogger";
 
 interface ScheduledTarget {
   config: MonitoringTargetConfig;

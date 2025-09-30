@@ -23,7 +23,7 @@ This directory contains all documentation for the Network Monitor PWA project.
 
 The Network Monitor is a PWA built with:
 - **Frontend**: SolidJS + SolidStart
-- **Backend**: tRPC + Prisma
+- **Backend**: PRPC + Prisma
 - **Runtime**: Bun
 - **Database**: SQLite (dev) / PostgreSQL (prod)
 - **Process Manager**: PM2

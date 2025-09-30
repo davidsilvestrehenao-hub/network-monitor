@@ -1,5 +1,5 @@
 import { createSignal, createEffect, Show } from "solid-js";
-import {
+import type {
   NotificationSettings as NotificationSettingsType,
   SettingsChangeHandler,
 } from "~/lib/types/component-types";

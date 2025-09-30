@@ -33,9 +33,7 @@ export function ThemeToggle(props: ThemeToggleProps) {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen())}
-            class="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus: outline-none focus:ring-1 focus:ring-blue-500,
-  focus:border-blue-500,
-  sm:text-sm"
+            class="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <span class="flex items-center">
               <span class="text-lg mr-3">{getCurrentTheme().icon}</span>

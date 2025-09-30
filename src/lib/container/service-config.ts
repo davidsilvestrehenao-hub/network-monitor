@@ -19,24 +19,24 @@ import { SpeedTestConfigService } from "../services/concrete/SpeedTestConfigServ
 import { AlertingService } from "../services/concrete/AlertingService";
 import { NotificationService } from "../services/concrete/NotificationService";
 import { AuthService } from "../services/concrete/AuthService";
-import { ILogger } from "../services/interfaces/ILogger";
-import { IEventBus } from "../services/interfaces/IEventBus";
-import { IDatabaseService } from "../services/interfaces/IDatabaseService";
-import { IUserRepository } from "../services/interfaces/IUserRepository";
-import { IMonitoringTargetRepository } from "../services/interfaces/IMonitoringTargetRepository";
-import { ISpeedTestResultRepository } from "../services/interfaces/ISpeedTestResultRepository";
-import { IAlertRuleRepository } from "../services/interfaces/IAlertRuleRepository";
-import { IIncidentEventRepository } from "../services/interfaces/IIncidentEventRepository";
-import { IPushSubscriptionRepository } from "../services/interfaces/IPushSubscriptionRepository";
-import { INotificationRepository } from "../services/interfaces/INotificationRepository";
-import { ITargetRepository } from "../services/interfaces/ITargetRepository";
-import { ISpeedTestRepository } from "../services/interfaces/ISpeedTestRepository";
-import { IMonitorService } from "../services/interfaces/IMonitorService";
-import { ISpeedTestService } from "../services/interfaces/ISpeedTestService";
-import { ISpeedTestConfigService } from "../services/interfaces/ISpeedTestConfig";
-import { IAlertingService } from "../services/interfaces/IAlertingService";
-import { INotificationService } from "../services/interfaces/INotificationService";
-import { IAuthService } from "../services/interfaces/IAuthService";
+import type { ILogger } from "../services/interfaces/ILogger";
+import type { IEventBus } from "../services/interfaces/IEventBus";
+import type { IDatabaseService } from "../services/interfaces/IDatabaseService";
+import type { IUserRepository } from "../services/interfaces/IUserRepository";
+import type { IMonitoringTargetRepository } from "../services/interfaces/IMonitoringTargetRepository";
+import type { ISpeedTestResultRepository } from "../services/interfaces/ISpeedTestResultRepository";
+import type { IAlertRuleRepository } from "../services/interfaces/IAlertRuleRepository";
+import type { IIncidentEventRepository } from "../services/interfaces/IIncidentEventRepository";
+import type { IPushSubscriptionRepository } from "../services/interfaces/IPushSubscriptionRepository";
+import type { INotificationRepository } from "../services/interfaces/INotificationRepository";
+import type { ITargetRepository } from "../services/interfaces/ITargetRepository";
+import type { ISpeedTestRepository } from "../services/interfaces/ISpeedTestRepository";
+import type { IMonitorService } from "../services/interfaces/IMonitorService";
+import type { ISpeedTestService } from "../services/interfaces/ISpeedTestService";
+import type { ISpeedTestConfigService } from "../services/interfaces/ISpeedTestConfig";
+import type { IAlertingService } from "../services/interfaces/IAlertingService";
+import type { INotificationService } from "../services/interfaces/INotificationService";
+import type { IAuthService } from "../services/interfaces/IAuthService";
 
 export const baseServiceConfig = {
   // Core services

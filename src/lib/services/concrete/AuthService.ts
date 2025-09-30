@@ -1,8 +1,8 @@
-import { IAuthService, AuthSession } from "../interfaces/IAuthService";
-import { IUserRepository } from "../interfaces/IUserRepository";
-import { IEventBus, BackendEvents } from "../interfaces/IEventBus";
-import { ILogger } from "../interfaces/ILogger";
-import {
+import type { IAuthService, AuthSession } from "../interfaces/IAuthService";
+import type { IUserRepository } from "../interfaces/IUserRepository";
+import type { IEventBus, BackendEvents } from "../interfaces/IEventBus";
+import type { ILogger } from "../interfaces/ILogger";
+import type {
   User,
   CreateUserData,
   UpdateUserData,

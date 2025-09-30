@@ -1,7 +1,7 @@
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
-import { MockPrismaClient } from "~/lib/types/mock-types";
-import { PrismaClient } from "@prisma/client";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
+import type { MockPrismaClient } from "~/lib/types/mock-types";
+import type { PrismaClient } from "@prisma/client";
 
 export class MockDatabase implements IDatabaseService {
   private connected = false;

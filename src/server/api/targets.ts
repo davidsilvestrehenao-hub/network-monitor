@@ -1,10 +1,10 @@
 import { getAppContext } from "~/lib/container/container";
-import {
+import type {
   CreateTargetData,
   UpdateTargetData,
   SpeedTestResult,
 } from "~/lib/services/interfaces/ITargetRepository";
-import { SpeedTestConfig } from "~/lib/services/interfaces/IMonitorService";
+import type { SpeedTestConfig } from "~/lib/services/interfaces/IMonitorService";
 
 // Target management endpoints
 export async function createTarget(data: CreateTargetData) {

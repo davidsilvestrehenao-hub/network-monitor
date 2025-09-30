@@ -1,10 +1,10 @@
-import {
+import type {
   IMonitoringTargetRepository,
   MonitoringTarget,
   CreateMonitoringTargetData,
   UpdateMonitoringTargetData,
 } from "../interfaces/IMonitoringTargetRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockMonitoringTargetRepository
   implements IMonitoringTargetRepository

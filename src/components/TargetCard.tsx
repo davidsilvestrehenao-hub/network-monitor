@@ -1,5 +1,5 @@
 import { createSignal, createEffect, For, Show } from "solid-js";
-import {
+import type {
   Target,
   SpeedTestResult,
 } from "~/lib/services/interfaces/ITargetRepository";

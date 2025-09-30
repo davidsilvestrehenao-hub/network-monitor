@@ -1,12 +1,12 @@
-import {
+import type {
   IAlertRuleRepository,
   AlertRule,
   CreateAlertRuleData,
   UpdateAlertRuleData,
   AlertRuleQuery,
 } from "../interfaces/IAlertRuleRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class AlertRuleRepository implements IAlertRuleRepository {
   constructor(

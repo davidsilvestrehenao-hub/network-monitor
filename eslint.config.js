@@ -6,10 +6,11 @@ import solid from "eslint-plugin-solid";
 export default [
   js.configs.recommended,
   {
-    files: ["**/*.{ts,tsx,js,jsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
+        project: "./tsconfig.json",
         ecmaVersion: "latest",
         sourceType: "module",
         ecmaFeatures: {
@@ -17,23 +18,24 @@ export default [
         },
       },
       globals: {
-        // Node.js globals
-        console: "readonly",
-        process: "readonly",
-        global: "readonly",
-        Buffer: "readonly",
-        __dirname: "readonly",
-        __filename: "readonly",
-        module: "readonly",
-        require: "readonly",
-        exports: "readonly",
         // Browser globals
         window: "readonly",
         document: "readonly",
-        navigator: "readonly",
-        location: "readonly",
-        // Auth.js types
-        DefaultSession: "readonly",
+        console: "readonly",
+        alert: "readonly",
+        confirm: "readonly",
+        localStorage: "readonly",
+        fetch: "readonly",
+        performance: "readonly",
+        // Node.js globals
+        process: "readonly",
+        Buffer: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        NodeJS: "readonly",
+        global: "readonly",
       },
     },
     plugins: {
@@ -42,28 +44,44 @@ export default [
     },
     rules: {
       ...typescript.configs.recommended.rules,
-      ...solid.configs.recommended.rules,
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_" },
-      ],
+      ...solid.configs.typescript.rules,
+      "@typescript-eslint/consistent-type-imports": "warn",
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-non-null-assertion": "warn",
-      "solid/reactivity": "error",
-      "solid/no-destructure": "error",
-      "solid/no-array-handlers": "error",
-      "solid/no-innerhtml": "error",
-      "solid/jsx-no-script-url": "error",
-      "solid/jsx-no-undef": "error",
-      "solid/jsx-uses-vars": "error",
-      "solid/no-unknown-namespaces": "error",
-      "solid/self-closing-comp": "error",
-      "solid/style-prop": "error",
-      // Allow console in scripts and development
-      "no-console": "off",
+      "no-console": "warn",
+      "prefer-const": "error",
+      "no-var": "error",
       "no-undef": "off", // TypeScript handles this
+    },
+  },
+  {
+    files: ["prisma/**/*.ts", "scripts/**/*.ts"],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+      globals: {
+        console: "readonly",
+        process: "readonly",
+        Buffer: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        NodeJS: "readonly",
+        global: "readonly",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": typescript,
+    },
+    rules: {
+      ...typescript.configs.recommended.rules,
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "no-console": "off", // Allow console in scripts
+      "no-undef": "off",
     },
   },
   {
@@ -74,29 +92,32 @@ export default [
       globals: {
         console: "readonly",
         process: "readonly",
-        global: "readonly",
         Buffer: "readonly",
-        __dirname: "readonly",
-        __filename: "readonly",
-        module: "readonly",
-        require: "readonly",
-        exports: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        NodeJS: "readonly",
+        global: "readonly",
       },
     },
     rules: {
-      "no-console": "off",
+      "no-console": "off", // Allow console in JS files
     },
   },
   {
     ignores: [
       "node_modules/**",
       "dist/**",
-      "build/**",
-      ".vinxi/**",
       ".output/**",
-      "*.config.js",
-      "*.config.mjs",
-      "*.config.cjs",
+      ".vinxi/**",
+      "prisma/migrations/**",
+      "**/*.d.ts",
+      "public/sw.js",
+      "app.config.ts",
+      "postcss.config.js",
+      "tailwind.config.js",
+      "eslint.config.js",
     ],
   },
 ];

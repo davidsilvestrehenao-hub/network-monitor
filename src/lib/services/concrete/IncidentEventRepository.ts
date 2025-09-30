@@ -1,12 +1,12 @@
-import {
+import type {
   IIncidentEventRepository,
   IncidentEvent,
   CreateIncidentEventData,
   UpdateIncidentEventData,
   IncidentEventQuery,
 } from "../interfaces/IIncidentEventRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class IncidentEventRepository implements IIncidentEventRepository {
   constructor(

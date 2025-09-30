@@ -1,14 +1,15 @@
 import { createSignal, createEffect, Show, type VoidComponent } from "solid-js";
+import "~/lib/chart-config";
 import { useCommandQuery, useEventBus } from "~/lib/frontend/container";
-import {
+// import * as prpc from "~/server/prpc";
+import type {
   Target,
   SpeedTestResult,
 } from "~/lib/services/interfaces/ITargetRepository";
-import {
+import type {
   FrontendEvents,
   BackendEvents,
 } from "~/lib/services/interfaces/IEventBus";
-import { Navigation } from "~/components/Navigation";
 import { PerformanceChart } from "~/components/PerformanceChart";
 import { StatusCard } from "~/components/StatusCard";
 import { RecentActivity } from "~/components/RecentActivity";
@@ -46,8 +47,11 @@ const Dashboard: VoidComponent = () => {
       setError(null);
 
       try {
-        // Load targets
+        console.log("Loading dashboard data...");
+
+        // Load targets using the service
         const targetList = await commandQuery.getTargets();
+        console.log("Loaded targets:", targetList);
         setTargets(targetList);
 
         // Load recent results for all targets
@@ -94,6 +98,8 @@ const Dashboard: VoidComponent = () => {
           averagePing: Math.round(averagePing * 100) / 100,
           averageDownload: Math.round(averageDownload * 100) / 100,
         });
+
+        console.log("Dashboard data loaded successfully");
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load dashboard data"
@@ -140,120 +146,121 @@ const Dashboard: VoidComponent = () => {
   };
 
   return (
-    <Navigation>
-      <div class="p-6">
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <p class="text-gray-600">
-            Monitor your internet connection quality in real-time
+    <div>
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+        <p class="text-gray-600">
+          Monitor your internet connection quality in real-time
+        </p>
+      </div>
+
+      {loading() && (
+        <div class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+          <p class="mt-4 text-gray-600">Loading dashboard...</p>
+          <p class="mt-2 text-sm text-gray-500">
+            Debug: loading={loading()}, error={error()}
           </p>
         </div>
+      )}
 
-        {loading() && (
-          <div class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-            <p class="mt-4 text-gray-600">Loading dashboard...</p>
-          </div>
-        )}
+      {error() && (
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          <strong class="font-bold">Error:</strong>
+          <span class="block sm:inline"> {error()}</span>
+        </div>
+      )}
 
-        {error() && (
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <strong class="font-bold">Error:</strong>
-            <span class="block sm:inline"> {error()}</span>
-          </div>
-        )}
+      <Show when={!loading() && !error()}>
+        {/* Stats Cards */}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatusCard
+            title="Total Targets"
+            value={stats().totalTargets.toString()}
+            icon="🎯"
+            color="blue"
+          />
+          <StatusCard
+            title="Active Monitoring"
+            value={stats().activeTargets.toString()}
+            icon="📡"
+            color="green"
+          />
+          <StatusCard
+            title="Success Rate"
+            value={`${stats().successRate}%`}
+            icon="✅"
+            color="green"
+          />
+          <StatusCard
+            title="Total Tests"
+            value={stats().totalTests.toString()}
+            icon="📊"
+            color="purple"
+          />
+        </div>
 
-        <Show when={!loading() && !error()}>
-          {/* Stats Cards */}
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatusCard
-              title="Total Targets"
-              value={stats().totalTargets.toString()}
-              icon="🎯"
-              color="blue"
-            />
-            <StatusCard
-              title="Active Monitoring"
-              value={stats().activeTargets.toString()}
-              icon="📡"
-              color="green"
-            />
-            <StatusCard
-              title="Success Rate"
-              value={`${stats().successRate}%`}
-              icon="✅"
-              color="green"
-            />
-            <StatusCard
-              title="Total Tests"
-              value={stats().totalTests.toString()}
-              icon="📊"
-              color="purple"
-            />
-          </div>
-
-          {/* Performance Overview */}
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                Average Performance
-              </h3>
-              <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Ping</span>
-                  <span class="text-2xl font-bold text-blue-600">
-                    {stats().averagePing}ms
-                  </span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Download Speed</span>
-                  <span class="text-2xl font-bold text-green-600">
-                    {stats().averageDownload} Mbps
-                  </span>
-                </div>
+        {/* Performance Overview */}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Average Performance
+            </h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Ping</span>
+                <span class="text-2xl font-bold text-blue-600">
+                  {stats().averagePing}ms
+                </span>
               </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                Quick Actions
-              </h3>
-              <div class="space-y-3">
-                <button
-                  onClick={handleRunAllTests}
-                  class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Run All Speed Tests
-                </button>
-                <a
-                  href="/targets"
-                  class="block w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors text-center"
-                >
-                  Manage Targets
-                </a>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Download Speed</span>
+                <span class="text-2xl font-bold text-green-600">
+                  {stats().averageDownload} Mbps
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Charts and Recent Activity */}
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white rounded-lg shadow p-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                Performance Trends
-              </h3>
-              <PerformanceChart targets={targets()} />
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                Recent Activity
-              </h3>
-              <RecentActivity results={recentResults()} />
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Quick Actions
+            </h3>
+            <div class="space-y-3">
+              <button
+                onClick={handleRunAllTests}
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Run All Speed Tests
+              </button>
+              <a
+                href="/targets"
+                class="block w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors text-center"
+              >
+                Manage Targets
+              </a>
             </div>
           </div>
-        </Show>
-      </div>
-    </Navigation>
+        </div>
+
+        {/* Charts and Recent Activity */}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Performance Trends
+            </h3>
+            <PerformanceChart targets={targets()} />
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Recent Activity
+            </h3>
+            <RecentActivity results={recentResults()} />
+          </div>
+        </div>
+      </Show>
+    </div>
   );
 };
 

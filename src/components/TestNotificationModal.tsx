@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import {
+import type {
   TestNotificationFormData,
   FormSubmitHandler,
 } from "~/lib/types/component-types";

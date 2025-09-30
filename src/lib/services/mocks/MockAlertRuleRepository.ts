@@ -1,11 +1,11 @@
-import {
+import type {
   IAlertRuleRepository,
   AlertRule,
   CreateAlertRuleData,
   UpdateAlertRuleData,
   AlertRuleQuery,
 } from "../interfaces/IAlertRuleRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockAlertRuleRepository implements IAlertRuleRepository {
   private rules: AlertRule[] = [];

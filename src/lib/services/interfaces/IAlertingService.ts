@@ -1,10 +1,10 @@
-import {
+import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
   IncidentEvent,
 } from "./IAlertRepository";
-import { AlertRule } from "./ITargetRepository";
-import { SpeedTestResult } from "./ITargetRepository";
+import type { AlertRule } from "./ITargetRepository";
+import type { SpeedTestResult } from "./ITargetRepository";
 
 export interface IAlertingService {
   // Alert rule management

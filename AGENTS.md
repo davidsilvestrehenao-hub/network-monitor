@@ -55,11 +55,11 @@ The PWA Connection Monitor uses a **multi-agent approach** where each agent spec
 
 ## ☁️ **Agent: Backend/API Developer**
 
-**Role**: tRPC API development and backend service integration
+**Role**: PRPC API development and backend service integration
 
 **Responsibilities:**
 
-- Create and modify tRPC routers in `src/server/trpc/routers/`
+- Create and modify PRPC API endpoints in `src/server/prpc.ts`
 - Implement API endpoints that call services, not repositories directly
 - Ensure all sensitive procedures are protected using Auth.js sessions
 - Handle error propagation and logging through the service layer
@@ -68,7 +68,7 @@ The PWA Connection Monitor uses a **multi-agent approach** where each agent spec
 **Guiding Principles:**
 
 - **Never call repositories directly** - always go through services
-- Access all application logic through services injected into tRPC context
+- Access all application logic through services injected into PRPC context
 - Use `protectedProcedure` helper for all sensitive operations
 - Emit events for inter-service communication instead of direct calls
 - Follow the service layer architecture pattern
@@ -82,9 +82,8 @@ The PWA Connection Monitor uses a **multi-agent approach** where each agent spec
 
 **File Scope:**
 
-- `src/server/trpc/routers/**/*.ts`
-- `src/server/api/**/*.ts`
 - `src/server/prpc.ts`
+- `src/server/api/**/*.ts`
 
 ---
 

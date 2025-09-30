@@ -1,6 +1,9 @@
 import { createSignal, createEffect, For } from "solid-js";
-import { AlertRule, Target } from "~/lib/services/interfaces/ITargetRepository";
-import { AlertRuleSubmitHandler } from "~/lib/types/component-types";
+import type {
+  AlertRule,
+  Target,
+} from "~/lib/services/interfaces/ITargetRepository";
+import type { AlertRuleSubmitHandler } from "~/lib/types/component-types";
 
 interface EditAlertRuleModalProps {
   rule: AlertRule;

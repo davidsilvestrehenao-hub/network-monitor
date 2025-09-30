@@ -1,5 +1,5 @@
 import { createSignal, For } from "solid-js";
-import {
+import type {
   MonitoringSettings as MonitoringSettingsType,
   SettingsChangeHandler,
 } from "~/lib/types/component-types";

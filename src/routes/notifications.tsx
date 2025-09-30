@@ -6,12 +6,11 @@ import {
   type VoidComponent,
 } from "solid-js";
 import { useLogger } from "~/lib/frontend/container";
-import {
+import type {
   Notification,
   PushSubscription,
   TestNotificationData,
 } from "~/lib/frontend/interfaces/IAPIClient";
-import { Navigation } from "~/components/Navigation";
 import { NotificationCard } from "~/components/NotificationCard";
 import { PushSubscriptionCard } from "~/components/PushSubscriptionCard";
 import { TestNotificationModal } from "~/components/TestNotificationModal";
@@ -106,19 +105,18 @@ const NotificationsContent: VoidComponent = () => {
   };
 
   return (
-    <Navigation>
-      <div class="p-6">
-        <div class="mb-8">
-          <div class="flex justify-between items-center mb-4">
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                Notifications
-              </h1>
-              <p class="text-gray-600">
-                Manage push notifications and view notification history
-              </p>
-            </div>
-            <div class="flex space-x-3">
+    <div>
+      <div class="mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+              Notifications
+            </h1>
+            <p class="text-gray-600">
+              Manage push notifications and view notification history
+            </p>
+          </div>
+          <div class="flex space-x-3">
               <button
                 onClick={() => setShowTestModal(true)}
                 class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
@@ -291,7 +289,7 @@ const NotificationsContent: VoidComponent = () => {
           onSubmit={handleTestNotification}
         />
       </Show>
-    </Navigation>
+    </div>
   );
 };
 

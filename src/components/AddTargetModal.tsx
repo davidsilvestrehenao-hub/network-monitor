@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { CreateTargetData } from "~/lib/services/interfaces/ITargetRepository";
+import type { CreateTargetData } from "~/lib/services/interfaces/ITargetRepository";
 
 interface AddTargetModalProps {
   onClose: () => void;

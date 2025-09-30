@@ -1,6 +1,5 @@
 import { createSignal, createEffect, Show, type VoidComponent } from "solid-js";
 import { FrontendServicesProvider } from "~/lib/frontend/container";
-import { Navigation } from "~/components/Navigation";
 import { SettingsSection } from "~/components/SettingsSection";
 import { ThemeToggle } from "~/components/ThemeToggle";
 import { MonitoringSettings } from "~/components/MonitoringSettings";
@@ -166,10 +165,8 @@ const Settings: VoidComponent = () => {
   };
 
   return (
-    <FrontendServicesProvider>
-      <Navigation>
-        <div class="p-6">
-          <div class="mb-8">
+    <div>
+      <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
             <p class="text-gray-600">
               Configure your monitoring preferences and application settings
@@ -289,8 +286,8 @@ const Settings: VoidComponent = () => {
             </div>
           </Show>
         </div>
-      </Navigation>
-    </FrontendServicesProvider>
+      </div>
+    </div>
   );
 };
 

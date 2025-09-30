@@ -1,11 +1,11 @@
-import {
+import type {
   IPushSubscriptionRepository,
   PushSubscription,
   CreatePushSubscriptionData,
   UpdatePushSubscriptionData,
 } from "../interfaces/IPushSubscriptionRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class PushSubscriptionRepository implements IPushSubscriptionRepository {
   constructor(

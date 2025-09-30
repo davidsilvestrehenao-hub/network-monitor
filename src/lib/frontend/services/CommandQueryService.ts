@@ -1,5 +1,5 @@
-import { ICommandQueryService } from "../interfaces/ICommandQueryService";
-import {
+import type { ICommandQueryService } from "../interfaces/ICommandQueryService";
+import type {
   IAPIClient,
   AlertRuleData,
   Incident,
@@ -9,9 +9,12 @@ import {
   User,
   AuthSession,
 } from "../interfaces/IAPIClient";
-import { IEventBus, FrontendEvents } from "~/lib/services/interfaces/IEventBus";
-import { ILogger, LogContext } from "~/lib/services/interfaces/ILogger";
-import {
+import type {
+  IEventBus,
+  FrontendEvents,
+} from "~/lib/services/interfaces/IEventBus";
+import type { ILogger, LogContext } from "~/lib/services/interfaces/ILogger";
+import type {
   Target,
   CreateTargetData,
   UpdateTargetData,

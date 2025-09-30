@@ -51,22 +51,22 @@ export function DataSettings(props: DataSettingsProps) {
 
   return (
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md: grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            , Data: Retention
+            Data Retention
           </label>
           <div class="text-sm text-gray-600">
             {props.settings.dataRetentionDays} days
           </div>
           <p class="text-xs text-gray-500">
-            Data older than this will be automatically: deleted
+            Data older than this will be automatically deleted
           </p>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            , Auto: Cleanup
+            Auto Cleanup
           </label>
           <div class="text-sm text-gray-600">
             {props.settings.autoCleanup ? "Enabled" : "Disabled"}
@@ -82,8 +82,7 @@ export function DataSettings(props: DataSettingsProps) {
           <button
             onClick={handleExport}
             disabled={isExporting()}
-            class="flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover: bg-blue-200 transition-colors,
-  disabled:opacity-50"
+            class="flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors disabled:opacity-50"
           >
             <svg
               class="h-5 w-5 mr-2"
@@ -129,8 +128,7 @@ export function DataSettings(props: DataSettingsProps) {
           <button
             onClick={handleDeleteAll}
             disabled={isDeleting()}
-            class="flex items-center justify-center w-full px-4 py-2 bg-red-100 text-red-700 rounded-md hover: bg-red-200 transition-colors,
-  disabled:opacity-50"
+            class="flex items-center justify-center w-full px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors disabled:opacity-50"
           >
             <svg
               class="h-5 w-5 mr-2"
@@ -148,7 +146,7 @@ export function DataSettings(props: DataSettingsProps) {
             {isDeleting() ? "Deleting..." : "Delete All Data"}
           </button>
           <p class="mt-2 text-xs text-red-600 text-center">
-            This action cannot be: undone
+            This action cannot be undone
           </p>
         </div>
       </div>

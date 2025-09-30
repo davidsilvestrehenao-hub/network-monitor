@@ -1,10 +1,10 @@
-import {
+import type {
   ISpeedTestResultRepository,
   SpeedTestResult,
   CreateSpeedTestResultData,
   SpeedTestResultQuery,
 } from "../interfaces/ISpeedTestResultRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockSpeedTestResultRepository
   implements ISpeedTestResultRepository

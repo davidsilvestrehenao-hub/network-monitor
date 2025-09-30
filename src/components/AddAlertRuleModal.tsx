@@ -1,6 +1,6 @@
 import { createSignal, For } from "solid-js";
-import { Target } from "~/lib/services/interfaces/ITargetRepository";
-import {
+import type { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type {
   AlertRuleFormData,
   FormSubmitHandler,
 } from "~/lib/types/component-types";

@@ -1,10 +1,10 @@
 import { getAppContext } from "~/lib/container/container";
-import {
+import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
 } from "~/lib/services/interfaces/IAlertRuleRepository";
-import { AlertRule } from "~/lib/services/interfaces/ITargetRepository";
-import { IncidentEvent } from "~/lib/services/interfaces/IAlertRepository";
+import type { AlertRule } from "~/lib/services/interfaces/ITargetRepository";
+import type { IncidentEvent } from "~/lib/services/interfaces/IAlertRepository";
 
 // Alert rule management endpoints
 export async function createAlertRule(

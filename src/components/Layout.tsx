@@ -2,11 +2,11 @@ import { createSignal, Show, For, createEffect } from "solid-js";
 import { A, useLocation } from "@solidjs/router";
 import type { ComponentChildren } from "~/lib/types/component-types";
 
-interface NavigationProps {
+interface LayoutProps {
   children: ComponentChildren["children"];
 }
 
-export function Navigation(props: NavigationProps) {
+export function Layout(props: LayoutProps) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = createSignal(false);
   const [currentPath, setCurrentPath] = createSignal("/");
@@ -40,7 +40,8 @@ export function Navigation(props: NavigationProps) {
       <div class="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen())}
-          class="bg-white p-2 rounded-md shadow-md border border-gray-200"
+          class="bg-white p-2 rounded-md shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+          aria-label="Toggle mobile menu"
         >
           <svg
             class="h-6 w-6"
@@ -71,7 +72,8 @@ export function Navigation(props: NavigationProps) {
                 <h1 class="text-xl font-bold text-gray-900">Network Monitor</h1>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  class="p-2 rounded-md hover:bg-gray-100"
+                  class="p-2 rounded-md hover:bg-gray-100 transition-colors"
+                  aria-label="Close mobile menu"
                 >
                   <svg
                     class="h-6 w-6"
@@ -139,12 +141,16 @@ export function Navigation(props: NavigationProps) {
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main content area */}
       <div class="lg:pl-64">
-        <div class="flex h-screen flex-col">
-          <main class="flex-1 overflow-y-auto">{props.children}</main>
+        <div class="flex min-h-screen flex-col">
+          {/* Main content with proper padding and spacing */}
+          <main class="flex-1">
+            <div class="px-4 py-6 sm:px-6 lg:px-8">{props.children}</div>
+          </main>
         </div>
       </div>
     </div>
   );
 }
+

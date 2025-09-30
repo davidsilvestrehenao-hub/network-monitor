@@ -1,15 +1,15 @@
-import {
+import type {
   ISpeedTestService,
   SpeedTestConfig,
   PingResult,
   SpeedResult,
   ComprehensiveSpeedTestResult,
 } from "../interfaces/ISpeedTestService";
-import { ISpeedTestRepository } from "../interfaces/ISpeedTestRepository";
-import { ITargetRepository } from "../interfaces/ITargetRepository";
-import { IEventBus } from "../interfaces/IEventBus";
-import { ILogger } from "../interfaces/ILogger";
-import { ISpeedTestConfigService } from "../interfaces/ISpeedTestConfig";
+import type { ISpeedTestRepository } from "../interfaces/ISpeedTestRepository";
+import type { ITargetRepository } from "../interfaces/ITargetRepository";
+import type { IEventBus } from "../interfaces/IEventBus";
+import type { ILogger } from "../interfaces/ILogger";
+import type { ISpeedTestConfigService } from "../interfaces/ISpeedTestConfig";
 import { spawn } from "child_process";
 
 interface MonitoringTarget {

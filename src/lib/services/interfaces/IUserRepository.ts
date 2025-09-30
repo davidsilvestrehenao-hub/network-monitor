@@ -39,6 +39,6 @@ export interface IUserRepository {
 }
 
 // Import related types
-import { MonitoringTarget } from "./IMonitoringTargetRepository";
-import { PushSubscription } from "./IPushSubscriptionRepository";
-import { Notification } from "./INotificationRepository";
+import type { MonitoringTarget } from "./IMonitoringTargetRepository";
+import type { PushSubscription } from "./IPushSubscriptionRepository";
+import type { Notification } from "./INotificationRepository";

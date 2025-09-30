@@ -1,11 +1,11 @@
-import {
+import type {
   ISpeedTestRepository,
   CreateSpeedTestData,
   SpeedTestQuery,
 } from "../interfaces/ISpeedTestRepository";
-import { SpeedTestResult } from "../interfaces/ITargetRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { SpeedTestResult } from "../interfaces/ITargetRepository";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class SpeedTestRepository implements ISpeedTestRepository {
   constructor(

@@ -1,7 +1,7 @@
 import { createMemo, Show } from "solid-js";
 import { Line } from "solid-chartjs";
-import { ChartData, ChartOptions } from "chart.js";
-import { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type { ChartData, ChartOptions } from "chart.js";
+import type { Target } from "~/lib/services/interfaces/ITargetRepository";
 
 interface SuccessRateChartProps {
   targets: Target[];
@@ -78,10 +78,10 @@ export function SuccessRateChart(props: SuccessRateChartProps) {
 
         const data = Array.from(buckets.entries())
           .map(([bucket, stats]) => ({
-            x: new Date(bucket * bucketSize * 60 * 1000),
+            x: new Date(bucket * bucketSize * 60 * 1000).getTime(),
             y: stats.total > 0 ? (stats.success / stats.total) * 100 : 0,
           }))
-          .sort((a, b) => a.x.getTime() - b.x.getTime());
+          .sort((a, b) => a.x - b.x);
 
         return {
           label: target?.name || `Target ${targetId.slice(-4)}`,

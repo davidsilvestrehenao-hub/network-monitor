@@ -1,11 +1,11 @@
-import {
+import type {
   IUserRepository,
   User,
   CreateUserData,
   UpdateUserData,
 } from "../interfaces/IUserRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class UserRepository implements IUserRepository {
   constructor(

@@ -1,17 +1,20 @@
-import { IAlertingService } from "../interfaces/IAlertingService";
-import { ILogger } from "../interfaces/ILogger";
-import { IEventBus } from "../interfaces/IEventBus";
-import {
+import type { IAlertingService } from "../interfaces/IAlertingService";
+import type { ILogger } from "../interfaces/ILogger";
+import type { IEventBus } from "../interfaces/IEventBus";
+import type {
   MockAlertRule,
   MockTriggeredAlert,
   SpeedTestCompletedEventData,
 } from "~/lib/types/mock-types";
-import {
+import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
   IncidentEvent,
 } from "../interfaces/IAlertRepository";
-import { AlertRule, SpeedTestResult } from "../interfaces/ITargetRepository";
+import type {
+  AlertRule,
+  SpeedTestResult,
+} from "../interfaces/ITargetRepository";
 
 export class MockAlerting implements IAlertingService {
   private alertRules: Map<string, MockAlertRule[]> = new Map();

@@ -1,12 +1,12 @@
-import {
+import type {
   INotificationRepository,
   Notification,
   CreateNotificationData,
   UpdateNotificationData,
   NotificationQuery,
 } from "../interfaces/INotificationRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class NotificationRepository implements INotificationRepository {
   constructor(

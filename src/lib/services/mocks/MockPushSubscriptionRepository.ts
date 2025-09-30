@@ -1,10 +1,10 @@
-import {
+import type {
   IPushSubscriptionRepository,
   PushSubscription,
   CreatePushSubscriptionData,
   UpdatePushSubscriptionData,
 } from "../interfaces/IPushSubscriptionRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockPushSubscriptionRepository
   implements IPushSubscriptionRepository

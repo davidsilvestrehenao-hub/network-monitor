@@ -1,12 +1,12 @@
-import {
+import type {
   ISpeedTestService,
   SpeedTestConfig,
   PingResult,
   SpeedResult,
   ComprehensiveSpeedTestResult,
 } from "../interfaces/ISpeedTestService";
-import { ILogger } from "../interfaces/ILogger";
-import {
+import type { ILogger } from "../interfaces/ILogger";
+import type {
   ISpeedTestConfigService,
   SpeedTestUrl,
 } from "../interfaces/ISpeedTestConfig";

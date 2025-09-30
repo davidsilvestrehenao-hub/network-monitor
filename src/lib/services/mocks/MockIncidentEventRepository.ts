@@ -1,11 +1,11 @@
-import {
+import type {
   IIncidentEventRepository,
   IncidentEvent,
   CreateIncidentEventData,
   UpdateIncidentEventData,
   IncidentEventQuery,
 } from "../interfaces/IIncidentEventRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockIncidentEventRepository implements IIncidentEventRepository {
   private events: IncidentEvent[] = [];

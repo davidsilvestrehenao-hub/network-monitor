@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js";
-import { SpeedTestResult } from "~/lib/services/interfaces/ITargetRepository";
+import type { SpeedTestResult } from "~/lib/services/interfaces/ITargetRepository";
 
 interface RecentActivityProps {
   results: SpeedTestResult[];

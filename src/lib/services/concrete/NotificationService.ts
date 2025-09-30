@@ -1,13 +1,13 @@
-import { INotificationService } from "../interfaces/INotificationService";
-import { INotificationRepository } from "../interfaces/INotificationRepository";
-import { IPushSubscriptionRepository } from "../interfaces/IPushSubscriptionRepository";
-import { IEventBus, BackendEvents } from "../interfaces/IEventBus";
-import { ILogger } from "../interfaces/ILogger";
-import {
+import type { INotificationService } from "../interfaces/INotificationService";
+import type { INotificationRepository } from "../interfaces/INotificationRepository";
+import type { IPushSubscriptionRepository } from "../interfaces/IPushSubscriptionRepository";
+import type { IEventBus, BackendEvents } from "../interfaces/IEventBus";
+import type { ILogger } from "../interfaces/ILogger";
+import type {
   Notification,
   CreateNotificationData,
 } from "../interfaces/INotificationRepository";
-import {
+import type {
   PushSubscription,
   CreatePushSubscriptionData,
 } from "../interfaces/IPushSubscriptionRepository";

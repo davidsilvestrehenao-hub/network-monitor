@@ -1,5 +1,5 @@
 // PrismaClient is used indirectly through databaseService
-import {
+import type {
   ITargetRepository,
   Target,
   CreateTargetData,
@@ -7,8 +7,8 @@ import {
   SpeedTestResult,
   AlertRule,
 } from "../interfaces/ITargetRepository";
-import { IDatabaseService } from "../interfaces/IDatabaseService";
-import { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "../interfaces/IDatabaseService";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class TargetRepository implements ITargetRepository {
   constructor(

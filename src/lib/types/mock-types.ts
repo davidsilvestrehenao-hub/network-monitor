@@ -1,15 +1,15 @@
 // Types for mock services and test data
 
-import {
+import type {
   Notification,
   CreateNotificationData,
 } from "~/lib/services/interfaces/INotificationRepository";
-import {
+import type {
   PushSubscription,
   CreatePushSubscriptionData,
 } from "~/lib/services/interfaces/IPushSubscriptionRepository";
-import { CreateAlertRuleData } from "~/lib/services/interfaces/IAlertRepository";
-import {
+import type { CreateAlertRuleData } from "~/lib/services/interfaces/IAlertRepository";
+import type {
   Target,
   CreateTargetData,
   SpeedTestResult,

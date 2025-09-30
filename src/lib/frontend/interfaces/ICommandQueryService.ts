@@ -1,11 +1,11 @@
-import {
+import type {
   Target,
   CreateTargetData,
   UpdateTargetData,
   SpeedTestResult,
   AlertRule,
 } from "~/lib/services/interfaces/ITargetRepository";
-import {
+import type {
   AlertRuleData,
   Incident,
   Notification,

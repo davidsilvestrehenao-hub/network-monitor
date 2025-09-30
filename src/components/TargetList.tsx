@@ -1,7 +1,7 @@
 import { createSignal, createEffect, For } from "solid-js";
 import { useCommandQuery, useEventBus } from "~/lib/frontend/container";
-import { Target } from "~/lib/services/interfaces/ITargetRepository";
-import { FrontendEvents } from "~/lib/services/interfaces/IEventBus";
+import type { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type { FrontendEvents } from "~/lib/services/interfaces/IEventBus";
 
 export function TargetList() {
   const commandQuery = useCommandQuery();

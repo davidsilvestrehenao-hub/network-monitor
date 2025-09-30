@@ -1,6 +1,6 @@
-import { IAuthService, AuthSession } from "../interfaces/IAuthService";
-import { ILogger } from "../interfaces/ILogger";
-import { User } from "../interfaces/IUserRepository";
+import type { IAuthService, AuthSession } from "../interfaces/IAuthService";
+import type { ILogger } from "../interfaces/ILogger";
+import type { User } from "../interfaces/IUserRepository";
 
 export class MockAuth implements IAuthService {
   private currentSession: AuthSession | null = null;

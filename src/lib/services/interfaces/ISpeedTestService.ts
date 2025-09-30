@@ -1,4 +1,4 @@
-import { SpeedTestResult } from "./ITargetRepository";
+import type { SpeedTestResult } from "./ITargetRepository";
 
 export interface SpeedTestConfig {
   targetId?: string;

@@ -1,11 +1,11 @@
-import {
+import type {
   INotificationRepository,
   Notification,
   CreateNotificationData,
   UpdateNotificationData,
   NotificationQuery,
 } from "../interfaces/INotificationRepository";
-import { ILogger } from "../interfaces/ILogger";
+import type { ILogger } from "../interfaces/ILogger";
 
 export class MockNotificationRepository implements INotificationRepository {
   private notifications: Notification[] = [];

@@ -1,478 +1,528 @@
-import { createCaller, error$ } from "@solid-mediakit/prpc";
-import { getAppContext, initializeContainer } from "~/lib/container/container";
-import { z } from "zod";
+import { getAppContext } from "~/lib/container/container";
+import type { UpdateTargetData } from "~/lib/services/interfaces/ITargetRepository";
+import type { UpdateAlertRuleData } from "~/lib/services/interfaces/IAlertRepository";
 
-// Target management callers following PRPC documentation
-export const createTarget = createCaller(
-  z.object({
-    name: z.string().min(1, "Target name is required"),
-    address: z.string().min(1, "Target address is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    try {
-      await initializeContainer();
-      const ctx = await getAppContext();
-      if (!ctx.services.monitor) throw new Error("Monitor service not available");
-      const { name, address } = input$;
-
-      const target = await ctx.services.monitor.createTarget({
-        name,
-        address,
-        ownerId: "anonymous",
-      });
-
-      return target;
-    } catch (error) {
-      console.error("Error in createTarget:", error);
-      throw error;
-    }
-  },
-  {
-    method: "POST",
-    type: "action",
+// Helper function to get app context
+async function getContext() {
+  const ctx = await getAppContext();
+  if (!ctx.services.logger || !ctx.services.monitor || !ctx.services.alerting || !ctx.services.notification || !ctx.services.auth) {
+    throw new Error("Required services not available in context");
   }
-);
+  // TypeScript assertion since we've checked for null above
+  return ctx as typeof ctx & {
+    services: {
+      logger: NonNullable<typeof ctx.services.logger>;
+      monitor: NonNullable<typeof ctx.services.monitor>;
+      alerting: NonNullable<typeof ctx.services.alerting>;
+      notification: NonNullable<typeof ctx.services.notification>;
+      auth: NonNullable<typeof ctx.services.auth>;
+    };
+  };
+}
 
-export const getTargets = createCaller(
-  z.object({}),
-  async ({ input$: _input$, event$: _event$ }) => {
-    try {
-      await initializeContainer();
-      const ctx = await getAppContext();
-      if (!ctx.services.monitor) throw new Error("Monitor service not available");
-      const targets = await ctx.services.monitor.getTargets("anonymous");
-      return targets;
-    } catch (error) {
-      console.error("Error in getTargets:", error);
-      throw error;
-    }
-  },
-  {
-    method: "GET",
-    type: "query",
+// Target Management
+export const createTarget = async (data: { name: string; address: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Creating target", data);
+
+    const target = await ctx.services.monitor.createTarget({
+      name: data.name,
+      address: data.address,
+      ownerId: "mock-user", // TODO: Get from session
+    });
+
+    return target;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Target creation failed", { error, data });
+    throw new Error(`Failed to create target: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getTarget = createCaller(
-  z.object({
-    id: z.string().min(1, "Target ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { id } = input$;
+export const getTarget = async (data: { id: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting target", { id: data.id });
 
-    const target = await ctx.services.monitor.getTarget(id);
-    if (!target || target.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
+    const target = await ctx.services.monitor.getTarget(data.id);
+    if (!target) {
+      throw new Error("Target not found");
     }
 
     return target;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get target failed", { error, id: data.id });
+    throw new Error(`Failed to get target: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const updateTarget = createCaller(
-  z.object({
-    id: z.string().min(1, "Target ID is required"),
-    name: z.string().min(1, "Target name is required").optional(),
-    address: z.string().min(1, "Target address is required").optional(),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { id, ...data } = input$;
+export const getTargets = async (_data: { limit?: number; offset?: number } = {}) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting targets");
 
-    const existingTarget = await ctx.services.monitor.getTarget(id);
-    if (!existingTarget || existingTarget.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
-    }
+    const targets = await ctx.services.monitor.getTargets("mock-user"); // TODO: Get from session
+    return targets;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get targets failed", { error });
+    throw new Error(`Failed to get targets: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};
 
-    const target = await ctx.services.monitor.updateTarget(id, data);
+export const updateTarget = async (data: {
+  id: string;
+  name?: string;
+  address?: string;
+}) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Updating target", data);
+
+    const updateData: UpdateTargetData = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.address !== undefined) updateData.address = data.address;
+
+    const target = await ctx.services.monitor.updateTarget(data.id, updateData);
     return target;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Target update failed", { error, data });
+    throw new Error(`Failed to update target: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const deleteTarget = createCaller(
-  z.object({
-    id: z.string().min(1, "Target ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { id } = input$;
+export const deleteTarget = async (data: { id: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Deleting target", { id: data.id });
 
-    const existingTarget = await ctx.services.monitor.getTarget(id);
-    if (!existingTarget || existingTarget.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
-    }
-
-    await ctx.services.monitor.deleteTarget(id);
+    await ctx.services.monitor.deleteTarget(data.id);
     return { success: true };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Target deletion failed", { error, id: data.id });
+    throw new Error(`Failed to delete target: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const runSpeedTest = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-    timeout: z.number().positive().optional(),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { targetId, timeout } = input$;
-
-    const target = await ctx.services.monitor.getTarget(targetId);
-    if (!target || target.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
-    }
+// Speed Testing
+export const runSpeedTest = async (data: { targetId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Running speed test", { targetId: data.targetId });
 
     const result = await ctx.services.monitor.runSpeedTest({
-      targetId,
-      timeout,
+      targetId: data.targetId,
+      timeout: 30000, // 30 second timeout
     });
+
     return result;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Speed test failed", { error, targetId: data.targetId });
+    throw new Error(`Failed to run speed test: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getTargetResults = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-    limit: z.number().positive().optional(),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { targetId, limit } = input$;
+export const startMonitoring = async (data: {
+  targetId: string;
+  intervalMs: number;
+}) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Starting monitoring", data);
 
-    const target = await ctx.services.monitor.getTarget(targetId);
-    if (!target || target.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
-    }
+    ctx.services.monitor.startMonitoring(data.targetId, data.intervalMs);
+    return { success: true };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Start monitoring failed", { error, data });
+    throw new Error(`Failed to start monitoring: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};
 
-    const results = await ctx.services.monitor.getTargetResults(
-      targetId,
-      limit
-    );
+export const stopMonitoring = async (data: { targetId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Stopping monitoring", { targetId: data.targetId });
+
+    ctx.services.monitor.stopMonitoring(data.targetId);
+    return { success: true };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Stop monitoring failed", { error, targetId: data.targetId });
+    throw new Error(`Failed to stop monitoring: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};
+
+export const getTargetResults = async (data: { targetId: string; limit?: number }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting target results", data);
+
+    const results = await ctx.services.monitor.getTargetResults(data.targetId, data.limit);
     return results;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get target results failed", { error, data });
+    throw new Error(`Failed to get target results: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const startMonitoring = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-    intervalMs: z.number().positive("Interval must be positive"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { targetId, intervalMs } = input$;
+export const getActiveTargets = async () => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting active targets");
 
-    const target = await ctx.services.monitor.getTarget(targetId);
-    if (!target || target.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
-    }
-
-    ctx.services.monitor.startMonitoring(targetId, intervalMs);
-    return { success: true };
-  }
-);
-
-export const stopMonitoring = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
-    const { targetId } = input$;
-
-    const target = await ctx.services.monitor.getTarget(targetId);
-    if (!target || target.ownerId !== "anonymous") {
-      throw new Error("Target not found or unauthorized access");
-    }
-
-    ctx.services.monitor.stopMonitoring(targetId);
-    return { success: true };
-  }
-);
-
-export const getActiveTargets = createCaller(
-  z.object({}),
-  async ({ input$: _input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.monitor) throw new Error("Monitor service not available");
     const activeTargets = ctx.services.monitor.getActiveTargets();
     return activeTargets;
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get active targets failed", { error });
+    throw new Error(`Failed to get active targets: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-// Alerting endpoints
-export const createAlertRule = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-    name: z.string().min(1, "Rule name is required"),
-    metric: z.enum(["ping", "download"]),
-    condition: z.enum(["GREATER_THAN", "LESS_THAN"]),
-    threshold: z.number().positive("Threshold must be positive"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.alerting)
-      throw new Error("Alerting service not available");
-    const rule = await ctx.services.alerting.createAlertRule(input$);
-    return rule;
+// Alert Management
+export const createAlertRule = async (data: {
+  name: string;
+  metric: "ping" | "download";
+  condition: "GREATER_THAN" | "LESS_THAN";
+  threshold: number;
+  targetId: string;
+}) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Creating alert rule", data);
+
+    const alertRule = await ctx.services.alerting.createAlertRule({
+      name: data.name,
+      metric: data.metric,
+      condition: data.condition,
+      threshold: data.threshold,
+      targetId: data.targetId,
+    });
+
+    return { data: alertRule };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Alert rule creation failed", { error, data });
+    throw new Error(`Failed to create alert rule: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getAlertRules = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.alerting)
-      throw new Error("Alerting service not available");
-    const rules = await ctx.services.alerting.getAlertRulesByTargetId(
-      input$.targetId
-    );
-    return rules;
+export const getAlertRules = async (data: { targetId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting alert rules", { targetId: data.targetId });
+
+    const alertRules = await ctx.services.alerting.getAlertRulesByTargetId(data.targetId);
+    return { data: alertRules };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get alert rules failed", { error, targetId: data.targetId });
+    throw new Error(`Failed to get alert rules: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const updateAlertRule = createCaller(
-  z.object({
-    id: z.number().positive("Rule ID is required"),
-    name: z.string().min(1, "Rule name is required").optional(),
-    metric: z.enum(["ping", "download"]).optional(),
-    condition: z.enum(["GREATER_THAN", "LESS_THAN"]).optional(),
-    threshold: z.number().positive("Threshold must be positive").optional(),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.alerting)
-      throw new Error("Alerting service not available");
-    const { id, ...data } = input$;
-    const rule = await ctx.services.alerting.updateAlertRule(id, data);
-    return rule;
+export const updateAlertRule = async (data: {
+  id: number;
+  name?: string;
+  metric?: "ping" | "download";
+  condition?: "GREATER_THAN" | "LESS_THAN";
+  threshold?: number;
+  enabled?: boolean;
+}) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Updating alert rule", data);
+
+    const updateData: UpdateAlertRuleData = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.metric !== undefined) updateData.metric = data.metric;
+    if (data.condition !== undefined) updateData.condition = data.condition;
+    if (data.threshold !== undefined) updateData.threshold = data.threshold;
+    if (data.enabled !== undefined) updateData.enabled = data.enabled;
+
+    const alertRule = await ctx.services.alerting.updateAlertRule(data.id, updateData);
+    return { data: alertRule };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Alert rule update failed", { error, data });
+    throw new Error(`Failed to update alert rule: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const deleteAlertRule = createCaller(
-  z.object({
-    id: z.number().positive("Rule ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.alerting)
-      throw new Error("Alerting service not available");
-    await ctx.services.alerting.deleteAlertRule(input$.id);
-    return { success: true };
+export const deleteAlertRule = async (data: { id: number }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Deleting alert rule", { id: data.id });
+
+    await ctx.services.alerting.deleteAlertRule(data.id);
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Alert rule deletion failed", { error, id: data.id });
+    throw new Error(`Failed to delete alert rule: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getIncidents = createCaller(
-  z.object({
-    targetId: z.string().min(1, "Target ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.alerting)
-      throw new Error("Alerting service not available");
-    const incidents = await ctx.services.alerting.getIncidentsByTargetId(
-      input$.targetId
-    );
-    return incidents;
+export const getIncidents = async (data: { targetId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting incidents", { targetId: data.targetId });
+
+    const incidents = await ctx.services.alerting.getIncidentsByTargetId(data.targetId);
+    return { data: incidents };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get incidents failed", { error, targetId: data.targetId });
+    throw new Error(`Failed to get incidents: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const resolveIncident = createCaller(
-  z.object({
-    id: z.number().positive("Incident ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.alerting)
-      throw new Error("Alerting service not available");
-    await ctx.services.alerting.resolveIncident(input$.id);
-    return { success: true };
+export const resolveIncident = async (data: { id: number }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Resolving incident", { id: data.id });
+
+    await ctx.services.alerting.resolveIncident(data.id);
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Resolve incident failed", { error, id: data.id });
+    throw new Error(`Failed to resolve incident: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
+// Notification Management
+export const getNotifications = async (data: { userId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting notifications", { userId: data.userId });
 
-// Notification endpoints
-export const getNotifications = createCaller(
-  z.object({
-    userId: z.string().min(1, "User ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    const notifications = await ctx.services.notification.getNotifications(
-      input$.userId
-    );
-    return notifications;
+    const notifications = await ctx.services.notification.getNotifications(data.userId);
+    return { data: notifications };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get notifications failed", { error, userId: data.userId });
+    throw new Error(`Failed to get notifications: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const markNotificationAsRead = createCaller(
-  z.object({
-    id: z.number().positive("Notification ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    await ctx.services.notification.markNotificationAsRead(input$.id);
-    return { success: true };
+export const markNotificationAsRead = async (data: { id: number }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Marking notification as read", { id: data.id });
+
+    await ctx.services.notification.markNotificationAsRead(data.id);
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Mark notification as read failed", { error, id: data.id });
+    throw new Error(`Failed to mark notification as read: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const markAllNotificationsAsRead = createCaller(
-  z.object({
-    userId: z.string().min(1, "User ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    await ctx.services.notification.markAllNotificationsAsRead(input$.userId);
-    return { success: true };
+export const markAllNotificationsAsRead = async (data: { userId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Marking all notifications as read", { userId: data.userId });
+
+    await ctx.services.notification.markAllNotificationsAsRead(data.userId);
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Mark all notifications as read failed", { error, userId: data.userId });
+    throw new Error(`Failed to mark all notifications as read: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const createPushSubscription = createCaller(
-  z.object({
-    userId: z.string().min(1, "User ID is required"),
-    endpoint: z.string().min(1, "Endpoint is required"),
-    p256dh: z.string().min(1, "p256dh key is required"),
-    auth: z.string().min(1, "Auth key is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    const subscription =
-      await ctx.services.notification.createPushSubscription(input$);
-    return subscription;
+export const createPushSubscription = async (data: {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  userId: string;
+}) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Creating push subscription", { userId: data.userId });
+
+    const subscription = await ctx.services.notification.createPushSubscription({
+      endpoint: data.endpoint,
+      p256dh: data.p256dh,
+      auth: data.auth,
+      userId: data.userId,
+    });
+
+    return { data: subscription };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Create push subscription failed", { error, data });
+    throw new Error(`Failed to create push subscription: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getPushSubscriptions = createCaller(
-  z.object({
-    userId: z.string().min(1, "User ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    const subscriptions = await ctx.services.notification.getPushSubscriptions(
-      input$.userId
-    );
-    return subscriptions;
+export const getPushSubscriptions = async (data: { userId: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting push subscriptions", { userId: data.userId });
+
+    const subscriptions = await ctx.services.notification.getPushSubscriptions(data.userId);
+    return { data: subscriptions };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get push subscriptions failed", { error, userId: data.userId });
+    throw new Error(`Failed to get push subscriptions: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const deletePushSubscription = createCaller(
-  z.object({
-    id: z.string().min(1, "Subscription ID is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    await ctx.services.notification.deletePushSubscription(input$.id);
-    return { success: true };
+export const deletePushSubscription = async (data: { id: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Deleting push subscription", { id: data.id });
+
+    await ctx.services.notification.deletePushSubscription(data.id);
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Delete push subscription failed", { error, id: data.id });
+    throw new Error(`Failed to delete push subscription: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const sendPushNotification = createCaller(
-  z.object({
-    userId: z.string().min(1, "User ID is required"),
-    message: z.string().min(1, "Message is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.notification)
-      throw new Error("Notification service not available");
-    await ctx.services.notification.sendPushNotification(
-      input$.userId,
-      input$.message
-    );
-    return { success: true };
+export const sendPushNotification = async (data: { userId: string; message: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: Sending push notification", { userId: data.userId });
+
+    await ctx.services.notification.sendPushNotification(data.userId, data.message);
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Send push notification failed", { error, data });
+    throw new Error(`Failed to send push notification: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
+// Authentication Management
+export const signIn = async (data: { email: string; password: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: User sign in", { email: data.email });
 
-// Authentication endpoints
-export const signIn = createCaller(
-  z.object({
-    email: z.string().email("Valid email is required"),
-    password: z.string().min(1, "Password is required"),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.auth) throw new Error("Auth service not available");
-    const result = await ctx.services.auth.signIn(
-      input$.email,
-      input$.password
-    );
-    return result;
+    const session = await ctx.services.auth.signIn(data.email, data.password);
+    if (!session) {
+      throw new Error("Invalid credentials");
+    }
+
+    return {
+      data: {
+        user: session.user,
+        session: {
+          id: "mock-session-id", // TODO: Implement proper session ID
+          userId: session.user.id,
+          expiresAt: session.expires.toISOString(),
+        },
+      },
+    };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Sign in failed", { error, email: data.email });
+    throw new Error(`Failed to sign in: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const signUp = createCaller(
-  z.object({
-    email: z.string().email("Valid email is required"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    name: z.string().optional(),
-  }),
-  async ({ input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.auth) throw new Error("Auth service not available");
-    const result = await ctx.services.auth.signUp(
-      input$.email,
-      input$.password,
-      input$.name
-    );
-    return result;
+export const signUp = async (data: { name: string; email: string; password: string }) => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: User sign up", { email: data.email });
+
+    const session = await ctx.services.auth.signUp(data.email, data.password, data.name);
+    if (!session) {
+      throw new Error("Failed to create user");
+    }
+
+    return {
+      data: {
+        user: session.user,
+        session: {
+          id: "mock-session-id", // TODO: Implement proper session ID
+          userId: session.user.id,
+          expiresAt: session.expires.toISOString(),
+        },
+      },
+    };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Sign up failed", { error, email: data.email });
+    throw new Error(`Failed to sign up: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const signOut = createCaller(
-  z.object({}),
-  async ({ input$: _input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.auth) throw new Error("Auth service not available");
+export const signOut = async () => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.info("pRPC: User sign out");
+
     await ctx.services.auth.signOut();
-    return { success: true };
+    return { data: { success: true } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Sign out failed", { error });
+    throw new Error(`Failed to sign out: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getCurrentUser = createCaller(
-  z.object({}),
-  async ({ input$: _input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.auth) throw new Error("Auth service not available");
+export const getCurrentUser = async () => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting current user");
+
     const user = await ctx.services.auth.getCurrentUser();
-    return user;
+    return { data: user };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get current user failed", { error });
+    throw new Error(`Failed to get current user: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
 
-export const getSession = createCaller(
-  z.object({}),
-  async ({ input$: _input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.auth) throw new Error("Auth service not available");
+export const getSession = async () => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Getting session");
+
     const session = await ctx.services.auth.getSession();
-    return session;
-  }
-);
+    if (!session) {
+      return { data: null };
+    }
 
-export const isAuthenticated = createCaller(
-  z.object({}),
-  async ({ input$: _input$, event$: _event$ }) => {
-    const ctx = await getAppContext();
-    if (!ctx.services.auth) throw new Error("Auth service not available");
-    const authenticated = await ctx.services.auth.isAuthenticated();
-    return { authenticated };
+    return {
+      data: {
+        id: "mock-session-id", // TODO: Implement proper session ID
+        userId: session.user.id,
+        expiresAt: session.expires.toISOString(),
+      },
+    };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Get session failed", { error });
+    throw new Error(`Failed to get session: ${error instanceof Error ? error.message : String(error)}`);
   }
-);
+};
+
+export const isAuthenticated = async () => {
+  try {
+    const ctx = await getContext();
+    ctx.services.logger.debug("pRPC: Checking authentication status");
+
+    const authenticated = await ctx.services.auth.isAuthenticated();
+    return { data: { authenticated } };
+  } catch (error) {
+    const ctx = await getContext();
+    ctx.services.logger.error("pRPC: Check authentication failed", { error });
+    throw new Error(`Failed to check authentication: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};

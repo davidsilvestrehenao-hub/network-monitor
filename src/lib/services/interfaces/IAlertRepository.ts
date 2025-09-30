@@ -1,4 +1,4 @@
-import { AlertRule } from "./ITargetRepository";
+import type { AlertRule } from "./ITargetRepository";
 
 export interface CreateAlertRuleData {
   name: string;

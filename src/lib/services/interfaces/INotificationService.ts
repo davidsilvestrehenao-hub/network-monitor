@@ -1,8 +1,8 @@
-import {
+import type {
   Notification,
   CreateNotificationData,
 } from "./INotificationRepository";
-import {
+import type {
   PushSubscription,
   CreatePushSubscriptionData,
 } from "./IPushSubscriptionRepository";

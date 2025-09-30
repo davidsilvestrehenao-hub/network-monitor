@@ -1,4 +1,4 @@
-import { IEventBus } from "../interfaces/IEventBus";
+import type { IEventBus } from "../interfaces/IEventBus";
 
 type EventHandler = (data?: unknown) => void;
 
