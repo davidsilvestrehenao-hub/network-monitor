@@ -15,7 +15,10 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "db:generate": "turbo run db:generate"
+    "db:generate": "turbo run db:generate --filter=@network-monitor/database",
+    "db:push": "turbo run db:push --filter=@network-monitor/database",
+    "db:migrate": "turbo run db:migrate --filter=@network-monitor/database",
+    "db:seed": "turbo run db:seed --filter=@network-monitor/database"
   },
   "type": "module",
   "devDependencies": {

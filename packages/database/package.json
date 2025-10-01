@@ -9,13 +9,17 @@
     "./repositories": "./src/repositories/index.ts",
     "./prisma": "./src/prisma/index.ts"
   },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  },
   "scripts": {
     "build": "echo 'Database package - no build needed'",
     "dev": "echo 'Database package - no dev needed'",
     "lint": "echo 'Linting database package'",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev"
+    "db:generate": "prisma generate --schema=./prisma/schema.prisma",
+    "db:push": "prisma db push --schema=./prisma/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
+    "db:seed": "bun run prisma/seed.ts"
   },
   "dependencies": {
     "@network-monitor/shared": "workspace:*",
