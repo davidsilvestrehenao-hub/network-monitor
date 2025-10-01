@@ -44,7 +44,7 @@ export class AlertRuleRepository implements IAlertRuleRepository {
         orderBy: { id: "desc" },
       });
 
-    return prismaRules.map(rule => this.mapToAlertRule(rule));
+    return prismaRules.map((rule: unknown) => this.mapToAlertRule(rule));
   }
 
   async findByQuery(query: AlertRuleQuery): Promise<AlertRule[]> {
@@ -76,7 +76,7 @@ export class AlertRuleRepository implements IAlertRuleRepository {
         skip: query.offset || 0,
       });
 
-    return prismaRules.map(rule => this.mapToAlertRule(rule));
+    return prismaRules.map((rule: unknown) => this.mapToAlertRule(rule));
   }
 
   async getAll(limit = 100, offset = 0): Promise<AlertRule[]> {
@@ -96,7 +96,7 @@ export class AlertRuleRepository implements IAlertRuleRepository {
         skip: offset,
       });
 
-    return prismaRules.map(rule => this.mapToAlertRule(rule));
+    return prismaRules.map((rule: unknown) => this.mapToAlertRule(rule));
   }
 
   async count(): Promise<number> {

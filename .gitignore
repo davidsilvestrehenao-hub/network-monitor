@@ -7,6 +7,8 @@ dist/
 build/
 .next/
 out/
+.output/
+.vinxi/
 
 # Environment variables
 .env
@@ -87,6 +89,15 @@ temp/
 *.swp
 *.swo
 *~
+
+# Cursor IDE - Keep rules tracked in git
+# .cursor/ - TRACKED (contains project rules)
+# .cursorrules - TRACKED (main rules file)
+# BUT ignore MCP config with secrets
+.cursor/mcp-config.json
+.cursor/mcp_settings.json
+**/mcp-config.json
+**/mcp_settings.json
 
 # OS generated files
 .DS_Store

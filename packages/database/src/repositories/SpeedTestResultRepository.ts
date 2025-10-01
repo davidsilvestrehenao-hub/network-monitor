@@ -44,7 +44,9 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
         take: limit,
       });
 
-    return prismaResults.map(result => this.mapToSpeedTestResult(result));
+    return prismaResults.map((result: unknown) =>
+      this.mapToSpeedTestResult(result)
+    );
   }
 
   async findLatestByTargetId(
@@ -99,7 +101,9 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
         skip: query.offset || 0,
       });
 
-    return prismaResults.map(result => this.mapToSpeedTestResult(result));
+    return prismaResults.map((result: unknown) =>
+      this.mapToSpeedTestResult(result)
+    );
   }
 
   async getAll(limit = 100, offset = 0): Promise<SpeedTestResult[]> {
@@ -116,7 +120,9 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
         skip: offset,
       });
 
-    return prismaResults.map(result => this.mapToSpeedTestResult(result));
+    return prismaResults.map((result: unknown) =>
+      this.mapToSpeedTestResult(result)
+    );
   }
 
   async count(): Promise<number> {

@@ -1,0 +1,157 @@
+name: Auto Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  check_suite:
+    types: [completed]
+  status: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto Merge PR
+    runs-on: ubuntu-latest
+    
+    # Only run on PRs, not on pushes to main
+    if: github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Auto-merge PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            
+            if (!pr) {
+              console.log('No PR found in context');
+              return;
+            }
+            
+            console.log(`Checking PR #${pr.number}...`);
+            
+            // Get PR details
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+            });
+            
+            // Check if PR is already merged or closed
+            if (pullRequest.state !== 'open') {
+              console.log(`PR is ${pullRequest.state}, skipping auto-merge`);
+              return;
+            }
+            
+            // Check if PR is a draft
+            if (pullRequest.draft) {
+              console.log('PR is a draft, skipping auto-merge');
+              return;
+            }
+            
+            // Get all status checks
+            const { data: statuses } = await github.rest.repos.getCombinedStatusForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: pullRequest.head.sha,
+            });
+            
+            // Get check runs
+            const { data: checkRuns } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: pullRequest.head.sha,
+            });
+            
+            // Check if all status checks passed
+            const allStatusesPassed = statuses.statuses.length === 0 || 
+              statuses.statuses.every(status => status.state === 'success');
+            
+            // Check if all check runs passed (excluding this workflow)
+            const allChecksPassed = checkRuns.check_runs
+              .filter(check => check.name !== 'Auto Merge PR')
+              .every(check => check.status === 'completed' && check.conclusion === 'success');
+            
+            console.log(`All statuses passed: ${allStatusesPassed}`);
+            console.log(`All checks passed: ${allChecksPassed}`);
+            console.log(`Total statuses: ${statuses.statuses.length}`);
+            console.log(`Total check runs: ${checkRuns.check_runs.length}`);
+            
+            if (!allStatusesPassed || !allChecksPassed) {
+              console.log('Not all checks have passed yet, waiting...');
+              return;
+            }
+            
+            // Check if there are any merge conflicts
+            if (pullRequest.mergeable === false) {
+              console.log('PR has merge conflicts, cannot auto-merge');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: '⚠️ **Auto-merge blocked**: This PR has merge conflicts. Please resolve them and push again.',
+              });
+              return;
+            }
+            
+            // All checks passed - auto-merge!
+            console.log('All checks passed! Auto-merging...');
+            
+            try {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                merge_method: 'squash',
+                commit_title: pullRequest.title,
+                commit_message: pullRequest.body || '',
+              });
+              
+              console.log('✅ PR merged successfully!');
+              
+              // Delete the branch
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `heads/${pullRequest.head.ref}`,
+                });
+                console.log('✅ Branch deleted successfully!');
+              } catch (error) {
+                console.log('Could not delete branch:', error.message);
+              }
+              
+              // Post success comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `## 🎉 Auto-merged!
+                
+                All CI checks passed successfully. This PR has been automatically:
+                - ✅ Squash merged into main
+                - ✅ Branch deleted
+                
+                Thank you for your contribution! 🚀`,
+              });
+              
+            } catch (error) {
+              console.error('Failed to merge PR:', error);
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `⚠️ **Auto-merge failed**: ${error.message}
+                
+                Please merge manually or check the [workflow logs](https://github.com/${context.repo.owner}/${context.repo.repo}/actions).`,
+              });
+            }
+

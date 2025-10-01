@@ -1,0 +1,89 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  auto-label:
+    name: Auto Label PR
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Label based on changed files
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  assign-gemini:
+    name: Request Gemini Review
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Comment to trigger Gemini
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Post a comment to trigger Gemini Code Assist review
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '/gemini review'
+            });
+            
+            // Also post a welcome message
+            const welcomeMessage = `## 🤖 Automated Review Started
+            
+            This PR will be automatically reviewed by:
+            - ✅ GitHub Actions CI (linting, type checking, build)
+            - 🤖 Gemini Code Assist (architecture, security, best practices)
+            
+            ### Available Commands:
+            - \`/gemini review\` - Trigger a fresh review
+            - \`/gemini summary\` - Get a summary of changes
+            - \`@gemini-code-assist <question>\` - Ask specific questions
+            
+            ### Review Focus:
+            - Architecture patterns (Router → Service → Repository)
+            - TypeScript type safety
+            - Code quality standards
+            - 12-Factor App compliance
+            - Security best practices
+            - Performance optimization
+            `;
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: welcomeMessage
+            });
+
+  size-label:
+    name: Label PR Size
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Add size label
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: 'size/xs'
+          xs_max_size: 10
+          s_label: 'size/s'
+          s_max_size: 100
+          m_label: 'size/m'
+          m_max_size: 500
+          l_label: 'size/l'
+          l_max_size: 1000
+          xl_label: 'size/xl'
+

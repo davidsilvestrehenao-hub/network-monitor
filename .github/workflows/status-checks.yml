@@ -1,0 +1,117 @@
+name: Status Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-pr-title:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check PR title format
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+          requireScope: false
+          subjectPattern: ^[A-Z].+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            must start with a capital letter.
+
+  check-branch-name:
+    name: Validate Branch Name
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          if [[ ! "$BRANCH_NAME" =~ ^(feature|fix|hotfix|refactor|docs|test|chore)/.+ ]]; then
+            echo "❌ Invalid branch name: $BRANCH_NAME"
+            echo ""
+            echo "Branch names must follow the pattern:"
+            echo "  feature/<description>"
+            echo "  fix/<description>"
+            echo "  hotfix/<description>"
+            echo "  refactor/<description>"
+            echo "  docs/<description>"
+            echo "  test/<description>"
+            echo "  chore/<description>"
+            echo ""
+            echo "Example: feature/add-user-authentication"
+            exit 1
+          fi
+          echo "✅ Branch name is valid: $BRANCH_NAME"
+
+  check-no-conflicts:
+    name: Check for Merge Conflicts
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for conflicts with main
+        run: |
+          git fetch origin main
+          if git merge-tree $(git merge-base HEAD origin/main) HEAD origin/main | grep -q '<<<<<<<'; then
+            echo "❌ Merge conflicts detected with main branch"
+            echo "Please rebase or merge main into your branch"
+            exit 1
+          fi
+          echo "✅ No merge conflicts detected"
+
+  check-file-size:
+    name: Check File Sizes
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for large files
+        run: |
+          MAX_SIZE=1048576  # 1MB in bytes
+          LARGE_FILES=$(find . -type f -size +${MAX_SIZE}c -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/build/*")
+          
+          if [ -n "$LARGE_FILES" ]; then
+            echo "❌ Large files detected (>1MB):"
+            echo "$LARGE_FILES"
+            echo ""
+            echo "Please avoid committing large files to the repository."
+            echo "Consider using Git LFS or external storage."
+            exit 1
+          fi
+          echo "✅ No large files detected"
+
+  check-no-secrets:
+    name: Scan for Secrets
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

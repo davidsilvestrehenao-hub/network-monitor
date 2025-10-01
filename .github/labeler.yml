@@ -1,0 +1,74 @@
+# Auto-label PRs based on changed files
+# Format for actions/labeler@v5
+
+'area: frontend':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/web/**/*'
+
+'area: api':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/api/**/*'
+
+'area: services':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/*-service/**/*'
+
+'area: database':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'packages/database/**/*'
+          - '**/*.prisma'
+
+'area: infrastructure':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/infrastructure/**/*'
+
+'area: monitoring':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/monitor/**/*'
+
+'area: alerting':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/alerting/**/*'
+
+'area: notifications':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/notification/**/*'
+
+'area: auth':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/auth/**/*'
+
+'type: documentation':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**/*'
+          - '**/*.md'
+
+'type: tests':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.test.ts'
+          - '**/*.spec.ts'
+          - '**/__tests__/**/*'
+
+'type: configuration':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.json'
+          - '*.yml'
+          - '*.yaml'
+          - '*.config.*'
+          - '.github/**/*'
+
+'type: dependencies':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'package.json'
+          - 'bun.lock'
+
+'type: ci/cd':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**/*'
+          - 'scripts/**/*'
