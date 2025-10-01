@@ -5,7 +5,9 @@ on:
     types: [opened, synchronize, reopened]
   check_suite:
     types: [completed]
-  status: {}
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
 
 permissions:
   contents: write
