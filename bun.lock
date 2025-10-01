@@ -33,6 +33,72 @@
         "vite": "^6.2.2",
       },
     },
+    "packages/alerting": {
+      "name": "@network-monitor/alerting",
+      "version": "0.0.0",
+      "dependencies": {
+        "@network-monitor/database": "workspace:*",
+        "@network-monitor/infrastructure": "workspace:*",
+        "@network-monitor/shared": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.6.2",
+      },
+    },
+    "packages/database": {
+      "name": "@network-monitor/database",
+      "version": "0.0.0",
+      "dependencies": {
+        "@network-monitor/shared": "workspace:*",
+        "@prisma/client": "^6.16.2",
+      },
+      "devDependencies": {
+        "prisma": "^6.16.2",
+        "typescript": "^5.6.2",
+      },
+    },
+    "packages/infrastructure": {
+      "name": "@network-monitor/infrastructure",
+      "version": "0.0.0",
+      "dependencies": {
+        "@network-monitor/shared": "workspace:*",
+        "winston": "^3.17.0",
+      },
+      "devDependencies": {
+        "typescript": "^5.6.2",
+      },
+    },
+    "packages/monitor": {
+      "name": "@network-monitor/monitor",
+      "version": "0.0.0",
+      "dependencies": {
+        "@network-monitor/database": "workspace:*",
+        "@network-monitor/infrastructure": "workspace:*",
+        "@network-monitor/shared": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.6.2",
+      },
+    },
+    "packages/notification": {
+      "name": "@network-monitor/notification",
+      "version": "0.0.0",
+      "dependencies": {
+        "@network-monitor/database": "workspace:*",
+        "@network-monitor/infrastructure": "workspace:*",
+        "@network-monitor/shared": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.6.2",
+      },
+    },
+    "packages/shared": {
+      "name": "@network-monitor/shared",
+      "version": "0.0.0",
+      "devDependencies": {
+        "typescript": "^5.6.2",
+      },
+    },
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
@@ -202,6 +268,18 @@
     "@kurkle/color": ["@kurkle/color@0.3.4", "", {}, "sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w=="],
 
     "@mapbox/node-pre-gyp": ["@mapbox/node-pre-gyp@2.0.0", "", { "dependencies": { "consola": "^3.2.3", "detect-libc": "^2.0.0", "https-proxy-agent": "^7.0.5", "node-fetch": "^2.6.7", "nopt": "^8.0.0", "semver": "^7.5.3", "tar": "^7.4.0" }, "bin": { "node-pre-gyp": "bin/node-pre-gyp" } }, "sha512-llMXd39jtP0HpQLVI37Bf1m2ADlEb35GYSh1SDSLsBhR+5iCxiNGlT31yqbNtVHygHAtMy6dWFERpU2JgufhPg=="],
+
+    "@network-monitor/alerting": ["@network-monitor/alerting@workspace:packages/alerting"],
+
+    "@network-monitor/database": ["@network-monitor/database@workspace:packages/database"],
+
+    "@network-monitor/infrastructure": ["@network-monitor/infrastructure@workspace:packages/infrastructure"],
+
+    "@network-monitor/monitor": ["@network-monitor/monitor@workspace:packages/monitor"],
+
+    "@network-monitor/notification": ["@network-monitor/notification@workspace:packages/notification"],
+
+    "@network-monitor/shared": ["@network-monitor/shared@workspace:packages/shared"],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 

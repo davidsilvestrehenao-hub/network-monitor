@@ -1,0 +1,438 @@
+import type {
+  IMonitorService,
+  SpeedTestConfig,
+} from "@network-monitor/shared";
+import type {
+  ITargetRepository,
+  SpeedTestResult,
+  Target,
+} from "@network-monitor/shared";
+import type { ISpeedTestRepository } from "@network-monitor/shared";
+import type { IMonitoringTargetRepository } from "@network-monitor/shared";
+import type { ISpeedTestResultRepository } from "@network-monitor/shared";
+import type { IEventBus, ILogger } from "@network-monitor/shared";
+
+export class MonitorService implements IMonitorService {
+  private activeTargets: Map<string, NodeJS.Timeout> = new Map();
+
+  constructor(
+    private targetRepository: ITargetRepository,
+    private speedTestRepository: ISpeedTestRepository,
+    private monitoringTargetRepository: IMonitoringTargetRepository,
+    private speedTestResultRepository: ISpeedTestResultRepository,
+    private eventBus: IEventBus,
+    private logger: ILogger
+  ) {
+    this.setupEventHandlers();
+  }
+
+  private setupEventHandlers(): void {
+    this.eventBus.on(
+      "TARGET_CREATE_REQUESTED",
+      this.handleTargetCreateRequested.bind(this)
+    );
+    this.eventBus.on(
+      "TARGET_UPDATE_REQUESTED",
+      this.handleTargetUpdateRequested.bind(this)
+    );
+    this.eventBus.on(
+      "TARGET_DELETE_REQUESTED",
+      this.handleTargetDeleteRequested.bind(this)
+    );
+    this.eventBus.on(
+      "MONITORING_START_REQUESTED",
+      this.handleMonitoringStartRequested.bind(this)
+    );
+    this.eventBus.on(
+      "MONITORING_STOP_REQUESTED",
+      this.handleMonitoringStopRequested.bind(this)
+    );
+    this.eventBus.on(
+      "SPEED_TEST_REQUESTED",
+      this.handleSpeedTestRequested.bind(this)
+    );
+  }
+
+  // Event handlers
+  private async handleTargetCreateRequested(data?: {
+    requestId?: string;
+    name: string;
+    address: string;
+    ownerId: string;
+  }): Promise<void> {
+    if (!data) return;
+    
+    try {
+      const target = await this.createTarget({
+        name: data.name,
+        address: data.address,
+        ownerId: data.ownerId,
+      });
+
+      // Emit success with requestId for EventRPC
+      if (data.requestId) {
+        this.eventBus.emit(`TARGET_CREATED_${data.requestId}`, target);
+      }
+      
+      // Emit general event for subscribers
+      this.eventBus.emit("TARGET_CREATED", { target });
+    } catch (error) {
+      this.logger.error("MonitorService: Failed to create target", { error, data });
+      
+      if (data.requestId) {
+        this.eventBus.emit(`TARGET_CREATE_FAILED_${data.requestId}`, {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+  }
+
+  private async handleTargetUpdateRequested(data?: {
+    requestId?: string;
+    id: string;
+    name?: string;
+    address?: string;
+  }): Promise<void> {
+    if (!data) return;
+    
+    try {
+      const { id, requestId, ...updateData } = data;
+      const target = await this.updateTarget(id, updateData);
+
+      if (requestId) {
+        this.eventBus.emit(`TARGET_UPDATED_${requestId}`, target);
+      }
+      
+      this.eventBus.emit("TARGET_UPDATED", { target });
+    } catch (error) {
+      this.logger.error("MonitorService: Failed to update target", { error, data });
+      
+      if (data.requestId) {
+        this.eventBus.emit(`TARGET_UPDATE_FAILED_${data.requestId}`, {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+  }
+
+  private async handleTargetDeleteRequested(data?: {
+    requestId?: string;
+    id: string;
+  }): Promise<void> {
+    if (!data) return;
+    
+    try {
+      await this.deleteTarget(data.id);
+
+      if (data.requestId) {
+        this.eventBus.emit(`TARGET_DELETED_${data.requestId}`, { success: true });
+      }
+      
+      this.eventBus.emit("TARGET_DELETED", { id: data.id });
+    } catch (error) {
+      this.logger.error("MonitorService: Failed to delete target", { error, data });
+      
+      if (data.requestId) {
+        this.eventBus.emit(`TARGET_DELETE_FAILED_${data.requestId}`, {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+  }
+
+  private async handleMonitoringStartRequested(data?: {
+    requestId?: string;
+    targetId: string;
+    intervalMs: number;
+  }): Promise<void> {
+    if (!data) return;
+    
+    try {
+      this.startMonitoring(data.targetId, data.intervalMs);
+
+      if (data.requestId) {
+        this.eventBus.emit(`MONITORING_STARTED_${data.requestId}`, { success: true });
+      }
+      
+      this.eventBus.emit("MONITORING_STARTED", { targetId: data.targetId });
+    } catch (error) {
+      this.logger.error("MonitorService: Failed to start monitoring", { error, data });
+      
+      if (data.requestId) {
+        this.eventBus.emit(`MONITORING_START_FAILED_${data.requestId}`, {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+  }
+
+  private async handleMonitoringStopRequested(data?: {
+    requestId?: string;
+    targetId: string;
+  }): Promise<void> {
+    if (!data) return;
+    
+    try {
+      this.stopMonitoring(data.targetId);
+
+      if (data.requestId) {
+        this.eventBus.emit(`MONITORING_STOPPED_${data.requestId}`, { success: true });
+      }
+      
+      this.eventBus.emit("MONITORING_STOPPED", { targetId: data.targetId });
+    } catch (error) {
+      this.logger.error("MonitorService: Failed to stop monitoring", { error, data });
+      
+      if (data.requestId) {
+        this.eventBus.emit(`MONITORING_STOP_FAILED_${data.requestId}`, {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+  }
+
+  private async handleSpeedTestRequested(data?: {
+    requestId?: string;
+    config: SpeedTestConfig;
+  }): Promise<void> {
+    if (!data) return;
+    
+    try {
+      const result = await this.runSpeedTest(data.config);
+
+      if (data.requestId) {
+        this.eventBus.emit(`SPEED_TEST_COMPLETED_${data.requestId}`, result);
+      }
+      
+      this.eventBus.emit("SPEED_TEST_COMPLETED", { result });
+    } catch (error) {
+      this.logger.error("MonitorService: Speed test failed", { error, data });
+      
+      if (data.requestId) {
+        this.eventBus.emit(`SPEED_TEST_FAILED_${data.requestId}`, {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+  }
+
+  // Business logic methods
+  async createTarget(data: {
+    name: string;
+    address: string;
+    ownerId: string;
+  }): Promise<Target> {
+    this.logger.info("MonitorService: Creating target", data);
+    const target = await this.targetRepository.create(data);
+    this.logger.info("MonitorService: Target created", { id: target.id });
+    return target;
+  }
+
+  async getTarget(id: string): Promise<Target | null> {
+    this.logger.debug("MonitorService: Getting target", { id });
+    return await this.targetRepository.findById(id);
+  }
+
+  async getTargets(userId: string): Promise<Target[]> {
+    this.logger.debug("MonitorService: Getting targets for user", { userId });
+    return await this.targetRepository.findByUserId(userId);
+  }
+
+  async updateTarget(
+    id: string,
+    data: { name?: string; address?: string }
+  ): Promise<Target> {
+    this.logger.info("MonitorService: Updating target", { id, data });
+    const target = await this.targetRepository.update(id, data);
+    this.logger.info("MonitorService: Target updated", { id });
+    return target;
+  }
+
+  async deleteTarget(id: string): Promise<void> {
+    this.logger.info("MonitorService: Deleting target", { id });
+    this.stopMonitoring(id);
+    await this.targetRepository.delete(id);
+    this.logger.info("MonitorService: Target deleted", { id });
+  }
+
+  async runSpeedTest(config: SpeedTestConfig): Promise<SpeedTestResult> {
+    this.logger.info("MonitorService: Running speed test", config);
+
+    const startTime = Date.now();
+
+    try {
+      const pingResult = await this.measurePing(config.target);
+      const downloadResult = await this.measureDownloadSpeed();
+
+      const result: SpeedTestResult = {
+        id: crypto.randomUUID(),
+        targetId: config.targetId,
+        ping: pingResult,
+        download: downloadResult,
+        upload: 0,
+        status: "SUCCESS",
+        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+
+      await this.speedTestResultRepository.create({
+        targetId: config.targetId,
+        ping: pingResult,
+        download: downloadResult,
+        upload: 0,
+        status: "SUCCESS",
+      });
+
+      this.logger.info("MonitorService: Speed test completed", {
+        duration: Date.now() - startTime,
+        result,
+      });
+
+      return result;
+    } catch (error) {
+      this.logger.error("MonitorService: Speed test failed", {
+        error,
+        config,
+        duration: Date.now() - startTime,
+      });
+
+      const failedResult: SpeedTestResult = {
+        id: crypto.randomUUID(),
+        targetId: config.targetId,
+        ping: null,
+        download: null,
+        upload: null,
+        status: "FAILURE",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+
+      await this.speedTestResultRepository.create({
+        targetId: config.targetId,
+        ping: null,
+        download: null,
+        upload: null,
+        status: "FAILURE",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+
+      return failedResult;
+    }
+  }
+
+  startMonitoring(targetId: string, intervalMs: number): void {
+    if (this.activeTargets.has(targetId)) {
+      this.logger.warn("MonitorService: Target already being monitored", {
+        targetId,
+      });
+      return;
+    }
+
+    this.logger.info("MonitorService: Starting monitoring", {
+      targetId,
+      intervalMs,
+    });
+
+    const interval = setInterval(async () => {
+      try {
+        const target = await this.targetRepository.findById(targetId);
+        if (!target) {
+          this.logger.error("MonitorService: Target not found", { targetId });
+          this.stopMonitoring(targetId);
+          return;
+        }
+
+        await this.runSpeedTest({
+          targetId,
+          target: target.address,
+        });
+      } catch (error) {
+        this.logger.error("MonitorService: Monitoring iteration failed", {
+          error,
+          targetId,
+        });
+      }
+    }, intervalMs);
+
+    this.activeTargets.set(targetId, interval);
+  }
+
+  stopMonitoring(targetId: string): void {
+    const interval = this.activeTargets.get(targetId);
+    if (!interval) {
+      this.logger.warn("MonitorService: Target not being monitored", {
+        targetId,
+      });
+      return;
+    }
+
+    this.logger.info("MonitorService: Stopping monitoring", { targetId });
+    clearInterval(interval);
+    this.activeTargets.delete(targetId);
+  }
+
+  getActiveTargets(): string[] {
+    return Array.from(this.activeTargets.keys());
+  }
+
+  async getTargetResults(
+    targetId: string,
+    limit?: number
+  ): Promise<SpeedTestResult[]> {
+    this.logger.debug("MonitorService: Getting target results", {
+      targetId,
+      limit,
+    });
+    return await this.speedTestResultRepository.findByTargetId(targetId, limit);
+  }
+
+  private async measurePing(target: string): Promise<number> {
+    const start = Date.now();
+    
+    try {
+      const response = await fetch(target, { method: "HEAD" });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return Date.now() - start;
+    } catch (error) {
+      this.logger.error("MonitorService: Ping failed", { error, target });
+      throw error;
+    }
+  }
+
+  private async measureDownloadSpeed(): Promise<number> {
+    const testUrl = "http://cachefly.cachefly.net/100mb.test";
+    const testSizeBytes = 100 * 1024 * 1024; // 100 MB
+
+    const start = Date.now();
+
+    try {
+      const response = await fetch(testUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const buffer = await response.arrayBuffer();
+      const sizeInBytes = buffer.byteLength;
+      const durationInSeconds = (Date.now() - start) / 1000;
+
+      const speedMbps = (sizeInBytes * 8) / durationInSeconds / 1_000_000;
+
+      this.logger.debug("MonitorService: Download speed measured", {
+        sizeInBytes,
+        durationInSeconds,
+        speedMbps,
+      });
+
+      return speedMbps;
+    } catch (error) {
+      this.logger.error("MonitorService: Download speed test failed", {
+        error,
+        testUrl,
+      });
+      throw error;
+    }
+  }
+}
