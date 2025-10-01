@@ -1,6 +1,6 @@
-import type { INotificationService } from "../interfaces/INotificationService";
-import type { ILogger } from "../interfaces/ILogger";
-import type { IEventBus } from "../interfaces/IEventBus";
+import type { INotificationService } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type {
   MockNotification as MockNotificationType,
   MockPushSubscription,
@@ -10,11 +10,11 @@ import type {
 import type {
   Notification,
   CreateNotificationData,
-} from "../interfaces/INotificationRepository";
+} from "@network-monitor/shared";
 import type {
   PushSubscription,
   CreatePushSubscriptionData,
-} from "../interfaces/IPushSubscriptionRepository";
+} from "@network-monitor/shared";
 
 export class MockNotification implements INotificationService {
   private subscriptions: Map<string, MockPushSubscription> = new Map();

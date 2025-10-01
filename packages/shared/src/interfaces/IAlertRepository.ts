@@ -1,31 +1,9 @@
-import type { AlertRule } from "./ITargetRepository";
+// Import from canonical sources to avoid duplication
+import type { AlertRule, CreateAlertRuleData, UpdateAlertRuleData } from "./IAlertRuleRepository";
+import type { IncidentEvent } from "./IIncidentEventRepository";
 
-export interface CreateAlertRuleData {
-  name: string;
-  metric: "ping" | "download";
-  condition: "GREATER_THAN" | "LESS_THAN";
-  threshold: number;
-  enabled?: boolean;
-  targetId: string;
-}
-
-export interface UpdateAlertRuleData {
-  name?: string;
-  metric?: "ping" | "download";
-  condition?: "GREATER_THAN" | "LESS_THAN";
-  threshold?: number;
-  enabled?: boolean;
-}
-
-export interface IncidentEvent {
-  id: number;
-  timestamp: Date;
-  type: "OUTAGE" | "ALERT";
-  description: string;
-  resolved: boolean;
-  targetId: string;
-  ruleId?: number;
-}
+// Re-export for convenience
+export type { AlertRule, CreateAlertRuleData, UpdateAlertRuleData, IncidentEvent };
 
 export interface CreateIncidentData {
   type: "OUTAGE" | "ALERT";

@@ -3,8 +3,8 @@ import type {
   PushSubscription,
   CreatePushSubscriptionData,
   UpdatePushSubscriptionData,
-} from "../interfaces/IPushSubscriptionRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockPushSubscriptionRepository
   implements IPushSubscriptionRepository

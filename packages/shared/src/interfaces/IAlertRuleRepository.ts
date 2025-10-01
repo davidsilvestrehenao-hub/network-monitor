@@ -52,14 +52,5 @@ export interface IAlertRuleRepository {
   toggleEnabled(id: number, enabled: boolean): Promise<AlertRule>;
 }
 
-// Forward declaration to avoid circular imports
-export interface IncidentEvent {
-  id: number;
-  timestamp: Date;
-  type: "OUTAGE" | "ALERT";
-  description: string;
-  resolved: boolean;
-  targetId: string;
-  ruleId?: number;
-  triggeredByRule: AlertRule | null;
-}
+// Import IncidentEvent from canonical source to avoid duplication
+import type { IncidentEvent } from "./IIncidentEventRepository";

@@ -1,5 +1,5 @@
-import type { IDatabaseService } from "../interfaces/IDatabaseService";
-import type { ILogger } from "../interfaces/ILogger";
+import type { IDatabaseService } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 import type { MockPrismaClient } from "~/lib/types/mock-types";
 import type { PrismaClient } from "@prisma/client";
 

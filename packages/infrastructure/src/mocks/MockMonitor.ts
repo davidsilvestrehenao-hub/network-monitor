@@ -1,15 +1,15 @@
-import type { IMonitorService } from "../interfaces/IMonitorService";
-import type { ILogger } from "../interfaces/ILogger";
-import type { IEventBus } from "../interfaces/IEventBus";
-import type { ITargetRepository } from "../interfaces/ITargetRepository";
-import type { ISpeedTestRepository } from "../interfaces/ISpeedTestRepository";
+import type { IMonitorService } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
+import type { ITargetRepository } from "@network-monitor/shared";
+import type { ISpeedTestRepository } from "@network-monitor/shared";
 import type {
   Target,
   CreateTargetData,
   UpdateTargetData,
   SpeedTestResult,
-} from "../interfaces/ITargetRepository";
-import type { SpeedTestConfig } from "../interfaces/IMonitorService";
+} from "@network-monitor/shared";
+import type { SpeedTestConfig } from "@network-monitor/shared";
 
 export class MockMonitor implements IMonitorService {
   private activeTargets: Set<string> = new Set();

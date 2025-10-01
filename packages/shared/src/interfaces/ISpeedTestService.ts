@@ -1,8 +1,8 @@
 import type { SpeedTestResult } from "./ITargetRepository";
+import type { SpeedTestConfig } from "./IMonitorService";
 
-export interface SpeedTestConfig {
-  targetId?: string;
-  timeout?: number;
+// Comprehensive config extends the basic SpeedTestConfig
+export interface ComprehensiveSpeedTestConfig extends SpeedTestConfig {
   testPing?: boolean;
   testDownload?: boolean;
   testUpload?: boolean;

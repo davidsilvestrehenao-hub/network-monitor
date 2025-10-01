@@ -3,8 +3,8 @@ import type {
   MonitoringTarget,
   CreateMonitoringTargetData,
   UpdateMonitoringTargetData,
-} from "../interfaces/IMonitoringTargetRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockMonitoringTargetRepository
   implements IMonitoringTargetRepository

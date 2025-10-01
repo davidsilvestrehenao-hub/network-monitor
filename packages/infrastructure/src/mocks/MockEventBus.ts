@@ -1,4 +1,4 @@
-import type { IEventBus } from "../interfaces/IEventBus";
+import type { IEventBus } from "@network-monitor/shared";
 
 type EventHandler = (data?: unknown) => void;
 

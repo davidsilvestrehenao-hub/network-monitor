@@ -3,8 +3,8 @@ import type {
   User,
   CreateUserData,
   UpdateUserData,
-} from "../interfaces/IUserRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockUserRepository implements IUserRepository {
   private users: User[] = [];

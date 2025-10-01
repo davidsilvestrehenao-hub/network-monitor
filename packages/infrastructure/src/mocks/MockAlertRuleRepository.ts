@@ -4,8 +4,8 @@ import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
   AlertRuleQuery,
-} from "../interfaces/IAlertRuleRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockAlertRuleRepository implements IAlertRuleRepository {
   private rules: AlertRule[] = [];

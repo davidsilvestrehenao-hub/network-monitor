@@ -4,8 +4,8 @@ import type {
   CreateNotificationData,
   UpdateNotificationData,
   NotificationQuery,
-} from "../interfaces/INotificationRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockNotificationRepository implements INotificationRepository {
   private notifications: Notification[] = [];

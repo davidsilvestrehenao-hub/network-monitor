@@ -1,5 +1,9 @@
-// Import SpeedTestResult from its canonical source
+// Import from canonical sources to avoid duplication
 import type { SpeedTestResult } from './ISpeedTestResultRepository';
+import type { AlertRule } from './IAlertRuleRepository';
+
+// Re-export for convenience
+export type { SpeedTestResult, AlertRule };
 
 // Domain types
 export interface Target {
@@ -20,20 +24,6 @@ export interface CreateTargetData {
 export interface UpdateTargetData {
   name?: string;
   address?: string;
-}
-
-// SpeedTestResult is defined in ISpeedTestResultRepository.ts
-// Import it from there to avoid duplication
-export type { SpeedTestResult } from './ISpeedTestResultRepository';
-
-export interface AlertRule {
-  id: number;
-  name: string;
-  metric: "ping" | "download";
-  condition: "GREATER_THAN" | "LESS_THAN";
-  threshold: number;
-  enabled: boolean;
-  targetId: string;
 }
 
 export interface ITargetRepository {

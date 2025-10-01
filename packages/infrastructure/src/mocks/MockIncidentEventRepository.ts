@@ -4,8 +4,8 @@ import type {
   CreateIncidentEventData,
   UpdateIncidentEventData,
   IncidentEventQuery,
-} from "../interfaces/IIncidentEventRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockIncidentEventRepository implements IIncidentEventRepository {
   private events: IncidentEvent[] = [];

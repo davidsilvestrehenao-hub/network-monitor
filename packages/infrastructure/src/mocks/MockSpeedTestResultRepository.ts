@@ -3,8 +3,8 @@ import type {
   SpeedTestResult,
   CreateSpeedTestResultData,
   SpeedTestResultQuery,
-} from "../interfaces/ISpeedTestResultRepository";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockSpeedTestResultRepository
   implements ISpeedTestResultRepository

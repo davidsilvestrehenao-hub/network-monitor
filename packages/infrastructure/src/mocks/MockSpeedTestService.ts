@@ -4,12 +4,12 @@ import type {
   PingResult,
   SpeedResult,
   ComprehensiveSpeedTestResult,
-} from "../interfaces/ISpeedTestService";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 import type {
   ISpeedTestConfigService,
   SpeedTestUrl,
-} from "../interfaces/ISpeedTestConfig";
+} from "@network-monitor/shared";
 
 export class MockSpeedTestService implements ISpeedTestService {
   private monitoringTargets: Set<string> = new Set();
@@ -139,7 +139,7 @@ export class MockSpeedTestService implements ISpeedTestService {
 
     // Create comprehensive result
     const result: ComprehensiveSpeedTestResult = {
-      id: Math.floor(Math.random() * 10000),
+      id: crypto.randomUUID(),
       targetId: config.targetId,
       ping: pingResult.ping,
       download: speedResult.download,
@@ -148,8 +148,9 @@ export class MockSpeedTestService implements ISpeedTestService {
         pingResult.status === "SUCCESS" && speedResult.status === "SUCCESS"
           ? "SUCCESS"
           : "FAILURE",
-      error: pingResult.error || speedResult.error || null,
-      createdAt: new Date(),
+      error: pingResult.error || speedResult.error || undefined,
+      createdAt: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
       jitter: pingResult.jitter ?? undefined,
       testDuration,
       serverInfo: {
@@ -242,7 +243,7 @@ export class MockSpeedTestService implements ISpeedTestService {
 
   async runBatchTests(
     targetIds: string[],
-    config: SpeedTestConfig = {}
+    config?: Partial<SpeedTestConfig>
   ): Promise<ComprehensiveSpeedTestResult[]> {
     this.logger?.debug("MockSpeedTestService: Running mock batch tests", {
       targetIds,
@@ -264,14 +265,15 @@ export class MockSpeedTestService implements ISpeedTestService {
 
         // Add error result
         results.push({
-          id: Math.floor(Math.random() * 10000),
+          id: crypto.randomUUID(),
           targetId,
           ping: null,
           download: null,
-          upload: undefined,
+          upload: null,
           status: "FAILURE",
           error: error instanceof Error ? error.message : "Unknown error",
-          createdAt: new Date(),
+          createdAt: new Date().toISOString(),
+          timestamp: new Date().toISOString(),
         });
       }
     }
@@ -317,10 +319,9 @@ export class MockSpeedTestService implements ISpeedTestService {
 
   getDefaultConfig(): SpeedTestConfig {
     return {
+      targetId: "",
+      target: "",
       timeout: this.defaultTimeout,
-      testPing: true,
-      testDownload: true,
-      testUpload: false,
     };
   }
 

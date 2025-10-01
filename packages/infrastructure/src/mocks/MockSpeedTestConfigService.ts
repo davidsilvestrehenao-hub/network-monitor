@@ -3,8 +3,8 @@ import type {
   SpeedTestUrl,
   SpeedTestUrlConfig,
   SpeedTestUrlSelection,
-} from "../interfaces/ISpeedTestConfig";
-import type { ILogger } from "../interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 
 export class MockSpeedTestConfigService implements ISpeedTestConfigService {
   private config: SpeedTestUrlConfig;

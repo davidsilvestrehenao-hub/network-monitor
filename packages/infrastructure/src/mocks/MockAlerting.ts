@@ -1,6 +1,6 @@
-import type { IAlertingService } from "../interfaces/IAlertingService";
-import type { ILogger } from "../interfaces/ILogger";
-import type { IEventBus } from "../interfaces/IEventBus";
+import type { IAlertingService } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type {
   MockAlertRule,
   MockTriggeredAlert,
@@ -10,11 +10,11 @@ import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
   IncidentEvent,
-} from "../interfaces/IAlertRepository";
+} from "@network-monitor/shared";
 import type {
   AlertRule,
   SpeedTestResult,
-} from "../interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 export class MockAlerting implements IAlertingService {
   private alertRules: Map<string, MockAlertRule[]> = new Map();

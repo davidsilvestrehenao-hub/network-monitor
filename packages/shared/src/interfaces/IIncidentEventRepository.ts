@@ -53,14 +53,5 @@ export interface IIncidentEventRepository {
   resolveByTargetId(targetId: string): Promise<number>;
 }
 
-// Forward declaration to avoid circular imports
-export interface AlertRule {
-  id: number;
-  name: string;
-  metric: "ping" | "download";
-  condition: "GREATER_THAN" | "LESS_THAN";
-  threshold: number;
-  enabled: boolean;
-  targetId: string;
-  triggeredEvents: IncidentEvent[];
-}
+// Import AlertRule from canonical source to avoid duplication
+import type { AlertRule } from "./IAlertRuleRepository";
