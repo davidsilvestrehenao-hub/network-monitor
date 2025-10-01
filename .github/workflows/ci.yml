@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Generate Prisma Client
+        run: cd packages/database && bunx prisma generate --schema=./prisma/schema.prisma
+
       - name: Check formatting (Prettier)
         run: bun run format:check
         
@@ -69,6 +72,9 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd packages/database && bunx prisma generate --schema=./prisma/schema.prisma
 
       - name: Build all packages
         run: bun run build
