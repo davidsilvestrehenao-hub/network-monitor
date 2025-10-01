@@ -592,7 +592,7 @@ const defuFn = createDefu((object, key, currentValue) => {
   }
 });
 
-function o(n){throw new Error(`${n} is not implemented yet!`)}let i$1 = class i extends EventEmitter{__unenv__={};readableEncoding=null;readableEnded=true;readableFlowing=false;readableHighWaterMark=0;readableLength=0;readableObjectMode=false;readableAborted=false;readableDidRead=false;closed=false;errored=null;readable=false;destroyed=false;static from(e,t){return new i(t)}constructor(e){super();}_read(e){}read(e){}setEncoding(e){return this}pause(){return this}resume(){return this}isPaused(){return  true}unpipe(e){return this}unshift(e,t){}wrap(e){return this}push(e,t){return  false}_destroy(e,t){this.removeAllListeners();}destroy(e){return this.destroyed=true,this._destroy(e),this}pipe(e,t){return {}}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return this.destroy(),Promise.resolve()}async*[Symbol.asyncIterator](){throw o("Readable.asyncIterator")}iterator(e){throw o("Readable.iterator")}map(e,t){throw o("Readable.map")}filter(e,t){throw o("Readable.filter")}forEach(e,t){throw o("Readable.forEach")}reduce(e,t,r){throw o("Readable.reduce")}find(e,t){throw o("Readable.find")}findIndex(e,t){throw o("Readable.findIndex")}some(e,t){throw o("Readable.some")}toArray(e){throw o("Readable.toArray")}every(e,t){throw o("Readable.every")}flatMap(e,t){throw o("Readable.flatMap")}drop(e,t){throw o("Readable.drop")}take(e,t){throw o("Readable.take")}asIndexedPairs(e){throw o("Readable.asIndexedPairs")}};let l$1 = class l extends EventEmitter{__unenv__={};writable=true;writableEnded=false;writableFinished=false;writableHighWaterMark=0;writableLength=0;writableObjectMode=false;writableCorked=0;closed=false;errored=null;writableNeedDrain=false;writableAborted=false;destroyed=false;_data;_encoding="utf8";constructor(e){super();}pipe(e,t){return {}}_write(e,t,r){if(this.writableEnded){r&&r();return}if(this._data===void 0)this._data=e;else {const s=typeof this._data=="string"?Buffer$1.from(this._data,this._encoding||t||"utf8"):this._data,a=typeof e=="string"?Buffer$1.from(e,t||this._encoding||"utf8"):e;this._data=Buffer$1.concat([s,a]);}this._encoding=t,r&&r();}_writev(e,t){}_destroy(e,t){}_final(e){}write(e,t,r){const s=typeof t=="string"?this._encoding:"utf8",a=typeof t=="function"?t:typeof r=="function"?r:void 0;return this._write(e,s,a),true}setDefaultEncoding(e){return this}end(e,t,r){const s=typeof e=="function"?e:typeof t=="function"?t:typeof r=="function"?r:void 0;if(this.writableEnded)return s&&s(),this;const a=e===s?void 0:e;if(a){const u=t===s?void 0:t;this.write(a,u,s);}return this.writableEnded=true,this.writableFinished=true,this.emit("close"),this.emit("finish"),this}cork(){}uncork(){}destroy(e){return this.destroyed=true,delete this._data,this.removeAllListeners(),this}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return Promise.resolve()}};const c$1=class c{allowHalfOpen=true;_destroy;constructor(e=new i$1,t=new l$1){Object.assign(this,e),Object.assign(this,t),this._destroy=m$1(e._destroy,t._destroy);}};function _$2(){return Object.assign(c$1.prototype,i$1.prototype),Object.assign(c$1.prototype,l$1.prototype),c$1}function m$1(...n){return function(...e){for(const t of n)t(...e);}}const g$1=_$2();class A extends g$1{__unenv__={};bufferSize=0;bytesRead=0;bytesWritten=0;connecting=false;destroyed=false;pending=false;localAddress="";localPort=0;remoteAddress="";remoteFamily="";remotePort=0;autoSelectFamilyAttemptedAddresses=[];readyState="readOnly";constructor(e){super();}write(e,t,r){return  false}connect(e,t,r){return this}end(e,t,r){return this}setEncoding(e){return this}pause(){return this}resume(){return this}setTimeout(e,t){return this}setNoDelay(e){return this}setKeepAlive(e,t){return this}address(){return {}}unref(){return this}ref(){return this}destroySoon(){this.destroy();}resetAndDestroy(){const e=new Error("ERR_SOCKET_CLOSED");return e.code="ERR_SOCKET_CLOSED",this.destroy(e),this}}let y$2 = class y extends i$1{aborted=false;httpVersion="1.1";httpVersionMajor=1;httpVersionMinor=1;complete=true;connection;socket;headers={};trailers={};method="GET";url="/";statusCode=200;statusMessage="";closed=false;errored=null;readable=false;constructor(e){super(),this.socket=this.connection=e||new A;}get rawHeaders(){const e=this.headers,t=[];for(const r in e)if(Array.isArray(e[r]))for(const s of e[r])t.push(r,s);else t.push(r,e[r]);return t}get rawTrailers(){return []}setTimeout(e,t){return this}get headersDistinct(){return p(this.headers)}get trailersDistinct(){return p(this.trailers)}};function p(n){const e={};for(const[t,r]of Object.entries(n))t&&(e[t]=(Array.isArray(r)?r:[r]).filter(Boolean));return e}let w$2 = class w extends l$1{statusCode=200;statusMessage="";upgrading=false;chunkedEncoding=false;shouldKeepAlive=false;useChunkedEncodingByDefault=false;sendDate=false;finished=false;headersSent=false;strictContentLength=false;connection=null;socket=null;req;_headers={};constructor(e){super(),this.req=e;}assignSocket(e){e._httpMessage=this,this.socket=e,this.connection=e,this.emit("socket",e),this._flush();}_flush(){this.flushHeaders();}detachSocket(e){}writeContinue(e){}writeHead(e,t,r){e&&(this.statusCode=e),typeof t=="string"&&(this.statusMessage=t,t=void 0);const s=r||t;if(s&&!Array.isArray(s))for(const a in s)this.setHeader(a,s[a]);return this.headersSent=true,this}writeProcessing(){}setTimeout(e,t){return this}appendHeader(e,t){e=e.toLowerCase();const r=this._headers[e],s=[...Array.isArray(r)?r:[r],...Array.isArray(t)?t:[t]].filter(Boolean);return this._headers[e]=s.length>1?s:s[0],this}setHeader(e,t){return this._headers[e.toLowerCase()]=t,this}setHeaders(e){for(const[t,r]of Object.entries(e))this.setHeader(t,r);return this}getHeader(e){return this._headers[e.toLowerCase()]}getHeaders(){return this._headers}getHeaderNames(){return Object.keys(this._headers)}hasHeader(e){return e.toLowerCase()in this._headers}removeHeader(e){delete this._headers[e.toLowerCase()];}addTrailers(e){}flushHeaders(){}writeEarlyHints(e,t){typeof t=="function"&&t();}};const E$1=(()=>{const n=function(){};return n.prototype=Object.create(null),n})();function R$2(n={}){const e=new E$1,t=Array.isArray(n)||H$1(n)?n:Object.entries(n);for(const[r,s]of t)if(s){if(e[r]===void 0){e[r]=s;continue}e[r]=[...Array.isArray(e[r])?e[r]:[e[r]],...Array.isArray(s)?s:[s]];}return e}function H$1(n){return typeof n?.entries=="function"}function v$1(n={}){if(n instanceof Headers)return n;const e=new Headers;for(const[t,r]of Object.entries(n))if(r!==void 0){if(Array.isArray(r)){for(const s of r)e.append(t,String(s));continue}e.set(t,String(r));}return e}const S$2=new Set([101,204,205,304]);async function b$2(n,e){const t=new y$2,r=new w$2(t);t.url=e.url?.toString()||"/";let s;if(!t.url.startsWith("/")){const d=new URL(t.url);s=d.host,t.url=d.pathname+d.search+d.hash;}t.method=e.method||"GET",t.headers=R$2(e.headers||{}),t.headers.host||(t.headers.host=e.host||s||"localhost"),t.connection.encrypted=t.connection.encrypted||e.protocol==="https",t.body=e.body||null,t.__unenv__=e.context,await n(t,r);let a=r._data;(S$2.has(r.statusCode)||t.method.toUpperCase()==="HEAD")&&(a=null,delete r._headers["content-length"]);const u={status:r.statusCode,statusText:r.statusMessage,headers:r._headers,body:a};return t.destroy(),r.destroy(),u}async function C$2(n,e,t={}){try{const r=await b$2(n,{url:e,...t});return new Response(r.body,{status:r.status,statusText:r.statusText,headers:v$1(r.headers)})}catch(r){return new Response(r.toString(),{status:Number.parseInt(r.statusCode||r.code)||500,statusText:r.statusText})}}
+function o(n){throw new Error(`${n} is not implemented yet!`)}let i$2 = class i extends EventEmitter{__unenv__={};readableEncoding=null;readableEnded=true;readableFlowing=false;readableHighWaterMark=0;readableLength=0;readableObjectMode=false;readableAborted=false;readableDidRead=false;closed=false;errored=null;readable=false;destroyed=false;static from(e,t){return new i(t)}constructor(e){super();}_read(e){}read(e){}setEncoding(e){return this}pause(){return this}resume(){return this}isPaused(){return  true}unpipe(e){return this}unshift(e,t){}wrap(e){return this}push(e,t){return  false}_destroy(e,t){this.removeAllListeners();}destroy(e){return this.destroyed=true,this._destroy(e),this}pipe(e,t){return {}}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return this.destroy(),Promise.resolve()}async*[Symbol.asyncIterator](){throw o("Readable.asyncIterator")}iterator(e){throw o("Readable.iterator")}map(e,t){throw o("Readable.map")}filter(e,t){throw o("Readable.filter")}forEach(e,t){throw o("Readable.forEach")}reduce(e,t,r){throw o("Readable.reduce")}find(e,t){throw o("Readable.find")}findIndex(e,t){throw o("Readable.findIndex")}some(e,t){throw o("Readable.some")}toArray(e){throw o("Readable.toArray")}every(e,t){throw o("Readable.every")}flatMap(e,t){throw o("Readable.flatMap")}drop(e,t){throw o("Readable.drop")}take(e,t){throw o("Readable.take")}asIndexedPairs(e){throw o("Readable.asIndexedPairs")}};let l$1 = class l extends EventEmitter{__unenv__={};writable=true;writableEnded=false;writableFinished=false;writableHighWaterMark=0;writableLength=0;writableObjectMode=false;writableCorked=0;closed=false;errored=null;writableNeedDrain=false;writableAborted=false;destroyed=false;_data;_encoding="utf8";constructor(e){super();}pipe(e,t){return {}}_write(e,t,r){if(this.writableEnded){r&&r();return}if(this._data===void 0)this._data=e;else {const s=typeof this._data=="string"?Buffer$1.from(this._data,this._encoding||t||"utf8"):this._data,a=typeof e=="string"?Buffer$1.from(e,t||this._encoding||"utf8"):e;this._data=Buffer$1.concat([s,a]);}this._encoding=t,r&&r();}_writev(e,t){}_destroy(e,t){}_final(e){}write(e,t,r){const s=typeof t=="string"?this._encoding:"utf8",a=typeof t=="function"?t:typeof r=="function"?r:void 0;return this._write(e,s,a),true}setDefaultEncoding(e){return this}end(e,t,r){const s=typeof e=="function"?e:typeof t=="function"?t:typeof r=="function"?r:void 0;if(this.writableEnded)return s&&s(),this;const a=e===s?void 0:e;if(a){const u=t===s?void 0:t;this.write(a,u,s);}return this.writableEnded=true,this.writableFinished=true,this.emit("close"),this.emit("finish"),this}cork(){}uncork(){}destroy(e){return this.destroyed=true,delete this._data,this.removeAllListeners(),this}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return Promise.resolve()}};const c=class{allowHalfOpen=true;_destroy;constructor(e=new i$2,t=new l$1){Object.assign(this,e),Object.assign(this,t),this._destroy=m$1(e._destroy,t._destroy);}};function _$1(){return Object.assign(c.prototype,i$2.prototype),Object.assign(c.prototype,l$1.prototype),c}function m$1(...n){return function(...e){for(const t of n)t(...e);}}const g$2=_$1();class A extends g$2{__unenv__={};bufferSize=0;bytesRead=0;bytesWritten=0;connecting=false;destroyed=false;pending=false;localAddress="";localPort=0;remoteAddress="";remoteFamily="";remotePort=0;autoSelectFamilyAttemptedAddresses=[];readyState="readOnly";constructor(e){super();}write(e,t,r){return  false}connect(e,t,r){return this}end(e,t,r){return this}setEncoding(e){return this}pause(){return this}resume(){return this}setTimeout(e,t){return this}setNoDelay(e){return this}setKeepAlive(e,t){return this}address(){return {}}unref(){return this}ref(){return this}destroySoon(){this.destroy();}resetAndDestroy(){const e=new Error("ERR_SOCKET_CLOSED");return e.code="ERR_SOCKET_CLOSED",this.destroy(e),this}}let y$2 = class y extends i$2{aborted=false;httpVersion="1.1";httpVersionMajor=1;httpVersionMinor=1;complete=true;connection;socket;headers={};trailers={};method="GET";url="/";statusCode=200;statusMessage="";closed=false;errored=null;readable=false;constructor(e){super(),this.socket=this.connection=e||new A;}get rawHeaders(){const e=this.headers,t=[];for(const r in e)if(Array.isArray(e[r]))for(const s of e[r])t.push(r,s);else t.push(r,e[r]);return t}get rawTrailers(){return []}setTimeout(e,t){return this}get headersDistinct(){return p(this.headers)}get trailersDistinct(){return p(this.trailers)}};function p(n){const e={};for(const[t,r]of Object.entries(n))t&&(e[t]=(Array.isArray(r)?r:[r]).filter(Boolean));return e}let w$2 = class w extends l$1{statusCode=200;statusMessage="";upgrading=false;chunkedEncoding=false;shouldKeepAlive=false;useChunkedEncodingByDefault=false;sendDate=false;finished=false;headersSent=false;strictContentLength=false;connection=null;socket=null;req;_headers={};constructor(e){super(),this.req=e;}assignSocket(e){e._httpMessage=this,this.socket=e,this.connection=e,this.emit("socket",e),this._flush();}_flush(){this.flushHeaders();}detachSocket(e){}writeContinue(e){}writeHead(e,t,r){e&&(this.statusCode=e),typeof t=="string"&&(this.statusMessage=t,t=void 0);const s=r||t;if(s&&!Array.isArray(s))for(const a in s)this.setHeader(a,s[a]);return this.headersSent=true,this}writeProcessing(){}setTimeout(e,t){return this}appendHeader(e,t){e=e.toLowerCase();const r=this._headers[e],s=[...Array.isArray(r)?r:[r],...Array.isArray(t)?t:[t]].filter(Boolean);return this._headers[e]=s.length>1?s:s[0],this}setHeader(e,t){return this._headers[e.toLowerCase()]=t,this}setHeaders(e){for(const[t,r]of Object.entries(e))this.setHeader(t,r);return this}getHeader(e){return this._headers[e.toLowerCase()]}getHeaders(){return this._headers}getHeaderNames(){return Object.keys(this._headers)}hasHeader(e){return e.toLowerCase()in this._headers}removeHeader(e){delete this._headers[e.toLowerCase()];}addTrailers(e){}flushHeaders(){}writeEarlyHints(e,t){typeof t=="function"&&t();}};const E$1=(()=>{const n=function(){};return n.prototype=Object.create(null),n})();function R$2(n={}){const e=new E$1,t=Array.isArray(n)||H$1(n)?n:Object.entries(n);for(const[r,s]of t)if(s){if(e[r]===void 0){e[r]=s;continue}e[r]=[...Array.isArray(e[r])?e[r]:[e[r]],...Array.isArray(s)?s:[s]];}return e}function H$1(n){return typeof n?.entries=="function"}function v(n={}){if(n instanceof Headers)return n;const e=new Headers;for(const[t,r]of Object.entries(n))if(r!==void 0){if(Array.isArray(r)){for(const s of r)e.append(t,String(s));continue}e.set(t,String(r));}return e}const S$2=new Set([101,204,205,304]);async function b$3(n,e){const t=new y$2,r=new w$2(t);t.url=e.url?.toString()||"/";let s;if(!t.url.startsWith("/")){const d=new URL(t.url);s=d.host,t.url=d.pathname+d.search+d.hash;}t.method=e.method||"GET",t.headers=R$2(e.headers||{}),t.headers.host||(t.headers.host=e.host||s||"localhost"),t.connection.encrypted=t.connection.encrypted||e.protocol==="https",t.body=e.body||null,t.__unenv__=e.context,await n(t,r);let a=r._data;(S$2.has(r.statusCode)||t.method.toUpperCase()==="HEAD")&&(a=null,delete r._headers["content-length"]);const u={status:r.statusCode,statusText:r.statusMessage,headers:r._headers,body:a};return t.destroy(),r.destroy(),u}async function C$2(n,e,t={}){try{const r=await b$3(n,{url:e,...t});return new Response(r.body,{status:r.status,statusText:r.statusText,headers:v(r.headers)})}catch(r){return new Response(r.toString(),{status:Number.parseInt(r.statusCode||r.code)||500,statusText:r.statusText})}}
 
 function hasProp$1(obj, prop) {
   try {
@@ -2069,7 +2069,7 @@ function createHooks() {
   return new Hookable();
 }
 
-const s$1=globalThis.Headers,i=globalThis.AbortController,l=globalThis.fetch||(()=>{throw new Error("[node-fetch-native] Failed to fetch: `globalThis.fetch` is not available!")});
+const s$1=globalThis.Headers,i$1=globalThis.AbortController,l=globalThis.fetch||(()=>{throw new Error("[node-fetch-native] Failed to fetch: `globalThis.fetch` is not available!")});
 
 class FetchError extends Error {
   constructor(message, opts) {
@@ -2419,7 +2419,7 @@ function createNodeFetch() {
 }
 const fetch = globalThis.fetch ? (...args) => globalThis.fetch(...args) : createNodeFetch();
 const Headers$1 = globalThis.Headers || s$1;
-const AbortController = globalThis.AbortController || i;
+const AbortController = globalThis.AbortController || i$1;
 createFetch({ fetch, Headers: Headers$1, AbortController });
 
 function wrapToPromise(value) {
@@ -4244,7 +4244,7 @@ async function errorHandler(error, event) {
 }
 
 const appConfig = {"name":"vinxi","routers":[{"name":"public","type":"static","base":"/","dir":"./public","root":"/Users/david/Documents/Projects/network-monitor/apps/web","order":0,"outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/public"},{"name":"ssr","type":"http","link":{"client":"client"},"handler":"src/entry-server.tsx","extensions":["js","jsx","ts","tsx"],"target":"server","root":"/Users/david/Documents/Projects/network-monitor/apps/web","base":"/","outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/ssr","order":1},{"name":"client","type":"client","base":"/_build","handler":"src/entry-client.tsx","extensions":["js","jsx","ts","tsx"],"target":"browser","root":"/Users/david/Documents/Projects/network-monitor/apps/web","outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/client","order":2},{"name":"server-fns","type":"http","base":"/_server","handler":"../../node_modules/@solidjs/start/dist/runtime/server-handler.js","target":"server","root":"/Users/david/Documents/Projects/network-monitor/apps/web","outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/server-fns","order":3}],"server":{"compressPublicAssets":{"brotli":true},"routeRules":{"/_build/assets/**":{"headers":{"cache-control":"public, immutable, max-age=31536000"}}},"experimental":{"asyncContext":true},"preset":"node-server"},"root":"/Users/david/Documents/Projects/network-monitor/apps/web"};
-				const buildManifest = {"ssr":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-DgPx_trM.js":{"file":"assets/UptimeChart-DgPx_trM.js","name":"UptimeChart","imports":["_container-a_eHAKW0.js"]},"_container-BxI3aDH-.js":{"file":"assets/container-BxI3aDH-.js","name":"container"},"_container-a_eHAKW0.js":{"file":"assets/container-a_eHAKW0.js","name":"container","imports":["_container-BxI3aDH-.js"]},"_router-DwlLWxXi.js":{"file":"assets/router-DwlLWxXi.js","name":"router","imports":["_container-BxI3aDH-.js"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-DwlLWxXi.js","_container-BxI3aDH-.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-DwlLWxXi.js","_container-BxI3aDH-.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-DgPx_trM.js","_container-a_eHAKW0.js","_TargetCard-Bjgo4gzU.js","_container-BxI3aDH-.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_TargetCard-Bjgo4gzU.js","_container-BxI3aDH-.js"]},"virtual:$vinxi/handler/ssr":{"file":"ssr.js","name":"ssr","src":"virtual:$vinxi/handler/ssr","isEntry":true,"imports":["_container-a_eHAKW0.js","_container-BxI3aDH-.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST"],"css":["assets/ssr-BjoaO50o.css"]}},"client":{"_TestNotificationModal-CGJzdTkf.js":{"file":"assets/TestNotificationModal-CGJzdTkf.js","name":"TestNotificationModal","imports":["___vite-browser-external-Cf35KMhY.js"]},"___vite-browser-external-Cf35KMhY.js":{"file":"assets/__vite-browser-external-Cf35KMhY.js","name":"__vite-browser-external"},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"assets/alerts-s4GfSo1M.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"assets/charts-DVIISjrs.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"assets/index-BeVyEAAP.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_TestNotificationModal-CGJzdTkf.js","___vite-browser-external-Cf35KMhY.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"assets/notifications-BK_Ctv6W.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"assets/settings-CzNzunqA.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"assets/targets-Dbyf3FNl.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"virtual:$vinxi/handler/client":{"file":"assets/client-BTe1mcpT.js","name":"client","src":"virtual:$vinxi/handler/client","isEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css"],"css":["assets/client-BjoaO50o.css"]}},"server-fns":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-DpIqj3wE.js":{"file":"assets/UptimeChart-DpIqj3wE.js","name":"UptimeChart","imports":["_routing-BtkaN0N8.js"]},"_container-Dn6QYIGz.js":{"file":"assets/container-Dn6QYIGz.js","name":"container"},"_router-SOUM5df7.js":{"file":"assets/router-SOUM5df7.js","name":"router","imports":["_container-Dn6QYIGz.js"]},"_routing-BtkaN0N8.js":{"file":"assets/routing-BtkaN0N8.js","name":"routing","imports":["_container-Dn6QYIGz.js"]},"_server-fns-9jI2eI5S.js":{"file":"assets/server-fns-9jI2eI5S.js","name":"server-fns","dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST","src/app.tsx"]},"src/app.tsx":{"file":"assets/app-CZI4m8QT.js","name":"app","src":"src/app.tsx","isDynamicEntry":true,"imports":["_server-fns-9jI2eI5S.js","_routing-BtkaN0N8.js","_container-Dn6QYIGz.js"],"css":["assets/app-BjoaO50o.css"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-SOUM5df7.js","_container-Dn6QYIGz.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-SOUM5df7.js","_container-Dn6QYIGz.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-DpIqj3wE.js","_routing-BtkaN0N8.js","_TargetCard-Bjgo4gzU.js","_container-Dn6QYIGz.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_TargetCard-Bjgo4gzU.js","_container-Dn6QYIGz.js"]},"virtual:$vinxi/handler/server-fns":{"file":"server-fns.js","name":"server-fns","src":"virtual:$vinxi/handler/server-fns","isEntry":true,"imports":["_server-fns-9jI2eI5S.js"]}}};
+				const buildManifest = {"ssr":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-CD6k3qf2.js":{"file":"assets/UptimeChart-CD6k3qf2.js","name":"UptimeChart","imports":["_container-_QQ7PYOU.js"]},"_container-BdTWeqLX.js":{"file":"assets/container-BdTWeqLX.js","name":"container"},"_container-_QQ7PYOU.js":{"file":"assets/container-_QQ7PYOU.js","name":"container","imports":["_container-BdTWeqLX.js"]},"_router-BHr2mKJe.js":{"file":"assets/router-BHr2mKJe.js","name":"router","imports":["_container-BdTWeqLX.js"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-_QQ7PYOU.js","_UptimeChart-CD6k3qf2.js","_container-BdTWeqLX.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-BHr2mKJe.js","_container-BdTWeqLX.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-BHr2mKJe.js","_container-BdTWeqLX.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-_QQ7PYOU.js","_UptimeChart-CD6k3qf2.js","_container-BdTWeqLX.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-CD6k3qf2.js","_container-_QQ7PYOU.js","_TargetCard-Bjgo4gzU.js","_container-BdTWeqLX.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-_QQ7PYOU.js","_UptimeChart-CD6k3qf2.js","_container-BdTWeqLX.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-_QQ7PYOU.js","_UptimeChart-CD6k3qf2.js","_container-BdTWeqLX.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-_QQ7PYOU.js","_UptimeChart-CD6k3qf2.js","_TargetCard-Bjgo4gzU.js","_container-BdTWeqLX.js"]},"virtual:$vinxi/handler/ssr":{"file":"ssr.js","name":"ssr","src":"virtual:$vinxi/handler/ssr","isEntry":true,"imports":["_container-_QQ7PYOU.js","_container-BdTWeqLX.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST"],"css":["assets/ssr-BjoaO50o.css"]}},"client":{"_TestNotificationModal-CkrZLlSU.js":{"file":"assets/TestNotificationModal-CkrZLlSU.js","name":"TestNotificationModal","imports":["___vite-browser-external-RK4VSpGF.js"]},"___vite-browser-external-RK4VSpGF.js":{"file":"assets/__vite-browser-external-RK4VSpGF.js","name":"__vite-browser-external"},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"assets/alerts-DsDytED_.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-RK4VSpGF.js","_TestNotificationModal-CkrZLlSU.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"assets/charts-DkX9NvCY.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-RK4VSpGF.js","_TestNotificationModal-CkrZLlSU.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"assets/index-BWU2vGlq.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_TestNotificationModal-CkrZLlSU.js","___vite-browser-external-RK4VSpGF.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"assets/notifications-BXQTqvuw.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-RK4VSpGF.js","_TestNotificationModal-CkrZLlSU.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"assets/settings-Dn9eebpG.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-RK4VSpGF.js","_TestNotificationModal-CkrZLlSU.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"assets/targets-7GPphzgo.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-RK4VSpGF.js","_TestNotificationModal-CkrZLlSU.js"]},"virtual:$vinxi/handler/client":{"file":"assets/client-I3_I3kf-.js","name":"client","src":"virtual:$vinxi/handler/client","isEntry":true,"imports":["___vite-browser-external-RK4VSpGF.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css"],"css":["assets/client-BjoaO50o.css"]}},"server-fns":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-C4Ju2pTh.js":{"file":"assets/UptimeChart-C4Ju2pTh.js","name":"UptimeChart","imports":["_routing-B3QheJj0.js"]},"_container-BsYf4kEu.js":{"file":"assets/container-BsYf4kEu.js","name":"container"},"_router-CjkYyLvA.js":{"file":"assets/router-CjkYyLvA.js","name":"router","imports":["_container-BsYf4kEu.js"]},"_routing-B3QheJj0.js":{"file":"assets/routing-B3QheJj0.js","name":"routing","imports":["_container-BsYf4kEu.js"]},"_server-fns-BA16_Wyd.js":{"file":"assets/server-fns-BA16_Wyd.js","name":"server-fns","dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST","src/app.tsx"]},"src/app.tsx":{"file":"assets/app-BLcIUmY-.js","name":"app","src":"src/app.tsx","isDynamicEntry":true,"imports":["_server-fns-BA16_Wyd.js","_routing-B3QheJj0.js","_container-BsYf4kEu.js"],"css":["assets/app-BjoaO50o.css"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-B3QheJj0.js","_UptimeChart-C4Ju2pTh.js","_container-BsYf4kEu.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-CjkYyLvA.js","_container-BsYf4kEu.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-CjkYyLvA.js","_container-BsYf4kEu.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-B3QheJj0.js","_UptimeChart-C4Ju2pTh.js","_container-BsYf4kEu.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-C4Ju2pTh.js","_routing-B3QheJj0.js","_TargetCard-Bjgo4gzU.js","_container-BsYf4kEu.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-B3QheJj0.js","_UptimeChart-C4Ju2pTh.js","_container-BsYf4kEu.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-B3QheJj0.js","_UptimeChart-C4Ju2pTh.js","_container-BsYf4kEu.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-B3QheJj0.js","_UptimeChart-C4Ju2pTh.js","_TargetCard-Bjgo4gzU.js","_container-BsYf4kEu.js"]},"virtual:$vinxi/handler/server-fns":{"file":"server-fns.js","name":"server-fns","src":"virtual:$vinxi/handler/server-fns","isEntry":true,"imports":["_server-fns-BA16_Wyd.js"]}}};
 
 				const routeManifest = {"ssr":{},"client":{},"server-fns":{}};
 
@@ -4508,7 +4508,7 @@ const assets = {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
     "etag": "\"4a1-gofeK281p8VRuSnOXJ7A6/cMmLI\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T22:37:20.266Z",
     "size": 1185,
     "path": "../public/assets/TargetCard-Bjgo4gzU.js.br"
   },
@@ -4516,78 +4516,78 @@ const assets = {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"552-dE2A4LbjJUxYTbgnztk50jXv1EE\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T22:37:20.266Z",
     "size": 1362,
     "path": "../public/assets/TargetCard-Bjgo4gzU.js.gz"
   },
-  "/assets/UptimeChart-DgPx_trM.js.br": {
+  "/assets/UptimeChart-CD6k3qf2.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"973-TjchZmxc49I8cGjO5PXgvtIEMvc\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 2419,
-    "path": "../public/assets/UptimeChart-DgPx_trM.js.br"
+    "etag": "\"975-WI12nAw60vgVeZjNb29HnX3QCIY\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 2421,
+    "path": "../public/assets/UptimeChart-CD6k3qf2.js.br"
   },
-  "/assets/UptimeChart-DgPx_trM.js.gz": {
+  "/assets/UptimeChart-CD6k3qf2.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"ad4-Rbjzuw70NWmGa9DsxgKh/Prk3g8\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 2772,
-    "path": "../public/assets/UptimeChart-DgPx_trM.js.gz"
+    "etag": "\"ad7-Z8qXvUtmQdmGg//PLniQhbXg0vk\"",
+    "mtime": "2025-10-01T22:37:20.266Z",
+    "size": 2775,
+    "path": "../public/assets/UptimeChart-CD6k3qf2.js.gz"
   },
-  "/assets/container-BxI3aDH-.js.br": {
+  "/assets/container-BdTWeqLX.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"1126-wQLQH44Vq9q3nSXhhrEkY05N2IE\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 4390,
-    "path": "../public/assets/container-BxI3aDH-.js.br"
+    "etag": "\"11aa-PUzCVczI6hevCKvZ80ZpAzZDZWw\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 4522,
+    "path": "../public/assets/container-BdTWeqLX.js.br"
   },
-  "/assets/container-BxI3aDH-.js.gz": {
+  "/assets/container-BdTWeqLX.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1337-MB9Qo9baetMjXZP2v5VZdV3uNBM\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 4919,
-    "path": "../public/assets/container-BxI3aDH-.js.gz"
+    "etag": "\"13c6-vpElrZ/hNUMbR/TRfRZFr/vdRFA\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 5062,
+    "path": "../public/assets/container-BdTWeqLX.js.gz"
   },
-  "/assets/container-a_eHAKW0.js.br": {
+  "/assets/container-_QQ7PYOU.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"16b2-nT3a8D+U2Q3QbXRmD8uK3L1GHIY\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 5810,
-    "path": "../public/assets/container-a_eHAKW0.js.br"
+    "etag": "\"17a3-2mpDpamMfoyKJiLeIqmugrJIt9Y\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 6051,
+    "path": "../public/assets/container-_QQ7PYOU.js.br"
   },
-  "/assets/container-a_eHAKW0.js.gz": {
+  "/assets/container-_QQ7PYOU.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1955-YTbS301gX2NM8w1lyEWpVOzoYqc\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 6485,
-    "path": "../public/assets/container-a_eHAKW0.js.gz"
+    "etag": "\"1a6a-746K0ziv7LBG+o2C8z3xoFjHTNU\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 6762,
+    "path": "../public/assets/container-_QQ7PYOU.js.gz"
   },
-  "/assets/router-DwlLWxXi.js.br": {
+  "/assets/router-BHr2mKJe.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"737-5XpEVqWO+q2SGkZbbvkIXsf1Avk\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1847,
-    "path": "../public/assets/router-DwlLWxXi.js.br"
+    "etag": "\"73d-viMPcru8qMrKqEfxcbcbUilcXfQ\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1853,
+    "path": "../public/assets/router-BHr2mKJe.js.br"
   },
-  "/assets/router-DwlLWxXi.js.gz": {
+  "/assets/router-BHr2mKJe.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"830-2UeMF1lqQ12X4Zrd2tSFvdtiof4\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 2096,
-    "path": "../public/assets/router-DwlLWxXi.js.gz"
+    "etag": "\"83c-YFerNlwzj2g/JSGauddcr90Yb1Q\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 2108,
+    "path": "../public/assets/router-BHr2mKJe.js.gz"
   },
   "/assets/ssr-BjoaO50o.css": {
     "type": "text/css; charset=utf-8",
     "etag": "\"2202-ygL4IXs5/vgBxlP62V7HPkPOxds\"",
-    "mtime": "2025-10-01T19:24:04.517Z",
+    "mtime": "2025-10-01T22:37:20.184Z",
     "size": 8706,
     "path": "../public/assets/ssr-BjoaO50o.css"
   },
@@ -4595,7 +4595,7 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "br",
     "etag": "\"8e1-HSY0FmU8JRIt0cSKfDV/gEkyPXU\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2273,
     "path": "../public/assets/ssr-BjoaO50o.css.br"
   },
@@ -4603,152 +4603,129 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"a5f-gTch4uEXODYLZQjFBi8lfhzrEHs\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2655,
     "path": "../public/assets/ssr-BjoaO50o.css.gz"
   },
   "/_build/.vite/manifest.json": {
     "type": "application/json",
-    "etag": "\"c0f-L7D+DkfjhfxbAIsZsmpfRs99c5Q\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"c0f-TIVPmeaznhF3XcWGSM8j9M1xekM\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 3087,
     "path": "../public/_build/.vite/manifest.json"
   },
   "/_build/.vite/manifest.json.br": {
     "type": "application/json",
     "encoding": "br",
-    "etag": "\"1b3-QbE8G85D8nf+vkZWFIzndXHMM8Y\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 435,
+    "etag": "\"1b7-YCgyJuV++ljuswsroocbgkRvtRI\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 439,
     "path": "../public/_build/.vite/manifest.json.br"
   },
   "/_build/.vite/manifest.json.gz": {
     "type": "application/json",
     "encoding": "gzip",
-    "etag": "\"1fc-C7rBZuq4L9GSxF+LiUGuzh2dq8E\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 508,
+    "etag": "\"202-Lms4MEfbIp9nTd4lROYLBoMG9Nw\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 514,
     "path": "../public/_build/.vite/manifest.json.gz"
   },
-  "/_build/assets/TestNotificationModal-CGJzdTkf.js": {
+  "/_build/assets/TestNotificationModal-CkrZLlSU.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"defd-DcdrFaurctaHAemPy07wJo4X8r0\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"defd-r4oTsOPUprphkeaF/+/INj/c9lM\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 57085,
-    "path": "../public/_build/assets/TestNotificationModal-CGJzdTkf.js"
+    "path": "../public/_build/assets/TestNotificationModal-CkrZLlSU.js"
   },
-  "/_build/assets/TestNotificationModal-CGJzdTkf.js.br": {
+  "/_build/assets/TestNotificationModal-CkrZLlSU.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"2b02-gIgjs6coVtXW94x58dwjrVCdmDs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 11010,
-    "path": "../public/_build/assets/TestNotificationModal-CGJzdTkf.js.br"
+    "etag": "\"2af1-WziCnC/5fFNS04hhwjdhN2fyEFU\"",
+    "mtime": "2025-10-01T22:37:20.273Z",
+    "size": 10993,
+    "path": "../public/_build/assets/TestNotificationModal-CkrZLlSU.js.br"
   },
-  "/_build/assets/TestNotificationModal-CGJzdTkf.js.gz": {
+  "/_build/assets/TestNotificationModal-CkrZLlSU.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"323e-i4b3vzV9KxDRsdF0qrBmoW+2RlQ\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"323e-ewzh5zWZA5Qwhx4kVzTjKKcwEOs\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 12862,
-    "path": "../public/_build/assets/TestNotificationModal-CGJzdTkf.js.gz"
+    "path": "../public/_build/assets/TestNotificationModal-CkrZLlSU.js.gz"
   },
-  "/_build/assets/__vite-browser-external-Cf35KMhY.js": {
+  "/_build/assets/__vite-browser-external-RK4VSpGF.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"4082c-L1WvrbC+4xvbP4Z+P078UHs7TP8\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
-    "size": 264236,
-    "path": "../public/_build/assets/__vite-browser-external-Cf35KMhY.js"
+    "etag": "\"40eaf-2YFikdUpZHhOSm5FF6/IJMz9hLs\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
+    "size": 265903,
+    "path": "../public/_build/assets/__vite-browser-external-RK4VSpGF.js"
   },
-  "/_build/assets/__vite-browser-external-Cf35KMhY.js.br": {
+  "/_build/assets/__vite-browser-external-RK4VSpGF.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"12c0e-vtlwlJNtOJa48MOLjoK169gQFlo\"",
-    "mtime": "2025-10-01T19:24:04.805Z",
-    "size": 76814,
-    "path": "../public/_build/assets/__vite-browser-external-Cf35KMhY.js.br"
+    "etag": "\"12d70-JUr+UNESn99tRlumk6dryUMepD4\"",
+    "mtime": "2025-10-01T22:37:20.464Z",
+    "size": 77168,
+    "path": "../public/_build/assets/__vite-browser-external-RK4VSpGF.js.br"
   },
-  "/_build/assets/__vite-browser-external-Cf35KMhY.js.gz": {
+  "/_build/assets/__vite-browser-external-RK4VSpGF.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"15751-PW7LTY3X5kssZIJt2L9GHflJuqs\"",
-    "mtime": "2025-10-01T19:24:04.616Z",
-    "size": 87889,
-    "path": "../public/_build/assets/__vite-browser-external-Cf35KMhY.js.gz"
+    "etag": "\"158fa-+Gr0QWFWGzGGh+Bv5f7SpC9G41o\"",
+    "mtime": "2025-10-01T22:37:20.271Z",
+    "size": 88314,
+    "path": "../public/_build/assets/__vite-browser-external-RK4VSpGF.js.gz"
   },
-  "/_build/assets/alerts-s4GfSo1M.js": {
+  "/_build/assets/alerts-DsDytED_.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1405-zcqG82lQ4h+Bm06LMBPa5J4nJ/A\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"1405-J4AXtZeI8LIGLhz4qyLmlRN8sXk\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 5125,
-    "path": "../public/_build/assets/alerts-s4GfSo1M.js"
+    "path": "../public/_build/assets/alerts-DsDytED_.js"
   },
-  "/_build/assets/alerts-s4GfSo1M.js.br": {
+  "/_build/assets/alerts-DsDytED_.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"64f-B7CgInCx0vCR0vvo7gPCYwvc2pA\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"64f-7z1TSYa0qQdTlQIF8NZQ707XTiA\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 1615,
-    "path": "../public/_build/assets/alerts-s4GfSo1M.js.br"
+    "path": "../public/_build/assets/alerts-DsDytED_.js.br"
   },
-  "/_build/assets/alerts-s4GfSo1M.js.gz": {
+  "/_build/assets/alerts-DsDytED_.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"742-VkQ/vz8R5iD7JzjjAdLwCquPQUM\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1858,
-    "path": "../public/_build/assets/alerts-s4GfSo1M.js.gz"
+    "etag": "\"744-83NmEXiucIrpgKFv9QxZbVNWgyc\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1860,
+    "path": "../public/_build/assets/alerts-DsDytED_.js.gz"
   },
-  "/_build/assets/charts-DVIISjrs.js": {
+  "/_build/assets/charts-DkX9NvCY.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"347c-ZTl/FNqiYGzWZ4ExjNumVT0AlZY\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"347c-ZekKslJwYX1ULPyMHGKPbhbNh2E\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 13436,
-    "path": "../public/_build/assets/charts-DVIISjrs.js"
+    "path": "../public/_build/assets/charts-DkX9NvCY.js"
   },
-  "/_build/assets/charts-DVIISjrs.js.br": {
+  "/_build/assets/charts-DkX9NvCY.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"d43-uCAq2tJCWqdLuVuLqvs9wfrUC+s\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"d43-MsIrg3ZqLPTmMddNzG06RnU8iLc\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 3395,
-    "path": "../public/_build/assets/charts-DVIISjrs.js.br"
+    "path": "../public/_build/assets/charts-DkX9NvCY.js.br"
   },
-  "/_build/assets/charts-DVIISjrs.js.gz": {
+  "/_build/assets/charts-DkX9NvCY.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"efa-uI0ZV+R72EthR8MwaE48JsheRBM\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 3834,
-    "path": "../public/_build/assets/charts-DVIISjrs.js.gz"
-  },
-  "/_build/assets/client-BTe1mcpT.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"f98c-TrmCafz1ALOqQgiQUUFsCq8qgvc\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
-    "size": 63884,
-    "path": "../public/_build/assets/client-BTe1mcpT.js"
-  },
-  "/_build/assets/client-BTe1mcpT.js.br": {
-    "type": "text/javascript; charset=utf-8",
-    "encoding": "br",
-    "etag": "\"3cfe-AtDANWbiHDDqJC1MeAtlic/q0Mw\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 15614,
-    "path": "../public/_build/assets/client-BTe1mcpT.js.br"
-  },
-  "/_build/assets/client-BTe1mcpT.js.gz": {
-    "type": "text/javascript; charset=utf-8",
-    "encoding": "gzip",
-    "etag": "\"44f2-P6wGSwTmWL8CwWXnLk7ESgBnZFM\"",
-    "mtime": "2025-10-01T19:24:04.615Z",
-    "size": 17650,
-    "path": "../public/_build/assets/client-BTe1mcpT.js.gz"
+    "etag": "\"efb-OciIfK5wBtOY8/Jsouu8lySOeSY\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 3835,
+    "path": "../public/_build/assets/charts-DkX9NvCY.js.gz"
   },
   "/_build/assets/client-BjoaO50o.css": {
     "type": "text/css; charset=utf-8",
     "etag": "\"2202-ygL4IXs5/vgBxlP62V7HPkPOxds\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 8706,
     "path": "../public/_build/assets/client-BjoaO50o.css"
   },
@@ -4756,7 +4733,7 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "br",
     "etag": "\"8e1-HSY0FmU8JRIt0cSKfDV/gEkyPXU\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2273,
     "path": "../public/_build/assets/client-BjoaO50o.css.br"
   },
@@ -4764,107 +4741,130 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"a5f-gTch4uEXODYLZQjFBi8lfhzrEHs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2655,
     "path": "../public/_build/assets/client-BjoaO50o.css.gz"
   },
-  "/_build/assets/index-BeVyEAAP.js": {
+  "/_build/assets/client-I3_I3kf-.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1379-IvfNEW1awKI/togexX2Jg33dYWs\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"f98c-FAHWBZA1dW0M3bwFXvFuJRTDHiw\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
+    "size": 63884,
+    "path": "../public/_build/assets/client-I3_I3kf-.js"
+  },
+  "/_build/assets/client-I3_I3kf-.js.br": {
+    "type": "text/javascript; charset=utf-8",
+    "encoding": "br",
+    "etag": "\"3cc2-/eJHIrv72wF58I+7ILsbjZTERMw\"",
+    "mtime": "2025-10-01T22:37:20.296Z",
+    "size": 15554,
+    "path": "../public/_build/assets/client-I3_I3kf-.js.br"
+  },
+  "/_build/assets/client-I3_I3kf-.js.gz": {
+    "type": "text/javascript; charset=utf-8",
+    "encoding": "gzip",
+    "etag": "\"44f3-og2xWp82ucQlU6y/9SbrqmVX//0\"",
+    "mtime": "2025-10-01T22:37:20.270Z",
+    "size": 17651,
+    "path": "../public/_build/assets/client-I3_I3kf-.js.gz"
+  },
+  "/_build/assets/index-BWU2vGlq.js": {
+    "type": "text/javascript; charset=utf-8",
+    "etag": "\"1379-vlTaGoaTk6cdhquy7oW9nhm6URE\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 4985,
-    "path": "../public/_build/assets/index-BeVyEAAP.js"
+    "path": "../public/_build/assets/index-BWU2vGlq.js"
   },
-  "/_build/assets/index-BeVyEAAP.js.br": {
+  "/_build/assets/index-BWU2vGlq.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"670-9g9WIWItnQQcyVVgFV6YwdCT0OQ\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1648,
-    "path": "../public/_build/assets/index-BeVyEAAP.js.br"
+    "etag": "\"66a-EeuoLiycenryQSqyNeq2/i9RJy4\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1642,
+    "path": "../public/_build/assets/index-BWU2vGlq.js.br"
   },
-  "/_build/assets/index-BeVyEAAP.js.gz": {
+  "/_build/assets/index-BWU2vGlq.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"74c-6kjr2gn527V6ZuyQxP/xzcrtPqs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1868,
-    "path": "../public/_build/assets/index-BeVyEAAP.js.gz"
+    "etag": "\"74b-hyCfIuuxvXbZSMy6i7ZC9qUY5Rw\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1867,
+    "path": "../public/_build/assets/index-BWU2vGlq.js.gz"
   },
-  "/_build/assets/notifications-BK_Ctv6W.js": {
+  "/_build/assets/notifications-BXQTqvuw.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1369-TV87vX/ZIP7N4SlP+D6Jy7TMOAc\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"1369-0irY+ImIXE5BZ1H7se3iMnspZFw\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 4969,
-    "path": "../public/_build/assets/notifications-BK_Ctv6W.js"
+    "path": "../public/_build/assets/notifications-BXQTqvuw.js"
   },
-  "/_build/assets/notifications-BK_Ctv6W.js.br": {
+  "/_build/assets/notifications-BXQTqvuw.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"5de-34+z1e1fJVPGa93LdDHs/NumSnM\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1502,
-    "path": "../public/_build/assets/notifications-BK_Ctv6W.js.br"
+    "etag": "\"5db-rQ+KDQ6ew8a/5vLH4G+kNI6hHKA\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1499,
+    "path": "../public/_build/assets/notifications-BXQTqvuw.js.br"
   },
-  "/_build/assets/notifications-BK_Ctv6W.js.gz": {
+  "/_build/assets/notifications-BXQTqvuw.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"6bc-roZh3YuazXZ0mPJ5D16cMtRrGZU\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1724,
-    "path": "../public/_build/assets/notifications-BK_Ctv6W.js.gz"
+    "etag": "\"6be-86JrLgv7tkR8DM/P/ctwFD/GRKM\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1726,
+    "path": "../public/_build/assets/notifications-BXQTqvuw.js.gz"
   },
-  "/_build/assets/settings-CzNzunqA.js": {
+  "/_build/assets/settings-Dn9eebpG.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"14dd-fASwA/+KooAxx/TieMtMo8/RB2w\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"14dd-aFUsUC+7F6k/h1BMafNdZ8Y1AaM\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 5341,
-    "path": "../public/_build/assets/settings-CzNzunqA.js"
+    "path": "../public/_build/assets/settings-Dn9eebpG.js"
   },
-  "/_build/assets/settings-CzNzunqA.js.br": {
+  "/_build/assets/settings-Dn9eebpG.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"5c4-RLTmpjfsi11jnZ10wKskmAtC4LE\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1476,
-    "path": "../public/_build/assets/settings-CzNzunqA.js.br"
+    "etag": "\"5c7-hFGAPwP10JcveKbaE5Hh3ACdMPk\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1479,
+    "path": "../public/_build/assets/settings-Dn9eebpG.js.br"
   },
-  "/_build/assets/settings-CzNzunqA.js.gz": {
+  "/_build/assets/settings-Dn9eebpG.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"704-hQkQDlqqa6vuRb8knfZ2U3llyso\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1796,
-    "path": "../public/_build/assets/settings-CzNzunqA.js.gz"
+    "etag": "\"705-6odNRJ0UchOcJNT6iNSV/rZIu9Y\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1797,
+    "path": "../public/_build/assets/settings-Dn9eebpG.js.gz"
   },
-  "/_build/assets/targets-Dbyf3FNl.js": {
+  "/_build/assets/targets-7GPphzgo.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"aab-6C8YHJ0wY232DxiGAnJsgJmad7k\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"aab-l4Dnjwp/EhFdforn0DPKFVd160o\"",
+    "mtime": "2025-10-01T22:37:20.187Z",
     "size": 2731,
-    "path": "../public/_build/assets/targets-Dbyf3FNl.js"
+    "path": "../public/_build/assets/targets-7GPphzgo.js"
   },
-  "/_build/assets/targets-Dbyf3FNl.js.br": {
+  "/_build/assets/targets-7GPphzgo.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"46b-iTE2S/oq/XsneKflII+wFShKf+U\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1131,
-    "path": "../public/_build/assets/targets-Dbyf3FNl.js.br"
+    "etag": "\"46c-RBPQAQtmSFow3qXact/dAMZNKkk\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1132,
+    "path": "../public/_build/assets/targets-7GPphzgo.js.br"
   },
-  "/_build/assets/targets-Dbyf3FNl.js.gz": {
+  "/_build/assets/targets-7GPphzgo.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"521-aWJ0iy21HvY8fbBhJ7GY5m5TGiI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1313,
-    "path": "../public/_build/assets/targets-Dbyf3FNl.js.gz"
+    "etag": "\"524-JCn1cvHf56boPyGAPsauiEXgOC0\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1316,
+    "path": "../public/_build/assets/targets-7GPphzgo.js.gz"
   },
   "/_server/assets/TargetCard-Bjgo4gzU.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
     "etag": "\"4a1-gofeK281p8VRuSnOXJ7A6/cMmLI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 1185,
     "path": "../public/_server/assets/TargetCard-Bjgo4gzU.js.br"
   },
@@ -4872,30 +4872,46 @@ const assets = {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"552-dE2A4LbjJUxYTbgnztk50jXv1EE\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 1362,
     "path": "../public/_server/assets/TargetCard-Bjgo4gzU.js.gz"
   },
-  "/_server/assets/UptimeChart-DpIqj3wE.js.br": {
+  "/_server/assets/UptimeChart-C4Ju2pTh.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"979-2RV4fKpbcd9izpRJ/DCWme9V5N0\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"979-m70ZhRjOSrLp49GenST2cKehh9k\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2425,
-    "path": "../public/_server/assets/UptimeChart-DpIqj3wE.js.br"
+    "path": "../public/_server/assets/UptimeChart-C4Ju2pTh.js.br"
   },
-  "/_server/assets/UptimeChart-DpIqj3wE.js.gz": {
+  "/_server/assets/UptimeChart-C4Ju2pTh.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"ad3-ij46R7kTLRszIT9Y/eZxTF898TI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"ad3-7cuDF8LCRvtn6+BM0HLmB1+B47c\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2771,
-    "path": "../public/_server/assets/UptimeChart-DpIqj3wE.js.gz"
+    "path": "../public/_server/assets/UptimeChart-C4Ju2pTh.js.gz"
+  },
+  "/_server/assets/app-BLcIUmY-.js.br": {
+    "type": "text/javascript; charset=utf-8",
+    "encoding": "br",
+    "etag": "\"ab7-AqMuZU5tivQNBvQp5lwmDiiwhVE\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 2743,
+    "path": "../public/_server/assets/app-BLcIUmY-.js.br"
+  },
+  "/_server/assets/app-BLcIUmY-.js.gz": {
+    "type": "text/javascript; charset=utf-8",
+    "encoding": "gzip",
+    "etag": "\"bf3-GpiYXp0khSS5uVbd0XtkiI77oRc\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 3059,
+    "path": "../public/_server/assets/app-BLcIUmY-.js.gz"
   },
   "/_server/assets/app-BjoaO50o.css": {
     "type": "text/css; charset=utf-8",
     "etag": "\"2202-ygL4IXs5/vgBxlP62V7HPkPOxds\"",
-    "mtime": "2025-10-01T19:24:04.528Z",
+    "mtime": "2025-10-01T22:37:20.190Z",
     "size": 8706,
     "path": "../public/_server/assets/app-BjoaO50o.css"
   },
@@ -4903,7 +4919,7 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "br",
     "etag": "\"8e1-HSY0FmU8JRIt0cSKfDV/gEkyPXU\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2273,
     "path": "../public/_server/assets/app-BjoaO50o.css.br"
   },
@@ -4911,89 +4927,73 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"a5f-gTch4uEXODYLZQjFBi8lfhzrEHs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 2655,
     "path": "../public/_server/assets/app-BjoaO50o.css.gz"
   },
-  "/_server/assets/app-CZI4m8QT.js.br": {
+  "/_server/assets/container-BsYf4kEu.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"abb-2DGMJjkPzG4lCUap+soN76ZRPnY\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 2747,
-    "path": "../public/_server/assets/app-CZI4m8QT.js.br"
+    "etag": "\"11a9-4IPhEbzAyVJrFWlxKCWN5tSgMa4\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 4521,
+    "path": "../public/_server/assets/container-BsYf4kEu.js.br"
   },
-  "/_server/assets/app-CZI4m8QT.js.gz": {
+  "/_server/assets/container-BsYf4kEu.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"bf6-YudrX4qtZJdfj7Y4negfx29nF5I\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 3062,
-    "path": "../public/_server/assets/app-CZI4m8QT.js.gz"
+    "etag": "\"13c6-azQ+icJ2FNKnLjtvzhtDtv5h2no\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 5062,
+    "path": "../public/_server/assets/container-BsYf4kEu.js.gz"
   },
-  "/_server/assets/container-Dn6QYIGz.js.br": {
+  "/_server/assets/router-CjkYyLvA.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"1126-oJqwLuO8DRPkPqRi622u6/tyLo4\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 4390,
-    "path": "../public/_server/assets/container-Dn6QYIGz.js.br"
+    "etag": "\"73d-AktC8vQIhXC9S+DpDued9XYx3d8\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 1853,
+    "path": "../public/_server/assets/router-CjkYyLvA.js.br"
   },
-  "/_server/assets/container-Dn6QYIGz.js.gz": {
+  "/_server/assets/router-CjkYyLvA.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1337-cll7TR1QYWDfEcraliganJtlLrA\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 4919,
-    "path": "../public/_server/assets/container-Dn6QYIGz.js.gz"
+    "etag": "\"83c-W/xa8lTrWqFvXZ331WiUoBgno9s\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 2108,
+    "path": "../public/_server/assets/router-CjkYyLvA.js.gz"
   },
-  "/_server/assets/router-SOUM5df7.js.br": {
+  "/_server/assets/routing-B3QheJj0.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"734-yAiI+LiWdMypJPLgnm0g6u1o3PI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1844,
-    "path": "../public/_server/assets/router-SOUM5df7.js.br"
+    "etag": "\"179a-NYpE8SPeMMvj9rNsXx5x+nCsdkQ\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 6042,
+    "path": "../public/_server/assets/routing-B3QheJj0.js.br"
   },
-  "/_server/assets/router-SOUM5df7.js.gz": {
+  "/_server/assets/routing-B3QheJj0.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"832-d/jyQdLkFA5qbO4m+S3L6RhAX40\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 2098,
-    "path": "../public/_server/assets/router-SOUM5df7.js.gz"
+    "etag": "\"1a64-gcppTwwR6J+zPtI3VNsKnSJFdQI\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 6756,
+    "path": "../public/_server/assets/routing-B3QheJj0.js.gz"
   },
-  "/_server/assets/routing-BtkaN0N8.js.br": {
+  "/_server/assets/server-fns-BA16_Wyd.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"16ae-pknMaLz5g3Ub854oiSyYTBgPlDs\"",
-    "mtime": "2025-10-01T19:24:04.619Z",
-    "size": 5806,
-    "path": "../public/_server/assets/routing-BtkaN0N8.js.br"
-  },
-  "/_server/assets/routing-BtkaN0N8.js.gz": {
-    "type": "text/javascript; charset=utf-8",
-    "encoding": "gzip",
-    "etag": "\"1954-JBR+pVlSr66Xc3UU/pVENHGWHLc\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 6484,
-    "path": "../public/_server/assets/routing-BtkaN0N8.js.gz"
-  },
-  "/_server/assets/server-fns-9jI2eI5S.js.br": {
-    "type": "text/javascript; charset=utf-8",
-    "encoding": "br",
-    "etag": "\"1158-nIeL1Mjew2bFEW2intLnkIsjhek\"",
-    "mtime": "2025-10-01T19:24:04.615Z",
+    "etag": "\"1158-HG8oeJ0oHZe98iVip/eF3jLGmng\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
     "size": 4440,
-    "path": "../public/_server/assets/server-fns-9jI2eI5S.js.br"
+    "path": "../public/_server/assets/server-fns-BA16_Wyd.js.br"
   },
-  "/_server/assets/server-fns-9jI2eI5S.js.gz": {
+  "/_server/assets/server-fns-BA16_Wyd.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1342-JScdgCcMY/O0K8NOHAHb7lpApic\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 4930,
-    "path": "../public/_server/assets/server-fns-9jI2eI5S.js.gz"
+    "etag": "\"1341-U6B5pt+VoiCSHbjVZggeg24c5Jc\"",
+    "mtime": "2025-10-01T22:37:20.267Z",
+    "size": 4929,
+    "path": "../public/_server/assets/server-fns-BA16_Wyd.js.gz"
   }
 };
 
@@ -6318,7 +6318,7 @@ function u(e) {
     return e(...s);
   };
 }
-const J$1 = u(getRequestURL), je$1 = u(getRequestIP), w$1 = u(setResponseStatus), I$1 = u(getResponseStatus), Fe$1 = u(getResponseStatusText), y$1 = u(getResponseHeaders), _$1 = u(getResponseHeader), Le$1 = u(setResponseHeader), V$1 = u(appendResponseHeader), Oe$1 = u(parseCookies), Ie$1 = u(getCookie), _e = u(setCookie), R$1 = u(setHeader), De$1 = u(getRequestWebStream), Me$1 = u(removeResponseHeader), We$1 = u(Ce);
+const J$1 = u(getRequestURL), je$1 = u(getRequestIP), w$1 = u(setResponseStatus), I$2 = u(getResponseStatus), Fe$1 = u(getResponseStatusText), y$1 = u(getResponseHeaders), _ = u(getResponseHeader), Le$1 = u(setResponseHeader), V$1 = u(appendResponseHeader), Oe$1 = u(parseCookies), Ie$1 = u(getCookie), _e = u(setCookie), R$1 = u(setHeader), De$1 = u(getRequestWebStream), Me$1 = u(removeResponseHeader), We$1 = u(Ce);
 function Ne$1() {
   var _a;
   return getContext("nitro-app", { asyncContext: !!((_a = globalThis.app.config.server.experimental) == null ? void 0 : _a.asyncContext), AsyncLocalStorage: AsyncLocalStorage });
@@ -6340,7 +6340,7 @@ class j extends Error {
 function ze$1(e, s) {
   if (!e) throw new j(s);
 }
-const b$1 = "solidFetchEvent";
+const b$2 = "solidFetchEvent";
 function Ge$1(e) {
   return { request: We$1(e), response: Qe$1(e), clientAddress: je$1(e), locals: {}, nativeEvent: e };
 }
@@ -6348,11 +6348,11 @@ function Je(e) {
   return { ...e };
 }
 function Ve(e) {
-  if (!e.context[b$1]) {
+  if (!e.context[b$2]) {
     const s = Ge$1(e);
-    e.context[b$1] = s;
+    e.context[b$2] = s;
   }
-  return e.context[b$1];
+  return e.context[b$2];
 }
 function D(e, s) {
   for (const [t, n] of s.entries()) V$1(e, t, n);
@@ -6363,7 +6363,7 @@ let Ke$1 = class Ke {
     this.event = s;
   }
   get(s) {
-    const t = _$1(this.event, s);
+    const t = _(this.event, s);
     return Array.isArray(t) ? t.join(", ") : t || null;
   }
   has(s) {
@@ -6379,7 +6379,7 @@ let Ke$1 = class Ke {
     V$1(this.event, s, t);
   }
   getSetCookie() {
-    const s = _$1(this.event, "Set-Cookie");
+    const s = _(this.event, "Set-Cookie");
     return Array.isArray(s) ? s : [s];
   }
   forEach(s) {
@@ -6400,13 +6400,13 @@ let Ke$1 = class Ke {
 };
 function Qe$1(e) {
   return { get status() {
-    return I$1(e);
+    return I$2(e);
   }, set status(s) {
     w$1(e, s);
   }, get statusText() {
     return Fe$1(e);
   }, set statusText(s) {
-    w$1(e, I$1(e), s);
+    w$1(e, I$2(e), s);
   }, headers: new Ke$1(e) };
 }
 const K$1 = [{ page: true, $component: { src: "src/routes/alerts.tsx?pick=default&pick=$css", build: () => import('../build/alerts.mjs'), import: () => import('../build/alerts.mjs') }, path: "/alerts", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/alerts.tsx" }, { page: true, $component: { src: "src/routes/charts.tsx?pick=default&pick=$css", build: () => import('../build/charts.mjs'), import: () => import('../build/charts.mjs') }, path: "/charts", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/charts.tsx" }, { page: true, $component: { src: "src/routes/index.tsx?pick=default&pick=$css", build: () => import('../build/index.mjs'), import: () => import('../build/index.mjs') }, path: "/", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/index.tsx" }, { page: true, $component: { src: "src/routes/notifications.tsx?pick=default&pick=$css", build: () => import('../build/notifications.mjs'), import: () => import('../build/notifications.mjs') }, path: "/notifications", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/notifications.tsx" }, { page: true, $component: { src: "src/routes/settings.tsx?pick=default&pick=$css", build: () => import('../build/settings.mjs'), import: () => import('../build/settings.mjs') }, path: "/settings", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/settings.tsx" }, { page: true, $component: { src: "src/routes/targets.tsx?pick=default&pick=$css", build: () => import('../build/targets.mjs'), import: () => import('../build/targets.mjs') }, path: "/targets", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/targets.tsx" }, { page: false, $GET: { src: "src/routes/api/trpc/[...trpc].ts?pick=GET", build: () => import('../build/_...trpc_.mjs'), import: () => import('../build/_...trpc_.mjs') }, $HEAD: { src: "src/routes/api/trpc/[...trpc].ts?pick=GET", build: () => import('../build/_...trpc_.mjs'), import: () => import('../build/_...trpc_.mjs') }, $POST: { src: "src/routes/api/trpc/[...trpc].ts?pick=POST", build: () => import('../build/_...trpc_2.mjs'), import: () => import('../build/_...trpc_2.mjs') }, path: "/api/trpc/*trpc", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/api/trpc/[...trpc].ts" }], Ye = Ze$1(K$1.filter((e) => e.page));
@@ -6521,17 +6521,17 @@ async function dt(e) {
       if (r.headers && r.headers.has("X-Content-Raw")) return r;
       o && (r.headers && D(e, r.headers), r.status && (r.status < 300 || r.status >= 400) && w$1(e, r.status), r.customBody ? r = await r.customBody() : r.body == null && (r = null));
     }
-    return o ? (R$1(e, "content-type", "text/javascript"), W$1(o, r)) : N$2(r, t, f);
+    return o ? (R$1(e, "content-type", "text/javascript"), W$1(o, r)) : N$1(r, t, f);
   } catch (r) {
     if (r instanceof Response) a && o && (r = await B$2(s, r)), r.headers && D(e, r.headers), r.status && (!o || r.status < 300 || r.status >= 400) && w$1(e, r.status), r.customBody ? r = r.customBody() : r.body == null && (r = null), R$1(e, "X-Error", "true");
     else if (o) {
       const p = r instanceof Error ? r.message : typeof r == "string" ? r : "true";
       R$1(e, "X-Error", p.replace(/[\r\n]+/g, ""));
-    } else r = N$2(r, t, f, true);
+    } else r = N$1(r, t, f, true);
     return o ? (R$1(e, "content-type", "text/javascript"), W$1(o, r)) : r;
   }
 }
-function N$2(e, s, t, n) {
+function N$1(e, s, t, n) {
   const o = new URL(s.url), a = e instanceof Error;
   let i = 302, c;
   return e instanceof Response ? (c = new Headers(e.headers), e.headers.has("Location") && (c.set("Location", new URL(e.headers.get("Location"), o.origin + "").toString()), i = ut(e))) : c = new Headers({ Location: new URL(s.headers.get("referer")).toString() }), e && c.append("Set-Cookie", `flash=${encodeURIComponent(JSON.stringify({ url: o.pathname + o.search, result: a ? e.message : e, thrown: n, error: a, input: [...t.slice(0, -1), [...t[t.length - 1].entries()]] }))}; Secure; HttpOnly;`), new Response(null, { status: i, headers: c });
@@ -6555,7 +6555,7 @@ async function B$2(e, s) {
   s instanceof Response && (s.headers.has("X-Revalidate") && (t = s.headers.get("X-Revalidate").split(",")), s.headers.has("Location") && (n = new URL(s.headers.get("Location"), new URL(e.request.url).origin + "").toString()));
   const o = Je(e);
   return o.request = new Request(n, { headers: ft$1(e) }), await provideRequestEvent(o, async () => {
-    await it$1(o), $ || ($ = (await import('../build/app-CZI4m8QT.mjs')).default), o.router.dataOnly = t || true, o.router.previousUrl = e.request.headers.get("referer");
+    await it$1(o), $ || ($ = (await import('../build/app-BLcIUmY-.mjs')).default), o.router.dataOnly = t || true, o.router.previousUrl = e.request.headers.get("referer");
     try {
       renderToString(() => {
         sharedConfig.context.event = o, $();
@@ -6575,75 +6575,104 @@ const kt$1 = eventHandler(dt);
 var __defProp$1 = Object.defineProperty;
 var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField$1 = (obj, key, value) => __defNormalProp$1(obj, typeof key !== "symbol" ? key + "" : key, value);
-let C$1 = class C {
+class T {
   constructor() {
     __publicField$1(this, "listeners", /* @__PURE__ */ new Map());
+    __publicField$1(this, "connected", false);
   }
-  emit(e, i) {
+  emit(e, t) {
     const r = this.listeners.get(e);
     r && r.forEach((n) => {
       try {
-        n(i);
+        n(t);
       } catch (s) {
         console.error(`Error in event handler for ${e}:`, s);
       }
     });
   }
-  emitTyped(e, i) {
-    this.emit(e, i);
+  emitTyped(e, t) {
+    this.emit(e, t);
   }
-  on(e, i) {
+  on(e, t) {
     this.listeners.has(e) || this.listeners.set(e, /* @__PURE__ */ new Set());
     const r = this.listeners.get(e);
-    r && r.add(i);
+    r && r.add(t);
   }
-  onTyped(e, i) {
-    this.on(e, i);
+  onTyped(e, t) {
+    this.on(e, t);
   }
-  off(e, i) {
+  off(e, t) {
     const r = this.listeners.get(e);
-    r && (r.delete(i), r.size === 0 && this.listeners.delete(e));
+    r && (r.delete(t), r.size === 0 && this.listeners.delete(e));
   }
-  once(e, i) {
+  once(e, t) {
     const r = (n) => {
-      i(n), this.off(e, r);
+      t(n), this.off(e, r);
     };
     this.on(e, r);
   }
-  onceTyped(e, i) {
-    this.once(e, i);
+  onceTyped(e, t) {
+    this.once(e, t);
   }
   removeAllListeners(e) {
     e ? this.listeners.delete(e) : this.listeners.clear();
   }
-  getListenerCount(e) {
+  async emitAsync(e, t) {
+    const r = this.listeners.get(e);
+    if (r) {
+      const n = Array.from(r).map(async (s) => {
+        try {
+          await s(t);
+        } catch (a) {
+          console.error(`Error in async event handler for ${e}:`, a);
+        }
+      });
+      await Promise.all(n);
+    }
+  }
+  listenerCount(e) {
     var _a;
     return ((_a = this.listeners.get(e)) == null ? void 0 : _a.size) || 0;
   }
-  getEvents() {
+  eventNames() {
     return Array.from(this.listeners.keys());
   }
-};
-var c;
-(function(o) {
-  o[o.DEBUG = 0] = "DEBUG", o[o.INFO = 1] = "INFO", o[o.WARN = 2] = "WARN", o[o.ERROR = 3] = "ERROR";
-})(c || (c = {}));
-let U$2 = class U {
-  constructor(e = c.INFO) {
-    __publicField$1(this, "level", c.INFO);
+  async connect() {
+    this.connected = true;
+  }
+  async disconnect() {
+    this.connected = false, this.listeners.clear();
+  }
+  isConnected() {
+    return this.connected;
+  }
+  getListenerCount(e) {
+    return this.listenerCount(e);
+  }
+  getEvents() {
+    return this.eventNames();
+  }
+}
+class S {
+  constructor(e = "info") {
+    __publicField$1(this, "level", "info");
+    __publicField$1(this, "context", {});
     this.level = e;
   }
-  debug(e, i) {
-    this.level <= c.DEBUG && console.debug(`[DEBUG] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+  debug(e, t) {
+    this.isLevelEnabled("debug") && console.debug(`[DEBUG] ${e}`, t ? JSON.stringify(t, null, 2) : "");
   }
-  info(e, i) {
-    this.level <= c.INFO && console.info(`[INFO] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+  info(e, t) {
+    this.isLevelEnabled("info") && console.info(`[INFO] ${e}`, t ? JSON.stringify(t, null, 2) : "");
   }
-  warn(e, i) {
-    this.level <= c.WARN && console.warn(`[WARN] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+  warn(e, t) {
+    this.isLevelEnabled("warn") && console.warn(`[WARN] ${e}`, t ? JSON.stringify(t, null, 2) : "");
   }
-  error(e, i) {
-    this.level <= c.ERROR && console.error(`[ERROR] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+  error(e, t) {
+    this.isLevelEnabled("error") && console.error(`[ERROR] ${e}`, t ? JSON.stringify(t, null, 2) : "");
+  }
+  fatal(e, t) {
+    this.isLevelEnabled("fatal") && console.error(`[FATAL] ${e}`, t ? JSON.stringify(t, null, 2) : "");
   }
   setLevel(e) {
     this.level = e;
@@ -6651,24 +6680,38 @@ let U$2 = class U {
   getLevel() {
     return this.level;
   }
-};
+  isLevelEnabled(e) {
+    const t = { debug: 0, info: 1, warn: 2, error: 3, fatal: 4 };
+    return t[e] >= t[this.level];
+  }
+  setContext(e) {
+    this.context = { ...this.context, ...e };
+  }
+  getContext() {
+    return { ...this.context };
+  }
+  child(e) {
+    const t = new S(this.level);
+    return t.setContext({ ...this.context, ...e }), t;
+  }
+}
 class E {
   constructor() {
     __publicField$1(this, "services", /* @__PURE__ */ new Map());
     __publicField$1(this, "instances", /* @__PURE__ */ new Map());
     __publicField$1(this, "initialized", false);
   }
-  register(e, i) {
-    this.services.set(e, i);
+  register(e, t) {
+    this.services.set(e, t);
   }
   get(e) {
     if (!this.initialized) throw new Error("Container not initialized. Call initialize() first.");
     if (!this.services.has(e)) throw new Error(`Service with key ${e.toString()} not found`);
     if (this.instances.has(e)) return this.instances.get(e);
-    const i = this.services.get(e);
-    if (!i) throw new Error(`Service configuration not found for key ${e.toString()}`);
-    const r = i.factory(this);
-    return i.singleton && this.instances.set(e, r), r;
+    const t = this.services.get(e);
+    if (!t) throw new Error(`Service configuration not found for key ${e.toString()}`);
+    const r = t.factory(this);
+    return t.singleton && this.instances.set(e, r), r;
   }
   has(e) {
     return this.services.has(e);
@@ -6678,28 +6721,28 @@ class E {
   }
   async initialize() {
     if (!this.initialized) {
-      for (const [e, i] of this.services) for (const r of i.dependencies) if (!this.services.has(r)) throw new Error(`Service ${e.toString()} depends on ${r.toString()} which is not registered`);
+      for (const [e, t] of this.services) for (const r of t.dependencies) if (!this.services.has(r)) throw new Error(`Service ${e.toString()} depends on ${r.toString()} which is not registered`);
       this.initialized = true;
     }
   }
 }
-let v = null;
-function S() {
-  return v || (v = new E()), v;
+let y = null;
+function h() {
+  return y || (y = new E()), y;
 }
-const t = { ILogger: Symbol("ILogger"), IEventBus: Symbol("IEventBus"), IDatabaseService: Symbol("IDatabaseService"), IMonitorService: Symbol("IMonitorService"), ISpeedTestService: Symbol("ISpeedTestService"), ISpeedTestConfigService: Symbol("ISpeedTestConfigService"), IAlertingService: Symbol("IAlertingService"), INotificationService: Symbol("INotificationService"), IAuthService: Symbol("IAuthService"), IUserRepository: Symbol("IUserRepository"), IMonitoringTargetRepository: Symbol("IMonitoringTargetRepository"), ISpeedTestResultRepository: Symbol("ISpeedTestResultRepository"), IAlertRuleRepository: Symbol("IAlertRuleRepository"), IIncidentEventRepository: Symbol("IIncidentEventRepository"), IPushSubscriptionRepository: Symbol("IPushSubscriptionRepository"), INotificationRepository: Symbol("INotificationRepository"), IUserSpeedTestPreferenceRepository: Symbol("IUserSpeedTestPreferenceRepository"), ITargetRepository: Symbol("ITargetRepository"), ISpeedTestRepository: Symbol("ISpeedTestRepository"), IAPIClient: Symbol("IAPIClient"), ICommandQueryService: Symbol("ICommandQueryService"), IPerformanceMonitor: Symbol("IPerformanceMonitor"), ICacheManager: Symbol("ICacheManager"), IPWAService: Symbol("IPWAService") }, y = { ILogger: t.ILogger, IEventBus: t.IEventBus, IDatabaseService: t.IDatabaseService, IMonitorService: t.IMonitorService, IAlertingService: t.IAlertingService, INotificationService: t.INotificationService, IAuthService: t.IAuthService, IUserRepository: t.IUserRepository, IMonitoringTargetRepository: t.IMonitoringTargetRepository, ISpeedTestResultRepository: t.ISpeedTestResultRepository, IAlertRuleRepository: t.IAlertRuleRepository, IIncidentEventRepository: t.IIncidentEventRepository, IPushSubscriptionRepository: t.IPushSubscriptionRepository, INotificationRepository: t.INotificationRepository, ITargetRepository: t.ITargetRepository, ISpeedTestRepository: t.ISpeedTestRepository, ISpeedTestConfigService: t.ISpeedTestConfigService, IUserSpeedTestPreferenceRepository: t.IUserSpeedTestPreferenceRepository };
-let B$1 = class B {
-  constructor(e = "service-config.json") {
+const i = { ILogger: Symbol("ILogger"), IEventBus: Symbol("IEventBus"), IDatabaseService: Symbol("IDatabaseService"), IMonitorService: Symbol("IMonitorService"), ISpeedTestService: Symbol("ISpeedTestService"), ISpeedTestConfigService: Symbol("ISpeedTestConfigService"), IAlertingService: Symbol("IAlertingService"), INotificationService: Symbol("INotificationService"), IAuthService: Symbol("IAuthService"), IUserRepository: Symbol("IUserRepository"), IMonitoringTargetRepository: Symbol("IMonitoringTargetRepository"), ISpeedTestResultRepository: Symbol("ISpeedTestResultRepository"), IAlertRuleRepository: Symbol("IAlertRuleRepository"), IIncidentEventRepository: Symbol("IIncidentEventRepository"), IPushSubscriptionRepository: Symbol("IPushSubscriptionRepository"), INotificationRepository: Symbol("INotificationRepository"), IUserSpeedTestPreferenceRepository: Symbol("IUserSpeedTestPreferenceRepository"), ITargetRepository: Symbol("ITargetRepository"), ISpeedTestRepository: Symbol("ISpeedTestRepository"), IAPIClient: Symbol("IAPIClient"), ICommandQueryService: Symbol("ICommandQueryService"), IPerformanceMonitor: Symbol("IPerformanceMonitor"), ICacheManager: Symbol("ICacheManager"), IPWAService: Symbol("IPWAService") }, I$1 = { ILogger: i.ILogger, IEventBus: i.IEventBus, IDatabaseService: i.IDatabaseService, IMonitorService: i.IMonitorService, IAlertingService: i.IAlertingService, INotificationService: i.INotificationService, IAuthService: i.IAuthService, IUserRepository: i.IUserRepository, IMonitoringTargetRepository: i.IMonitoringTargetRepository, ISpeedTestResultRepository: i.ISpeedTestResultRepository, IAlertRuleRepository: i.IAlertRuleRepository, IIncidentEventRepository: i.IIncidentEventRepository, IPushSubscriptionRepository: i.IPushSubscriptionRepository, INotificationRepository: i.INotificationRepository, ITargetRepository: i.ITargetRepository, ISpeedTestRepository: i.ISpeedTestRepository, ISpeedTestConfigService: i.ISpeedTestConfigService, IUserSpeedTestPreferenceRepository: i.IUserSpeedTestPreferenceRepository };
+let U$1 = class U {
+  constructor(e = "service-wiring/development.json") {
     __publicField$1(this, "configPath");
     __publicField$1(this, "projectRoot");
     this.configPath = e, this.projectRoot = typeof process < "u" && typeof process.cwd == "function" ? process.cwd() : "/";
   }
   async loadConfiguration() {
     {
-      const { join: e } = await import('path'), i = e(this.projectRoot, this.configPath), { readFileSync: r, existsSync: n } = await import('fs');
-      if (!n(i)) throw new Error(`Configuration file not found: ${i}`);
+      const { join: e } = await import('path'), t = e(this.projectRoot, this.configPath), { readFileSync: r, existsSync: n } = await import('fs');
+      if (!n(t)) throw new Error(`Configuration file not found: ${t}`);
       try {
-        const s = r(i, "utf-8"), a = JSON.parse(s);
+        const s = r(t, "utf-8"), a = JSON.parse(s);
         return this.validateConfiguration(a), a;
       } catch (s) {
         throw new Error(`Failed to load configuration: ${s}`);
@@ -6707,84 +6750,84 @@ let B$1 = class B {
     }
   }
   async convertToServiceConfig(e) {
-    const i = {};
+    const t = {};
     for (const [r, n] of Object.entries(e.services)) {
-      const s = y[r];
+      const s = I$1[r];
       if (!s) {
         console.warn(`[ConfigLoader] Unknown service type: ${r} - skipping`);
         continue;
       }
       try {
-        const l = (await this.loadServiceModule(n.module))[n.className];
-        if (!l) throw new Error(`Class ${n.className} not found in module ${n.module}`);
-        const d = this.createServiceFactory(s, l), u = this.getServiceDependencies(s);
-        i[s] = { factory: d, dependencies: u, singleton: true, description: n.description };
+        const c = (await this.loadServiceModule(n.module))[n.className];
+        if (!c) throw new Error(`Class ${n.className} not found in module ${n.module}`);
+        const l = this.createServiceFactory(s, c), u = this.getServiceDependencies(s);
+        t[s] = { factory: l, dependencies: u, singleton: true, description: n.description };
       } catch (a) {
         throw new Error(`Failed to load service ${r}: ${a}`);
       }
     }
-    return i;
+    return t;
   }
   async loadServiceModule(e) {
-    let i;
+    let t;
     if (e.startsWith("../")) {
       const r = e.replace("../", ""), { resolve: n } = await import('path');
-      i = n(this.projectRoot, r);
+      t = n(this.projectRoot, r);
     } else if (e.startsWith("./")) {
       const { resolve: r } = await import('path'), n = typeof process < "u" && typeof process.cwd == "function" ? process.cwd() : "/";
-      i = r(n, e);
-    } else i = e;
+      t = r(n, e);
+    } else t = e;
     try {
-      return await import(i);
+      return await import(t);
     } catch (r) {
       try {
-        return await import(i + ".js");
+        return await import(t + ".js");
       } catch (n) {
         try {
-          return await import(i + ".ts");
+          return await import(t + ".ts");
         } catch (s) {
-          throw new Error(`Failed to import module ${e} (tried ${i}, ${i}.js, ${i}.ts): ${r}. JS Error: ${n}. TS Error: ${s}`);
+          throw new Error(`Failed to import module ${e} (tried ${t}, ${t}.js, ${t}.ts): ${r}. JS Error: ${n}. TS Error: ${s}`);
         }
       }
     }
   }
-  createServiceFactory(e, i) {
+  createServiceFactory(e, t) {
     return (r) => {
       const s = this.getServiceDependencies(e).map((a) => r.get(a));
-      return new i(...s);
+      return new t(...s);
     };
   }
   getServiceDependencies(e) {
-    return { [t.ILogger]: [], [t.IEventBus]: [], [t.IDatabaseService]: [t.ILogger], [t.IUserRepository]: [t.IDatabaseService, t.ILogger], [t.IMonitoringTargetRepository]: [t.IDatabaseService, t.ILogger], [t.ISpeedTestResultRepository]: [t.IDatabaseService, t.ILogger], [t.IAlertRuleRepository]: [t.IDatabaseService, t.ILogger], [t.IIncidentEventRepository]: [t.IDatabaseService, t.ILogger], [t.IPushSubscriptionRepository]: [t.IDatabaseService, t.ILogger], [t.INotificationRepository]: [t.IDatabaseService, t.ILogger], [t.IUserSpeedTestPreferenceRepository]: [t.IDatabaseService, t.ILogger], [t.ITargetRepository]: [t.IDatabaseService, t.ILogger], [t.ISpeedTestRepository]: [t.IDatabaseService, t.ILogger], [t.IMonitorService]: [t.ITargetRepository, t.ISpeedTestRepository, t.IMonitoringTargetRepository, t.ISpeedTestResultRepository, t.IUserSpeedTestPreferenceRepository, t.ISpeedTestConfigService, t.IEventBus, t.ILogger], [t.IAlertingService]: [t.IAlertRuleRepository, t.IIncidentEventRepository, t.IEventBus, t.ILogger], [t.INotificationService]: [t.INotificationRepository, t.IPushSubscriptionRepository, t.IEventBus, t.ILogger], [t.IAuthService]: [t.ILogger] }[e] || [];
+    return { [i.ILogger]: [], [i.IEventBus]: [], [i.IDatabaseService]: [i.ILogger], [i.IUserRepository]: [i.IDatabaseService, i.ILogger], [i.IMonitoringTargetRepository]: [i.IDatabaseService, i.ILogger], [i.ISpeedTestResultRepository]: [i.IDatabaseService, i.ILogger], [i.IAlertRuleRepository]: [i.IDatabaseService, i.ILogger], [i.IIncidentEventRepository]: [i.IDatabaseService, i.ILogger], [i.IPushSubscriptionRepository]: [i.IDatabaseService, i.ILogger], [i.INotificationRepository]: [i.IDatabaseService, i.ILogger], [i.IUserSpeedTestPreferenceRepository]: [i.IDatabaseService, i.ILogger], [i.ITargetRepository]: [i.IDatabaseService, i.ILogger], [i.ISpeedTestRepository]: [i.IDatabaseService, i.ILogger], [i.IMonitorService]: [i.ITargetRepository, i.ISpeedTestRepository, i.IMonitoringTargetRepository, i.ISpeedTestResultRepository, i.IEventBus, i.ILogger], [i.IAlertingService]: [i.IAlertRuleRepository, i.IIncidentEventRepository, i.IEventBus, i.ILogger], [i.INotificationService]: [i.INotificationRepository, i.IPushSubscriptionRepository, i.IEventBus, i.ILogger], [i.IAuthService]: [i.ILogger] }[e] || [];
   }
   validateConfiguration(e) {
     if (!e.name || !e.description || !e.environment) throw new Error("Configuration must have name, description, and environment");
     if (!e.services || typeof e.services != "object") throw new Error("Configuration must have services object");
-    for (const [i, r] of Object.entries(e.services)) {
-      if (!r.module || !r.className || !r.description) throw new Error(`Service ${i} must have module, className, and description`);
-      y[i] || console.warn(`[ConfigLoader] Unknown service type in validation: ${i}`);
+    for (const [t, r] of Object.entries(e.services)) {
+      if (!r.module || !r.className || !r.description) throw new Error(`Service ${t} must have module, className, and description`);
+      I$1[t] || console.warn(`[ConfigLoader] Unknown service type in validation: ${t}`);
     }
   }
   static async getAvailableConfigurations() {
-    const { join: e } = await import('path'), i = typeof process < "u" && typeof process.cwd == "function" ? process.cwd() : "/", r = e(i, "configs"), n = ["all-concrete.json", "auth-mock-only.json", "all-mock.json", "offline-development.json", "performance-testing.json", "database-testing.json", "notification-testing.json", "monitoring-testing.json", "alerting-testing.json"], { existsSync: s } = await import('fs');
+    const { join: e } = await import('path'), t = typeof process < "u" && typeof process.cwd == "function" ? process.cwd() : "/", r = e(t, "configs"), n = ["all-concrete.json", "auth-mock-only.json", "all-mock.json", "offline-development.json", "performance-testing.json", "database-testing.json", "notification-testing.json", "monitoring-testing.json", "alerting-testing.json"], { existsSync: s } = await import('fs');
     return n.filter((a) => s(e(r, a)));
   }
 };
-let b = false;
-async function T(o) {
-  if (!b) try {
-    const e = S(), i = new B$1(o), r = await i.loadConfiguration();
+let b$1 = false;
+async function C$1(o) {
+  if (!b$1) try {
+    const e = h(), t = new U$1(o), r = await t.loadConfiguration();
     console.log(`\u{1F4CB} Loading configuration: ${r.name} (${r.environment})`);
-    const n = await i.convertToServiceConfig(r);
+    const n = await t.convertToServiceConfig(r);
     for (const s of Object.getOwnPropertySymbols(n)) {
       const a = n[s];
       e.register(s, a);
     }
-    await e.initialize(), e.has(t.IDatabaseService) && await e.get(t.IDatabaseService).connect(), b = true, e.has(t.ILogger) ? e.get(t.ILogger).info("Container initialized with JSON configuration") : console.log("\u2705 Container initialized with JSON configuration");
+    await e.initialize(), e.has(i.IDatabaseService) && await e.get(i.IDatabaseService).connect(), b$1 = true, e.has(i.ILogger) ? e.get(i.ILogger).info("Container initialized with JSON configuration") : console.log("\u2705 Container initialized with JSON configuration");
   } catch (e) {
     try {
-      const i = S();
-      if (i.has(t.ILogger)) i.get(t.ILogger).error("Failed to initialize container with JSON configuration", { error: e });
+      const t = h();
+      if (t.has(i.ILogger)) t.get(i.ILogger).error("Failed to initialize container with JSON configuration", { error: e });
       else throw new Error("Logger not available");
     } catch {
       console.error("\u274C Failed to initialize container with JSON configuration:", e);
@@ -6793,11 +6836,11 @@ async function T(o) {
   }
 }
 async function P() {
-  await T();
-  const o = S();
-  return { userId: null, services: { logger: o.has(t.ILogger) ? o.get(t.ILogger) : null, eventBus: o.has(t.IEventBus) ? o.get(t.IEventBus) : null, database: o.has(t.IDatabaseService) ? o.get(t.IDatabaseService) : null, monitor: o.has(t.IMonitorService) ? o.get(t.IMonitorService) : null, alerting: o.has(t.IAlertingService) ? o.get(t.IAlertingService) : null, notification: o.has(t.INotificationService) ? o.get(t.INotificationService) : null, auth: o.has(t.IAuthService) ? o.get(t.IAuthService) : null, speedTestConfigService: o.has(t.ISpeedTestConfigService) ? o.get(t.ISpeedTestConfigService) : null }, repositories: { user: o.has(t.IUserRepository) ? o.get(t.IUserRepository) : null, monitoringTarget: o.has(t.IMonitoringTargetRepository) ? o.get(t.IMonitoringTargetRepository) : null, speedTestResult: o.has(t.ISpeedTestResultRepository) ? o.get(t.ISpeedTestResultRepository) : null, alertRule: o.has(t.IAlertRuleRepository) ? o.get(t.IAlertRuleRepository) : null, incidentEvent: o.has(t.IIncidentEventRepository) ? o.get(t.IIncidentEventRepository) : null, pushSubscription: o.has(t.IPushSubscriptionRepository) ? o.get(t.IPushSubscriptionRepository) : null, notification: o.has(t.INotificationRepository) ? o.get(t.INotificationRepository) : null, target: o.has(t.ITargetRepository) ? o.get(t.ITargetRepository) : null, speedTest: o.has(t.ISpeedTestRepository) ? o.get(t.ISpeedTestRepository) : null, userSpeedTestPreference: o.has(t.IUserSpeedTestPreferenceRepository) ? o.get(t.IUserSpeedTestPreferenceRepository) : null } };
+  await C$1();
+  const o = h();
+  return { userId: null, services: { logger: o.has(i.ILogger) ? o.get(i.ILogger) : null, eventBus: o.has(i.IEventBus) ? o.get(i.IEventBus) : null, database: o.has(i.IDatabaseService) ? o.get(i.IDatabaseService) : null, monitor: o.has(i.IMonitorService) ? o.get(i.IMonitorService) : null, alerting: o.has(i.IAlertingService) ? o.get(i.IAlertingService) : null, notification: o.has(i.INotificationService) ? o.get(i.INotificationService) : null, auth: o.has(i.IAuthService) ? o.get(i.IAuthService) : null, speedTestConfigService: o.has(i.ISpeedTestConfigService) ? o.get(i.ISpeedTestConfigService) : null }, repositories: { user: o.has(i.IUserRepository) ? o.get(i.IUserRepository) : null, monitoringTarget: o.has(i.IMonitoringTargetRepository) ? o.get(i.IMonitoringTargetRepository) : null, speedTestResult: o.has(i.ISpeedTestResultRepository) ? o.get(i.ISpeedTestResultRepository) : null, alertRule: o.has(i.IAlertRuleRepository) ? o.get(i.IAlertRuleRepository) : null, incidentEvent: o.has(i.IIncidentEventRepository) ? o.get(i.IIncidentEventRepository) : null, pushSubscription: o.has(i.IPushSubscriptionRepository) ? o.get(i.IPushSubscriptionRepository) : null, notification: o.has(i.INotificationRepository) ? o.get(i.INotificationRepository) : null, target: o.has(i.ITargetRepository) ? o.get(i.ITargetRepository) : null, speedTest: o.has(i.ISpeedTestRepository) ? o.get(i.ISpeedTestRepository) : null, userSpeedTestPreference: o.has(i.IUserSpeedTestPreferenceRepository) ? o.get(i.IUserSpeedTestPreferenceRepository) : null } };
 }
-let N$1 = class N {
+class L {
   constructor(e) {
     __publicField$1(this, "config");
     __publicField$1(this, "logger");
@@ -6813,55 +6856,55 @@ let N$1 = class N {
     return this.config.urls.filter((e) => e.enabled);
   }
   getUrlsByProvider(e) {
-    return this.config.urls.filter((i) => i.provider === e);
+    return this.config.urls.filter((t) => t.provider === e);
   }
   getUrlsBySize(e) {
-    return this.config.urls.filter((i) => i.sizeBytes === e);
+    return this.config.urls.filter((t) => t.sizeBytes === e);
   }
   addCustomUrl(e) {
-    const i = { ...e, id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` }, r = this.validateUrlConfig(i);
+    const t = { ...e, id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` }, r = this.validateUrlConfig(t);
     if (!r.valid) throw new Error(`Invalid URL configuration: ${r.errors.join(", ")}`);
-    return this.config.urls.push(i), this.logger.debug("SpeedTestConfigService: Added custom URL", { url: i }), i;
+    return this.config.urls.push(t), this.logger.debug("SpeedTestConfigService: Added custom URL", { url: t }), t;
   }
-  updateUrl(e, i) {
+  updateUrl(e, t) {
     const r = this.config.urls.findIndex((a) => a.id === e);
     if (r === -1) return this.logger.warn("SpeedTestConfigService: URL not found for update", { id: e }), null;
-    const n = { ...this.config.urls[r], ...i }, s = this.validateUrlConfig(n);
+    const n = { ...this.config.urls[r], ...t }, s = this.validateUrlConfig(n);
     if (!s.valid) throw new Error(`Invalid URL configuration: ${s.errors.join(", ")}`);
-    return this.config.urls[r] = n, this.logger.debug("SpeedTestConfigService: Updated URL", { id: e, updates: i }), n;
+    return this.config.urls[r] = n, this.logger.debug("SpeedTestConfigService: Updated URL", { id: e, updates: t }), n;
   }
   removeUrl(e) {
-    const i = this.config.urls.findIndex((n) => n.id === e);
-    if (i === -1) return this.logger.warn("SpeedTestConfigService: URL not found for removal", { id: e }), false;
-    const r = this.config.urls[i];
-    return this.config.urls.splice(i, 1), this.logger.debug("SpeedTestConfigService: Removed URL", { id: e, removedUrl: r }), true;
+    const t = this.config.urls.findIndex((n) => n.id === e);
+    if (t === -1) return this.logger.warn("SpeedTestConfigService: URL not found for removal", { id: e }), false;
+    const r = this.config.urls[t];
+    return this.config.urls.splice(t, 1), this.logger.debug("SpeedTestConfigService: Removed URL", { id: e, removedUrl: r }), true;
   }
   enableUrl(e) {
-    const i = this.config.urls.find((r) => r.id === e);
-    return i ? (i.enabled = true, this.logger.debug("SpeedTestConfigService: Enabled URL", { id: e }), true) : (this.logger.warn("SpeedTestConfigService: URL not found for enabling", { id: e }), false);
+    const t = this.config.urls.find((r) => r.id === e);
+    return t ? (t.enabled = true, this.logger.debug("SpeedTestConfigService: Enabled URL", { id: e }), true) : (this.logger.warn("SpeedTestConfigService: URL not found for enabling", { id: e }), false);
   }
   disableUrl(e) {
-    const i = this.config.urls.find((r) => r.id === e);
-    return i ? (i.enabled = false, this.logger.debug("SpeedTestConfigService: Disabled URL", { id: e }), true) : (this.logger.warn("SpeedTestConfigService: URL not found for disabling", { id: e }), false);
+    const t = this.config.urls.find((r) => r.id === e);
+    return t ? (t.enabled = false, this.logger.debug("SpeedTestConfigService: Disabled URL", { id: e }), true) : (this.logger.warn("SpeedTestConfigService: URL not found for disabling", { id: e }), false);
   }
   selectBestUrl(e = {}) {
-    const { preferredSize: i, preferredProvider: r, excludeProviders: n = [], maxSize: s, minSize: a } = e;
-    let l = this.getEnabledUrls().filter((g) => !(n.includes(g.provider) || s && g.sizeBytes > s || a && g.sizeBytes < a));
-    l.length === 0 && (l = this.getEnabledUrls()), l.sort((g, I) => {
+    const { preferredSize: t, preferredProvider: r, excludeProviders: n = [], maxSize: s, minSize: a } = e;
+    let c = this.getEnabledUrls().filter((d) => !(n.includes(d.provider) || s && d.sizeBytes > s || a && d.sizeBytes < a));
+    c.length === 0 && (c = this.getEnabledUrls()), c.sort((d, v) => {
       if (r) {
-        const f = g.provider === r, p = I.provider === r;
-        if (f && !p) return -1;
-        if (!f && p) return 1;
+        const g = d.provider === r, f = v.provider === r;
+        if (g && !f) return -1;
+        if (!g && f) return 1;
       }
-      if (i) {
-        const f = Math.abs(g.sizeBytes - i), p = Math.abs(I.sizeBytes - i);
-        if (f !== p) return f - p;
+      if (t) {
+        const g = Math.abs(d.sizeBytes - t), f = Math.abs(v.sizeBytes - t);
+        if (g !== f) return g - f;
       }
-      return g.priority - I.priority;
+      return d.priority - v.priority;
     });
-    const d = l[0], u = l.slice(1, 4);
-    let h = `Selected ${d.name} (${d.provider})`;
-    return r && d.provider === r && (h += " - preferred provider"), i && (h += ` - closest size to ${i} bytes`), this.logger.debug("SpeedTestConfigService: Selected URL", { selectedUrl: d.id, selectionReason: h, fallbackCount: u.length }), { selectedUrl: d, fallbackUrls: u, selectionReason: h };
+    const l = c[0], u = c.slice(1, 4);
+    let p = `Selected ${l.name} (${l.provider})`;
+    return r && l.provider === r && (p += " - preferred provider"), t && (p += ` - closest size to ${t} bytes`), this.logger.debug("SpeedTestConfigService: Selected URL", { selectedUrl: l.id, selectionReason: p, fallbackCount: u.length }), { selectedUrl: l, fallbackUrls: u, selectionReason: p };
   }
   getConfig() {
     return { ...this.config };
@@ -6880,40 +6923,40 @@ let N$1 = class N {
     }
   }
   validateUrlConfig(e) {
-    const i = [];
-    (!e.id || e.id.trim() === "") && i.push("ID is required"), (!e.name || e.name.trim() === "") && i.push("Name is required"), this.validateUrl(e.url) || i.push("Invalid URL format"), (!e.provider || e.provider.trim() === "") && i.push("Provider is required"), e.sizeBytes <= 0 && i.push("Size must be greater than 0"), e.priority < 0 && i.push("Priority must be non-negative");
+    const t = [];
+    (!e.id || e.id.trim() === "") && t.push("ID is required"), (!e.name || e.name.trim() === "") && t.push("Name is required"), this.validateUrl(e.url) || t.push("Invalid URL format"), (!e.provider || e.provider.trim() === "") && t.push("Provider is required"), e.sizeBytes <= 0 && t.push("Size must be greater than 0"), e.priority < 0 && t.push("Priority must be non-negative");
     const r = this.config.urls.find((n) => n.id === e.id);
-    return r && r !== e && i.push("ID already exists"), { valid: i.length === 0, errors: i };
+    return r && r !== e && t.push("ID already exists"), { valid: t.length === 0, errors: t };
   }
   getUrlStats() {
-    const e = this.getEnabledUrls(), i = [...new Set(this.config.urls.map((s) => s.provider))], r = this.config.urls.map((s) => s.sizeBytes), n = { min: Math.min(...r), max: Math.max(...r) };
-    return { totalUrls: this.config.urls.length, enabledUrls: e.length, providers: i, sizeRange: n };
+    const e = this.getEnabledUrls(), t = [...new Set(this.config.urls.map((s) => s.provider))], r = this.config.urls.map((s) => s.sizeBytes), n = { min: Math.min(...r), max: Math.max(...r) };
+    return { totalUrls: this.config.urls.length, enabledUrls: e.length, providers: t, sizeRange: n };
   }
-};
-const m = { [t.ILogger]: { factory: () => new U$2(c.DEBUG), dependencies: [], singleton: true, description: "Browser logger service" }, [t.IEventBus]: { factory: () => new C$1(), dependencies: [], singleton: true, description: "Browser event bus" }, [t.ISpeedTestConfigService]: { factory: (o) => new N$1(o.get(t.ILogger)), dependencies: [t.ILogger], singleton: true, description: "Speed test URL configuration service" } };
+}
+const m = { [i.ILogger]: { factory: () => new S("debug"), dependencies: [], singleton: true, description: "Browser logger service" }, [i.IEventBus]: { factory: () => new T(), dependencies: [], singleton: true, description: "Browser event bus" }, [i.ISpeedTestConfigService]: { factory: (o) => new L(o.get(i.ILogger)), dependencies: [i.ILogger], singleton: true, description: "Speed test URL configuration service" } };
+let w = false;
+async function B$1() {
+  if (w) return;
+  const o = h();
+  for (const e of Object.getOwnPropertySymbols(m)) o.register(e, m[e]);
+  await o.initialize(), w = true;
+}
 let R = false;
 async function z$1() {
-  if (R) return;
-  const o = S();
-  for (const e of Object.getOwnPropertySymbols(m)) o.register(e, m[e]);
-  await o.initialize(), R = true;
-}
-let w = false;
-async function L() {
-  if (!w) {
+  if (!R) {
     if (typeof process < "u" && typeof process.cwd == "function") {
-      const { join: o } = await import('path'), e = process.cwd(), i = o(e, "service-config.json"), { existsSync: r } = await import('fs');
-      if (r(i)) try {
-        await T(), w = true;
+      const { join: o } = await import('path'), e = process.cwd(), t = o(e, "service-wiring/development.json"), { existsSync: r } = await import('fs');
+      if (r(t)) try {
+        await C$1(), R = true;
         return;
       } catch (n) {
         console.warn("\u26A0\uFE0F Failed to load JSON configuration, falling back to hardcoded configuration:", n instanceof Error ? n.message : String(n));
       }
     }
-    throw console.error("\u274C No service configuration found! JSON config is required."), new Error("Service configuration not found. Please ensure service-config.json exists in the project root.");
+    throw console.error("\u274C No service configuration found! JSON config is required."), new Error("Service configuration not found. Please ensure service-wiring/development.json exists in the project root.");
   }
 }
-process.env.SKIP_AUTO_INIT !== "true" && !"production".includes("web") && !process.env.VITE && L().catch((o) => {
+process.env.SKIP_AUTO_INIT !== "true" && !"production".includes("web") && !process.env.VITE && z$1().catch((o) => {
   console.error("Failed to initialize container:", o);
 });
 
@@ -6925,17 +6968,17 @@ function Pe() {
   let t = false;
   function r(s, i) {
     if (t) return !(t = false);
-    const a = { to: s, options: i, defaultPrevented: false, preventDefault: () => a.defaultPrevented = true };
-    for (const c of n) c.listener({ ...a, from: c.location, retry: (g) => {
-      g && (t = true), c.navigate(s, { ...i, resolve: false });
+    const o = { to: s, options: i, defaultPrevented: false, preventDefault: () => o.defaultPrevented = true };
+    for (const c of n) c.listener({ ...o, from: c.location, retry: (h) => {
+      h && (t = true), c.navigate(s, { ...i, resolve: false });
     } });
-    return !a.defaultPrevented;
+    return !o.defaultPrevented;
   }
   return { subscribe: e, confirm: r };
 }
-let G$1;
+let N;
 function ee$1() {
-  (!window.history.state || window.history.state._depth == null) && window.history.replaceState({ ...window.history.state, _depth: window.history.length - 1 }, ""), G$1 = window.history.state._depth;
+  (!window.history.state || window.history.state._depth == null) && window.history.replaceState({ ...window.history.state, _depth: window.history.length - 1 }, ""), N = window.history.state._depth;
 }
 isServer || ee$1();
 function Ze(n) {
@@ -6944,9 +6987,9 @@ function Ze(n) {
 function et(n, e) {
   let t = false;
   return () => {
-    const r = G$1;
+    const r = N;
     ee$1();
-    const s = r == null ? null : G$1 - r;
+    const s = r == null ? null : N - r;
     if (t) {
       t = false;
       return;
@@ -6955,22 +6998,22 @@ function et(n, e) {
   };
 }
 const De = /^(?:[a-z0-9]+:)?\/\//i, Qe = /^\/+|(\/)\/+$/g, Le = "http://sr";
-function _(n, e = false) {
+function b(n, e = false) {
   const t = n.replace(Qe, "$1");
   return t ? e || /^[?#]/.test(t) ? t : "/" + t : "";
 }
-function U$1(n, e, t) {
+function G$1(n, e, t) {
   if (De.test(e)) return;
-  const r = _(n), s = t && _(t);
+  const r = b(n), s = t && b(t);
   let i = "";
-  return !s || e.startsWith("/") ? i = r : s.toLowerCase().indexOf(r.toLowerCase()) !== 0 ? i = r + s : i = s, (i || "/") + _(e, !i);
+  return !s || e.startsWith("/") ? i = r : s.toLowerCase().indexOf(r.toLowerCase()) !== 0 ? i = r + s : i = s, (i || "/") + b(e, !i);
 }
-function Be(n, e) {
+function Ie(n, e) {
   if (n == null) throw new Error(e);
   return n;
 }
-function Oe(n, e) {
-  return _(n).replace(/\/*(\*.*)?$/g, "") + _(e);
+function Be(n, e) {
+  return b(n).replace(/\/*(\*.*)?$/g, "") + b(e);
 }
 function te$1(n) {
   const e = {};
@@ -6978,31 +7021,31 @@ function te$1(n) {
     r in e ? Array.isArray(e[r]) ? e[r].push(t) : e[r] = [e[r], t] : e[r] = t;
   }), e;
 }
-function Ie(n, e, t) {
-  const [r, s] = n.split("/*", 2), i = r.split("/").filter(Boolean), a = i.length;
+function Oe(n, e, t) {
+  const [r, s] = n.split("/*", 2), i = r.split("/").filter(Boolean), o = i.length;
   return (c) => {
-    const g = c.split("/").filter(Boolean), d = g.length - a;
+    const h = c.split("/").filter(Boolean), d = h.length - o;
     if (d < 0 || d > 0 && s === void 0 && !e) return null;
-    const l = { path: a ? "" : "/", params: {} }, y = (p) => t === void 0 ? void 0 : t[p];
-    for (let p = 0; p < a; p++) {
-      const m = i[p], f = m[0] === ":", S = f ? g[p] : g[p].toLowerCase(), b = f ? m.slice(1) : m.toLowerCase();
-      if (f && F$1(S, y(b))) l.params[b] = S;
-      else if (f || !F$1(S, b)) return null;
+    const l = { path: o ? "" : "/", params: {} }, f = (p) => t === void 0 ? void 0 : t[p];
+    for (let p = 0; p < o; p++) {
+      const m = i[p], y = m[0] === ":", S = y ? h[p] : h[p].toLowerCase(), _ = y ? m.slice(1) : m.toLowerCase();
+      if (y && x(S, f(_))) l.params[_] = S;
+      else if (y || !x(S, _)) return null;
       l.path += `/${S}`;
     }
     if (s) {
-      const p = d ? g.slice(-d).join("/") : "";
-      if (F$1(p, y(s))) l.params[s] = p;
+      const p = d ? h.slice(-d).join("/") : "";
+      if (x(p, f(s))) l.params[s] = p;
       else return null;
     }
     return l;
   };
 }
-function F$1(n, e) {
+function x(n, e) {
   const t = (r) => r === n;
   return e === void 0 ? true : typeof e == "string" ? t(e) : typeof e == "function" ? e(n) : Array.isArray(e) ? e.some(t) : e instanceof RegExp ? e.test(n) : false;
 }
-function Ue(n) {
+function Ge(n) {
   const [e, t] = n.pattern.split("/*", 2), r = e.split("/").filter(Boolean);
   return r.reduce((s, i) => s + (i.startsWith(":") ? 2 : 3), r.length - (t === void 0 ? 0 : 1));
 }
@@ -7022,10 +7065,10 @@ function ne$1(n) {
   let t = n.slice(0, e.index), r = n.slice(e.index + e[0].length);
   const s = [t, t += e[1]];
   for (; e = /^(\/\:[^\/]+)\?/.exec(r); ) s.push(t += e[1]), r = r.slice(e[0].length);
-  return ne$1(r).reduce((i, a) => [...i, ...s.map((c) => c + a)], []);
+  return ne$1(r).reduce((i, o) => [...i, ...s.map((c) => c + o)], []);
 }
-const xe = 100, Fe = createContext$1(), se$1 = createContext$1(), q$1 = () => Be(useContext(Fe), "<A> and 'use' router primitives can be only used inside a Route."), Ne = () => useContext(se$1) || q$1().base, tt = (n) => {
-  const e = Ne();
+const Ue = 100, xe = createContext$1(), se$1 = createContext$1(), q$1 = () => Ie(useContext(xe), "<A> and 'use' router primitives can be only used inside a Route."), Fe = () => useContext(se$1) || q$1().base, tt = (n) => {
+  const e = Fe();
   return createMemo(() => e.resolvePath(n()));
 }, rt = (n) => {
   const e = q$1();
@@ -7034,24 +7077,24 @@ const xe = 100, Fe = createContext$1(), se$1 = createContext$1(), q$1 = () => Be
     return t !== void 0 ? e.renderPath(t) : t;
   });
 }, nt = () => q$1().location;
-function Ge(n, e = "") {
-  const { component: t, preload: r, load: s, children: i, info: a } = n, c = !i || Array.isArray(i) && !i.length, g = { key: n, component: t, preload: r || s, info: a };
+function Ne(n, e = "") {
+  const { component: t, preload: r, load: s, children: i, info: o } = n, c = !i || Array.isArray(i) && !i.length, h = { key: n, component: t, preload: r || s, info: o };
   return ie(n.path).reduce((d, l) => {
-    for (const y of ne$1(l)) {
-      const p = Oe(e, y);
+    for (const f of ne$1(l)) {
+      const p = Be(e, f);
       let m = c ? p : p.split("/*", 1)[0];
-      m = m.split("/").map((f) => f.startsWith(":") || f.startsWith("*") ? f : encodeURIComponent(f)).join("/"), d.push({ ...g, originalPath: l, pattern: m, matcher: Ie(m, !c, n.matchFilters) });
+      m = m.split("/").map((y) => y.startsWith(":") || y.startsWith("*") ? y : encodeURIComponent(y)).join("/"), d.push({ ...h, originalPath: l, pattern: m, matcher: Oe(m, !c, n.matchFilters) });
     }
     return d;
   }, []);
 }
 function ke(n, e = 0) {
-  return { routes: n, score: Ue(n[n.length - 1]) * 1e4 - e, matcher(t) {
+  return { routes: n, score: Ge(n[n.length - 1]) * 1e4 - e, matcher(t) {
     const r = [];
     for (let s = n.length - 1; s >= 0; s--) {
-      const i = n[s], a = i.matcher(t);
-      if (!a) return null;
-      r.unshift({ ...a, route: i });
+      const i = n[s], o = i.matcher(t);
+      if (!o) return null;
+      r.unshift({ ...o, route: i });
     }
     return r;
   } };
@@ -7061,26 +7104,26 @@ function ie(n) {
 }
 function qe(n, e = "", t = [], r = []) {
   const s = ie(n);
-  for (let i = 0, a = s.length; i < a; i++) {
+  for (let i = 0, o = s.length; i < o; i++) {
     const c = s[i];
     if (c && typeof c == "object") {
       c.hasOwnProperty("path") || (c.path = "");
-      const g = Ge(c, e);
-      for (const d of g) {
+      const h = Ne(c, e);
+      for (const d of h) {
         t.push(d);
         const l = Array.isArray(c.children) && c.children.length === 0;
         if (c.children && !l) qe(c.children, d.pattern, t, r);
         else {
-          const y = ke([...t], r.length);
-          r.push(y);
+          const f = ke([...t], r.length);
+          r.push(f);
         }
         t.pop();
       }
     }
   }
-  return t.length ? r : r.sort((i, a) => a.score - i.score);
+  return t.length ? r : r.sort((i, o) => o.score - i.score);
 }
-function N(n, e) {
+function F$1(n, e) {
   for (let t = 0, r = n.length; t < r; t++) {
     const s = n[t].matcher(e);
     if (s) return s;
@@ -7089,23 +7132,23 @@ function N(n, e) {
 }
 function Me(n, e, t) {
   const r = new URL(Le), s = createMemo((l) => {
-    const y = n();
+    const f = n();
     try {
-      return new URL(y, r);
+      return new URL(f, r);
     } catch {
-      return console.error(`Invalid path ${y}`), l;
+      return console.error(`Invalid path ${f}`), l;
     }
-  }, r, { equals: (l, y) => l.href === y.href }), i = createMemo(() => s().pathname), a = createMemo(() => s().search, true), c = createMemo(() => s().hash), g = () => "", d = on(a, () => te$1(s()));
+  }, r, { equals: (l, f) => l.href === f.href }), i = createMemo(() => s().pathname), o = createMemo(() => s().search, true), c = createMemo(() => s().hash), h = () => "", d = on(o, () => te$1(s()));
   return { get pathname() {
     return i();
   }, get search() {
-    return a();
+    return o();
   }, get hash() {
     return c();
   }, get state() {
     return e();
   }, get key() {
-    return g();
+    return h();
   }, query: t ? t(d) : re$1(d) };
 }
 let C;
@@ -7113,86 +7156,86 @@ function st() {
   return C;
 }
 function it(n, e, t, r = {}) {
-  const { signal: [s, i], utils: a = {} } = n, c = a.parsePath || ((o) => o), g = a.renderPath || ((o) => o), d = a.beforeLeave || Pe(), l = U$1("", r.base || "");
+  const { signal: [s, i], utils: o = {} } = n, c = o.parsePath || ((a) => a), h = o.renderPath || ((a) => a), d = o.beforeLeave || Pe(), l = G$1("", r.base || "");
   if (l === void 0) throw new Error(`${l} is not a valid base path`);
   l && !s().value && i({ value: l, replace: true, scroll: false });
-  const [y, p] = createSignal(false);
+  const [f, p] = createSignal(false);
   let m;
-  const f = (o, u) => {
-    u.value === S() && u.state === P() || (m === void 0 && p(true), C = o, m = u, startTransition(() => {
-      m === u && (b(m.value), oe(m.state), resetErrorBoundaries(), isServer || M[1]([]));
+  const y = (a, u) => {
+    u.value === S() && u.state === P() || (m === void 0 && p(true), C = a, m = u, startTransition(() => {
+      m === u && (_(m.value), ae(m.state), resetErrorBoundaries(), isServer || M[1]([]));
     }).finally(() => {
       m === u && batch(() => {
-        C = void 0, o === "navigate" && ge(m), p(false), m = void 0;
+        C = void 0, a === "navigate" && he(m), p(false), m = void 0;
       });
     }));
-  }, [S, b] = createSignal(s().value), [P, oe] = createSignal(s().state), D = Me(S, P, a.queryWrapper), Q = [], M = createSignal(isServer ? de() : []), j = createMemo(() => typeof r.transformUrl == "function" ? N(e(), r.transformUrl(D.pathname)) : N(e(), D.pathname)), $ = () => {
-    const o = j(), u = {};
-    for (let v = 0; v < o.length; v++) Object.assign(u, o[v].params);
+  }, [S, _] = createSignal(s().value), [P, ae] = createSignal(s().state), D = Me(S, P, o.queryWrapper), Q = [], M = createSignal(isServer ? de() : []), $ = createMemo(() => typeof r.transformUrl == "function" ? F$1(e(), r.transformUrl(D.pathname)) : F$1(e(), D.pathname)), j = () => {
+    const a = $(), u = {};
+    for (let w = 0; w < a.length; w++) Object.assign(u, a[w].params);
     return u;
-  }, ce = a.paramsWrapper ? a.paramsWrapper($, e) : re$1($), z = { pattern: l, path: () => l, outlet: () => null, resolvePath(o) {
-    return U$1(l, o);
+  }, ce = o.paramsWrapper ? o.paramsWrapper(j, e) : re$1(j), H = { pattern: l, path: () => l, outlet: () => null, resolvePath(a) {
+    return G$1(l, a);
   } };
-  return createRenderEffect(on(s, (o) => f("native", o), { defer: true })), { base: z, location: D, params: ce, isRouting: y, renderPath: g, parsePath: c, navigatorFactory: le, matches: j, beforeLeave: d, preloadRoute: he, singleFlight: r.singleFlight === void 0 ? true : r.singleFlight, submissions: M };
-  function ue(o, u, v) {
+  return createRenderEffect(on(s, (a) => y("native", a), { defer: true })), { base: H, location: D, params: ce, isRouting: f, renderPath: h, parsePath: c, navigatorFactory: le, matches: $, beforeLeave: d, preloadRoute: ge, singleFlight: r.singleFlight === void 0 ? true : r.singleFlight, submissions: M };
+  function ue(a, u, w) {
     untrack(() => {
       if (typeof u == "number") {
-        u && (a.go ? a.go(u) : console.warn("Router integration does not support relative routing"));
+        u && (o.go ? o.go(u) : console.warn("Router integration does not support relative routing"));
         return;
       }
-      const L = !u || u[0] === "?", { replace: B, resolve: T, scroll: O, state: E } = { replace: false, resolve: !L, scroll: true, ...v }, A = T ? o.resolvePath(u) : U$1(L && D.pathname || "", u);
-      if (A === void 0) throw new Error(`Path '${u}' is not a routable path`);
-      if (Q.length >= xe) throw new Error("Too many redirects");
-      const H = S();
-      if (A !== H || E !== P()) if (isServer) {
+      const L = !u || u[0] === "?", { replace: I, resolve: E, scroll: B, state: A } = { replace: false, resolve: !L, scroll: true, ...w }, T = E ? a.resolvePath(u) : G$1(L && D.pathname || "", u);
+      if (T === void 0) throw new Error(`Path '${u}' is not a routable path`);
+      if (Q.length >= Ue) throw new Error("Too many redirects");
+      const z = S();
+      if (T !== z || A !== P()) if (isServer) {
         const W = getRequestEvent();
-        W && (W.response = { status: 302, headers: new Headers({ Location: A }) }), i({ value: A, replace: B, scroll: O, state: E });
-      } else d.confirm(A, v) && (Q.push({ value: H, replace: B, scroll: O, state: P() }), f("navigate", { value: A, state: E }));
+        W && (W.response = { status: 302, headers: new Headers({ Location: T }) }), i({ value: T, replace: I, scroll: B, state: A });
+      } else d.confirm(T, w) && (Q.push({ value: z, replace: I, scroll: B, state: P() }), y("navigate", { value: T, state: A }));
     });
   }
-  function le(o) {
-    return o = o || useContext(se$1) || z, (u, v) => ue(o, u, v);
+  function le(a) {
+    return a = a || useContext(se$1) || H, (u, w) => ue(a, u, w);
   }
-  function ge(o) {
+  function he(a) {
     const u = Q[0];
-    u && (i({ ...o, replace: u.replace, scroll: u.scroll }), Q.length = 0);
+    u && (i({ ...a, replace: u.replace, scroll: u.scroll }), Q.length = 0);
   }
-  function he(o, u) {
-    const v = N(e(), o.pathname), L = C;
+  function ge(a, u) {
+    const w = F$1(e(), a.pathname), L = C;
     C = "preload";
-    for (let B in v) {
-      const { route: T, params: O } = v[B];
-      T.component && T.component.preload && T.component.preload();
-      const { preload: E } = T;
-      u && E && runWithOwner(t(), () => E({ params: O, location: { pathname: o.pathname, search: o.search, hash: o.hash, query: te$1(o), state: null, key: "" }, intent: "preload" }));
+    for (let I in w) {
+      const { route: E, params: B } = w[I];
+      E.component && E.component.preload && E.component.preload();
+      const { preload: A } = E;
+      u && A && runWithOwner(t(), () => A({ params: B, location: { pathname: a.pathname, search: a.search, hash: a.hash, query: te$1(a), state: null, key: "" }, intent: "preload" }));
     }
     C = L;
   }
   function de() {
-    const o = getRequestEvent();
-    return o && o.router && o.router.submission ? [o.router.submission] : [];
+    const a = getRequestEvent();
+    return a && a.router && a.router.submission ? [a.router.submission] : [];
   }
 }
-function at(n, e, t, r) {
-  const { base: s, location: i, params: a } = n, { pattern: c, component: g, preload: d } = r().route, l = createMemo(() => r().path);
-  g && g.preload && g.preload();
-  const y = d ? d({ params: a, location: i, intent: C || "initial" }) : void 0;
-  return { parent: e, pattern: c, path: l, outlet: () => g ? createComponent(g, { params: a, location: i, data: y, get children() {
+function ot(n, e, t, r) {
+  const { base: s, location: i, params: o } = n, { pattern: c, component: h, preload: d } = r().route, l = createMemo(() => r().path);
+  h && h.preload && h.preload();
+  const f = d ? d({ params: o, location: i, intent: C || "initial" }) : void 0;
+  return { parent: e, pattern: c, path: l, outlet: () => h ? createComponent(h, { params: o, location: i, data: f, get children() {
     return t();
   } }) : t(), resolvePath(m) {
-    return U$1(s.path(), m, l());
+    return G$1(s.path(), m, l());
   } };
 }
-const h = createTRPCProxyClient({ links: [httpBatchLink({ url: "/api/trpc" })] });
-class je {
+const g$1 = createTRPCProxyClient({ links: [httpBatchLink({ url: "/api/trpc" })] });
+class $e {
   async createTarget(e) {
-    const t = await h.targets.create.mutate({ name: e.name, address: e.address });
+    const t = await g$1.targets.create.mutate({ name: e.name, address: e.address });
     if (!t) throw new Error("Failed to create target");
     return t;
   }
   async getTarget(e) {
     try {
-      const t = await h.targets.getById.query({ id: e });
+      const t = await g$1.targets.getById.query({ id: e });
       return t || null;
     } catch (t) {
       if (t instanceof Error && t.message.includes("not found")) return null;
@@ -7200,83 +7243,83 @@ class je {
     }
   }
   async getTargets() {
-    return await h.targets.getAll.query() || [];
+    return await g$1.targets.getAll.query() || [];
   }
   async updateTarget(e, t) {
-    const r = await h.targets.update.mutate({ id: e, ...t });
+    const r = await g$1.targets.update.mutate({ id: e, ...t });
     if (!r) throw new Error("Failed to update target");
     return r;
   }
   async deleteTarget(e) {
-    await h.targets.delete.mutate({ id: e });
+    await g$1.targets.delete.mutate({ id: e });
   }
   async runSpeedTest(e, t) {
     const r = await this.getTarget(e);
     if (!r) throw new Error("Target not found");
-    const s = await h.speedTests.runTest.mutate({ targetId: e, target: r.address });
+    const s = await g$1.speedTests.runTest.mutate({ targetId: e, target: r.address });
     if (!s) throw new Error("Failed to run speed test");
     return s;
   }
   async startMonitoring(e, t) {
-    await h.targets.startMonitoring.mutate({ targetId: e, intervalMs: t });
+    await g$1.targets.startMonitoring.mutate({ targetId: e, intervalMs: t });
   }
   async stopMonitoring(e) {
-    await h.targets.stopMonitoring.mutate({ targetId: e });
+    await g$1.targets.stopMonitoring.mutate({ targetId: e });
   }
   async getActiveTargets() {
-    return await h.targets.getActiveTargets.query();
+    return await g$1.targets.getActiveTargets.query();
   }
   async getTargetResults(e, t) {
-    return await h.speedTests.getByTargetId.query({ targetId: e, limit: t }) || [];
+    return await g$1.speedTests.getByTargetId.query({ targetId: e, limit: t }) || [];
   }
   async createAlertRule(e) {
-    const t = await h.alertRules.create.mutate(e);
+    const t = await g$1.alertRules.create.mutate(e);
     if (!t) throw new Error("Failed to create alert rule");
     return t;
   }
   async getAlertRules(e) {
-    return await h.alertRules.getByTargetId.query({ targetId: e }) || [];
+    return await g$1.alertRules.getByTargetId.query({ targetId: e }) || [];
   }
   async updateAlertRule(e, t) {
-    const r = await h.alertRules.update.mutate({ id: e, ...t });
+    const r = await g$1.alertRules.update.mutate({ id: e, ...t });
     if (!r) throw new Error("Failed to update alert rule");
     return r;
   }
   async deleteAlertRule(e) {
-    await h.alertRules.delete.mutate({ id: e });
+    await g$1.alertRules.delete.mutate({ id: e });
   }
   async getIncidents(e) {
-    return (await h.incidents.getByTargetId.query({ targetId: e }) || []).map((r) => ({ ...r, timestamp: typeof r.timestamp == "string" ? r.timestamp : r.timestamp.toISOString() }));
+    return (await g$1.incidents.getByTargetId.query({ targetId: e }) || []).map((r) => ({ id: r.id, timestamp: r.timestamp instanceof Date ? r.timestamp : new Date(r.timestamp), type: r.type, description: r.description, resolved: r.resolved, targetId: r.targetId, ruleId: r.ruleId, triggeredByRule: null }));
   }
   async resolveIncident(e) {
-    await h.incidents.resolve.mutate({ id: e });
+    await g$1.incidents.resolve.mutate({ id: e });
   }
   async getNotifications(e) {
-    return (await h.notifications.getByUserId.query({ userId: e }) || []).map((r) => ({ ...r, sentAt: typeof r.sentAt == "string" ? r.sentAt : r.sentAt.toISOString() }));
+    return (await g$1.notifications.getByUserId.query({ userId: e }) || []).map((r) => ({ id: r.id, message: r.message, sentAt: r.sentAt instanceof Date ? r.sentAt : new Date(r.sentAt), read: r.read, userId: r.userId }));
   }
   async markNotificationAsRead(e) {
-    await h.notifications.markAsRead.mutate({ id: e });
+    await g$1.notifications.markAsRead.mutate({ id: e });
   }
   async markAllNotificationsAsRead(e) {
-    await h.notifications.markAllAsRead.mutate();
+    await g$1.notifications.markAllAsRead.mutate();
   }
   async createPushSubscription(e) {
-    const t = await h.pushSubscriptions.create.mutate({ endpoint: e.endpoint, p256dh: e.p256dh, auth: e.auth });
+    const t = await g$1.pushSubscriptions.create.mutate({ endpoint: e.endpoint, p256dh: e.p256dh, auth: e.auth });
     if (!t) throw new Error("Failed to create push subscription");
     return t;
   }
   async getPushSubscriptions(e) {
-    return await h.pushSubscriptions.getByUserId.query() || [];
+    return await g$1.pushSubscriptions.getByUserId.query() || [];
   }
   async deletePushSubscription(e) {
-    await h.pushSubscriptions.delete.mutate({ id: e });
+    await g$1.pushSubscriptions.delete.mutate({ id: e });
   }
   async sendPushNotification(e) {
     throw new Error("sendPushNotification not yet implemented with tRPC");
   }
   mapUser(e) {
-    var _a, _b, _c;
-    return { id: e.id, name: (_a = e.name) != null ? _a : void 0, email: (_b = e.email) != null ? _b : void 0, image: (_c = e.image) != null ? _c : void 0 };
+    var _a;
+    return { id: e.id, name: e.name, email: e.email, emailVerified: (_a = e.emailVerified) != null ? _a : null, image: e.image, monitoringTargets: [], pushSubscriptions: [], notifications: [] };
   }
   async signIn(e, t) {
     throw new Error("signIn not yet implemented with tRPC");
@@ -7288,18 +7331,57 @@ class je {
     throw new Error("signOut not yet implemented with tRPC");
   }
   async getCurrentUser() {
-    const e = await h.users.getCurrent.query();
+    const e = await g$1.users.getCurrent.query();
     return e ? this.mapUser(e) : null;
   }
   async getSession() {
     const e = await this.getCurrentUser();
     return e ? { user: e, expires: new Date(Date.now() + 720 * 60 * 60 * 1e3).toISOString(), accessToken: "mock-access-token" } : null;
   }
-  async isAuthenticated() {
-    return await this.getCurrentUser() !== null;
+  async connect() {
+    console.log("APIClient: Connected");
+  }
+  async disconnect() {
+    console.log("APIClient: Disconnected");
+  }
+  isConnected() {
+    return true;
+  }
+  async request(e, t) {
+    throw new Error(`Generic request method not implemented for endpoint: ${e}`);
+  }
+  async get(e, t) {
+    throw new Error(`Generic GET method not implemented for endpoint: ${e}`);
+  }
+  async post(e, t, r) {
+    throw new Error(`Generic POST method not implemented for endpoint: ${e}`);
+  }
+  async put(e, t, r) {
+    throw new Error(`Generic PUT method not implemented for endpoint: ${e}`);
+  }
+  async patch(e, t, r) {
+    throw new Error(`Generic PATCH method not implemented for endpoint: ${e}`);
+  }
+  async delete(e, t) {
+    throw new Error(`Generic DELETE method not implemented for endpoint: ${e}`);
+  }
+  setErrorHandler(e) {
+    console.log("APIClient: Error handler set");
+  }
+  setRetryPolicy(e) {
+    console.log("APIClient: Retry policy set");
+  }
+  setAuthToken(e) {
+    console.log("APIClient: Auth token set");
+  }
+  clearAuthToken() {
+    console.log("APIClient: Auth token cleared");
+  }
+  isAuthenticated() {
+    return false;
   }
 }
-class $e {
+class je {
   constructor(e, t, r) {
     this.apiClient = e, this.eventBus = t, this.logger = r;
   }
@@ -7307,18 +7389,18 @@ class $e {
     this.logger.debug("CommandQueryService: Creating target", e);
     try {
       const t = await this.apiClient.createTarget(e);
-      return this.eventBus.emitTyped("TARGETS_LOADED", { targets: [t] }), t;
+      return this.eventBus.emit("TARGETS_LOADED", { targets: [t] }), t;
     } catch (t) {
-      throw this.logger.error("CommandQueryService: Target creation failed", { error: t, data: e }), this.eventBus.emitTyped("TARGETS_LOAD_FAILED", { error: t instanceof Error ? t.message : "An error occurred" }), t;
+      throw this.logger.error("CommandQueryService: Target creation failed", { error: t, data: e }), this.eventBus.emit("TARGETS_LOAD_FAILED", { error: t instanceof Error ? t.message : "An error occurred" }), t;
     }
   }
   async updateTarget(e, t) {
     this.logger.debug("CommandQueryService: Updating target", { id: e, data: t });
     try {
       const r = await this.apiClient.updateTarget(e, t);
-      return this.eventBus.emitTyped("TARGETS_LOADED", { targets: [r] }), r;
+      return this.eventBus.emit("TARGETS_LOADED", { targets: [r] }), r;
     } catch (r) {
-      throw this.logger.error("CommandQueryService: Target update failed", { error: r, id: e, data: t }), this.eventBus.emitTyped("TARGETS_LOAD_FAILED", { error: r instanceof Error ? r.message : "An error occurred" }), r;
+      throw this.logger.error("CommandQueryService: Target update failed", { error: r, id: e, data: t }), this.eventBus.emit("TARGETS_LOAD_FAILED", { error: r instanceof Error ? r.message : "An error occurred" }), r;
     }
   }
   async deleteTarget(e) {
@@ -7326,18 +7408,18 @@ class $e {
     try {
       await this.apiClient.deleteTarget(e);
       const t = await this.getTargets();
-      this.eventBus.emitTyped("TARGETS_LOADED", { targets: t });
+      this.eventBus.emit("TARGETS_LOADED", { targets: t });
     } catch (t) {
-      throw this.logger.error("CommandQueryService: Target deletion failed", { error: t, id: e }), this.eventBus.emitTyped("TARGETS_LOAD_FAILED", { error: t instanceof Error ? t.message : "An error occurred" }), t;
+      throw this.logger.error("CommandQueryService: Target deletion failed", { error: t, id: e }), this.eventBus.emit("TARGETS_LOAD_FAILED", { error: t instanceof Error ? t.message : "An error occurred" }), t;
     }
   }
   async runSpeedTest(e, t) {
     this.logger.debug("CommandQueryService: Running speed test", { targetId: e, timeout: t });
     try {
       const r = await this.apiClient.runSpeedTest(e, t);
-      return this.eventBus.emitTyped("SPEED_TEST_RESULTS_LOADED", { targetId: e, results: [r] }), r;
+      return this.eventBus.emit("SPEED_TEST_RESULTS_LOADED", { targetId: e, results: [r] }), r;
     } catch (r) {
-      throw this.logger.error("CommandQueryService: Speed test failed", { error: r, targetId: e }), this.eventBus.emitTyped("SPEED_TEST_RESULTS_LOAD_FAILED", { targetId: e, error: r instanceof Error ? r.message : "An error occurred" }), r;
+      throw this.logger.error("CommandQueryService: Speed test failed", { error: r, targetId: e }), this.eventBus.emit("SPEED_TEST_RESULTS_LOAD_FAILED", { targetId: e, error: r instanceof Error ? r.message : "An error occurred" }), r;
     }
   }
   async startMonitoring(e, t) {
@@ -7368,9 +7450,9 @@ class $e {
     this.logger.debug("CommandQueryService: Getting targets");
     try {
       const e = await this.apiClient.getTargets();
-      return this.eventBus.emitTyped("TARGETS_LOADED", { targets: e }), e;
+      return this.eventBus.emit("TARGETS_LOADED", { targets: e }), e;
     } catch (e) {
-      throw this.logger.error("CommandQueryService: Get targets failed", { error: e }), this.eventBus.emitTyped("TARGETS_LOAD_FAILED", { error: e instanceof Error ? e.message : "An error occurred" }), e;
+      throw this.logger.error("CommandQueryService: Get targets failed", { error: e }), this.eventBus.emit("TARGETS_LOAD_FAILED", { error: e instanceof Error ? e.message : "An error occurred" }), e;
     }
   }
   async getActiveTargets() {
@@ -7385,16 +7467,16 @@ class $e {
     this.logger.debug("CommandQueryService: Getting target results", { targetId: e, limit: t });
     try {
       const r = await this.apiClient.getTargetResults(e, t);
-      return this.eventBus.emitTyped("SPEED_TEST_RESULTS_LOADED", { targetId: e, results: r }), r;
+      return this.eventBus.emit("SPEED_TEST_RESULTS_LOADED", { targetId: e, results: r }), r;
     } catch (r) {
-      throw this.logger.error("CommandQueryService: Get target results failed", { error: r, targetId: e }), this.eventBus.emitTyped("SPEED_TEST_RESULTS_LOAD_FAILED", { targetId: e, error: r instanceof Error ? r.message : "An error occurred" }), r;
+      throw this.logger.error("CommandQueryService: Get target results failed", { error: r, targetId: e }), this.eventBus.emit("SPEED_TEST_RESULTS_LOAD_FAILED", { targetId: e, error: r instanceof Error ? r.message : "An error occurred" }), r;
     }
   }
   async createAlertRule(e) {
     this.logger.debug("CommandQueryService: Creating alert rule", e);
     try {
       const t = await this.apiClient.createAlertRule(e);
-      return this.eventBus.emitTyped("ALERT_RULES_LOADED", { targetId: e.targetId, rules: [t] }), t;
+      return this.eventBus.emit("ALERT_RULES_LOADED", { targetId: e.targetId, rules: [t] }), t;
     } catch (t) {
       throw this.logger.error("CommandQueryService: Alert rule creation failed", { error: t, data: e }), t;
     }
@@ -7403,7 +7485,7 @@ class $e {
     this.logger.debug("CommandQueryService: Updating alert rule", { id: e, data: t });
     try {
       const r = await this.apiClient.updateAlertRule(e, t);
-      return this.eventBus.emitTyped("ALERT_RULES_LOADED", { targetId: r.targetId, rules: [r] }), r;
+      return this.eventBus.emit("ALERT_RULES_LOADED", { targetId: r.targetId, rules: [r] }), r;
     } catch (r) {
       throw this.logger.error("CommandQueryService: Alert rule update failed", { error: r, id: e, data: t }), r;
     }
@@ -7411,7 +7493,7 @@ class $e {
   async deleteAlertRule(e) {
     this.logger.debug("CommandQueryService: Deleting alert rule", { id: e });
     try {
-      await this.apiClient.deleteAlertRule(e), this.eventBus.emitTyped("ALERT_RULE_DELETED", { id: e });
+      await this.apiClient.deleteAlertRule(e), this.eventBus.emit("ALERT_RULE_DELETED", { id: e });
     } catch (t) {
       throw this.logger.error("CommandQueryService: Alert rule deletion failed", { error: t, id: e }), t;
     }
@@ -7419,7 +7501,7 @@ class $e {
   async resolveIncident(e) {
     this.logger.debug("CommandQueryService: Resolving incident", { id: e });
     try {
-      await this.apiClient.resolveIncident(e), this.eventBus.emitTyped("INCIDENT_RESOLVED", { id: e });
+      await this.apiClient.resolveIncident(e), this.eventBus.emit("INCIDENT_RESOLVED", { id: e });
     } catch (t) {
       throw this.logger.error("CommandQueryService: Incident resolution failed", { error: t, id: e }), t;
     }
@@ -7427,7 +7509,7 @@ class $e {
   async markNotificationAsRead(e) {
     this.logger.debug("CommandQueryService: Marking notification as read", { id: e });
     try {
-      await this.apiClient.markNotificationAsRead(e), this.eventBus.emitTyped("NOTIFICATION_READ", { id: e });
+      await this.apiClient.markNotificationAsRead(e), this.eventBus.emit("NOTIFICATION_READ", { id: e });
     } catch (t) {
       throw this.logger.error("CommandQueryService: Mark notification as read failed", { error: t, id: e }), t;
     }
@@ -7435,7 +7517,7 @@ class $e {
   async markAllNotificationsAsRead(e) {
     this.logger.debug("CommandQueryService: Marking all notifications as read", { userId: e });
     try {
-      await this.apiClient.markAllNotificationsAsRead(e), this.eventBus.emitTyped("ALL_NOTIFICATIONS_READ", { userId: e });
+      await this.apiClient.markAllNotificationsAsRead(e), this.eventBus.emit("ALL_NOTIFICATIONS_READ", { userId: e });
     } catch (t) {
       throw this.logger.error("CommandQueryService: Mark all notifications as read failed", { error: t, userId: e }), t;
     }
@@ -7444,7 +7526,7 @@ class $e {
     this.logger.debug("CommandQueryService: Creating push subscription", e);
     try {
       const t = await this.apiClient.createPushSubscription(e);
-      return this.eventBus.emitTyped("PUSH_SUBSCRIPTION_CREATED", { subscription: t }), t;
+      return this.eventBus.emit("PUSH_SUBSCRIPTION_CREATED", { subscription: t }), t;
     } catch (t) {
       throw this.logger.error("CommandQueryService: Push subscription creation failed", { error: t, data: e }), t;
     }
@@ -7452,7 +7534,7 @@ class $e {
   async deletePushSubscription(e) {
     this.logger.debug("CommandQueryService: Deleting push subscription", { id: e });
     try {
-      await this.apiClient.deletePushSubscription(e), this.eventBus.emitTyped("PUSH_SUBSCRIPTION_DELETED", { id: e });
+      await this.apiClient.deletePushSubscription(e), this.eventBus.emit("PUSH_SUBSCRIPTION_DELETED", { id: e });
     } catch (t) {
       throw this.logger.error("CommandQueryService: Push subscription deletion failed", { error: t, id: e }), t;
     }
@@ -7460,7 +7542,7 @@ class $e {
   async sendPushNotification(e) {
     this.logger.debug("CommandQueryService: Sending push notification", e);
     try {
-      await this.apiClient.sendPushNotification(e), this.eventBus.emitTyped("PUSH_NOTIFICATION_SENT", { data: e });
+      await this.apiClient.sendPushNotification(e), this.eventBus.emit("PUSH_NOTIFICATION_SENT", { data: e });
     } catch (t) {
       throw this.logger.error("CommandQueryService: Send push notification failed", { error: t, data: e }), t;
     }
@@ -7469,7 +7551,7 @@ class $e {
     this.logger.debug("CommandQueryService: Signing in user", { email: e });
     try {
       const r = await this.apiClient.signIn(e, t);
-      return this.eventBus.emitTyped("USER_SIGNED_IN", { user: r.user }), r;
+      return this.eventBus.emit("USER_SIGNED_IN", { user: r.user }), r;
     } catch (r) {
       throw this.logger.error("CommandQueryService: Sign in failed", { error: r, email: e }), r;
     }
@@ -7478,7 +7560,7 @@ class $e {
     this.logger.debug("CommandQueryService: Signing up user", { email: e, name: r });
     try {
       const s = await this.apiClient.signUp(e, t, r);
-      return this.eventBus.emitTyped("USER_SIGNED_UP", { user: s.user }), s;
+      return this.eventBus.emit("USER_SIGNED_UP", { user: s.user }), s;
     } catch (s) {
       throw this.logger.error("CommandQueryService: Sign up failed", { error: s, email: e, name: r }), s;
     }
@@ -7486,7 +7568,7 @@ class $e {
   async signOut() {
     this.logger.debug("CommandQueryService: Signing out user");
     try {
-      await this.apiClient.signOut(), this.eventBus.emitTyped("USER_SIGNED_OUT", {});
+      await this.apiClient.signOut(), this.eventBus.emit("USER_SIGNED_OUT", {});
     } catch (e) {
       throw this.logger.error("CommandQueryService: Sign out failed", { error: e }), e;
     }
@@ -7495,7 +7577,7 @@ class $e {
     this.logger.debug("CommandQueryService: Getting alert rules", { targetId: e });
     try {
       const t = await this.apiClient.getAlertRules(e);
-      return this.eventBus.emitTyped("ALERT_RULES_LOADED", { targetId: e, rules: t }), t;
+      return this.eventBus.emit("ALERT_RULES_LOADED", { targetId: e, rules: t }), t;
     } catch (t) {
       throw this.logger.error("CommandQueryService: Get alert rules failed", { error: t, targetId: e }), t;
     }
@@ -7504,7 +7586,7 @@ class $e {
     this.logger.debug("CommandQueryService: Getting incidents", { targetId: e });
     try {
       const t = await this.apiClient.getIncidents(e);
-      return this.eventBus.emitTyped("INCIDENTS_LOADED", { targetId: e, incidents: t }), t;
+      return this.eventBus.emit("INCIDENTS_LOADED", { targetId: e, incidents: t }), t;
     } catch (t) {
       throw this.logger.error("CommandQueryService: Get incidents failed", { error: t, targetId: e }), t;
     }
@@ -7513,7 +7595,7 @@ class $e {
     this.logger.debug("CommandQueryService: Getting notifications", { userId: e });
     try {
       const t = await this.apiClient.getNotifications(e);
-      return this.eventBus.emitTyped("NOTIFICATIONS_LOADED", { notifications: t }), t;
+      return this.eventBus.emit("NOTIFICATIONS_LOADED", { notifications: t }), t;
     } catch (t) {
       throw this.logger.error("CommandQueryService: Get notifications failed", { error: t, userId: e }), t;
     }
@@ -7522,7 +7604,7 @@ class $e {
     this.logger.debug("CommandQueryService: Getting push subscriptions", { userId: e });
     try {
       const t = await this.apiClient.getPushSubscriptions(e);
-      return this.eventBus.emitTyped("PUSH_SUBSCRIPTIONS_LOADED", { subscriptions: t }), t;
+      return this.eventBus.emit("PUSH_SUBSCRIPTIONS_LOADED", { subscriptions: t }), t;
     } catch (t) {
       throw this.logger.error("CommandQueryService: Get push subscriptions failed", { error: t, userId: e }), t;
     }
@@ -7552,32 +7634,32 @@ class $e {
     }
   }
 }
-var ze = ["<div", ' class="flex items-center justify-center min-h-screen bg-red-50"><div class="text-center p-8"><h1 class="text-2xl font-bold text-red-600 mb-4">Initialization Error</h1><p class="text-gray-700">', "</p></div></div>"], He = ["<div", ' class="flex items-center justify-center min-h-screen"><div class="text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div><p class="mt-4 text-gray-600">Initializing services...</p></div></div>'];
-const ae = createContext$1();
+var He = ["<div", ' class="flex items-center justify-center min-h-screen bg-red-50"><div class="text-center p-8"><h1 class="text-2xl font-bold text-red-600 mb-4">Initialization Error</h1><p class="text-gray-700">', "</p></div></div>"], ze = ["<div", ' class="flex items-center justify-center min-h-screen"><div class="text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div><p class="mt-4 text-gray-600">Initializing services...</p></div></div>'];
+const oe$1 = createContext$1();
 function We(n) {
   var _a;
-  const [e, t$1] = createSignal(null), [r, s] = createSignal(null);
+  const [e, t] = createSignal(null), [r, s] = createSignal(null);
   return createEffect(async () => {
     try {
-      await z$1();
-      const i = S(), a = i.get(t.ILogger), c = i.get(t.IEventBus), g = new je(), d = new $e(g, c, a);
-      t$1({ apiClient: g, commandQuery: d, eventBus: c, logger: a }), a.info("Frontend services initialized successfully");
+      await B$1();
+      const i$1 = h(), o = i$1.get(i.ILogger), c = i$1.get(i.IEventBus), h$1 = new $e(), d = new je(h$1, c, o);
+      t({ apiClient: h$1, commandQuery: d, eventBus: c, logger: o }), o.info("Frontend services initialized successfully");
     } catch (i) {
-      const a = i instanceof Error ? i : new Error("Unknown error");
-      s(a), console.error("Failed to initialize frontend services:", a);
+      const o = i instanceof Error ? i : new Error("Unknown error");
+      s(o), console.error("Failed to initialize frontend services:", o);
     }
-  }), [r() && ssr(ze, ssrHydrationKey(), escape((_a = r()) == null ? void 0 : _a.message)), !r() && !e() && ssr(He, ssrHydrationKey()), !r() && e() && createComponent$1(ae.Provider, { get value() {
+  }), [r() && ssr(He, ssrHydrationKey(), escape((_a = r()) == null ? void 0 : _a.message)), !r() && !e() && ssr(ze, ssrHydrationKey()), !r() && e() && createComponent$1(oe$1.Provider, { get value() {
     return e();
   }, get children() {
     return n.children;
   } })];
 }
 function Ke() {
-  const n = useContext(ae);
+  const n = useContext(oe$1);
   if (!n) throw new Error("useFrontendServices must be used within FrontendServicesProvider");
   return n;
 }
-function ot() {
+function at() {
   return Ke().logger;
 }
 const ct = We;
@@ -7823,7 +7905,7 @@ const ne = (e) => (t) => {
   const { base: r } = t, s = children(() => t.children), n = createMemo(() => qe(s(), t.base || ""));
   let o;
   const a = it(e, n, () => o, { base: r, singleFlight: t.singleFlight, transformUrl: t.transformUrl });
-  return e.create && e.create(a), createComponent$1(Fe.Provider, { value: a, get children() {
+  return e.create && e.create(a), createComponent$1(xe.Provider, { value: a, get children() {
     return createComponent$1(zt, { routerState: a, get root() {
       return t.root;
     }, get preload() {
@@ -7866,7 +7948,7 @@ function Jt(e) {
     for (let l = 0, w = n.length; l < w; l++) {
       const E = o && o[l], R = n[l];
       a && E && R.route.key === E.route.key ? u[l] = a[l] : (i = false, t[l] && t[l](), createRoot((m) => {
-        t[l] = m, u[l] = at(e.routerState, u[l - 1] || e.routerState.base, V(() => s()[l + 1]), () => e.routerState.matches()[l]);
+        t[l] = m, u[l] = ot(e.routerState, u[l - 1] || e.routerState.base, V(() => s()[l + 1]), () => e.routerState.matches()[l]);
       }));
     }
     return t.splice(n.length).forEach((l) => l()), a && i ? a : (r = u[0], u);
@@ -7879,7 +7961,7 @@ const V = (e) => () => createComponent$1(Show, { get when() {
   return t.outlet();
 } }) });
 function Vt(e, t, r) {
-  const s = new URL(e.request.url), n = N(r, new URL(e.router.previousUrl || e.request.url).pathname), o = N(r, s.pathname);
+  const s = new URL(e.request.url), n = F$1(r, new URL(e.router.previousUrl || e.request.url).pathname), o = F$1(r, s.pathname);
   for (let a = 0; a < o.length; a++) {
     (!n[a] || o[a].route !== n[a].route) && (e.router.dataOnly = true);
     const { route: i, params: u } = o[a];
@@ -8154,7 +8236,7 @@ function createNitroApp() {
     preemptive: true
   });
   const nodeHandler = toNodeListener(h3App);
-  const localCall = (aRequest) => b$2(
+  const localCall = (aRequest) => b$3(
     nodeHandler,
     aRequest
   );
@@ -8502,5 +8584,5 @@ trapUnhandledNodeErrors();
 setupGracefulShutdown(listener, nitroApp);
 const nodeServer = {};
 
-export { P, S, T, _, t as a, nodeServer as b, h, nt as n, ot as o, rt as r, tt as t, vt$1 as v };
+export { C$1 as C, P, at as a, b, nodeServer as c, g$1 as g, h, i, nt as n, rt as r, tt as t, vt$1 as v };
 //# sourceMappingURL=nitro.mjs.map

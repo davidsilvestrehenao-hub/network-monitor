@@ -1,5 +1,6 @@
 import type { SpeedTestResult } from "./ITargetRepository";
 import type { SpeedTestConfig } from "./IMonitorService";
+import type { IBackgroundService } from "./base/IService";
 
 // Comprehensive config extends the basic SpeedTestConfig
 export interface ComprehensiveSpeedTestConfig extends SpeedTestConfig {
@@ -32,7 +33,7 @@ export interface ComprehensiveSpeedTestResult extends SpeedTestResult {
   };
 }
 
-export interface ISpeedTestService {
+export interface ISpeedTestService extends IBackgroundService {
   // Core testing methods
   runPingTest(
     targetAddress: string,
@@ -65,8 +66,6 @@ export interface ISpeedTestService {
   ): Promise<ComprehensiveSpeedTestResult[]>;
 
   // Service management
-  start(): Promise<void>;
-  stop(): Promise<void>;
   isRunning(): boolean;
 
   // Configuration

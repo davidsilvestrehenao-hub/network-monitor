@@ -435,4 +435,37 @@ export class AuthService implements IAuthService {
     // For now, return false as this is a mock implementation
     return false;
   }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<User | null> {
+    this.logger.debug("AuthService: Getting user by ID", { id });
+    return this.userRepository.findById(
+      typeof id === "string" ? id : id.toString()
+    );
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<User[]> {
+    this.logger.debug("AuthService: Getting all users", { limit, offset });
+    return this.userRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateUserData): Promise<User> {
+    this.logger.debug("AuthService: Creating user", { data });
+    return this.userRepository.create(data);
+  }
+
+  async update(id: string | number, data: UpdateUserData): Promise<User> {
+    this.logger.debug("AuthService: Updating user", { id, data });
+    return this.userRepository.update(
+      typeof id === "string" ? id : id.toString(),
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger.debug("AuthService: Deleting user", { id });
+    return this.userRepository.delete(
+      typeof id === "string" ? id : id.toString()
+    );
+  }
 }

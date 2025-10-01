@@ -358,6 +358,69 @@ export class MockAlerting implements IAlertingService {
     };
   }
 
+  // Base IService interface methods
+  async getById(id: string | number): Promise<AlertRule | null> {
+    return this.getAlertRule(typeof id === "string" ? parseInt(id) : id);
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<AlertRule[]> {
+    this.logger?.debug("MockAlerting: Getting all alert rules", {
+      limit,
+      offset,
+    });
+
+    const allRules: AlertRule[] = [];
+    for (const rules of this.alertRules.values()) {
+      allRules.push(
+        ...rules.map(rule => ({
+          id: parseInt(rule.id.replace("rule-", "")),
+          name: rule.name,
+          metric: rule.metric,
+          condition: rule.condition,
+          threshold: rule.threshold,
+          enabled: rule.enabled,
+          targetId: rule.targetId,
+          triggeredEvents: [],
+        }))
+      );
+    }
+
+    const start = offset || 0;
+    const end = limit ? start + limit : allRules.length;
+    return allRules.slice(start, end);
+  }
+
+  async create(data: CreateAlertRuleData): Promise<AlertRule> {
+    return this.createAlertRule(data);
+  }
+
+  async update(
+    id: string | number,
+    data: UpdateAlertRuleData
+  ): Promise<AlertRule> {
+    return this.updateAlertRule(
+      typeof id === "string" ? parseInt(id) : id,
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    return this.deleteAlertRule(typeof id === "string" ? parseInt(id) : id);
+  }
+
+  // IObservableService interface methods
+  on<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.on(event, handler);
+  }
+
+  off<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.off(event, handler);
+  }
+
+  emit<T = unknown>(event: string, data?: T): void {
+    this.eventBus.emit(event, data);
+  }
+
   // Mock-specific methods for testing
   getTriggeredAlerts(): MockTriggeredAlert[] {
     return [...this.triggeredAlerts];

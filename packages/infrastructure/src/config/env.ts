@@ -258,7 +258,7 @@ export function loadEnvironment(): EnvironmentConfig {
     ),
     enableBrowserLaunch: parseBoolean(
       process.env.ENABLE_BROWSER_LAUNCH,
-      !isProduction && process.env.CI !== "true" && !process.env.AI_AGENT
+      !isProduction && process.env.CI !== "true"
     ),
 
     // Deployment

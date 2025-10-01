@@ -1,11 +1,14 @@
-import type { User } from "./IUserRepository";
+import type { User, CreateUserData, UpdateUserData } from "./IUserRepository";
+import type { IService } from "./base/IService";
 
 export interface AuthSession {
   user: User;
   expires: Date;
 }
 
-export interface IAuthService {
+export interface IAuthService
+  extends IService<User, CreateUserData, UpdateUserData> {
+  // Authentication-specific methods
   getSession(): Promise<AuthSession | null>;
   signIn(email: string, password: string): Promise<AuthSession | null>;
   signUp(

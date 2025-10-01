@@ -10,6 +10,7 @@ import type {
   Notification,
   PushSubscription,
   User,
+  IAPIClient as BaseIAPIClient,
 } from "@network-monitor/shared";
 
 // Re-export shared types for convenience
@@ -38,7 +39,7 @@ export interface AuthSession {
   refreshToken?: string;
 }
 
-export interface IAPIClient {
+export interface IAPIClient extends BaseIAPIClient {
   // Target operations
   createTarget(data: CreateTargetData): Promise<Target>;
   getTarget(id: string): Promise<Target | null>;
@@ -88,5 +89,4 @@ export interface IAPIClient {
   signOut(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
   getSession(): Promise<AuthSession | null>;
-  isAuthenticated(): Promise<boolean>;
 }

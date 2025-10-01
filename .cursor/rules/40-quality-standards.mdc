@@ -17,7 +17,8 @@ This project maintains **ZERO TOLERANCE** for code quality issues. All code must
 2. **ESLint Compliance**: Zero warnings or errors allowed
 3. **TypeScript Safety**: No `any` types without proper justification
 4. **ESLint Disable Justification**: All `eslint-disable` comments must have clear justifications
-5. **Interface Compliance**: All implementations must fully implement their interfaces
+5. **Interface Polymorphism**: All interfaces must extend their appropriate base interfaces
+6. **Interface Compliance**: All implementations must fully implement their interfaces
 
 ## 📋 **Code Quality Checklist**
 
@@ -68,6 +69,7 @@ bun run type-check
 - **Repository Pattern**: Database operations through repository interfaces
 - **Data Abstraction**: Prisma client never leaves repository layer
 - **Type Mapping**: All repository methods return domain types, not Prisma models
+- **Interface Polymorphism**: All interfaces extend appropriate base interfaces for consistency
 
 ## 🧪 **Testing Requirements**
 
@@ -80,7 +82,7 @@ bun run type-check
 
 ### **Test Organization**
 
-```
+```text
 src/lib/services/__tests__/
 ├── AlertingService.test.ts
 ├── MonitorService.test.ts
@@ -118,6 +120,8 @@ src/lib/container/__tests__/
 - Direct service instantiation instead of DI
 - Direct database calls instead of repository pattern
 - Direct service calls instead of event-driven communication
+- Interfaces not extending base interfaces
+- Missing base interface method implementations
 
 ### **Architecture Anti-Patterns**
 
@@ -125,6 +129,8 @@ src/lib/container/__tests__/
 - Synchronous dependencies
 - Hardcoded service implementations
 - Missing interface definitions
+- Interfaces not extending base interfaces
+- Missing base interface method implementations
 - Inconsistent error handling
 - Direct Prisma usage outside repositories
 - Raw Prisma models returned from services
@@ -152,6 +158,8 @@ src/lib/container/__tests__/
 - Keep Prisma client isolated to repository layer
 - Map Prisma models to domain types in repositories
 - Provide mock implementations for all repositories
+- Ensure all interfaces extend appropriate base interfaces
+- Implement all base interface methods in concrete classes
 
 ## 🔍 **Code Review Standards**
 
@@ -161,9 +169,10 @@ src/lib/container/__tests__/
 2. **Linting**: Zero ESLint warnings or errors
 3. **Type Safety**: No TypeScript errors, minimal justified `any` types
 4. **ESLint Disable Justification**: All disable comments have clear explanations
-5. **Architecture**: Follows loose coupling principles
-6. **Testing**: Adequate test coverage and quality
-7. **Documentation**: Clear comments and documentation
+5. **Interface Polymorphism**: All interfaces extend appropriate base interfaces
+6. **Architecture**: Follows loose coupling principles
+7. **Testing**: Adequate test coverage and quality
+8. **Documentation**: Clear comments and documentation
 
 ### **Review Process**
 
@@ -189,6 +198,7 @@ src/lib/container/__tests__/
 - **100%** Event-driven communication
 - **100%** Repository pattern usage
 - **100%** Interface compliance
+- **100%** Interface polymorphism (base interface extension)
 - **100%** Configuration-based service loading
 
 ## 🚀 **Continuous Improvement**

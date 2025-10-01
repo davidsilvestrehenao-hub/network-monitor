@@ -82,9 +82,181 @@ export class TargetRepository implements ITargetRepository {
 }
 ```
 
-## 3. Key Rules
+## 3. Interface Implementation Patterns
 
-- **Authentication**: Protect tRPC procedures by default using middleware.
-- **Dependency Injection**: Services and repositories must receive their dependencies (like other services or the DB client) via a DI container, not by instantiating them directly.
-- **Interface-First Design**: Define interfaces for services and repositories (`IMonitorService`, `ITargetRepository`) to ensure loose coupling.
-- **Prisma Isolation**: The Prisma client must only be used inside the repository layer.
+### **Repository Interface Hierarchy**
+
+All repository interfaces **MUST** extend the base `IRepository` interface:
+
+```typescript
+// ✅ Correct: Repository extends base interface
+export interface ITargetRepository
+  extends IRepository<Target, CreateTargetData, UpdateTargetData> {
+  // Domain-specific query methods
+  findByUserId(userId: string): Promise<Target[]>;
+  
+  // Domain-specific command methods
+  updateStatus(id: string, status: string): Promise<Target>;
+}
+
+// ❌ Incorrect: Repository without base interface
+export interface ITargetRepository {
+  findById(id: string): Promise<Target | null>;
+  // ... missing base CRUD methods
+}
+```
+
+**Base Repository Interface Methods:**
+- `findById(id: string | number): Promise<T | null>`
+- `getAll(limit?: number, offset?: number): Promise<T[]>`
+- `create(data: CreateDto): Promise<T>`
+- `update(id: string | number, data: UpdateDto): Promise<T>`
+- `delete(id: string | number): Promise<void>`
+- `count(): Promise<number>`
+
+### **Service Interface Hierarchy**
+
+All service interfaces **MUST** extend the base `IService` interface:
+
+```typescript
+// ✅ Correct: Service extends base interface
+export interface IMonitorService
+  extends IUserOwnedService<Target, CreateTargetData, UpdateTargetData>,
+    IObservableService,
+    IBackgroundService {
+  // Domain-specific methods
+  startMonitoring(targetId: string, intervalMs: number): void;
+  stopMonitoring(targetId: string): void;
+}
+
+// ❌ Incorrect: Service without base interface
+export interface IMonitorService {
+  startMonitoring(targetId: string, intervalMs: number): void;
+  // ... missing base CRUD methods
+}
+```
+
+**Base Service Interface Methods:**
+- `getById(id: string | number): Promise<T | null>`
+- `getAll(limit?: number, offset?: number): Promise<T[]>`
+- `create(data: CreateDto): Promise<T>`
+- `update(id: string | number, data: UpdateDto): Promise<T>`
+- `delete(id: string | number): Promise<void>`
+
+**Specialized Service Interfaces:**
+- `IUserOwnedService<T, CreateDto, UpdateDto>` - Adds `getByUserId(userId: string)`
+- `IObservableService` - Adds `on()`, `off()`, `emit()` for event handling
+- `IBackgroundService` - Adds `start()`, `stop()` for background tasks
+
+### **API Client Interface Hierarchy**
+
+All API client interfaces **MUST** extend the base `IAPIClient` interface:
+
+```typescript
+// ✅ Correct: API client extends base interface
+export interface IAPIClient extends BaseIAPIClient {
+  // Domain-specific methods
+  createTarget(data: CreateTargetData): Promise<Target>;
+  getTargets(): Promise<Target[]>;
+}
+
+// ❌ Incorrect: API client without base interface
+export interface IAPIClient {
+  createTarget(data: CreateTargetData): Promise<Target>;
+  // ... missing base connection/request methods
+}
+```
+
+**Base API Client Interface Methods:**
+- `connect(): Promise<void>`
+- `disconnect(): Promise<void>`
+- `isConnected(): boolean`
+- `request<T>(endpoint: string, options?: RequestOptions): Promise<T>`
+- `get<T>(endpoint: string, options?: RequestOptions): Promise<T>`
+- `post<T>(endpoint: string, data?: unknown, options?: RequestOptions): Promise<T>`
+- `put<T>(endpoint: string, data?: unknown, options?: RequestOptions): Promise<T>`
+- `patch<T>(endpoint: string, data?: unknown, options?: RequestOptions): Promise<T>`
+- `delete<T>(endpoint: string, options?: RequestOptions): Promise<T>`
+- `setErrorHandler(handler: (error: APIError) => void): void`
+- `setRetryPolicy(policy: RetryPolicy): void`
+- `setAuthToken(token: string): void`
+- `clearAuthToken(): void`
+- `isAuthenticated(): boolean`
+
+### **Concrete Implementation Requirements**
+
+All concrete implementations **MUST** implement both base and domain-specific methods:
+
+```typescript
+// ✅ Correct: Concrete service implements all methods
+export class MonitorService implements IMonitorService {
+  // Base IService methods
+  async getById(id: string | number): Promise<Target | null> {
+    return this.targetRepository.findById(typeof id === "string" ? id : id.toString());
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<Target[]> {
+    return this.targetRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateTargetData): Promise<Target> {
+    return this.targetRepository.create(data);
+  }
+
+  async update(id: string | number, data: UpdateTargetData): Promise<Target> {
+    return this.targetRepository.update(typeof id === "string" ? id : id.toString(), data);
+  }
+
+  async delete(id: string | number): Promise<void> {
+    return this.targetRepository.delete(typeof id === "string" ? id : id.toString());
+  }
+
+  // IUserOwnedService methods
+  async getByUserId(userId: string): Promise<Target[]> {
+    return this.targetRepository.findByUserId(userId);
+  }
+
+  // IObservableService methods
+  on<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.on(event, handler);
+  }
+
+  off<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.off(event, handler);
+  }
+
+  emit<T = unknown>(event: string, data?: T): void {
+    this.eventBus.emit(event, data);
+  }
+
+  // IBackgroundService methods
+  async start(): Promise<void> {
+    // Start background monitoring
+  }
+
+  async stop(): Promise<void> {
+    // Stop background monitoring
+  }
+
+  // Domain-specific methods
+  startMonitoring(targetId: string, intervalMs: number): void {
+    // Implementation
+  }
+
+  stopMonitoring(targetId: string): void {
+    // Implementation
+  }
+}
+```
+
+## 4. Key Rules
+
+- **Interface Polymorphism**: All interfaces MUST extend their appropriate base interfaces
+- **Method Delegation**: Domain-specific methods should delegate to base methods when possible
+- **Type Safety**: Use generic type parameters for compile-time safety
+- **Authentication**: Protect tRPC procedures by default using middleware
+- **Dependency Injection**: Services and repositories must receive their dependencies via DI container
+- **Interface-First Design**: Define interfaces before implementations to ensure loose coupling
+- **Prisma Isolation**: The Prisma client must only be used inside the repository layer
+- **Event Emission**: Services should emit events for domain-specific operations
+- **Error Handling**: All methods should include proper error handling and logging

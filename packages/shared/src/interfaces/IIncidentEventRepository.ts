@@ -34,20 +34,19 @@ export interface IncidentEventQuery {
 }
 
 // Repository interface
-export interface IIncidentEventRepository {
-  // Query methods
-  findById(id: number): Promise<IncidentEvent | null>;
+export interface IIncidentEventRepository
+  extends IRepository<
+    IncidentEvent,
+    CreateIncidentEventData,
+    UpdateIncidentEventData
+  > {
+  // Domain-specific query methods
   findByTargetId(targetId: string, limit?: number): Promise<IncidentEvent[]>;
   findByQuery(query: IncidentEventQuery): Promise<IncidentEvent[]>;
   getUnresolvedByTargetId(targetId: string): Promise<IncidentEvent[]>;
   findUnresolved(): Promise<IncidentEvent[]>;
-  getAll(limit?: number, offset?: number): Promise<IncidentEvent[]>;
-  count(): Promise<number>;
 
-  // Command methods
-  create(data: CreateIncidentEventData): Promise<IncidentEvent>;
-  update(id: number, data: UpdateIncidentEventData): Promise<IncidentEvent>;
-  delete(id: number): Promise<void>;
+  // Domain-specific command methods
   deleteByTargetId(targetId: string): Promise<void>;
   resolve(id: number): Promise<IncidentEvent>;
   resolveByTargetId(targetId: string): Promise<number>;
@@ -55,3 +54,4 @@ export interface IIncidentEventRepository {
 
 // Import AlertRule from canonical source to avoid duplication
 import type { AlertRule } from "./IAlertRuleRepository";
+import type { IRepository } from "./base/IRepository";

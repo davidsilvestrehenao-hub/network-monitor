@@ -154,4 +154,93 @@ export class MockAuth implements IAuthService {
   getMockSession(): AuthSession | null {
     return this.currentSession;
   }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<User | null> {
+    this.logger?.debug("MockAuth: Getting user by ID", { id });
+    const userId = typeof id === "string" ? id : id.toString();
+
+    for (const user of this.mockUsers.values()) {
+      if (user.id === userId) {
+        return user;
+      }
+    }
+
+    return null;
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<User[]> {
+    this.logger?.debug("MockAuth: Getting all users", { limit, offset });
+
+    const users = Array.from(this.mockUsers.values());
+    const start = offset || 0;
+    const end = limit ? start + limit : users.length;
+    return users.slice(start, end);
+  }
+
+  async create(data: {
+    name?: string;
+    email: string;
+    password?: string;
+  }): Promise<User> {
+    this.logger?.debug("MockAuth: Creating user", { data });
+
+    const user: User = {
+      id: `mock-user-${Date.now()}`,
+      name: data.name || "Mock User",
+      email: data.email,
+      emailVerified: new Date(),
+      image: null,
+      monitoringTargets: [],
+      pushSubscriptions: [],
+      notifications: [],
+    };
+
+    this.mockUsers.set(data.email, user);
+    return user;
+  }
+
+  async update(
+    id: string | number,
+    data: { name?: string; email?: string }
+  ): Promise<User> {
+    this.logger?.debug("MockAuth: Updating user", { id, data });
+
+    const userId = typeof id === "string" ? id : id.toString();
+    const user = await this.getById(id);
+
+    if (!user) {
+      throw new Error(`User ${userId} not found`);
+    }
+
+    const updatedUser: User = {
+      ...user,
+      name: data.name || user.name,
+      email: data.email || user.email,
+    };
+
+    if (data.email && data.email !== user.email) {
+      this.mockUsers.delete(user.email || "");
+      this.mockUsers.set(data.email, updatedUser);
+    } else {
+      this.mockUsers.set(user.email || "", updatedUser);
+    }
+
+    return updatedUser;
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger?.debug("MockAuth: Deleting user", { id });
+
+    const userId = typeof id === "string" ? id : id.toString();
+    const user = await this.getById(id);
+
+    if (!user) {
+      throw new Error(`User ${userId} not found`);
+    }
+
+    if (user.email) {
+      this.mockUsers.delete(user.email);
+    }
+  }
 }

@@ -21,23 +21,24 @@ export interface UpdateMonitoringTargetData {
 }
 
 // Repository interface
-export interface IMonitoringTargetRepository {
-  // Query methods
-  findById(id: string): Promise<MonitoringTarget | null>;
+export interface IMonitoringTargetRepository
+  extends IRepository<
+    MonitoringTarget,
+    CreateMonitoringTargetData,
+    UpdateMonitoringTargetData
+  > {
+  // Domain-specific query methods
   findByOwnerId(ownerId: string): Promise<MonitoringTarget[]>;
-  getAll(limit?: number, offset?: number): Promise<MonitoringTarget[]>;
-  count(): Promise<number>;
 
-  // Command methods
-  create(data: CreateMonitoringTargetData): Promise<MonitoringTarget>;
+  // Domain-specific command methods
   update(
     id: string,
     data: UpdateMonitoringTargetData
   ): Promise<MonitoringTarget>;
-  delete(id: string): Promise<void>;
 }
 
 // Import related types
 import type { SpeedTestResult } from "./ISpeedTestResultRepository";
 import type { IncidentEvent } from "./IIncidentEventRepository";
 import type { AlertRule } from "./IAlertRuleRepository";
+import type { IRepository } from "./base/IRepository";

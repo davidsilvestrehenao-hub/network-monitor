@@ -21,21 +21,24 @@ export interface UpdatePushSubscriptionData {
 }
 
 // Repository interface
-export interface IPushSubscriptionRepository {
-  // Query methods
-  findById(id: string): Promise<PushSubscription | null>;
+export interface IPushSubscriptionRepository
+  extends IRepository<
+    PushSubscription,
+    CreatePushSubscriptionData,
+    UpdatePushSubscriptionData
+  > {
+  // Domain-specific query methods
   findByUserId(userId: string): Promise<PushSubscription[]>;
   findByEndpoint(endpoint: string): Promise<PushSubscription | null>;
-  getAll(limit?: number, offset?: number): Promise<PushSubscription[]>;
-  count(): Promise<number>;
 
-  // Command methods
-  create(data: CreatePushSubscriptionData): Promise<PushSubscription>;
+  // Domain-specific command methods
   update(
     id: string,
     data: UpdatePushSubscriptionData
   ): Promise<PushSubscription>;
-  delete(id: string): Promise<void>;
   deleteByUserId(userId: string): Promise<void>;
   deleteByEndpoint(endpoint: string): Promise<void>;
 }
+
+// Import base repository interface
+import type { IRepository } from "./base/IRepository";

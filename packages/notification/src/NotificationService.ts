@@ -405,4 +405,47 @@ export class NotificationService implements INotificationService {
     const message = "This is a test notification from Network Monitor";
     await this.sendPushNotification(userId, message, "Test Notification");
   }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<Notification | null> {
+    this.logger.debug("NotificationService: Getting notification by ID", {
+      id,
+    });
+    return this.notificationRepository.findById(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<Notification[]> {
+    this.logger.debug("NotificationService: Getting all notifications", {
+      limit,
+      offset,
+    });
+    return this.notificationRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateNotificationData): Promise<Notification> {
+    return this.createNotification(data);
+  }
+
+  async update(
+    id: string | number,
+    data: { message?: string; read?: boolean }
+  ): Promise<Notification> {
+    this.logger.debug("NotificationService: Updating notification", {
+      id,
+      data,
+    });
+    return this.notificationRepository.update(
+      typeof id === "string" ? parseInt(id) : id,
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger.debug("NotificationService: Deleting notification", { id });
+    return this.notificationRepository.delete(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
 }

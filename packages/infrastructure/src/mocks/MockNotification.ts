@@ -273,4 +273,84 @@ export class MockNotification implements INotificationService {
       "This is a test notification from Network Monitor"
     );
   }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<Notification | null> {
+    this.logger?.debug("MockNotification: Getting notification by ID", { id });
+
+    const notification = this.notifications.find(
+      notif => notif.id === `notif-${id}`
+    );
+
+    if (!notification) {
+      return null;
+    }
+
+    return {
+      id: parseInt(notification.id.replace("notif-", "")),
+      message: notification.message,
+      sentAt: notification.timestamp,
+      read: notification.data?.read || false,
+      userId: notification.data?.userId || "",
+    };
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<Notification[]> {
+    this.logger?.debug("MockNotification: Getting all notifications", {
+      limit,
+      offset,
+    });
+
+    const allNotifications = this.notifications.map(notif => ({
+      id: parseInt(notif.id.replace("notif-", "")),
+      message: notif.message,
+      sentAt: notif.timestamp,
+      read: notif.data?.read || false,
+      userId: notif.data?.userId || "",
+    }));
+
+    const start = offset || 0;
+    const end = limit ? start + limit : allNotifications.length;
+    return allNotifications.slice(start, end);
+  }
+
+  async create(data: CreateNotificationData): Promise<Notification> {
+    return this.createNotification(data);
+  }
+
+  async update(
+    id: string | number,
+    data: { message?: string; read?: boolean }
+  ): Promise<Notification> {
+    this.logger?.debug("MockNotification: Updating notification", { id, data });
+
+    const notification = this.notifications.find(
+      notif => notif.id === `notif-${id}`
+    );
+
+    if (!notification) {
+      throw new Error(`Notification ${id} not found`);
+    }
+
+    if (data.message) {
+      notification.message = data.message;
+    }
+    if (data.read !== undefined) {
+      notification.data = { ...notification.data, read: data.read };
+    }
+
+    this.eventBus.emit("NOTIFICATION_UPDATED", notification);
+
+    return {
+      id: parseInt(notification.id.replace("notif-", "")),
+      message: notification.message,
+      sentAt: notification.timestamp,
+      read: notification.data?.read || false,
+      userId: notification.data?.userId || "",
+    };
+  }
+
+  async delete(id: string | number): Promise<void> {
+    return this.deleteNotification(typeof id === "string" ? parseInt(id) : id);
+  }
 }

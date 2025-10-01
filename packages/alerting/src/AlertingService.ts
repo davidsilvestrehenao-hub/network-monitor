@@ -49,74 +49,11 @@ export class AlertingService implements IAlertingService {
     );
   }
 
-  async createAlertRule(data: CreateAlertRuleData): Promise<AlertRule> {
-    this.logger.debug("AlertingService: Creating alert rule", { data });
-
-    try {
-      const rule = await this.alertRuleRepository.create(data);
-      this.eventBus.emit("ALERT_RULE_CREATED", {
-        id: rule.id,
-        targetId: rule.targetId,
-        rule: rule,
-      });
-      return rule;
-    } catch (error) {
-      this.logger.error("AlertingService: Alert rule creation failed", {
-        error,
-        data,
-      });
-      throw error;
-    }
-  }
-
-  async getAlertRule(id: number): Promise<AlertRule | null> {
-    this.logger.debug("AlertingService: Getting alert rule", { id });
-    return await this.alertRuleRepository.findById(id);
-  }
-
   async getAlertRulesByTargetId(targetId: string): Promise<AlertRule[]> {
     this.logger.debug("AlertingService: Getting alert rules by target ID", {
       targetId,
     });
     return await this.alertRuleRepository.findByTargetId(targetId);
-  }
-
-  async updateAlertRule(
-    id: number,
-    data: UpdateAlertRuleData
-  ): Promise<AlertRule> {
-    this.logger.debug("AlertingService: Updating alert rule", { id, data });
-
-    try {
-      const rule = await this.alertRuleRepository.update(id, data);
-      this.eventBus.emit("ALERT_RULE_UPDATED", {
-        id: rule.id,
-        rule: rule,
-      });
-      return rule;
-    } catch (error) {
-      this.logger.error("AlertingService: Alert rule update failed", {
-        error,
-        id,
-        data,
-      });
-      throw error;
-    }
-  }
-
-  async deleteAlertRule(id: number): Promise<void> {
-    this.logger.debug("AlertingService: Deleting alert rule", { id });
-
-    try {
-      await this.alertRuleRepository.delete(id);
-      this.eventBus.emit("ALERT_RULE_DELETED", { id });
-    } catch (error) {
-      this.logger.error("AlertingService: Alert rule deletion failed", {
-        error,
-        id,
-      });
-      throw error;
-    }
   }
 
   async toggleAlertRule(id: number, enabled: boolean): Promise<AlertRule> {
@@ -352,5 +289,121 @@ export class AlertingService implements IAlertingService {
     result: unknown;
   }): Promise<void> {
     await this.evaluateSpeedTestResult(data.result as SpeedTestResult);
+  }
+
+  // Domain-specific alert rule methods
+  async createAlertRule(data: CreateAlertRuleData): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Creating alert rule", { data });
+
+    try {
+      const rule = await this.alertRuleRepository.create(data);
+      this.eventBus.emit("ALERT_RULE_CREATED", {
+        id: rule.id,
+        targetId: rule.targetId,
+        rule: rule,
+      });
+      return rule;
+    } catch (error) {
+      this.logger.error("AlertingService: Alert rule creation failed", {
+        error,
+        data,
+      });
+      throw error;
+    }
+  }
+
+  async getAlertRule(id: number): Promise<AlertRule | null> {
+    this.logger.debug("AlertingService: Getting alert rule", { id });
+    return await this.alertRuleRepository.findById(id);
+  }
+
+  async updateAlertRule(
+    id: number,
+    data: UpdateAlertRuleData
+  ): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Updating alert rule", { id, data });
+
+    try {
+      const rule = await this.alertRuleRepository.update(id, data);
+      this.eventBus.emit("ALERT_RULE_UPDATED", {
+        id: rule.id,
+        rule: rule,
+      });
+      return rule;
+    } catch (error) {
+      this.logger.error("AlertingService: Alert rule update failed", {
+        error,
+        id,
+        data,
+      });
+      throw error;
+    }
+  }
+
+  async deleteAlertRule(id: number): Promise<void> {
+    this.logger.debug("AlertingService: Deleting alert rule", { id });
+
+    try {
+      await this.alertRuleRepository.delete(id);
+      this.eventBus.emit("ALERT_RULE_DELETED", { id });
+    } catch (error) {
+      this.logger.error("AlertingService: Alert rule deletion failed", {
+        error,
+        id,
+      });
+      throw error;
+    }
+  }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<AlertRule | null> {
+    this.logger.debug("AlertingService: Getting alert rule by ID", { id });
+    return this.alertRuleRepository.findById(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<AlertRule[]> {
+    this.logger.debug("AlertingService: Getting all alert rules", {
+      limit,
+      offset,
+    });
+    return this.alertRuleRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateAlertRuleData): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Creating alert rule", { data });
+    return this.alertRuleRepository.create(data);
+  }
+
+  async update(
+    id: string | number,
+    data: UpdateAlertRuleData
+  ): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Updating alert rule", { id, data });
+    return this.alertRuleRepository.update(
+      typeof id === "string" ? parseInt(id) : id,
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger.debug("AlertingService: Deleting alert rule", { id });
+    return this.alertRuleRepository.delete(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
+
+  // IObservableService interface methods
+  on<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.on(event, handler);
+  }
+
+  off<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.off(event, handler);
+  }
+
+  emit<T = unknown>(event: string, data?: T): void {
+    this.eventBus.emit(event, data);
   }
 }

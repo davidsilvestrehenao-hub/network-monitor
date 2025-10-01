@@ -39,20 +39,14 @@ export interface IUserSpeedTestPreferenceRepository {
 }
 
 // Repository interface
-export interface IUserRepository {
-  // Query methods
-  findById(id: string): Promise<User | null>;
+export interface IUserRepository
+  extends IRepository<User, CreateUserData, UpdateUserData> {
+  // Domain-specific query methods
   findByEmail(email: string): Promise<User | null>;
-  getAll(limit?: number, offset?: number): Promise<User[]>;
-  count(): Promise<number>;
-
-  // Command methods
-  create(data: CreateUserData): Promise<User>;
-  update(id: string, data: UpdateUserData): Promise<User>;
-  delete(id: string): Promise<void>;
 }
 
 // Import related types
 import type { MonitoringTarget } from "./IMonitoringTargetRepository";
 import type { PushSubscription } from "./IPushSubscriptionRepository";
 import type { Notification } from "./INotificationRepository";
+import type { IRepository } from "./base/IRepository";

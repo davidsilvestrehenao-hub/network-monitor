@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@network-monitor/shared": "workspace:*",
-    "@network-monitor/infrastructure": "workspace:*",
     "@network-monitor/database": "workspace:*"
   },
   "devDependencies": {
