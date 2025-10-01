@@ -2,22 +2,24 @@ import { getContainer } from "./flexible-container";
 import { JsonConfigLoader } from "./json-config-loader";
 import type { ServiceConfig } from "./types";
 import { TYPES } from "./types";
-import type { IDatabaseService } from "../services/interfaces/IDatabaseService";
-import type { ILogger } from "../services/interfaces/ILogger";
-import type { IEventBus } from "../services/interfaces/IEventBus";
-import type { IUserRepository } from "../services/interfaces/IUserRepository";
-import type { IMonitoringTargetRepository } from "../services/interfaces/IMonitoringTargetRepository";
-import type { ISpeedTestResultRepository } from "../services/interfaces/ISpeedTestResultRepository";
-import type { IAlertRuleRepository } from "../services/interfaces/IAlertRuleRepository";
-import type { IIncidentEventRepository } from "../services/interfaces/IIncidentEventRepository";
-import type { IPushSubscriptionRepository } from "../services/interfaces/IPushSubscriptionRepository";
-import type { INotificationRepository } from "../services/interfaces/INotificationRepository";
-import type { ITargetRepository } from "../services/interfaces/ITargetRepository";
-import type { ISpeedTestRepository } from "../services/interfaces/ISpeedTestRepository";
-import type { IMonitorService } from "../services/interfaces/IMonitorService";
-import type { IAlertingService } from "../services/interfaces/IAlertingService";
-import type { INotificationService } from "../services/interfaces/INotificationService";
-import type { IAuthService } from "../services/interfaces/IAuthService";
+import type {
+  IDatabaseService,
+  ILogger,
+  IEventBus,
+  IUserRepository,
+  IMonitoringTargetRepository,
+  ISpeedTestResultRepository,
+  IAlertRuleRepository,
+  IIncidentEventRepository,
+  IPushSubscriptionRepository,
+  INotificationRepository,
+  ITargetRepository,
+  ISpeedTestRepository,
+  IMonitorService,
+  IAlertingService,
+  INotificationService,
+  IAuthService,
+} from "@network-monitor/shared";
 
 let containerInitialized = false;
 

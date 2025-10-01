@@ -96,13 +96,13 @@ export class MockSpeedTestResultRepository
 
     if (query.startDate) {
       filteredResults = filteredResults.filter(
-        result => result.createdAt >= (query.startDate as Date)
+        result => new Date(result.createdAt) >= (query.startDate as Date)
       );
     }
 
     if (query.endDate) {
       filteredResults = filteredResults.filter(
-        result => result.createdAt <= (query.endDate as Date)
+        result => new Date(result.createdAt) <= (query.endDate as Date)
       );
     }
 

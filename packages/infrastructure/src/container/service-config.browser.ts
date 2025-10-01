@@ -1,9 +1,8 @@
 import { TYPES } from "./types";
 import { createServiceFactory } from "./flexible-container";
-import { LoggerService, LogLevel } from "../services/concrete/LoggerService";
-import { EventBus } from "../services/concrete/EventBus";
-import type { ILogger } from "../services/interfaces/ILogger";
-import type { IEventBus } from "../services/interfaces/IEventBus";
+import { LoggerService, LogLevel } from "../logger/LoggerService";
+import { EventBus } from "../event-bus/EventBus";
+import type { ILogger, IEventBus } from "@network-monitor/shared";
 
 export const browserServiceConfig = {
   [TYPES.ILogger]: {

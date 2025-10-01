@@ -1,11 +1,10 @@
 import type { IDatabaseService } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
-import type { MockPrismaClient } from "~/lib/types/mock-types";
 import type { PrismaClient } from "@prisma/client";
 
 export class MockDatabase implements IDatabaseService {
   private connected = false;
-  private mockClient: MockPrismaClient = {} as MockPrismaClient;
+  private mockClient: PrismaClient = {} as PrismaClient;
 
   constructor(private logger?: ILogger) {
     this.logger?.debug("MockDatabase: Initialized");

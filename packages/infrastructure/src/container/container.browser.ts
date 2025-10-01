@@ -1,8 +1,7 @@
 import { getContainer } from "./flexible-container";
 import type { ServiceConfig } from "./types";
 import { TYPES } from "./types";
-import type { ILogger } from "../services/interfaces/ILogger";
-import type { IEventBus } from "../services/interfaces/IEventBus";
+import type { ILogger, IEventBus } from "@network-monitor/shared";
 import { browserServiceConfig } from "./service-config.browser";
 
 let containerInitialized = false;

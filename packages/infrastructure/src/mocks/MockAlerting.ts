@@ -5,7 +5,7 @@ import type {
   MockAlertRule,
   MockTriggeredAlert,
   SpeedTestCompletedEventData,
-} from "~/lib/types/mock-types";
+} from "@network-monitor/shared";
 import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
@@ -155,6 +155,7 @@ export class MockAlerting implements IAlertingService {
       threshold: rule.threshold,
       enabled: rule.enabled,
       targetId: rule.targetId,
+      triggeredEvents: [], // Add missing property
     };
   }
 
@@ -347,6 +348,7 @@ export class MockAlerting implements IAlertingService {
       resolved: false,
       targetId: data.targetId,
       ruleId: data.ruleId,
+      triggeredByRule: null, // Add missing property
     };
   }
 
