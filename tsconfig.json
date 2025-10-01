@@ -6,19 +6,12 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "jsxImportSource": "solid-js",
-    "jsx": "preserve",
-    "types": ["vite/client", "@solidjs/start/env", "node"],
-    "baseUrl": "./",
-    "paths": {
-      "~/*": ["./src/*"]
-    },
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node"]
   },
-  "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["node_modules", "dist", "scripts/**/*"]
 }

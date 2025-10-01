@@ -60,7 +60,7 @@ docker build -t network-monitor:latest .
 
 # Or use Docker Compose
 docker-compose build
-```
+```text
 
 #### **Dockerfile**
 
@@ -97,7 +97,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start application
 CMD ["bun", "run", "start"]
-```
+```text
 
 #### **Docker Compose**
 
@@ -128,7 +128,7 @@ services:
 
 volumes:
   postgres_data:
-```
+```text
 
 #### **Deploy**
 
@@ -141,7 +141,7 @@ docker-compose logs -f app
 
 # Stop services
 docker-compose down
-```
+```text
 
 ---
 
@@ -155,9 +155,10 @@ bun add -g vercel
 
 # Deploy
 vercel deploy --prod
-```
+```text
 
 **vercel.json:**
+
 ```json
 {
   "version": 2,
@@ -174,7 +175,7 @@ vercel deploy --prod
     }
   ]
 }
-```
+```text
 
 #### **Railway**
 
@@ -187,9 +188,10 @@ railway login
 
 # Deploy
 railway up
-```
+```text
 
 **railway.toml:**
+
 ```toml
 [build]
 builder = "nixpacks"
@@ -201,7 +203,7 @@ restartPolicyType = "on_failure"
 
 [environments.production]
 variables = { NODE_ENV = "production" }
-```
+```text
 
 #### **Fly.io**
 
@@ -214,9 +216,10 @@ fly launch
 
 # Deploy
 fly deploy
-```
+```text
 
 **fly.toml:**
+
 ```toml
 app = "network-monitor"
 primary_region = "sea"
@@ -239,7 +242,7 @@ primary_region = "sea"
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
-```
+```text
 
 ---
 
@@ -275,11 +278,12 @@ bun add -g pm2
 pm2 start ecosystem.config.js
 pm2 save
 pm2 startup
-```
+```text
 
 #### **PM2 Configuration**
 
 **ecosystem.config.js:**
+
 ```javascript
 module.exports = {
   apps: [{
@@ -298,7 +302,7 @@ module.exports = {
     time: true
   }]
 };
-```
+```text
 
 #### **Nginx Reverse Proxy**
 
@@ -316,7 +320,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
-```
+```text
 
 ---
 
@@ -351,7 +355,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: network-monitor
-```
+```text
 
 #### **ConfigMap**
 
@@ -365,7 +369,7 @@ metadata:
 data:
   NODE_ENV: "production"
   REDIS_URL: "redis://redis-service:6379"
-```
+```text
 
 #### **Secrets**
 
@@ -380,7 +384,7 @@ type: Opaque
 data:
   DATABASE_URL: <base64-encoded-url>
   AUTH_SECRET: <base64-encoded-secret>
-```
+```text
 
 #### **Monitor Service Deployment**
 
@@ -433,7 +437,7 @@ spec:
             port: 3001
           initialDelaySeconds: 5
           periodSeconds: 5
-```
+```text
 
 #### **Service**
 
@@ -452,7 +456,7 @@ spec:
     port: 80
     targetPort: 3001
   type: ClusterIP
-```
+```text
 
 #### **Horizontal Pod Autoscaler**
 
@@ -483,7 +487,7 @@ spec:
       target:
         type: Utilization
         averageUtilization: 80
-```
+```text
 
 #### **Ingress**
 
@@ -513,7 +517,7 @@ spec:
             name: web-service
             port:
               number: 80
-```
+```text
 
 #### **Deploy to Kubernetes**
 
@@ -537,7 +541,7 @@ kubectl logs -f deployment/monitor-service -n network-monitor
 
 # Scale manually
 kubectl scale deployment monitor-service --replicas=5 -n network-monitor
-```
+```text
 
 ---
 
@@ -584,7 +588,7 @@ export class RedisEventBus implements IEventBus {
 
   // ... other methods
 }
-```
+```text
 
 #### **RabbitMQ EventBus**
 
@@ -625,7 +629,7 @@ export class RabbitMQEventBus implements IEventBus {
 
   // ... other methods
 }
-```
+```text
 
 ---
 
@@ -638,7 +642,7 @@ NODE_ENV=development
 DATABASE_URL=file:./dev.db
 LOG_LEVEL=debug
 PORT=3000
-```
+```text
 
 ### **Production**
 
@@ -649,7 +653,7 @@ LOG_LEVEL=info
 PORT=3000
 AUTH_SECRET=your-secret-key-here
 REDIS_URL=redis://redis:6379
-```
+```text
 
 ### **Environment Variables**
 
@@ -678,7 +682,7 @@ DATABASE_URL=postgresql://user:pass@host:5432/network_monitor \
 
 # Seed data (optional)
 bun run db:seed
-```
+```text
 
 ### **Connection Pooling**
 
@@ -697,7 +701,7 @@ const prisma = new PrismaClient({
 
 // Connection pool settings (in DATABASE_URL)
 // ?connection_limit=10&pool_timeout=20
-```
+```text
 
 ---
 
@@ -731,7 +735,7 @@ export const productionLoggerConfig = {
     })
   ]
 };
-```
+```text
 
 ---
 
@@ -804,4 +808,3 @@ export const productionLoggerConfig = {
 ---
 
 Made with ❤️ for reliable production deployments
-

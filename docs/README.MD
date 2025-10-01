@@ -40,7 +40,7 @@ Welcome to the Network Monitor documentation! This directory contains all docume
 
 | Document | Description | Audience |
 |----------|-------------|----------|
-| **[API.md](API.md)** | Complete pRPC API reference with examples | Frontend Developers |
+| **[API.md](API.md)** | Complete tRPC API reference with examples | Frontend Developers |
 
 ### **Deployment & Operations** 🚀
 
@@ -75,7 +75,7 @@ Network Monitor is built with:
 - **Event-Driven Architecture**: Loose coupling via EventBus
 - **Dependency Injection**: Configuration-driven service management
 - **Repository Pattern**: Database abstraction layer
-- **Type-Safe APIs**: pRPC for end-to-end type safety
+- **Type-Safe APIs**: tRPC for end-to-end type safety
 - **Microservices-Ready**: Deploy as monolith or scale to Kubernetes
 
 ```
@@ -102,7 +102,7 @@ packages/                       # Reusable packages
 
 ### **Frontend Developer**
 1. Read **[Quick Start](QUICK-START.md)** to setup dev environment
-2. Review **[API Documentation](API.md)** for pRPC endpoints
+2. Review **[API Documentation](API.md)** for tRPC endpoints
 3. Understand **[Architecture](ARCHITECTURE.md)** (Frontend Architecture section)
 4. Reference **[Requirements](REQUIREMENTS.md)** for features
 
@@ -153,7 +153,7 @@ packages/                       # Reusable packages
 |----------|------------|---------------|
 | **Runtime** | Bun | [bun.sh](https://bun.sh) |
 | **Frontend** | SolidJS + SolidStart | [start.solidjs.com](https://start.solidjs.com) |
-| **Backend** | pRPC | [API.md](API.md) |
+| **Backend** | tRPC | [API.md](API.md) |
 | **Database** | Prisma + PostgreSQL | [prisma.io](https://prisma.io) |
 | **Monorepo** | Turborepo | [turbo.build](https://turbo.build) |
 | **Architecture** | Event-Driven + DI | [ARCHITECTURE.md](ARCHITECTURE.md) |

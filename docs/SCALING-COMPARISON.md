@@ -9,9 +9,11 @@
 ## ❌ WITHOUT Event-Driven Architecture (Direct Calls)
 
 ### Current Monolith
+
 ```typescript
-// pRPC Endpoint
-export const createTarget = async (data) => {
+// tRPC Procedure
+export const targetsRouter = t.router({
+  create: t.procedure.mutation(async ({ ctx, data }) => {
   const target = await monitorService.createTarget(data);  // Same process
   return target;
 };
@@ -22,11 +24,12 @@ class MonitorService {
     return await this.repository.create(data);  // Same process
   }
 }
-```
+```text
 
 ### Refactoring Required for K8s
 
 **Step 1: Add HTTP/gRPC Clients** 🔴
+
 ```typescript
 // MASSIVE CHANGES EVERYWHERE
 import { MonitorServiceClient } from '@grpc/monitor-service';
@@ -43,9 +46,10 @@ export const createTarget = async (data) => {
     throw new Error('Service unavailable');
   }
 };
-```
+```text
 
 **Step 2: Update Every Service Call** 🔴
+
 ```typescript
 // Need to update HUNDREDS of locations:
 await monitorService.createTarget(data)        // Old ❌
@@ -58,9 +62,10 @@ await notificationService.send(alert)          // Old ❌
 await notificationClient.post('/send', alert)  // New ❌
 
 // ... 50+ more service calls to update
-```
+```text
 
 **Step 3: Add Service Discovery** 🔴
+
 ```typescript
 // Need to know where services are
 import { ServiceRegistry } from 'consul';
@@ -70,9 +75,10 @@ const monitorUrl = await registry.getService('monitor');
 const alertingUrl = await registry.getService('alerting');
 
 // Update ALL service instantiation code
-```
+```text
 
 **Step 4: Handle Network Failures** 🔴
+
 ```typescript
 // Add retry logic EVERYWHERE
 import retry from 'retry-axios';
@@ -84,7 +90,7 @@ const client = axios.create({
     // Configure for EVERY service call
   }
 });
-```
+```text
 
 ### Impact Assessment ❌
 
@@ -98,6 +104,7 @@ const client = axios.create({
 | **Team Impact** | All development stops | 🔴 High |
 
 ### Total Cost
+
 - 🔴 **Engineering Time:** 2-3 months
 - 🔴 **Team Size:** 3-4 developers full-time
 - 🔴 **Risk Level:** Very High
@@ -109,9 +116,11 @@ const client = axios.create({
 ## ✅ WITH Event-Driven Architecture
 
 ### Current Monolith (Event-Driven)
+
 ```typescript
-// pRPC Endpoint
-export const createTarget = async (data) => {
+// tRPC Procedure
+export const targetsRouter = t.router({
+  create: t.procedure.mutation(async ({ ctx, data }) => {
   const eventRPC = new EventRPC(eventBus, logger);
   const target = await eventRPC.request(
     "TARGET_CREATE_REQUESTED",
@@ -129,11 +138,12 @@ class MonitorService {
     this.eventBus.emit(`TARGET_CREATED_${data.requestId}`, target);
   }
 }
-```
+```text
 
 ### Refactoring Required for K8s
 
 **Step 1: Swap Event Bus Implementation** ✅
+
 ```typescript
 // ONE FILE TO CHANGE
 // src/lib/container/service-config.ts
@@ -151,30 +161,33 @@ class MonitorService {
 }
 
 // THAT'S IT! All code keeps working!
-```
+```text
 
 **Step 2: Create K8s Manifests** ✅
+
 ```yaml
 # NEW FILES - No code changes!
 # k8s/api-deployment.yaml
 # k8s/monitor-deployment.yaml
 # k8s/alerting-deployment.yaml
 # k8s/rabbitmq-deployment.yaml
-```
+```text
 
 **Step 3: Environment Configuration** ✅
+
 ```bash
 # Just environment variables - No code changes!
 # .env.production
 RABBITMQ_URL=amqp://rabbitmq:5672
 DATABASE_URL=postgresql://postgres:5432/db
-```
+```text
 
 **Step 4: Deploy** ✅
+
 ```bash
 # Standard K8s deployment
 kubectl apply -f k8s/
-```
+```text
 
 ### Impact Assessment ✅
 
@@ -188,6 +201,7 @@ kubectl apply -f k8s/
 | **Team Impact** | Can continue feature development | ✅ Low |
 
 ### Total Cost
+
 - ✅ **Engineering Time:** 1-2 weeks
 - ✅ **Team Size:** 1-2 developers part-time
 - ✅ **Risk Level:** Low
@@ -201,6 +215,7 @@ kubectl apply -f k8s/
 ### Code Changes Required
 
 **Direct Calls:**
+
 ```diff
 // Change EVERY service call (100+ locations)
 - await monitorService.createTarget(data)
@@ -212,9 +227,10 @@ kubectl apply -f k8s/
 + await client.post('/check', result);
 
 // ... 50+ more changes
-```
+```text
 
 **Event-Driven:**
+
 ```diff
 // Change ONE file
 // src/lib/container/service-config.ts
@@ -222,33 +238,37 @@ kubectl apply -f k8s/
 + new RabbitMQEventBus(url)
 
 // All other code: NO CHANGES NEEDED ✅
-```
+```text
 
 ### Architecture Evolution
 
 **Direct Calls - Monolith:**
-```
+
+```text
 API → MonitorService → Repository → DB
      (same process)
-```
+```text
 
 **Direct Calls - Microservices (HUGE REFACTOR):**
-```
+
+```text
 API → HTTP Client → [Network] → MonitorService → Repository → DB
      (different processes - BREAKS EVERYTHING)
-```
+```text
 
 **Event-Driven - Monolith:**
-```
+
+```text
 API → EventBus → MonitorService → Repository → DB
      (in-memory events)
-```
+```text
 
 **Event-Driven - Microservices (SAME CODE):**
-```
+
+```text
 API → EventBus → [RabbitMQ] → MonitorService → Repository → DB
      (distributed events - CODE UNCHANGED)
-```
+```text
 
 ---
 
@@ -257,7 +277,8 @@ API → EventBus → [RabbitMQ] → MonitorService → Repository → DB
 ### Scenario: 1 Million Users
 
 **Without Event-Driven:**
-```
+
+```text
 Initial Development Time: Same
 Scaling Refactor Time: 2-3 months
 Scaling Cost: $250,000 (engineering)
@@ -267,10 +288,11 @@ Feature Development: Frozen for months
 
 Total Scaling Cost: $300,000+
 Time to Market: 3+ months
-```
+```text
 
 **With Event-Driven:**
-```
+
+```text
 Initial Development Time: +1 week (implement events)
 Scaling Refactor Time: 1-2 weeks
 Scaling Cost: $15,000 (engineering)
@@ -280,7 +302,7 @@ Feature Development: Continues normally
 
 Total Scaling Cost: $20,000
 Time to Market: 2 weeks
-```
+```text
 
 **Savings: $280,000+ and 2.5 months faster!**
 
@@ -290,7 +312,7 @@ Time to Market: 2 weeks
 
 ### Without Event-Driven (12 weeks)
 
-```
+```text
 Week 1-2:   Research and design microservices architecture
 Week 3-4:   Implement gRPC/HTTP clients
 Week 5-6:   Refactor all service calls
@@ -298,11 +320,11 @@ Week 7-8:   Add error handling and retries
 Week 9-10:  Testing and bug fixes
 Week 11:    Staging deployment and testing
 Week 12:    Production deployment
-```
+```text
 
 ### With Event-Driven (2 weeks)
 
-```
+```text
 Week 1:     Implement RabbitMQEventBus
             Test with existing code
             Create K8s manifests
@@ -311,7 +333,7 @@ Week 2:     Deploy to staging
             Load testing
             Production deployment
             Monitor and optimize
-```
+```text
 
 ---
 
@@ -320,15 +342,18 @@ Week 2:     Deploy to staging
 ### Direct Calls (Painful Growth)
 
 **Year 1:** Monolith ✅
+
 - Everything works fine
 
 **Year 2:** Need to scale... 🔴
+
 - Stop all feature development
 - 3 months of refactoring
 - High risk migration
 - Team stress
 
 **Year 3:** Finally scaled ✅
+
 - But you're behind competitors
 - Lost 3 months of features
 - Customer patience tested
@@ -336,16 +361,19 @@ Week 2:     Deploy to staging
 ### Event-Driven (Smooth Growth)
 
 **Year 1:** Monolith ✅
+
 - Everything works fine
 - Events already in place
 
 **Year 2:** Need to scale... ✅
+
 - 2 weeks to implement
 - Continue feature development
 - Low risk migration
 - Team productive
 
 **Year 3:** Scaled and thriving ✅
+
 - Ahead of competitors
 - 2.5 months extra features
 - Happy customers
@@ -384,9 +412,11 @@ Week 2:     Deploy to staging
 ## ✅ The Bottom Line
 
 ### Question
+
 **"Does event-driven architecture help with scaling to K8s with less rework?"**
 
 ### Answer
+
 **YES - Dramatically!**
 
 | Aspect | Without Events | With Events | Difference |
@@ -401,6 +431,7 @@ Week 2:     Deploy to staging
 ### Investment Today Saves Tomorrow
 
 **Implementing event-driven architecture now:**
+
 - ✅ Costs ~1 week extra development
 - ✅ Saves 2-3 months when scaling
 - ✅ Saves $200k+ in refactoring costs
@@ -427,4 +458,3 @@ The choice is clear: Invest 1 week now, or spend 3 months refactoring later. �
 
 *Scaling Comparison: Direct Calls vs Event-Driven*
 *The difference is night and day*
-

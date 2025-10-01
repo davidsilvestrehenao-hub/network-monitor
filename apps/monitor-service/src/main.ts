@@ -17,20 +17,31 @@
  * Deploy independently and scale based on load!
  */
 
+// Justification: Service entry point - console statements are for startup information
+// eslint-disable-next-line no-console
 import { EventBus } from "@network-monitor/infrastructure";
 import { LoggerService, LogLevel } from "@network-monitor/infrastructure";
+// Justification: MonitorService will be used when implementing event handlers
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MonitorService } from "@network-monitor/monitor";
 
 async function startMonitorService() {
+  // Justification: Console statements for microservice startup info
+  // eslint-disable-next-line no-console
   console.log("🚀 Starting Monitor Microservice...");
+  // eslint-disable-next-line no-console
   console.log("📦 Independent service");
+  // eslint-disable-next-line no-console
   console.log("🔌 Event Bus: RabbitMQ (distributed)");
+  // eslint-disable-next-line no-console
   console.log("");
 
   const logger = new LoggerService(LogLevel.INFO);
 
   // In production, use RabbitMQ for distributed event bus
   // const eventBus = new RabbitMQEventBus(process.env.RABBITMQ_URL!);
+  // Justification: eventBus will be used when implementing event handlers
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const eventBus = new EventBus(); // For now, in-memory
 
   logger.info("Monitor Service: Initializing...");
@@ -62,6 +73,8 @@ async function startMonitorService() {
 }
 
 startMonitorService().catch(error => {
+  // Justification: Console error for critical startup failure
+  // eslint-disable-next-line no-console
   console.error("Failed to start Monitor Service:", error);
   process.exit(1);
 });

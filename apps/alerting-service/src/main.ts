@@ -16,15 +16,24 @@
 
 import { EventBus } from "@network-monitor/infrastructure";
 import { LoggerService, LogLevel } from "@network-monitor/infrastructure";
+// Justification: AlertingService will be used when implementing event handlers
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AlertingService } from "@network-monitor/alerting";
 
 async function startAlertingService() {
+  // Justification: Console statements for microservice startup info
+  // eslint-disable-next-line no-console
   console.log("🚀 Starting Alerting Microservice...");
+  // eslint-disable-next-line no-console
   console.log("📦 Independent service");
+  // eslint-disable-next-line no-console
   console.log("🔌 Event Bus: RabbitMQ (distributed)");
+  // eslint-disable-next-line no-console
   console.log("");
 
   const logger = new LoggerService(LogLevel.INFO);
+  // Justification: eventBus will be used when implementing event handlers
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const eventBus = new EventBus();
 
   logger.info("Alerting Service: Initializing...");
@@ -46,6 +55,8 @@ async function startAlertingService() {
 }
 
 startAlertingService().catch(error => {
+  // Justification: Console error for critical startup failure
+  // eslint-disable-next-line no-console
   console.error("Failed to start Alerting Service:", error);
   process.exit(1);
 });

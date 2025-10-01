@@ -55,7 +55,7 @@ logger.info("User action", {
   action: "createTarget",
   timestamp: new Date().toISOString(),
 });
-```
+```text
 
 ### Multiple Log Levels
 
@@ -100,7 +100,7 @@ async createTarget(data: CreateTargetData) {
     throw error;
   }
 }
-```
+```text
 
 ### Frontend Components
 
@@ -115,7 +115,7 @@ export function MyComponent() {
 
   return <button onClick={handleClick}>Click me</button>;
 }
-```
+```text
 
 ## Configuration
 
@@ -136,7 +136,7 @@ The logging service is configured in the DI container and can be switched betwee
   ),
   // ...
 }
-```
+```text
 
 ## Testing
 

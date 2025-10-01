@@ -5,7 +5,7 @@
 ```bash
 # Install PM2 and set up everything automatically
 bun run pm2:setup
-```
+```text
 
 This single command will:
 
@@ -24,25 +24,25 @@ This single command will:
 npm install -g pm2
 # or
 bun add -g pm2
-```
+```text
 
 ### 2. Install Dependencies
 
 ```bash
 bun install
-```
+```text
 
 ### 3. Build Application
 
 ```bash
 bun run build
-```
+```text
 
 ### 4. Setup Database
 
 ```bash
 bun run push
-```
+```text
 
 ### 5. Start with PM2
 
@@ -50,7 +50,7 @@ bun run push
 pm2 start ecosystem.config.js --env production
 pm2 save
 pm2 startup
-```
+```text
 
 ## 🔧 Management Commands
 
@@ -77,7 +77,7 @@ bun run pm2:logs
 
 # Open monitoring dashboard
 bun run pm2:monit
-```
+```text
 
 ### Advanced Operations
 
@@ -93,7 +93,7 @@ bun run pm2:cleanup
 
 # Delete from PM2
 bun run pm2:delete
-```
+```text
 
 ### Using Management Script
 
@@ -104,7 +104,7 @@ bun run pm2:commands [COMMAND]
 # Available commands:
 # start, stop, restart, reload, status, logs, logs-follow
 # monit, build, deploy, deploy-staging, cleanup, health
-```
+```text
 
 ## 📊 Monitoring
 
@@ -112,19 +112,19 @@ bun run pm2:commands [COMMAND]
 
 ```bash
 bun run pm2:monitoring start
-```
+```text
 
 ### Check Status
 
 ```bash
 bun run pm2:monitoring status
-```
+```text
 
 ### View Monitoring Logs
 
 ```bash
 bun run pm2:monitoring logs
-```
+```text
 
 ## 🚀 Production Deployment
 
@@ -132,13 +132,13 @@ bun run pm2:monitoring logs
 
 ```bash
 bun run deploy:pm2
-```
+```text
 
 ### Systemd Deployment (Linux)
 
 ```bash
 sudo bun run deploy:systemd
-```
+```text
 
 ## 🔍 Troubleshooting
 
@@ -146,25 +146,25 @@ sudo bun run deploy:systemd
 
 ```bash
 bun run pm2:status
-```
+```text
 
 ### View Logs
 
 ```bash
 bun run pm2:logs
-```
+```text
 
 ### Restart if Stuck
 
 ```bash
 bun run pm2:restart
-```
+```text
 
 ### Check Health
 
 ```bash
 bun run pm2:health
-```
+```text
 
 ## 📁 Configuration Files
 
@@ -198,6 +198,7 @@ After setup, verify everything is working:
    ```
 
 4. **Test Auto-restart**
+
    ```bash
    # Kill the process and watch it restart
    pm2 kill network-monitor

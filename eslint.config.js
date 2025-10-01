@@ -6,15 +6,62 @@ import solid from "eslint-plugin-solid";
 export default [
   js.configs.recommended,
   {
-    files: [
-      "src/**/*.{ts,tsx}",
-      "packages/**/src/**/*.{ts,tsx}",
-      "apps/**/src/**/*.{ts,tsx}",
-    ],
+    files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
         project: "./tsconfig.json",
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        // Browser globals
+        window: "readonly",
+        document: "readonly",
+        console: "readonly",
+        alert: "readonly",
+        confirm: "readonly",
+        localStorage: "readonly",
+        fetch: "readonly",
+        performance: "readonly",
+        // Node.js globals
+        process: "readonly",
+        Buffer: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        NodeJS: "readonly",
+        global: "readonly",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": typescript,
+      solid: solid,
+    },
+    rules: {
+      ...typescript.configs.recommended.rules,
+      ...solid.configs.typescript.rules,
+      "@typescript-eslint/consistent-type-imports": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
+      "@typescript-eslint/no-explicit-any": "error",
+      "no-console": "warn",
+      "prefer-const": "error",
+      "no-var": "error",
+      "no-undef": "off", // TypeScript handles this
+    },
+  },
+  {
+    files: ["packages/**/src/**/*.{ts,tsx}", "apps/**/src/**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
         ecmaFeatures: {
