@@ -1,0 +1,107 @@
+{
+  "name": "Integration Test Service Wiring",
+  "description": "Mix of real and mock for integration testing - tests service interactions",
+  "WARNING": "⚠️  This is SERVICE WIRING, NOT runtime configuration!",
+  "runtimeConfig": "All runtime configuration (database URLs, ports, keys) must be in environment variables (.env file)",
+  "purpose": "This file defines WHICH classes to use for each interface, not configuration VALUES",
+  "environment": "integration-test",
+  "useCase": "Integration tests that verify service interactions work correctly",
+  "services": {
+    "ILogger": {
+      "module": "@network-monitor/infrastructure",
+      "className": "LoggerService",
+      "isMock": false,
+      "description": "Real logger for debugging integration tests"
+    },
+    "IEventBus": {
+      "module": "@network-monitor/infrastructure",
+      "className": "EventBus",
+      "isMock": false,
+      "description": "Real event bus to test event-driven architecture"
+    },
+    "IDatabaseService": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockDatabase",
+      "isMock": true,
+      "description": "Mock database for fast, isolated tests"
+    },
+    "IMonitoringTargetRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockMonitoringTargetRepository",
+      "isMock": true,
+      "description": "Mock repository with controlled test data"
+    },
+    "ISpeedTestResultRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockSpeedTestResultRepository",
+      "isMock": true,
+      "description": "Mock repository with test results"
+    },
+    "IAlertRuleRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockAlertRuleRepository",
+      "isMock": true,
+      "description": "Mock repository for alert rules"
+    },
+    "IIncidentEventRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockIncidentEventRepository",
+      "isMock": true,
+      "description": "Mock repository for incidents"
+    },
+    "INotificationRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockNotificationRepository",
+      "isMock": true,
+      "description": "Mock repository for notifications"
+    },
+    "IPushSubscriptionRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockPushSubscriptionRepository",
+      "isMock": true,
+      "description": "Mock repository for push subscriptions"
+    },
+    "IUserRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockUserRepository",
+      "isMock": true,
+      "description": "Mock repository with test users"
+    },
+    "ITargetRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockMonitoringTargetRepository",
+      "isMock": true,
+      "description": "Mock legacy repository"
+    },
+    "ISpeedTestRepository": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockSpeedTestResultRepository",
+      "isMock": true,
+      "description": "Mock legacy repository"
+    },
+    "IMonitorService": {
+      "module": "@network-monitor/monitor",
+      "className": "MonitorService",
+      "isMock": false,
+      "description": "Real monitor service - test the actual logic"
+    },
+    "IAlertingService": {
+      "module": "@network-monitor/alerting",
+      "className": "AlertingService",
+      "isMock": false,
+      "description": "Real alerting service - test the actual logic"
+    },
+    "INotificationService": {
+      "module": "@network-monitor/notification",
+      "className": "NotificationService",
+      "isMock": false,
+      "description": "Real notification service - test the actual logic"
+    },
+    "IAuthService": {
+      "module": "@network-monitor/auth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock auth for testing"
+    }
+  }
+}

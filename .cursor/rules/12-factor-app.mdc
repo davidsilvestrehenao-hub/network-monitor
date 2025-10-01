@@ -1,0 +1,358 @@
+---
+description: 12-Factor App Methodology Compliance
+globs: "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# 12-Factor App Methodology
+
+The PWA Connection Monitor follows the [12-Factor App methodology](https://12factor.net/) for building modern, scalable, cloud-native SaaS applications. All code must comply with these principles.
+
+## 📋 Core Principles Summary
+
+### I. Codebase ✅
+
+- **One codebase tracked in revision control, many deploys**
+- ✅ Single Git repository with monorepo structure
+- ✅ Same codebase deployed to all environments
+
+### II. Dependencies ✅
+
+- **Explicitly declare and isolate dependencies**
+- ✅ All dependencies in `package.json`
+- ✅ Lock file (`bun.lock`) committed
+- ✅ No implicit system dependencies
+
+### III. Config ⚠️ CRITICAL
+
+- **Store config in the environment**
+- ✅ Use environment variables for ALL configuration
+- ❌ NEVER store config in JSON files (except service discovery)
+- ✅ Never commit secrets to version control
+
+**Required Pattern:**
+
+```typescript
+// ✅ GOOD - Read from environment
+const databaseUrl = process.env.DATABASE_URL;
+const port = parseInt(process.env.PORT || "3000", 10);
+
+// ❌ BAD - Read from JSON config
+import config from "./config/production.json";
+const databaseUrl = config.database.url;
+```
+
+### IV. Backing Services ✅
+
+- **Treat backing services as attached resources**
+- ✅ Database abstracted through Prisma
+- ✅ Repository pattern isolates data access
+- ✅ Services configurable via environment variables
+
+```typescript
+// ✅ GOOD - Backing service from environment
+const prisma = new PrismaClient({
+  datasources: {
+    db: { url: process.env.DATABASE_URL },
+  },
+});
+
+// ❌ BAD - Hardcoded backing service
+const prisma = new PrismaClient({
+  datasources: {
+    db: { url: "postgresql://localhost:5432/mydb" },
+  },
+});
+```
+
+### V. Build, Release, Run ✅
+
+- **Strictly separate build and run stages**
+- ✅ Build creates immutable artifacts
+- ✅ No compilation at runtime
+- ✅ Config injected at runtime
+
+```bash
+# ✅ GOOD - Separate stages
+bun run build        # Build stage
+docker build         # Release stage
+docker run           # Run stage
+
+# ❌ BAD - Mixing stages
+bun run build && bun run start  # Don't mix
+```
+
+### VI. Processes ✅
+
+- **Execute the app as one or more stateless processes**
+- ✅ Services must be stateless
+- ✅ State stored in database, not memory
+- ✅ Horizontal scaling supported
+
+```typescript
+// ✅ GOOD - Stateless service
+class MonitorService {
+  async getTarget(id: string) {
+    return this.repository.findById(id); // From database
+  }
+}
+
+// ❌ BAD - Stateful service
+class MonitorService {
+  private cache = new Map(); // ❌ In-memory state
+
+  async getTarget(id: string) {
+    return this.cache.get(id); // ❌ Won't work with multiple instances
+  }
+}
+```
+
+### VII. Port Binding ✅
+
+- **Export services via port binding**
+- ✅ Self-contained HTTP servers
+- ✅ Port from environment variables
+
+```typescript
+// ✅ GOOD - Port from environment
+const PORT = process.env.PORT || 3000;
+Bun.serve({ port: PORT });
+
+// ❌ BAD - Hardcoded port
+Bun.serve({ port: 3000 });
+```
+
+### VIII. Concurrency ✅
+
+- **Scale out via the process model**
+- ✅ Scale by running multiple processes
+- ✅ Different service types for different workloads
+- ✅ Stateless design enables horizontal scaling
+
+### IX. Disposability ⚠️ NEEDS IMPROVEMENT
+
+- **Maximize robustness with fast startup and graceful shutdown**
+- ✅ Fast startup (< 3 seconds)
+- ⚠️ Graceful shutdown needs improvement
+
+**Required Pattern:**
+
+```typescript
+// ✅ GOOD - Graceful shutdown
+async function gracefulShutdown(signal: string) {
+  console.log(`Received ${signal}, shutting down gracefully...`);
+
+  // Stop accepting new requests
+  server.close();
+
+  // Complete in-flight requests
+  await completeInFlightRequests();
+
+  // Close database connections
+  await database.disconnect();
+
+  // Exit cleanly
+  process.exit(0);
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+```
+
+### X. Dev/Prod Parity ⚠️ CRITICAL
+
+- **Keep development, staging, and production as similar as possible**
+- ⚠️ Use same database type (PostgreSQL) in all environments
+- ⚠️ Use Docker Compose for backing services in development
+- ✅ Same code runs in all environments
+
+**Required Setup:**
+
+```yaml
+# docker-compose.dev.yml - Development backing services
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: network_monitor_dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    ports:
+      - "5432:5432"
+```
+
+```bash
+# .env.development
+DATABASE_URL=postgresql://dev:dev@localhost:5432/network_monitor_dev
+```
+
+### XI. Logs ⚠️ CRITICAL
+
+- **Treat logs as event streams**
+- ✅ Write all logs to stdout/stderr
+- ❌ NEVER write to log files
+- ✅ Use structured logging (JSON)
+
+**Required Pattern:**
+
+```typescript
+// ✅ GOOD - Stream to stdout
+logger.info("Target created", {
+  targetId: "target-123",
+  userId: "user-456",
+  timestamp: new Date().toISOString(),
+});
+
+// ❌ BAD - Write to files
+winston.createLogger({
+  transports: [
+    new winston.transports.File({ filename: "error.log" }), // ❌ NO
+  ],
+});
+
+// ✅ GOOD - Console only
+winston.createLogger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.json(), // Structured
+    }),
+  ],
+});
+```
+
+### XII. Admin Processes ✅
+
+- **Run admin/management tasks as one-off processes**
+- ✅ Admin scripts use same codebase
+- ✅ Same configuration as app
+
+```bash
+# ✅ GOOD - One-off admin processes
+bun run db:migrate
+bun run db:seed
+bun run db:reset
+```
+
+---
+
+## 🚨 Critical Requirements
+
+### Configuration (Factor III)
+
+**NEVER store environment-specific configuration in code or JSON files.**
+
+```typescript
+// ❌ FORBIDDEN
+const config = {
+  database: {
+    production: "postgresql://prod-server/db",
+    development: "sqlite:./dev.db",
+  },
+};
+
+// ✅ REQUIRED
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL environment variable is required");
+}
+```
+
+### Environment Variables
+
+All configuration must come from environment variables:
+
+```bash
+# Required environment variables
+DATABASE_URL=postgresql://...
+NODE_ENV=production
+PORT=3000
+LOG_LEVEL=info
+AUTH_SECRET=...
+
+# Service configuration
+MONITOR_SERVICE_ENABLED=true
+ALERTING_SERVICE_ENABLED=true
+NOTIFICATION_SERVICE_ENABLED=true
+
+# Event bus
+EVENT_BUS_TYPE=rabbitmq
+RABBITMQ_URL=amqp://...
+```
+
+### Logging (Factor XI)
+
+**ALL logs must stream to stdout/stderr. NO file-based logging.**
+
+```typescript
+// ❌ FORBIDDEN
+logger.addTransport(new FileTransport({ filename: "app.log" }));
+fs.writeFileSync("error.log", error.message);
+
+// ✅ REQUIRED
+console.log(JSON.stringify({ level: "info", message: "..." }));
+logger.info("Event occurred", { data });
+```
+
+### Dev/Prod Parity (Factor X)
+
+**Development and production must use the same backing services.**
+
+```bash
+# ❌ DISCOURAGED
+# Development: SQLite
+DATABASE_URL=file:./dev.db
+
+# Production: PostgreSQL
+DATABASE_URL=postgresql://prod/db
+
+# ✅ REQUIRED
+# Development: PostgreSQL (via Docker)
+DATABASE_URL=postgresql://localhost:5432/network_monitor_dev
+
+# Production: PostgreSQL
+DATABASE_URL=postgresql://prod-host:5432/network_monitor
+```
+
+---
+
+## 📝 Code Review Checklist
+
+When reviewing or writing code, ensure:
+
+- [ ] No configuration in JSON files (use environment variables)
+- [ ] No secrets committed to version control
+- [ ] All logs stream to stdout/stderr (no file logging)
+- [ ] Services are stateless (no in-memory state)
+- [ ] Graceful shutdown handlers implemented
+- [ ] Port binding from environment variables
+- [ ] Database connections from environment
+- [ ] Same backing services in dev and prod
+- [ ] Admin scripts use environment config
+
+---
+
+## 🎯 Implementation Status
+
+See `/docs/12-FACTOR-APP.md` for detailed compliance assessment and implementation roadmap.
+
+**Current Status: 8/12 Fully Compliant**
+
+**Priority Fixes:**
+
+1. **Config (Factor III)** - Move to environment variables
+2. **Dev/Prod Parity (Factor X)** - Use PostgreSQL in development
+3. **Logs (Factor XI)** - Remove file-based logging
+4. **Disposability (Factor IX)** - Improve graceful shutdown
+
+---
+
+## 📚 Resources
+
+- [The Twelve-Factor App](https://12factor.net/)
+- [12-Factor Config in Different Languages](https://www.baeldung.com/ops/12-factor-app-methodology)
+- [Cloud Native Computing Foundation Best Practices](https://www.cncf.io/)
+
+---
+
+Remember: **12-Factor principles are not optional. They are mandatory for building maintainable, scalable, cloud-native applications.**

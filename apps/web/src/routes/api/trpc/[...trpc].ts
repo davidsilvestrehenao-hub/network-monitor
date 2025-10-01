@@ -6,9 +6,28 @@ import {
   getAppContext,
 } from "@network-monitor/infrastructure";
 
-// Initialize the DI container when the server starts.
-// This will read service-config.json and set up all services.
-await initializeContainer();
+// Container initialization state
+let containerInitialized = false;
+let initializationPromise: Promise<void> | null = null;
+
+// Lazy container initialization to avoid top-level await
+async function ensureContainerInitialized(): Promise<void> {
+  if (containerInitialized) {
+    return;
+  }
+
+  if (initializationPromise) {
+    await initializationPromise;
+    return;
+  }
+
+  initializationPromise = initializeContainer().then(() => {
+    containerInitialized = true;
+    initializationPromise = null;
+  });
+
+  await initializationPromise;
+}
 
 const handler = (event: APIEvent) =>
   fetchRequestHandler({
@@ -16,7 +35,8 @@ const handler = (event: APIEvent) =>
     req: event.request,
     router: appRouter,
     createContext: async () => {
-      // getAppContext resolves all services from the container.
+      // Ensure container is initialized before getting context
+      await ensureContainerInitialized();
       const appContext = await getAppContext();
       return appContext;
     },

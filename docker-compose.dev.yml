@@ -1,0 +1,204 @@
+# =====================================================
+# Development Environment - Backing Services
+# =====================================================
+# This Docker Compose file provides backing services for local development
+# that match production as closely as possible (Factor X: Dev/prod parity).
+#
+# Services:
+# - PostgreSQL: Database (matches production)
+# - RabbitMQ: Message broker for event bus (optional, for microservices)
+# - Redis: Caching layer (optional, if implemented)
+#
+# Usage:
+#   Start:  docker-compose -f docker-compose.dev.yml up -d
+#   Stop:   docker-compose -f docker-compose.dev.yml down
+#   Logs:   docker-compose -f docker-compose.dev.yml logs -f
+#   Reset:  docker-compose -f docker-compose.dev.yml down -v
+# =====================================================
+
+version: "3.8"
+
+services:
+  # =====================================================
+  # PostgreSQL Database
+  # =====================================================
+  # Primary database for development (matches production)
+  postgres:
+    image: postgres:15-alpine
+    container_name: network-monitor-postgres-dev
+    environment:
+      POSTGRES_DB: network_monitor_dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist database data
+      - postgres_dev_data:/var/lib/postgresql/data
+      # Optional: Custom initialization scripts
+      # - ./scripts/postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d network_monitor_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - network-monitor-dev
+
+  # =====================================================
+  # RabbitMQ Message Broker (Optional)
+  # =====================================================
+  # Event bus for microservices architecture
+  # Enable this when testing microservices deployment
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: network-monitor-rabbitmq-dev
+    environment:
+      RABBITMQ_DEFAULT_USER: dev
+      RABBITMQ_DEFAULT_PASS: dev
+      RABBITMQ_DEFAULT_VHOST: /
+      # Enable plugins
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions /etc/rabbitmq/definitions.json"
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_dev_data:/var/lib/rabbitmq
+      # Optional: Custom RabbitMQ configuration
+      # - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      # - ./config/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - network-monitor-dev
+    # Uncomment to enable by default
+    # profiles:
+    #   - microservices
+
+  # =====================================================
+  # Redis Cache (Optional)
+  # =====================================================
+  # Caching layer for performance optimization
+  # Enable this if implementing caching
+  redis:
+    image: redis:7-alpine
+    container_name: network-monitor-redis-dev
+    command: redis-server --appendonly yes --requirepass dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - network-monitor-dev
+    # Uncomment to enable by default
+    # profiles:
+    #   - caching
+
+  # =====================================================
+  # PostgreSQL Admin Tool (Optional)
+  # =====================================================
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: network-monitor-pgadmin-dev
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: dev
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_dev_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - network-monitor-dev
+    profiles:
+      - tools
+
+# =====================================================
+# Networks
+# =====================================================
+networks:
+  network-monitor-dev:
+    driver: bridge
+
+# =====================================================
+# Volumes
+# =====================================================
+# Persistent storage for development data
+volumes:
+  postgres_dev_data:
+    name: network-monitor-postgres-dev-data
+  rabbitmq_dev_data:
+    name: network-monitor-rabbitmq-dev-data
+  redis_dev_data:
+    name: network-monitor-redis-dev-data
+  pgadmin_dev_data:
+    name: network-monitor-pgadmin-dev-data
+
+# =====================================================
+# USAGE EXAMPLES
+# =====================================================
+#
+# Start all services:
+#   docker-compose -f docker-compose.dev.yml up -d
+#
+# Start specific services:
+#   docker-compose -f docker-compose.dev.yml up -d postgres
+#   docker-compose -f docker-compose.dev.yml up -d postgres rabbitmq
+#
+# Start with profiles:
+#   docker-compose -f docker-compose.dev.yml --profile tools up -d
+#   docker-compose -f docker-compose.dev.yml --profile microservices up -d
+#
+# View logs:
+#   docker-compose -f docker-compose.dev.yml logs -f postgres
+#
+# Stop services:
+#   docker-compose -f docker-compose.dev.yml down
+#
+# Reset everything (including data):
+#   docker-compose -f docker-compose.dev.yml down -v
+#
+# Check service health:
+#   docker-compose -f docker-compose.dev.yml ps
+#
+# Access services:
+#   PostgreSQL:    localhost:5432 (user: dev, password: dev, database: network_monitor_dev)
+#   RabbitMQ UI:   http://localhost:15672 (user: dev, password: dev)
+#   Redis:         localhost:6379 (password: dev)
+#   pgAdmin:       http://localhost:5050 (email: dev@localhost.com, password: dev)
+#
+# =====================================================
+# ENVIRONMENT VARIABLES
+# =====================================================
+#
+# Add to your .env file:
+#
+# # Database
+# DATABASE_URL=postgresql://dev:dev@localhost:5432/network_monitor_dev
+#
+# # Event Bus (if using RabbitMQ)
+# EVENT_BUS_TYPE=rabbitmq
+# RABBITMQ_URL=amqp://dev:dev@localhost:5672
+#
+# # Cache (if using Redis)
+# REDIS_URL=redis://:dev@localhost:6379
+#
+# =====================================================
+
