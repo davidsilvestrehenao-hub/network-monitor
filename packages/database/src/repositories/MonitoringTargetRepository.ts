@@ -195,12 +195,14 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
       ownerId: target.ownerId,
       speedTestResults:
         target.speedTestResults?.map(result => ({
-          id: result.id,
+          id: result.id.toString(),
           ping: result.ping,
           download: result.download,
+          upload: null,
           status: result.status as "SUCCESS" | "FAILURE",
-          error: result.error,
-          createdAt: result.createdAt,
+          error: result.error ?? undefined,
+          createdAt: result.createdAt.toISOString(),
+          timestamp: result.createdAt.toISOString(),
           targetId: result.targetId,
         })) || [],
       incidentEvents:

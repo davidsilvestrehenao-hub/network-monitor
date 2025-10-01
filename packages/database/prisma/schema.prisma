@@ -77,12 +77,14 @@ model MonitoringTarget {
 }
 
 model SpeedTestResult {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   ping      Float?
   download  Float?
+  upload    Float?
   status    String   // 'SUCCESS' or 'FAILURE'
   error     String?
   createdAt DateTime @default(now())
+  timestamp DateTime @default(now())
   
   target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
   targetId  String

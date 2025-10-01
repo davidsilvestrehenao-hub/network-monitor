@@ -439,6 +439,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
       // Run the comprehensive test
       await this.speedTestService.runComprehensiveTest({
         targetId,
+        target: target.address,
         timeout: target.config.maxFailures || 10000,
       });
 

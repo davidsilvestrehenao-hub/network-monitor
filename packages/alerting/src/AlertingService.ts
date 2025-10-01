@@ -1,15 +1,15 @@
-import type { IAlertingService } from "@network-monitor/shared"IAlertingService";
-import type { IAlertRuleRepository } from "@network-monitor/shared"IAlertRuleRepository";
-import type { IIncidentEventRepository } from "@network-monitor/shared"IIncidentEventRepository";
-import type { IEventBus, BackendEvents } from "@network-monitor/shared"IEventBus";
-import type { ILogger } from "@network-monitor/shared"ILogger";
+import type { IAlertingService } from "@network-monitor/shared";
+import type { IAlertRuleRepository } from "@network-monitor/shared";
+import type { IIncidentEventRepository } from "@network-monitor/shared";
+import type { IEventBus, BackendEvents } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 import type {
   AlertRule,
   CreateAlertRuleData,
   UpdateAlertRuleData,
-} from "@network-monitor/shared"IAlertRuleRepository";
-import type { IncidentEvent } from "@network-monitor/shared"IIncidentEventRepository";
-import type { SpeedTestResult } from "@network-monitor/shared"ITargetRepository";
+} from "@network-monitor/shared";
+import type { IncidentEvent } from "@network-monitor/shared";
+import type { SpeedTestResult } from "@network-monitor/shared";
 
 export class AlertingService implements IAlertingService {
   private alertRuleRepository: IAlertRuleRepository;

@@ -1,16 +1,16 @@
-import type { INotificationService } from "@network-monitor/shared"INotificationService";
-import type { INotificationRepository } from "@network-monitor/shared"INotificationRepository";
-import type { IPushSubscriptionRepository } from "@network-monitor/shared"IPushSubscriptionRepository";
-import type { IEventBus, BackendEvents } from "@network-monitor/shared"IEventBus";
-import type { ILogger } from "@network-monitor/shared"ILogger";
+import type { INotificationService } from "@network-monitor/shared";
+import type { INotificationRepository } from "@network-monitor/shared";
+import type { IPushSubscriptionRepository } from "@network-monitor/shared";
+import type { IEventBus, BackendEvents } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
 import type {
   Notification,
   CreateNotificationData,
-} from "@network-monitor/shared"INotificationRepository";
+} from "@network-monitor/shared";
 import type {
   PushSubscription,
   CreatePushSubscriptionData,
-} from "@network-monitor/shared"IPushSubscriptionRepository";
+} from "@network-monitor/shared";
 
 export class NotificationService implements INotificationService {
   private notificationRepository: INotificationRepository;
