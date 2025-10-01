@@ -8,7 +8,7 @@ import type {
   IEventBus,
   ISpeedTestConfigService,
 } from "@network-monitor/shared";
-import { SpeedTestConfigService } from "@network-monitor/speed-test/config";
+import { SpeedTestConfigService } from "@network-monitor/speed-test";
 
 export const browserServiceConfig = {
   [TYPES.ILogger]: {
