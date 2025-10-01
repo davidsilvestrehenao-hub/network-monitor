@@ -1,54 +1,74 @@
 # Auto-label PRs based on changed files
+# Format for actions/labeler@v5
 
 'area: frontend':
-  - 'apps/web/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'apps/web/**/*'
 
 'area: api':
-  - 'apps/api/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'apps/api/**/*'
 
 'area: services':
-  - 'apps/*-service/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'apps/*-service/**/*'
 
 'area: database':
-  - 'packages/database/**/*'
-  - '**/*.prisma'
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'packages/database/**/*'
+          - '**/*.prisma'
 
 'area: infrastructure':
-  - 'packages/infrastructure/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'packages/infrastructure/**/*'
 
 'area: monitoring':
-  - 'packages/monitor/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'packages/monitor/**/*'
 
 'area: alerting':
-  - 'packages/alerting/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'packages/alerting/**/*'
 
 'area: notifications':
-  - 'packages/notification/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'packages/notification/**/*'
 
 'area: auth':
-  - 'packages/auth/**/*'
+  - changed-files:
+      - any-glob-to-any-file: 'packages/auth/**/*'
 
 'type: documentation':
-  - 'docs/**/*'
-  - '**/*.md'
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**/*'
+          - '**/*.md'
 
 'type: tests':
-  - '**/*.test.ts'
-  - '**/*.spec.ts'
-  - '**/__tests__/**/*'
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.test.ts'
+          - '**/*.spec.ts'
+          - '**/__tests__/**/*'
 
 'type: configuration':
-  - '*.json'
-  - '*.yml'
-  - '*.yaml'
-  - '*.config.*'
-  - '.github/**/*'
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.json'
+          - '*.yml'
+          - '*.yaml'
+          - '*.config.*'
+          - '.github/**/*'
 
 'type: dependencies':
-  - 'package.json'
-  - 'bun.lock'
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'package.json'
+          - 'bun.lock'
 
 'type: ci/cd':
-  - '.github/workflows/**/*'
-  - 'scripts/**/*'
-
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**/*'
+          - 'scripts/**/*'
