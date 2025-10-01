@@ -16,7 +16,7 @@ export class SimpleMockMonitor implements IMonitorService {
 
   async createTarget(data: CreateTargetData): Promise<Target> {
     const target: Target = {
-      id: `target-${Date.now()}`,
+      id: `target-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: data.name,
       address: data.address,
       ownerId: data.ownerId,
