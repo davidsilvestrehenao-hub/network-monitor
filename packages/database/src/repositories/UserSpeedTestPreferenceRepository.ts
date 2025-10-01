@@ -8,10 +8,13 @@ import type { ILogger } from "@network-monitor/shared";
 export class UserSpeedTestPreferenceRepository
   implements IUserSpeedTestPreferenceRepository
 {
-  constructor(
-    private databaseService: IDatabaseService,
-    private logger: ILogger
-  ) {}
+  private databaseService: IDatabaseService;
+  private logger: ILogger;
+
+  constructor(databaseService: IDatabaseService, logger: ILogger) {
+    this.databaseService = databaseService;
+    this.logger = logger;
+  }
 
   async getByUserId(userId: string): Promise<UserSpeedTestPreference | null> {
     this.logger.debug(

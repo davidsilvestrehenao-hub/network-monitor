@@ -8,8 +8,10 @@ import type { ILogger } from "@network-monitor/shared";
 
 export class SpeedTestConfigService implements ISpeedTestConfigService {
   private config: SpeedTestUrlConfig;
+  private logger: ILogger;
 
-  constructor(private logger: ILogger) {
+  constructor(logger: ILogger) {
+    this.logger = logger;
     this.config = this.getDefaultConfig();
     this.logger.debug(
       "SpeedTestConfigService: Initialized with default configuration"

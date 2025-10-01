@@ -26,14 +26,24 @@ export class SpeedTestService implements ISpeedTestService {
   private isServiceRunning = false;
   private defaultTimeout = 10000; // 10 seconds
   private defaultInterval = 30000; // 30 seconds
+  private speedTestRepository: ISpeedTestRepository;
+  private targetRepository: ITargetRepository;
+  private eventBus: IEventBus;
+  private logger: ILogger;
+  private configService: ISpeedTestConfigService;
 
   constructor(
-    private speedTestRepository: ISpeedTestRepository,
-    private targetRepository: ITargetRepository,
-    private eventBus: IEventBus,
-    private logger: ILogger,
-    private configService: ISpeedTestConfigService
+    speedTestRepository: ISpeedTestRepository,
+    targetRepository: ITargetRepository,
+    eventBus: IEventBus,
+    logger: ILogger,
+    configService: ISpeedTestConfigService
   ) {
+    this.speedTestRepository = speedTestRepository;
+    this.targetRepository = targetRepository;
+    this.eventBus = eventBus;
+    this.logger = logger;
+    this.configService = configService;
     this.setupEventHandlers();
   }
 

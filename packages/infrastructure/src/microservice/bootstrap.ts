@@ -8,9 +8,9 @@
 import {
   initializeJsonContainer,
   getJsonAppContext,
-} from "../container/json-container";
-import { getContainer } from "../container/flexible-container";
-import { TYPES } from "../container/types";
+} from "../container/json-container.js";
+import { getContainer } from "../container/flexible-container.js";
+import { TYPES } from "../container/types.js";
 import type {
   IDatabaseService,
   ILogger,

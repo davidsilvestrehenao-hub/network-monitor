@@ -5,8 +5,10 @@ import type { PrismaClient } from "@prisma/client";
 export class MockDatabase implements IDatabaseService {
   private connected = false;
   private mockClient: PrismaClient = {} as PrismaClient;
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.logger?.debug("MockDatabase: Initialized");
   }
 

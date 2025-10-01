@@ -1,6 +1,6 @@
 // Justification: Dynamic import of path module to avoid browser compatibility issues
-import { TYPES } from "./types";
-import { createServiceFactory } from "./flexible-container";
+import { TYPES } from "./types.js";
+import { createServiceFactory } from "./flexible-container.js";
 
 // JSON configuration interfaces
 export interface JsonServiceConfig {
@@ -60,7 +60,7 @@ export class JsonConfigLoader {
     if (typeof window !== "undefined") {
       // Browser environment - use fetch
       try {
-        const response = await fetch("/service-config.json");
+        const response = await fetch(`/${this.configPath}`);
         if (!response.ok) {
           throw new Error(`Configuration file not found: ${response.status}`);
         }

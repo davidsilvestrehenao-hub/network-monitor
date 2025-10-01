@@ -10,8 +10,10 @@ export class MockSpeedTestResultRepository
   implements ISpeedTestResultRepository
 {
   private results: SpeedTestResult[] = [];
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedResults();
   }
 

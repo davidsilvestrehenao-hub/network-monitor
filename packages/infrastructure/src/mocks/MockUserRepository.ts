@@ -8,8 +8,10 @@ import type { ILogger } from "@network-monitor/shared";
 
 export class MockUserRepository implements IUserRepository {
   private users: User[] = [];
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedUsers();
   }
 

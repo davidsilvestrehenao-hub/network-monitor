@@ -8,8 +8,10 @@ import type { ILogger } from "@network-monitor/shared";
 
 export class MockSpeedTestConfigService implements ISpeedTestConfigService {
   private config: SpeedTestUrlConfig;
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.config = this.getDefaultConfig();
     this.logger?.debug(
       "MockSpeedTestConfigService: Initialized with mock configuration"

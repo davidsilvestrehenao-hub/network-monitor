@@ -1,12 +1,12 @@
-import { getContainer } from "./flexible-container";
-import type { ServiceConfig } from "./types";
-import { TYPES } from "./types";
+import { getContainer } from "./flexible-container.js";
+import type { ServiceConfig } from "./types.js";
+import { TYPES } from "./types.js";
 import type {
   ILogger,
   IEventBus,
   ISpeedTestConfigService,
 } from "@network-monitor/shared";
-import { browserServiceConfig } from "./service-config.browser";
+import { browserServiceConfig } from "./service-config.browser.js";
 
 let containerInitialized = false;
 

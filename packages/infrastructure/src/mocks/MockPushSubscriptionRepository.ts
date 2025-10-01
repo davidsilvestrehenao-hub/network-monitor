@@ -10,8 +10,10 @@ export class MockPushSubscriptionRepository
   implements IPushSubscriptionRepository
 {
   private subscriptions: PushSubscription[] = [];
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedSubscriptions();
   }
 

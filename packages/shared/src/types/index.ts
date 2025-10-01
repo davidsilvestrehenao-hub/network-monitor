@@ -1,3 +1,3 @@
 // Export all types
-export * from "./component-types";
-export * from "./mock-types";
+export * from "./component-types.js";
+export * from "./mock-types.js";

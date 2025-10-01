@@ -1,8 +1,8 @@
-import { TYPES } from "./types";
-import { createServiceFactory } from "./flexible-container";
-import { LoggerService } from "../logger/LoggerService";
+import { TYPES } from "./types.js";
+import { createServiceFactory } from "./flexible-container.js";
+import { LoggerService } from "../logger/LoggerService.js";
 import { LogLevel } from "@network-monitor/shared";
-import { EventBus } from "../event-bus/EventBus";
+import { EventBus } from "../event-bus/EventBus.js";
 import type {
   ILogger,
   IEventBus,

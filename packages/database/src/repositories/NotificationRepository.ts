@@ -9,10 +9,13 @@ import type { IDatabaseService } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 
 export class NotificationRepository implements INotificationRepository {
-  constructor(
-    private databaseService: IDatabaseService,
-    private logger: ILogger
-  ) {}
+  private databaseService: IDatabaseService;
+  private logger: ILogger;
+
+  constructor(databaseService: IDatabaseService, logger: ILogger) {
+    this.databaseService = databaseService;
+    this.logger = logger;
+  }
 
   async findById(id: number): Promise<Notification | null> {
     this.logger.debug("NotificationRepository: Finding notification by ID", {

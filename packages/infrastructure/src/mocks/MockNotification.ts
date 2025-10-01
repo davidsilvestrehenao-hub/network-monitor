@@ -20,10 +20,12 @@ export class MockNotification implements INotificationService {
   private subscriptions: Map<string, MockPushSubscription> = new Map();
   private notifications: MockNotificationType[] = [];
 
-  constructor(
-    private eventBus: IEventBus,
-    private logger?: ILogger
-  ) {
+  private eventBus: IEventBus;
+  private logger?: ILogger;
+
+  constructor(eventBus: IEventBus, logger?: ILogger) {
+    this.eventBus = eventBus;
+    this.logger = logger;
     this.logger?.debug("MockNotification: Initialized");
     this.setupEventHandlers();
   }

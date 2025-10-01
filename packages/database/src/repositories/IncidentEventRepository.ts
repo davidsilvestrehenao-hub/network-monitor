@@ -9,10 +9,13 @@ import type { IDatabaseService } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 
 export class IncidentEventRepository implements IIncidentEventRepository {
-  constructor(
-    private databaseService: IDatabaseService,
-    private logger: ILogger
-  ) {}
+  private databaseService: IDatabaseService;
+  private logger: ILogger;
+
+  constructor(databaseService: IDatabaseService, logger: ILogger) {
+    this.databaseService = databaseService;
+    this.logger = logger;
+  }
 
   async findById(id: number): Promise<IncidentEvent | null> {
     this.logger.debug("IncidentEventRepository: Finding event by ID", { id });

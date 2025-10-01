@@ -27,7 +27,11 @@
     "db:generate": "turbo run db:generate --filter=@network-monitor/database",
     "db:push": "turbo run db:push --filter=@network-monitor/database",
     "db:migrate": "turbo run db:migrate --filter=@network-monitor/database",
-    "db:seed": "turbo run db:seed --filter=@network-monitor/database"
+    "db:seed": "turbo run db:seed --filter=@network-monitor/database",
+    "db:start": "./scripts/start-dev-db.sh",
+    "db:stop": "./scripts/start-dev-db.sh stop",
+    "db:reset": "./scripts/start-dev-db.sh reset",
+    "db:status": "./scripts/start-dev-db.sh status"
   },
   "type": "module",
   "devDependencies": {

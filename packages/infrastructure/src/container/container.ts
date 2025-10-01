@@ -1,5 +1,5 @@
-import { getContainer } from "./flexible-container";
-import { TYPES } from "./types";
+import { getContainer } from "./flexible-container.js";
+import { TYPES } from "./types.js";
 import type {
   IDatabaseService,
   ILogger,
@@ -20,12 +20,15 @@ import type {
   IUserSpeedTestPreferenceRepository,
   ISpeedTestConfigService,
 } from "@network-monitor/shared";
-import { getJsonAppContext, initializeJsonContainer } from "./json-container";
-import { getBrowserAppContext } from "./container.browser";
+import {
+  getJsonAppContext,
+  initializeJsonContainer,
+} from "./json-container.js";
+import { getBrowserAppContext } from "./container.browser.js";
 // Justification: Dynamic import of fs module to avoid browser compatibility issues
 // Justification: Dynamic import of path module to avoid browser compatibility issues
 
-import { initializeBrowserContainer } from "./container.browser";
+import { initializeBrowserContainer } from "./container.browser.js";
 
 let containerInitialized = false;
 
@@ -177,7 +180,14 @@ export async function getAppContext(): Promise<AppContext> {
 }
 
 // Auto-initialize container when this module is imported
-if (typeof window === "undefined") {
+// Only if not using bootstrapMicroservice (which handles its own initialization)
+// Skip auto-initialization in web app context (SolidStart/Vite)
+if (
+  typeof window === "undefined" &&
+  process.env.SKIP_AUTO_INIT !== "true" &&
+  !process.env.NODE_ENV?.includes("web") &&
+  !process.env.VITE
+) {
   // Only initialize on server side
   initializeContainer().catch(error => {
     // Use console here as logger may not be initialized yet

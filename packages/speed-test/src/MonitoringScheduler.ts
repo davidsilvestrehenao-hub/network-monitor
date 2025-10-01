@@ -29,12 +29,18 @@ export class MonitoringScheduler implements IMonitoringScheduler {
   private successfulRuns = 0;
   private failedRuns = 0;
   private totalRunTime = 0;
+  private speedTestService: ISpeedTestService;
+  private eventBus: IEventBus;
+  private logger: ILogger;
 
   constructor(
-    private speedTestService: ISpeedTestService,
-    private eventBus: IEventBus,
-    private logger: ILogger
+    speedTestService: ISpeedTestService,
+    eventBus: IEventBus,
+    logger: ILogger
   ) {
+    this.speedTestService = speedTestService;
+    this.eventBus = eventBus;
+    this.logger = logger;
     this.setupEventHandlers();
   }
 

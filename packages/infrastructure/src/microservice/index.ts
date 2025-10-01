@@ -11,4 +11,4 @@ export {
   getRequiredRepository,
   type MicroserviceBootstrapOptions,
   type MicroserviceContext,
-} from "./bootstrap";
+} from "./bootstrap.js";

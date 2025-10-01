@@ -1,2 +1,2 @@
 // Notification service package
-export * from "./NotificationService";
+export * from "./NotificationService.js";

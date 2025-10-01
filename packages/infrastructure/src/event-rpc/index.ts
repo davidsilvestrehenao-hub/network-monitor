@@ -1,1 +1,1 @@
-export { EventRPC } from "./EventRPC";
+export { EventRPC } from "./EventRPC.js";

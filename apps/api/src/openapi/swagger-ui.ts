@@ -12,7 +12,7 @@ import { join } from "path";
  * Gets the OpenAPI spec from the YAML file
  */
 export function getOpenAPISpec(): string {
-  const specPath = join(process.cwd(), "apps/api/openapi.yaml");
+  const specPath = join(process.cwd(), "openapi.yaml");
   return readFileSync(specPath, "utf-8");
 }
 

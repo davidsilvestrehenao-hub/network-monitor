@@ -17,10 +17,12 @@ export class MockSpeedTestService implements ISpeedTestService {
   private defaultTimeout = 10000;
   private defaultInterval = 30000;
 
-  constructor(
-    private logger?: ILogger,
-    private configService?: ISpeedTestConfigService
-  ) {
+  private logger?: ILogger;
+  private configService?: ISpeedTestConfigService;
+
+  constructor(logger?: ILogger, configService?: ISpeedTestConfigService) {
+    this.logger = logger;
+    this.configService = configService;
     this.logger?.debug("MockSpeedTestService: Initialized");
   }
 
