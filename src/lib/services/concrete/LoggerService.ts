@@ -39,6 +39,8 @@ export class LoggerService implements ILogger {
 
   error(message: string, context?: LogContext): void {
     if (this.level <= LogLevel.ERROR) {
+      // Justification: LoggerService implementation - must use console.error for error logs
+      // eslint-disable-next-line no-console
       console.error(
         `[ERROR] ${message}`,
         context ? JSON.stringify(context, null, 2) : ""

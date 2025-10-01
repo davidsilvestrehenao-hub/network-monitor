@@ -1,24 +1,6 @@
-import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+// Justification: Dynamic import of path module to avoid browser compatibility issues
 import { TYPES } from "./types";
 import { createServiceFactory } from "./flexible-container";
-// Justification: These imports are for type checking and future use
-// import { ILogger } from "../services/interfaces/ILogger";
-// import { IEventBus } from "../services/interfaces/IEventBus";
-// import { IDatabaseService } from "../services/interfaces/IDatabaseService";
-// import { IUserRepository } from "../services/interfaces/IUserRepository";
-// import { IMonitoringTargetRepository } from "../services/interfaces/IMonitoringTargetRepository";
-// import { ISpeedTestResultRepository } from "../services/interfaces/ISpeedTestResultRepository";
-// import { IAlertRuleRepository } from "../services/interfaces/IAlertRuleRepository";
-// import { IIncidentEventRepository } from "../services/interfaces/IIncidentEventRepository";
-// import { IPushSubscriptionRepository } from "../services/interfaces/IPushSubscriptionRepository";
-// import { INotificationRepository } from "../services/interfaces/INotificationRepository";
-// import { ITargetRepository } from "../services/interfaces/ITargetRepository";
-// import { ISpeedTestRepository } from "../services/interfaces/ISpeedTestRepository";
-// import { IMonitorService } from "../services/interfaces/IMonitorService";
-// import { IAlertingService } from "../services/interfaces/IAlertingService";
-// import { INotificationService } from "../services/interfaces/INotificationService";
-// import { IAuthService } from "../services/interfaces/IAuthService";
 
 // JSON configuration interfaces
 export interface JsonServiceConfig {
@@ -55,25 +37,6 @@ const SERVICE_TYPE_MAP: Record<string, symbol> = {
   ISpeedTestRepository: TYPES.ISpeedTestRepository,
 };
 
-// Justification: This map is for future use when we need to validate interface types
-// const INTERFACE_TYPE_MAP: Record<symbol, any> = {
-//   [TYPES.ILogger]: ILogger,
-//   [TYPES.IEventBus]: IEventBus,
-//   [TYPES.IDatabaseService]: IDatabaseService,
-//   [TYPES.IMonitorService]: IMonitorService,
-//   [TYPES.IAlertingService]: IAlertingService,
-//   [TYPES.INotificationService]: INotificationService,
-//   [TYPES.IAuthService]: IAuthService,
-//   [TYPES.IUserRepository]: IUserRepository,
-//   [TYPES.IMonitoringTargetRepository]: IMonitoringTargetRepository,
-//   [TYPES.ISpeedTestResultRepository]: ISpeedTestResultRepository,
-//   [TYPES.IAlertRuleRepository]: IAlertRuleRepository,
-//   [TYPES.IIncidentEventRepository]: IIncidentEventRepository,
-//   [TYPES.IPushSubscriptionRepository]: IPushSubscriptionRepository,
-//   [TYPES.INotificationRepository]: INotificationRepository,
-//   [TYPES.ITargetRepository]: ITargetRepository,
-//   [TYPES.ISpeedTestRepository]: ISpeedTestRepository,
-// };
 
 export class JsonConfigLoader {
   private configPath: string;
@@ -81,29 +44,57 @@ export class JsonConfigLoader {
 
   constructor(configPath: string = "service-config.json") {
     this.configPath = configPath;
-    this.projectRoot = process.cwd();
+    // Justification: Use browser-compatible path for project root
+    this.projectRoot = typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/';
   }
 
   /**
    * Load configuration from JSON file
    */
-  public loadConfiguration(): JsonConfiguration {
-    const fullPath = join(this.projectRoot, this.configPath);
+  public async loadConfiguration(): Promise<JsonConfiguration> {
+    // Check if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      // Browser environment - use fetch
+      try {
+        const response = await fetch('/service-config.json');
+        if (!response.ok) {
+          throw new Error(`Configuration file not found: ${response.status}`);
+        }
+        const configContent = await response.text();
+        const config = JSON.parse(configContent) as JsonConfiguration;
+        console.log("Loaded JSON config:", config);
+        
+        // Validate configuration structure
+        this.validateConfiguration(config);
+        
+        return config;
+      } catch (error) {
+        throw new Error(`Failed to load configuration: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    } else {
+      // Node.js environment - use fs
+      // Justification: Dynamic import of path module to avoid browser compatibility issues
+      const { join } = await import("path");
+      const fullPath = join(this.projectRoot, this.configPath);
 
-    if (!existsSync(fullPath)) {
-      throw new Error(`Configuration file not found: ${fullPath}`);
-    }
+      // Justification: Dynamic import of fs module to avoid browser compatibility issues
+      const { readFileSync, existsSync } = await import("fs");
 
-    try {
-      const configContent = readFileSync(fullPath, "utf-8");
-      const config = JSON.parse(configContent) as JsonConfiguration;
+      if (!existsSync(fullPath)) {
+        throw new Error(`Configuration file not found: ${fullPath}`);
+      }
 
-      // Validate configuration structure
-      this.validateConfiguration(config);
+      try {
+        const configContent = readFileSync(fullPath, "utf-8");
+        const config = JSON.parse(configContent) as JsonConfiguration;
 
-      return config;
-    } catch (error) {
-      throw new Error(`Failed to load configuration: ${error}`);
+        // Validate configuration structure
+        this.validateConfiguration(config);
+
+        return config;
+      } catch (error) {
+        throw new Error(`Failed to load configuration: ${error}`);
+      }
     }
   }
 
@@ -173,10 +164,16 @@ export class JsonConfigLoader {
       // For paths like "../src/lib/services/concrete/LoggerService"
       // Remove the "../" and resolve from project root
       const cleanPath = modulePath.replace("../", "");
+      // Justification: Dynamic import of path module to avoid browser compatibility issues
+      const { resolve } = await import("path");
       resolvedPath = resolve(this.projectRoot, cleanPath);
     } else if (modulePath.startsWith("./")) {
       // Resolve relative to current directory
-      resolvedPath = resolve(process.cwd(), modulePath);
+      // Justification: Dynamic import of path module to avoid browser compatibility issues
+      const { resolve } = await import("path");
+      // Justification: Use browser-compatible path resolution
+      const cwd = typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/';
+      resolvedPath = resolve(cwd, modulePath);
     } else {
       // Assume it's a module name or absolute path
       resolvedPath = modulePath;
@@ -314,8 +311,12 @@ export class JsonConfigLoader {
   /**
    * Get available configuration files
    */
-  public static getAvailableConfigurations(): string[] {
-    const configsDir = join(process.cwd(), "configs");
+  public static async getAvailableConfigurations(): Promise<string[]> {
+    // Justification: Dynamic import of path module to avoid browser compatibility issues
+    const { join } = await import("path");
+    // Justification: Use browser-compatible path for configs directory
+    const cwd = typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/';
+    const configsDir = join(cwd, "configs");
     const configs = [
       "all-concrete.json",
       "auth-mock-only.json",
@@ -328,6 +329,8 @@ export class JsonConfigLoader {
       "alerting-testing.json",
     ];
 
+    // Justification: Dynamic import of fs module to avoid browser compatibility issues
+    const { existsSync } = await import("fs");
     return configs.filter(config => existsSync(join(configsDir, config)));
   }
 }

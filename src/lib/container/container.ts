@@ -1,5 +1,4 @@
 import { getContainer } from "./flexible-container";
-import { baseServiceConfig } from "./service-config";
 import type { ServiceConfig } from "./types";
 import { TYPES } from "./types";
 import type { IDatabaseService } from "../services/interfaces/IDatabaseService";
@@ -18,37 +17,52 @@ import type { IMonitorService } from "../services/interfaces/IMonitorService";
 import type { IAlertingService } from "../services/interfaces/IAlertingService";
 import type { INotificationService } from "../services/interfaces/INotificationService";
 import type { IAuthService } from "../services/interfaces/IAuthService";
-import { initializeJsonContainer, getJsonAppContext } from "./json-container";
-import { existsSync } from "fs";
-import { join } from "path";
+import { getJsonAppContext, initializeJsonContainer } from "./json-container";
+import { getBrowserAppContext } from "./container.browser";
+// Justification: Dynamic import of fs module to avoid browser compatibility issues
+// Justification: Dynamic import of path module to avoid browser compatibility issues
+
+import { initializeBrowserContainer } from "./container.browser";
 
 let containerInitialized = false;
 
 export async function initializeContainer(): Promise<void> {
+  if (typeof window !== "undefined") {
+    return initializeBrowserContainer();
+  }
+
   if (containerInitialized) {
     return;
   }
 
-  // Check if JSON configuration exists
-  const jsonConfigPath = join(process.cwd(), "service-config.json");
-
-  if (existsSync(jsonConfigPath)) {
-    try {
-      // Use JSON configuration
-      await initializeJsonContainer();
-      containerInitialized = true;
-      return;
-    } catch (error) {
-      console.warn(
-        "⚠️ Failed to load JSON configuration, falling back to hardcoded configuration:",
-        error instanceof Error ? error.message : String(error)
-      );
+  // Check if we're in a Node.js environment
+  if (typeof process !== "undefined" && typeof process.cwd === "function") {
+    // Justification: Dynamic import of path module to avoid browser compatibility issues
+    const { join } = await import("path");
+    const cwd = process.cwd();
+    const jsonConfigPath = join(cwd, "service-config.json");
+    const { existsSync } = await import("fs");
+    if (existsSync(jsonConfigPath)) {
+      try {
+        // Use JSON configuration
+        await initializeJsonContainer();
+        containerInitialized = true;
+        return;
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to load JSON configuration, falling back to hardcoded configuration:",
+          error instanceof Error ? error.message : String(error)
+        );
+      }
     }
   }
 
   // Fallback to hardcoded configuration
   console.log("📋 Using hardcoded service configuration");
   const container = getContainer();
+
+  // Dynamically import baseServiceConfig to avoid loading Winston when using JSON config
+  const { baseServiceConfig } = await import("./service-config");
 
   // Register all services
   container.register(
@@ -134,22 +148,54 @@ export async function initializeContainer(): Promise<void> {
   containerInitialized = true;
 }
 
-export async function getAppContext() {
-  // Check if JSON configuration exists and use it
-  const jsonConfigPath = join(process.cwd(), "service-config.json");
+export type AppContext = {
+  services: {
+    logger: ILogger | null;
+    eventBus: IEventBus | null;
+    database: IDatabaseService | null;
+    monitor: IMonitorService | null;
+    alerting: IAlertingService | null;
+    notification: INotificationService | null;
+    auth: IAuthService | null;
+  };
+  repositories: {
+    user: IUserRepository | null;
+    monitoringTarget: IMonitoringTargetRepository | null;
+    speedTestResult: ISpeedTestResultRepository | null;
+    alertRule: IAlertRuleRepository | null;
+    incidentEvent: IIncidentEventRepository | null;
+    pushSubscription: IPushSubscriptionRepository | null;
+    notification: INotificationRepository | null;
+    target: ITargetRepository | null;
+    speedTest: ISpeedTestRepository | null;
+  };
+};
 
-  if (existsSync(jsonConfigPath)) {
-    try {
-      return await getJsonAppContext();
-    } catch (error) {
-      console.warn(
-        "⚠️ Failed to get JSON app context, falling back to hardcoded configuration:",
-        error instanceof Error ? error.message : String(error)
-      );
+export async function getAppContext(): Promise<AppContext> {
+  if (typeof window !== "undefined") {
+    return getBrowserAppContext();
+  }
+
+  // Check if we're in a Node.js environment
+  if (typeof process !== "undefined" && typeof process.cwd === "function") {
+    // Justification: Dynamic import of path module to avoid browser compatibility issues
+    const { join } = await import("path");
+    const cwd = process.cwd();
+    const jsonConfigPath = join(cwd, "service-config.json");
+    const { existsSync } = await import("fs");
+    if (existsSync(jsonConfigPath)) {
+      try {
+        return await getJsonAppContext();
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to get JSON app context, falling back to hardcoded configuration:",
+          error instanceof Error ? error.message : String(error)
+        );
+      }
     }
   }
 
-  // Fallback to hardcoded configuration
+  // Fallback to hardcoded configuration for browser or if JSON config fails
   await initializeContainer();
   const container = getContainer();
 
@@ -197,5 +243,9 @@ export async function getAppContext() {
 // Auto-initialize container when this module is imported
 if (typeof window === "undefined") {
   // Only initialize on server side
-  initializeContainer().catch(console.error);
+  initializeContainer().catch(error => {
+    // Use console here as logger may not be initialized yet
+    // eslint-disable-next-line no-console
+    console.error("Failed to initialize container:", error);
+  });
 }

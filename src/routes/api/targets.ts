@@ -15,7 +15,8 @@ export async function GET() {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Get targets failed:", error);
+    const ctx = await getAppContext();
+    ctx.services.logger?.error("Get targets failed:", { error });
     return new Response(
       JSON.stringify({
         error: error instanceof Error ? error.message : String(error),
@@ -62,7 +63,8 @@ export async function POST({ request }: { request: Request }) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Create target failed:", error);
+    const ctx = await getAppContext();
+    ctx.services.logger?.error("Create target failed:", { error });
     return new Response(
       JSON.stringify({
         error: error instanceof Error ? error.message : String(error),

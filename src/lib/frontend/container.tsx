@@ -1,14 +1,14 @@
 import type { ParentProps } from "solid-js";
-import { createContext, useContext } from "solid-js";
+import { createContext, useContext, createEffect, createSignal } from "solid-js";
 import type { IAPIClient } from "./interfaces/IAPIClient";
 import type { ICommandQueryService } from "./interfaces/ICommandQueryService";
 import type { IEventBus } from "~/lib/services/interfaces/IEventBus";
 import type { ILogger } from "~/lib/services/interfaces/ILogger";
-import { LogLevel } from "~/lib/services/interfaces/ILogger";
+import { initializeBrowserContainer } from "~/lib/container/container.browser";
+import { getContainer } from "~/lib/container/flexible-container";
+import { TYPES } from "~/lib/container/types";
 import { APIClient } from "./services/APIClient";
 import { CommandQueryService } from "./services/CommandQueryService";
-import { EventBus } from "~/lib/services/concrete/EventBus";
-import { LoggerService } from "~/lib/services/concrete/LoggerService";
 
 // Frontend service interfaces
 export interface FrontendServices {
@@ -18,39 +18,75 @@ export interface FrontendServices {
   logger: ILogger;
 }
 
-// Create services - SSR safe
-let frontendServices: FrontendServices | null = null;
-
-function createFrontendServices(): FrontendServices {
-  if (frontendServices) {
-    return frontendServices;
-  }
-
-  const logger = new LoggerService(LogLevel.DEBUG);
-  const eventBus = new EventBus();
-  const apiClient = new APIClient();
-  const commandQuery = new CommandQueryService(apiClient, eventBus, logger);
-
-  frontendServices = {
-    apiClient,
-    commandQuery,
-    eventBus,
-    logger,
-  };
-
-  return frontendServices;
-}
-
 // Create context
 const FrontendServicesContext = createContext<FrontendServices>();
 
 // Provider component
 export function FrontendServicesProvider(props: ParentProps) {
-  const services = createFrontendServices();
+  const [services, setServices] = createSignal<FrontendServices | null>(null);
+  const [error, setError] = createSignal<Error | null>(null);
+
+  // Initialize services using the flexible container
+  // Justification: Async initialization is necessary for container setup
+  // eslint-disable-next-line solid/reactivity
+  createEffect(async () => {
+    try {
+      // Initialize browser container
+      await initializeBrowserContainer();
+
+      const container = getContainer();
+
+      // Get shared services from container
+      const logger = container.get<ILogger>(TYPES.ILogger);
+      const eventBus = container.get<IEventBus>(TYPES.IEventBus);
+
+      // Create frontend-specific services
+      const apiClient = new APIClient();
+      const commandQuery = new CommandQueryService(apiClient, eventBus, logger);
+
+      setServices({
+        apiClient,
+        commandQuery,
+        eventBus,
+        logger,
+      });
+
+      logger.info("Frontend services initialized successfully");
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error("Unknown error");
+      setError(error);
+      // Justification: Console logging is appropriate for initialization errors
+      // eslint-disable-next-line no-console
+      console.error("Failed to initialize frontend services:", error);
+    }
+  });
+
   return (
-    <FrontendServicesContext.Provider value={services}>
-      {props.children}
-    </FrontendServicesContext.Provider>
+    <>
+      {error() && (
+        <div class="flex items-center justify-center min-h-screen bg-red-50">
+          <div class="text-center p-8">
+            <h1 class="text-2xl font-bold text-red-600 mb-4">
+              Initialization Error
+            </h1>
+            <p class="text-gray-700">{error()?.message}</p>
+          </div>
+        </div>
+      )}
+      {!error() && !services() && (
+        <div class="flex items-center justify-center min-h-screen">
+          <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+            <p class="mt-4 text-gray-600">Initializing services...</p>
+          </div>
+        </div>
+      )}
+      {!error() && services() && (
+        <FrontendServicesContext.Provider value={services()!}>
+          {props.children}
+        </FrontendServicesContext.Provider>
+      )}
+    </>
   );
 }
 

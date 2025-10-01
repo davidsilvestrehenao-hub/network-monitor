@@ -1,11 +1,16 @@
 export interface IEventBus {
   emit(event: string, data?: unknown): void;
   emitTyped<T>(event: string, data: T): void;
-  on(event: string, handler: (data?: unknown) => void): void;
+
+  // Generic overloads for type-safe event handlers
+  on<T = unknown>(event: string, handler: (data?: T) => void): void;
   onTyped<T>(event: string, handler: (data: T) => void): void;
-  off(event: string, handler: (data?: unknown) => void): void;
-  once(event: string, handler: (data?: unknown) => void): void;
+
+  off<T = unknown>(event: string, handler: (data?: T) => void): void;
+
+  once<T = unknown>(event: string, handler: (data?: T) => void): void;
   onceTyped<T>(event: string, handler: (data: T) => void): void;
+
   removeAllListeners(event?: string): void;
 }
 

@@ -1,7 +1,7 @@
 import { TYPES } from "./types";
 import { createServiceFactory } from "./flexible-container";
+import { LoggerService } from "../services/concrete/LoggerService";
 import { LogLevel } from "../services/concrete/LoggerService";
-import { WinstonLoggerService } from "../services/concrete/WinstonLoggerService";
 import { EventBus } from "../services/concrete/EventBus";
 import { DatabaseService } from "../services/concrete/DatabaseService";
 import { UserRepository } from "../services/concrete/UserRepository";
@@ -15,6 +15,7 @@ import { TargetRepository } from "../services/concrete/TargetRepository";
 import { SpeedTestRepository } from "../services/concrete/SpeedTestRepository";
 import { MonitorService } from "../services/concrete/MonitorService";
 import { SpeedTestService } from "../services/concrete/SpeedTestService";
+import { MockSpeedTestService } from "../services/mocks/MockSpeedTestService";
 import { SpeedTestConfigService } from "../services/concrete/SpeedTestConfigService";
 import { AlertingService } from "../services/concrete/AlertingService";
 import { NotificationService } from "../services/concrete/NotificationService";
@@ -42,11 +43,11 @@ export const baseServiceConfig = {
   // Core services
   [TYPES.ILogger]: {
     factory: createServiceFactory<ILogger>(
-      () => new WinstonLoggerService(LogLevel.DEBUG)
+      () => new LoggerService(LogLevel.DEBUG)
     ),
     dependencies: [],
     singleton: true,
-    description: "Winston logger service for application logging",
+    description: "Console logger service for application logging",
   },
 
   [TYPES.IEventBus]: {
@@ -227,24 +228,18 @@ export const baseServiceConfig = {
   [TYPES.ISpeedTestService]: {
     factory: createServiceFactory<ISpeedTestService>(
       container =>
-        new SpeedTestService(
-          container.get<ISpeedTestRepository>(TYPES.ISpeedTestRepository),
-          container.get<ITargetRepository>(TYPES.ITargetRepository),
-          container.get<IEventBus>(TYPES.IEventBus),
+        new MockSpeedTestService(
           container.get<ILogger>(TYPES.ILogger),
           container.get<ISpeedTestConfigService>(TYPES.ISpeedTestConfigService)
         )
     ),
     dependencies: [
-      TYPES.ISpeedTestRepository,
-      TYPES.ITargetRepository,
-      TYPES.IEventBus,
       TYPES.ILogger,
       TYPES.ISpeedTestConfigService,
     ],
     singleton: true,
     description:
-      "Speed test service for continuous monitoring and performance testing",
+      "Mock speed test service for browser environment",
   },
 
   [TYPES.IAlertingService]: {

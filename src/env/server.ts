@@ -1,24 +1,12 @@
-import { serverScheme } from "./schema";
 import type { ZodFormattedError } from "zod";
 
 export const formatErrors = (
-  errors: ZodFormattedError<Map<string, string>, string>
+  errors: ZodFormattedError<Record<string, unknown>, string>
 ) =>
   Object.entries(errors)
     .map(([name, value]) => {
-      if (value && "_errors" in value)
+      if (value && "_errors" in value && value._errors.length > 0)
         return `${name}: ${value._errors.join(", ")}\n`;
+      return null;
     })
     .filter(Boolean);
-
-const env = serverScheme.safeParse(process.env);
-
-if (env.success === false) {
-  console.error(
-    "❌ Invalid environment variables:\n",
-    ...formatErrors(env.error.format())
-  );
-  throw new Error("Invalid environment variables");
-}
-
-export const serverEnv = env.data;

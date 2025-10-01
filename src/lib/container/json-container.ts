@@ -36,7 +36,7 @@ export async function initializeJsonContainer(
     const configLoader = new JsonConfigLoader(configPath);
 
     // Load JSON configuration
-    const jsonConfig = configLoader.loadConfiguration();
+    const jsonConfig = await configLoader.loadConfiguration();
     console.log(
       `📋 Loading configuration: ${jsonConfig.name} (${jsonConfig.environment})`
     );
@@ -64,6 +64,8 @@ export async function initializeJsonContainer(
     containerInitialized = true;
     console.log("✅ Container initialized with JSON configuration");
   } catch (error) {
+    // Use console here as logger may not be initialized yet during container initialization
+    // eslint-disable-next-line no-console
     console.error(
       "❌ Failed to initialize container with JSON configuration:",
       error
@@ -166,7 +168,7 @@ export function isContainerInitialized(): boolean {
 export async function getCurrentConfigurationInfo() {
   try {
     const configLoader = new JsonConfigLoader();
-    const config = configLoader.loadConfiguration();
+    const config = await configLoader.loadConfiguration();
 
     return {
       name: config.name,

@@ -116,7 +116,7 @@ export class APIClient implements IAPIClient {
 
   // Alert operations
   async createAlertRule(data: AlertRuleData): Promise<AlertRule> {
-    const result = await prpc.createAlertRule();
+    const result = await prpc.createAlertRule(data);
     return {
       ...result.data,
       targetId: data.targetId,
@@ -124,7 +124,7 @@ export class APIClient implements IAPIClient {
   }
 
   async getAlertRules(targetId: string): Promise<AlertRule[]> {
-    const result = await prpc.getAlertRules();
+    const result = await prpc.getAlertRules({ targetId });
     return result.data.map(rule => ({
       ...rule,
       targetId,
@@ -135,44 +135,50 @@ export class APIClient implements IAPIClient {
     id: number,
     data: Partial<AlertRuleData>
   ): Promise<AlertRule> {
-    const result = await prpc.updateAlertRule();
+    const result = await prpc.updateAlertRule({ id, ...data });
     return {
       ...result.data,
       targetId: data.targetId || "mock-target",
     };
   }
 
-  async deleteAlertRule(_id: number): Promise<void> {
-    await prpc.deleteAlertRule();
+  async deleteAlertRule(id: number): Promise<void> {
+    await prpc.deleteAlertRule({ id });
   }
 
-  async getIncidents(_targetId: string): Promise<Incident[]> {
-    const result = await prpc.getIncidents();
-    return result.data;
+  async getIncidents(targetId: string): Promise<Incident[]> {
+    const result = await prpc.getIncidents({ targetId });
+    return result.data.map(incident => ({
+      ...incident,
+      timestamp: incident.timestamp.toISOString(),
+    }));
   }
 
-  async resolveIncident(_id: number): Promise<void> {
-    await prpc.resolveIncident();
+  async resolveIncident(id: number): Promise<void> {
+    await prpc.resolveIncident({ id });
   }
 
   // Notification operations
-  async getNotifications(_userId: string): Promise<Notification[]> {
-    const result = await prpc.getNotifications();
-    return result.data;
+  async getNotifications(userId: string): Promise<Notification[]> {
+    const result = await prpc.getNotifications({ userId });
+    return result.data.map(notification => ({
+      ...notification,
+      sentAt: notification.sentAt.toISOString(),
+    }));
   }
 
-  async markNotificationAsRead(_id: number): Promise<void> {
-    await prpc.markNotificationAsRead();
+  async markNotificationAsRead(id: number): Promise<void> {
+    await prpc.markNotificationAsRead({ id });
   }
 
-  async markAllNotificationsAsRead(_userId: string): Promise<void> {
-    await prpc.markAllNotificationsAsRead();
+  async markAllNotificationsAsRead(userId: string): Promise<void> {
+    await prpc.markAllNotificationsAsRead({ userId });
   }
 
   async createPushSubscription(
     data: PushSubscription
   ): Promise<PushSubscription> {
-    const result = await prpc.createPushSubscription();
+    const result = await prpc.createPushSubscription(data);
     return {
       ...result.data,
       userId: data.userId,
@@ -180,15 +186,15 @@ export class APIClient implements IAPIClient {
   }
 
   async getPushSubscriptions(userId: string): Promise<PushSubscription[]> {
-    const result = await prpc.getPushSubscriptions();
+    const result = await prpc.getPushSubscriptions({ userId });
     return result.data.map(sub => ({
       ...sub,
       userId,
     }));
   }
 
-  async deletePushSubscription(_id: string): Promise<void> {
-    await prpc.deletePushSubscription();
+  async deletePushSubscription(id: string): Promise<void> {
+    await prpc.deletePushSubscription({ id });
   }
 
   async sendPushNotification(data: TestNotificationData): Promise<void> {
@@ -196,33 +202,50 @@ export class APIClient implements IAPIClient {
   }
 
   // Authentication operations
-  async signIn(
-    _email: string,
-    _password: string
-  ): Promise<{ user: User; session: AuthSession }> {
-    const result = await prpc.signIn();
+  private mapUser(backendUser: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    emailVerified: Date | null;
+    image: string | null;
+  }): User {
     return {
-      user: result.data.user,
+      id: backendUser.id,
+      name: backendUser.name ?? undefined,
+      email: backendUser.email ?? undefined,
+      image: backendUser.image ?? undefined,
+    };
+  }
+
+  async signIn(
+    email: string,
+    password: string
+  ): Promise<{ user: User; session: AuthSession }> {
+    const result = await prpc.signIn({ email, password });
+    const user = this.mapUser(result.data.user);
+    return {
+      user,
       session: {
         ...result.data.session,
-        user: result.data.user,
-        expires: new Date(result.data.session.expiresAt),
+        user,
+        expires: result.data.session.expiresAt,
       },
     };
   }
 
   async signUp(
-    _name: string,
-    _email: string,
-    _password: string
+    name: string,
+    email: string,
+    password: string
   ): Promise<{ user: User; session: AuthSession }> {
-    const result = await prpc.signUp();
+    const result = await prpc.signUp({ name, email, password });
+    const user = this.mapUser(result.data.user);
     return {
-      user: result.data.user,
+      user,
       session: {
         ...result.data.session,
-        user: result.data.user,
-        expires: new Date(result.data.session.expiresAt),
+        user,
+        expires: result.data.session.expiresAt,
       },
     };
   }
@@ -233,12 +256,20 @@ export class APIClient implements IAPIClient {
 
   async getCurrentUser(): Promise<User | null> {
     const result = await prpc.getCurrentUser();
-    return result.data;
+    if (!result.data) return null;
+    return this.mapUser(result.data);
   }
 
   async getSession(): Promise<AuthSession | null> {
     const result = await prpc.getSession();
-    return result.data;
+    if (!result.data) return null;
+    const user = await this.getCurrentUser();
+    if (!user) return null;
+    return {
+      ...result.data,
+      user,
+      expires: result.data.expiresAt,
+    };
   }
 
   async isAuthenticated(): Promise<boolean> {

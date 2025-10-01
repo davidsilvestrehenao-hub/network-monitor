@@ -28,29 +28,31 @@ export class MonitorService implements IMonitorService {
   }
 
   private setupEventHandlers(): void {
+    // Note: These handlers are currently unused as pRPC calls services directly
+    // Keep for potential future event-driven architecture
     this.eventBus.on(
       "TARGET_CREATE_REQUESTED",
-      this.handleTargetCreateRequested.bind(this) as (data?: unknown) => void
+      this.handleTargetCreateRequested.bind(this)
     );
     this.eventBus.on(
       "TARGET_UPDATE_REQUESTED",
-      this.handleTargetUpdateRequested.bind(this) as (data?: unknown) => void
+      this.handleTargetUpdateRequested.bind(this)
     );
     this.eventBus.on(
       "TARGET_DELETE_REQUESTED",
-      this.handleTargetDeleteRequested.bind(this) as (data?: unknown) => void
+      this.handleTargetDeleteRequested.bind(this)
     );
     this.eventBus.on(
       "MONITORING_START_REQUESTED",
-      this.handleMonitoringStartRequested.bind(this) as (data?: unknown) => void
+      this.handleMonitoringStartRequested.bind(this)
     );
     this.eventBus.on(
       "MONITORING_STOP_REQUESTED",
-      this.handleMonitoringStopRequested.bind(this) as (data?: unknown) => void
+      this.handleMonitoringStopRequested.bind(this)
     );
     this.eventBus.on(
       "SPEED_TEST_REQUESTED",
-      this.handleSpeedTestRequested.bind(this) as (data?: unknown) => void
+      this.handleSpeedTestRequested.bind(this)
     );
   }
 
@@ -258,43 +260,49 @@ export class MonitorService implements IMonitorService {
   }
 
   // Event handlers
-  private async handleTargetCreateRequested(data: {
+  private async handleTargetCreateRequested(data?: {
     name: string;
     address: string;
     ownerId: string;
   }): Promise<void> {
+    if (!data) return;
     await this.createTarget(data);
   }
 
-  private async handleTargetUpdateRequested(data: {
+  private async handleTargetUpdateRequested(data?: {
     id: string;
     name?: string;
     address?: string;
   }): Promise<void> {
+    if (!data) return;
     const { id, ...updateData } = data;
     await this.updateTarget(id, updateData);
   }
 
-  private async handleTargetDeleteRequested(data: {
+  private async handleTargetDeleteRequested(data?: {
     id: string;
   }): Promise<void> {
+    if (!data) return;
     await this.deleteTarget(data.id);
   }
 
-  private handleMonitoringStartRequested(data: {
+  private handleMonitoringStartRequested(data?: {
     targetId: string;
     intervalMs: number;
   }): void {
+    if (!data) return;
     this.startMonitoring(data.targetId, data.intervalMs);
   }
 
-  private handleMonitoringStopRequested(data: { targetId: string }): void {
+  private handleMonitoringStopRequested(data?: { targetId: string }): void {
+    if (!data) return;
     this.stopMonitoring(data.targetId);
   }
 
-  private async handleSpeedTestRequested(data: {
+  private async handleSpeedTestRequested(data?: {
     targetId: string;
   }): Promise<void> {
+    if (!data) return;
     await this.runSpeedTest({ targetId: data.targetId });
   }
 }

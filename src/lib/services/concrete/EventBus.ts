@@ -12,6 +12,8 @@ export class EventBus implements IEventBus {
         try {
           handler(data);
         } catch (error) {
+          // Justification: EventBus is infrastructure - must use console for error handling
+          // eslint-disable-next-line no-console
           console.error(`Error in event handler for ${event}:`, error);
         }
       });
@@ -22,13 +24,13 @@ export class EventBus implements IEventBus {
     this.emit(event, data);
   }
 
-  on(event: string, handler: (data?: unknown) => void): void {
+  on<T = unknown>(event: string, handler: (data?: T) => void): void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
     const listeners = this.listeners.get(event);
     if (listeners) {
-      listeners.add(handler);
+      listeners.add(handler as EventHandler);
     }
   }
 
@@ -36,19 +38,19 @@ export class EventBus implements IEventBus {
     this.on(event, handler as (data?: unknown) => void);
   }
 
-  off(event: string, handler: (data?: unknown) => void): void {
+  off<T = unknown>(event: string, handler: (data?: T) => void): void {
     const handlers = this.listeners.get(event);
     if (handlers) {
-      handlers.delete(handler);
+      handlers.delete(handler as EventHandler);
       if (handlers.size === 0) {
         this.listeners.delete(event);
       }
     }
   }
 
-  once(event: string, handler: (data?: unknown) => void): void {
+  once<T = unknown>(event: string, handler: (data?: T) => void): void {
     const onceHandler = (data?: unknown) => {
-      handler(data);
+      handler(data as T);
       this.off(event, onceHandler);
     };
     this.on(event, onceHandler);

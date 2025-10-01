@@ -28,21 +28,41 @@ export function TargetList() {
     loadTargets();
   });
 
-  // Listen for target events
+  // Listen for target events with proper cleanup
   createEffect(() => {
+    const handleTargetsLoaded = (data: FrontendEvents["TARGETS_LOADED"]) => {
+      setTargets(data.targets as Target[]);
+    };
+
+    const handleTargetsLoadFailed = (
+      data: FrontendEvents["TARGETS_LOAD_FAILED"]
+    ) => {
+      setError(data.error);
+    };
+
+    // Register listeners
     eventBus.onTyped<FrontendEvents["TARGETS_LOADED"]>(
       "TARGETS_LOADED",
-      data => {
-        setTargets(data.targets as Target[]);
-      }
+      handleTargetsLoaded
     );
 
     eventBus.onTyped<FrontendEvents["TARGETS_LOAD_FAILED"]>(
       "TARGETS_LOAD_FAILED",
-      data => {
-        setError(data.error);
-      }
+      handleTargetsLoadFailed
     );
+
+    // Cleanup on unmount
+    return () => {
+      // Type cast needed due to EventBus interface limitations
+      eventBus.off(
+        "TARGETS_LOADED",
+        handleTargetsLoaded as (data?: unknown) => void
+      );
+      eventBus.off(
+        "TARGETS_LOAD_FAILED",
+        handleTargetsLoadFailed as (data?: unknown) => void
+      );
+    };
   });
 
   const handleDeleteTarget = async (id: string) => {
