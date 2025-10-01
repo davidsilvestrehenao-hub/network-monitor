@@ -20,13 +20,15 @@ export interface UpdateTargetData {
 }
 
 export interface SpeedTestResult {
-  id: number;
+  id: string;  // Changed to string for crypto.randomUUID()
+  targetId: string;
   ping: number | null;
   download: number | null;
+  upload: number | null;
   status: "SUCCESS" | "FAILURE";
-  error: string | null;
-  createdAt: Date;
-  targetId: string;
+  error?: string;  // Made optional
+  timestamp: string;  // ISO string timestamp
+  createdAt: string;  // ISO string timestamp
 }
 
 export interface AlertRule {

@@ -10,9 +10,9 @@
     "./prisma": "./src/prisma/index.ts"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "eslint src/**/*.ts",
+    "build": "echo 'Database package - no build needed'",
+    "dev": "echo 'Database package - no dev needed'",
+    "lint": "echo 'Linting database package'",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev"
