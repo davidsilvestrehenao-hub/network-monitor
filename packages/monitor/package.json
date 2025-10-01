@@ -19,6 +19,7 @@
     "@network-monitor/database": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^20.11.26",
     "typescript": "^5.6.2"
   }
 }

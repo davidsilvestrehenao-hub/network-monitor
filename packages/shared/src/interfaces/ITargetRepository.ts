@@ -19,17 +19,9 @@ export interface UpdateTargetData {
   address?: string;
 }
 
-export interface SpeedTestResult {
-  id: string;  // Changed to string for crypto.randomUUID()
-  targetId: string;
-  ping: number | null;
-  download: number | null;
-  upload: number | null;
-  status: "SUCCESS" | "FAILURE";
-  error?: string;  // Made optional
-  timestamp: string;  // ISO string timestamp
-  createdAt: string;  // ISO string timestamp
-}
+// SpeedTestResult is defined in ISpeedTestResultRepository.ts
+// Import it from there to avoid duplication
+export type { SpeedTestResult } from './ISpeedTestResultRepository';
 
 export interface AlertRule {
   id: number;

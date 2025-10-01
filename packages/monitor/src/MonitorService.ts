@@ -13,7 +13,7 @@ import type { ISpeedTestResultRepository } from "@network-monitor/shared";
 import type { IEventBus, ILogger } from "@network-monitor/shared";
 
 export class MonitorService implements IMonitorService {
-  private activeTargets: Map<string, NodeJS.Timeout> = new Map();
+  private activeTargets: Map<string, ReturnType<typeof setInterval>> = new Map();
 
   constructor(
     private targetRepository: ITargetRepository,
@@ -256,7 +256,10 @@ export class MonitorService implements IMonitorService {
   }
 
   async runSpeedTest(config: SpeedTestConfig): Promise<SpeedTestResult> {
-    this.logger.info("MonitorService: Running speed test", config);
+    this.logger.info("MonitorService: Running speed test", {
+      targetId: config.targetId,
+      target: config.target,
+    });
 
     const startTime = Date.now();
 

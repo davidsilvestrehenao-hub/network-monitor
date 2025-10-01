@@ -1,18 +1,21 @@
 // Domain types for SpeedTestResult entity
 export interface SpeedTestResult {
-  id: number;
+  id: string;  // UUID from crypto.randomUUID()
+  targetId: string;
   ping: number | null;
   download: number | null;
+  upload: number | null;
   status: "SUCCESS" | "FAILURE";
-  error: string | null;
-  createdAt: Date;
-  targetId: string;
+  error?: string;  // Optional error message
+  timestamp: string;  // ISO timestamp of when test was run
+  createdAt: string;  // ISO timestamp of when record was created
 }
 
 export interface CreateSpeedTestResultData {
   targetId: string;
-  ping?: number;
-  download?: number;
+  ping: number | null;
+  download: number | null;
+  upload: number | null;
   status: "SUCCESS" | "FAILURE";
   error?: string;
 }

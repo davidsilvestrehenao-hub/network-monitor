@@ -12,10 +12,14 @@
  */
 
 import { EventBus } from '@network-monitor/infrastructure';
-import { LoggerService, LogLevel } from '@network-monitor/infrastructure';
+import { LoggerService } from '@network-monitor/infrastructure';
 import { MonitorService } from '@network-monitor/monitor';
 import { AlertingService } from '@network-monitor/alerting';
 import { NotificationService } from '@network-monitor/notification';
+import type { LogLevel } from '@network-monitor/shared';
+
+// For now, use INFO level directly since LogLevel enum needs to be exported properly
+const LOG_LEVEL = 2; // INFO level
 
 async function startMonolith() {
   console.log('🚀 Starting Network Monitor Monolith...');
@@ -24,7 +28,7 @@ async function startMonolith() {
   console.log('');
 
   // Initialize infrastructure
-  const logger = new LoggerService(LogLevel.INFO);
+  const logger = new LoggerService(LOG_LEVEL);
   const eventBus = new EventBus();
 
   logger.info('Infrastructure initialized', {
