@@ -217,7 +217,7 @@ When you run `bun run dev`, the **OpenAPI documentation** automatically opens in
 
 **Manual Access:**
 
-```
+```text
 http://localhost:3000/api/docs
 ```
 
