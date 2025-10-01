@@ -2,8 +2,13 @@ generator client {
     provider = "prisma-client-js"
 }
 
+// 12-Factor App (Factor X: Dev/prod parity)
+// Support both SQLite (testing) and PostgreSQL (dev/prod)
+// Set via DATABASE_URL environment variable:
+// - PostgreSQL: postgresql://user:password@localhost:5432/database
+// - SQLite: file:./dev.db
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
