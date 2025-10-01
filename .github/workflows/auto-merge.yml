@@ -84,9 +84,22 @@ jobs:
               statuses.statuses.every(status => status.state === 'success');
             
             // Check if all check runs passed (excluding this workflow)
+            // Wait for ALL checks to complete, including optional ones like Cursor Bugbot
             const allChecksPassed = checkRuns.check_runs
               .filter(check => check.name !== 'Auto Merge PR')
-              .every(check => check.status === 'completed' && check.conclusion === 'success');
+              .every(check => 
+                check.status === 'completed' && 
+                (check.conclusion === 'success' || check.conclusion === 'skipped')
+              );
+            
+            // Check if any checks are still pending
+            const pendingChecks = checkRuns.check_runs
+              .filter(check => check.name !== 'Auto Merge PR' && check.status !== 'completed')
+              .map(check => check.name);
+            
+            if (pendingChecks.length > 0) {
+              console.log(`Waiting for checks to complete: ${pendingChecks.join(', ')}`);
+            }
             
             console.log(`All statuses passed: ${allStatusesPassed}`);
             console.log(`All checks passed: ${allChecksPassed}`);
