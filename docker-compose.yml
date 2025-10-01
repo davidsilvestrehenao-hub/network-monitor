@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Monolith deployment (cheap hosting)
+  monolith:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./db.sqlite
+      - USE_RABBITMQ=false  # In-memory event bus
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Microservices deployment (when scaling)
+  # Uncomment to use microservices architecture
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=admin
+  #     - RABBITMQ_DEFAULT_PASS=password
+  #   restart: unless-stopped
+
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api/Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+  #   depends_on:
+  #     - rabbitmq
+  #   restart: unless-stopped
+
+  # monitor-service:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/monitor-service/Dockerfile
+  #   environment:
+  #     - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+  #   depends_on:
+  #     - rabbitmq
+  #   restart: unless-stopped
+  #   deploy:
+  #     replicas: 3  # Scale independently!
+
+  # alerting-service:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/alerting-service/Dockerfile
+  #   environment:
+  #     - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+  #   depends_on:
+  #     - rabbitmq
+  #   restart: unless-stopped
+
+  # notification-service:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/notification-service/Dockerfile
+  #   environment:
+  #     - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+  #   depends_on:
+  #     - rabbitmq
+  #   restart: unless-stopped

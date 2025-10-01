@@ -1,0 +1,21 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/main.ts",
+    "build": "bun build src/main.ts --target=bun --outdir=dist",
+    "start": "bun run dist/main.js"
+  },
+  "dependencies": {
+    "@network-monitor/shared": "workspace:*",
+    "@network-monitor/infrastructure": "workspace:*",
+    "@network-monitor/database": "workspace:*",
+    "@network-monitor/monitor": "workspace:*",
+    "@network-monitor/alerting": "workspace:*",
+    "@network-monitor/notification": "workspace:*",
+    "@solidjs/start": "1.1.3",
+    "vinxi": "0.5.3"
+  }
+}
