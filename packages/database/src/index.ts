@@ -12,11 +12,4 @@ export * from './repositories/SpeedTestResultRepository';
 export * from './repositories/TargetRepository';
 export * from './repositories/UserRepository';
 
-// Mock exports
-export * from './mocks/MockAlertRuleRepository';
-export * from './mocks/MockIncidentEventRepository';
-export * from './mocks/MockMonitoringTargetRepository';
-export * from './mocks/MockNotificationRepository';
-export * from './mocks/MockPushSubscriptionRepository';
-export * from './mocks/MockSpeedTestResultRepository';
-export * from './mocks/MockUserRepository';
+// Note: Mock repositories are now in @network-monitor/infrastructure package

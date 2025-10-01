@@ -142,12 +142,14 @@ export class SpeedTestRepository implements ISpeedTestRepository {
     };
 
     return {
-      id: result.id,
+      id: result.id.toString(),
       ping: result.ping,
       download: result.download,
+      upload: null, // Prisma schema doesn't have upload yet
       status: result.status as "SUCCESS" | "FAILURE",
-      error: result.error,
-      createdAt: result.createdAt,
+      error: result.error ?? undefined,
+      createdAt: result.createdAt.toISOString(),
+      timestamp: result.createdAt.toISOString(),
       targetId: result.targetId,
     };
   }

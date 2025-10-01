@@ -13,7 +13,7 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
     private logger: ILogger
   ) {}
 
-  async findById(id: number): Promise<SpeedTestResult | null> {
+  async findById(id: string): Promise<SpeedTestResult | null> {
     this.logger.debug("SpeedTestResultRepository: Finding result by ID", {
       id,
     });
@@ -137,7 +137,7 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
   }
 
   async update(
-    id: number,
+    id: string,
     data: Partial<CreateSpeedTestResultData>
   ): Promise<SpeedTestResult> {
     this.logger.debug("SpeedTestResultRepository: Updating result", {
@@ -155,7 +155,7 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
     return this.mapToSpeedTestResult(prismaResult);
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     this.logger.debug("SpeedTestResultRepository: Deleting result", { id });
     await this.databaseService.getClient().speedTestResult.delete({
       where: { id },
@@ -202,12 +202,14 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
     };
 
     return {
-      id: result.id,
+      id: result.id.toString(),
       ping: result.ping,
       download: result.download,
+      upload: null, // Prisma schema doesn't have upload yet
       status: result.status as "SUCCESS" | "FAILURE",
-      error: result.error,
-      createdAt: result.createdAt,
+      error: result.error ?? undefined,
+      createdAt: result.createdAt.toISOString(),
+      timestamp: result.createdAt.toISOString(),
       targetId: result.targetId,
     };
   }
