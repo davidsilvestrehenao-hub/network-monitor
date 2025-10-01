@@ -1,0 +1,26 @@
+{
+  "name": "@network-monitor/infrastructure",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./event-bus": "./src/event-bus/index.ts",
+    "./event-rpc": "./src/event-rpc/index.ts",
+    "./logger": "./src/logger/index.ts",
+    "./container": "./src/container/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "@network-monitor/shared": "workspace:*",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  }
+}

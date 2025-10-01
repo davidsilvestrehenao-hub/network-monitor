@@ -1,10 +1,20 @@
 {
   "name": "network-monitor",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
-    "start": "vinxi start",
-    "lint": "eslint --fix \"**/*.{ts,tsx,js,jsx}\""
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:api": "turbo run dev --filter=api",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "turbo run db:generate"
   },
   "type": "module",
   "devDependencies": {
@@ -13,6 +23,7 @@
     "@typescript-eslint/parser": "^7.6.0",
     "eslint": "^9.13.0",
     "eslint-plugin-solid": "^0.14.3",
+    "turbo": "^2.5.8",
     "typescript": "^5.6.2",
     "vite": "^6.2.2"
   },
