@@ -1,11 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run Prettier to format code
-bun run format
+# Run full quality gate (format check, type-check, lint check, markdownlint)
+bun run quality
 
-# Run linting
-bun run lint
-
-# Run type checking
-bun run type-check
+# Ensure only affected packages build before committing
+bunx turbo run build --filter=...^...
