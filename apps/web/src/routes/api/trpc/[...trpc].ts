@@ -38,7 +38,11 @@ const handler = (event: APIEvent) =>
       // Ensure container is initialized before getting context
       await ensureContainerInitialized();
       const appContext = await getAppContext();
-      return appContext;
+      // TODO: integrate real auth; for now, propagate placeholder userId
+      return {
+        ...appContext,
+        userId: appContext.userId ?? "clerk-user-id-placeholder",
+      };
     },
   });
 

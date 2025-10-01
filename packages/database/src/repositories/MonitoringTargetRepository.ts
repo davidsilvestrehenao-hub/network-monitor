@@ -24,7 +24,7 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
         where: { id },
         include: {
           speedTestResults: {
-            orderBy: { id: "desc" },
+            orderBy: { createdAt: "desc" },
           },
           incidentEvents: {
             orderBy: { timestamp: "desc" },
@@ -48,7 +48,7 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
         where: { ownerId },
         include: {
           speedTestResults: {
-            orderBy: { id: "desc" },
+            orderBy: { createdAt: "desc" },
           },
           incidentEvents: {
             orderBy: { timestamp: "desc" },
@@ -74,7 +74,7 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
         skip: offset,
         include: {
           speedTestResults: {
-            orderBy: { id: "desc" },
+            orderBy: { createdAt: "desc" },
           },
           incidentEvents: {
             orderBy: { timestamp: "desc" },
@@ -151,12 +151,14 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
       address: string;
       ownerId: string;
       speedTestResults?: Array<{
-        id: number;
+        id: string;
         ping: number | null;
         download: number | null;
+        upload: number | null;
         status: string;
         error: string | null;
         createdAt: Date;
+        timestamp: Date;
         targetId: string;
       }>;
       incidentEvents?: Array<{
@@ -195,14 +197,14 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
       ownerId: target.ownerId,
       speedTestResults:
         target.speedTestResults?.map(result => ({
-          id: result.id.toString(),
+          id: result.id,
           ping: result.ping,
           download: result.download,
-          upload: null,
+          upload: result.upload,
           status: result.status as "SUCCESS" | "FAILURE",
           error: result.error ?? undefined,
           createdAt: result.createdAt.toISOString(),
-          timestamp: result.createdAt.toISOString(),
+          timestamp: result.timestamp.toISOString(),
           targetId: result.targetId,
         })) || [],
       incidentEvents:

@@ -15,14 +15,16 @@ This service handles all alerting-related operations in the Network Monitor appl
 
 ## Event-Driven Communication
 
-### Listens To:
+### Listens To
+
 - `ALERT_RULE_CREATE_REQUESTED` - Create a new alert rule
 - `ALERT_RULE_UPDATE_REQUESTED` - Update an existing rule
 - `ALERT_RULE_DELETE_REQUESTED` - Delete a rule
 - `SPEED_TEST_COMPLETED` - Evaluate rules against new test results
 - `INCIDENT_RESOLVE_REQUESTED` - Mark an incident as resolved
 
-### Emits:
+### Emits
+
 - `ALERT_RULE_CREATED` - Alert rule successfully created
 - `ALERT_RULE_UPDATED` - Alert rule successfully updated
 - `ALERT_RULE_DELETED` - Alert rule successfully deleted
@@ -33,6 +35,7 @@ This service handles all alerting-related operations in the Network Monitor appl
 ## Configuration
 
 Uses JSON-based DI container configuration from `configs/apps/alerting-service/`:
+
 - `production.json` - Real database and repositories
 - `development.json` - Mocked database for offline development
 
@@ -63,6 +66,7 @@ The service automatically evaluates alert rules when `SPEED_TEST_COMPLETED` even
 ## Architecture
 
 Follows the **Router → Service → Repository** pattern with complete loose coupling:
+
 - No direct dependencies on other services
 - All inter-service communication via EventBus
 - Can be scaled independently
@@ -74,4 +78,3 @@ Follows the **Router → Service → Repository** pattern with complete loose co
 - `@network-monitor/infrastructure` - DI container, EventBus, Logger
 - `@network-monitor/database` - Repositories for data access
 - `@network-monitor/alerting` - AlertingService business logic
-

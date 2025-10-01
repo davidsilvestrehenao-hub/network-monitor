@@ -15,7 +15,8 @@ This service handles all monitoring-related operations in the Network Monitor ap
 
 ## Event-Driven Communication
 
-### Listens To:
+### Listens To
+
 - `TARGET_CREATE_REQUESTED` - Create a new target
 - `TARGET_UPDATE_REQUESTED` - Update an existing target
 - `TARGET_DELETE_REQUESTED` - Delete a target
@@ -23,7 +24,8 @@ This service handles all monitoring-related operations in the Network Monitor ap
 - `MONITORING_START_REQUESTED` - Start monitoring a target
 - `MONITORING_STOP_REQUESTED` - Stop monitoring a target
 
-### Emits:
+### Emits
+
 - `TARGET_CREATED` - Target successfully created
 - `TARGET_UPDATED` - Target successfully updated
 - `TARGET_DELETED` - Target successfully deleted
@@ -34,6 +36,7 @@ This service handles all monitoring-related operations in the Network Monitor ap
 ## Configuration
 
 Uses JSON-based DI container configuration from `configs/apps/monitor-service/`:
+
 - `production.json` - Real database and repositories
 - `development.json` - Mocked database for offline development
 
@@ -65,6 +68,7 @@ docker run -p 3001:3001 monitor-service
 ## Architecture
 
 Follows the **Router → Service → Repository** pattern with complete loose coupling:
+
 - No direct dependencies on other services
 - All inter-service communication via EventBus
 - Can be scaled independently
@@ -76,4 +80,3 @@ Follows the **Router → Service → Repository** pattern with complete loose co
 - `@network-monitor/infrastructure` - DI container, EventBus, Logger
 - `@network-monitor/database` - Repositories for data access
 - `@network-monitor/monitor` - MonitorService business logic
-

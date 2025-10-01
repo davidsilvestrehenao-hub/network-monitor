@@ -9,6 +9,7 @@ export interface SpeedTestConfig {
   targetId: string;
   target: string; // URL or address to test
   timeout?: number;
+  downloadUrl?: string;
 }
 
 export interface IMonitorService {

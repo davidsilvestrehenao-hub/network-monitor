@@ -179,6 +179,7 @@ speedTestService.startContinuousMonitoring(
 ## Speed Test Implementation
 
 ### Ping Test
+
 1. Extracts hostname from URL
 2. Executes native `ping` command (3 packets)
 3. Parses ping times from output
@@ -186,6 +187,7 @@ speedTestService.startContinuousMonitoring(
 5. Returns result with latency metrics
 
 ### Download Test
+
 1. Selects optimal download URL from config
 2. Downloads test file with timeout
 3. Measures download time and size
@@ -193,6 +195,7 @@ speedTestService.startContinuousMonitoring(
 5. Implements fallback URLs on failure
 
 ### Upload Test
+
 Coming soon - will use POST requests to measure upload bandwidth.
 
 ## Configuration
@@ -221,13 +224,15 @@ const config = {
 
 ## Event-Driven Architecture
 
-### Listens To:
+### Listens To
+
 - `SPEED_TEST_START_REQUESTED`
 - `SPEED_TEST_STOP_REQUESTED`
 - `CONTINUOUS_MONITORING_START_REQUESTED`
 - `CONTINUOUS_MONITORING_STOP_REQUESTED`
 
-### Emits:
+### Emits
+
 - `SPEED_TEST_COMPLETED`
 - `SPEED_TEST_FAILED`
 - `MONITORING_STARTED`
@@ -263,4 +268,3 @@ bun run dev
 - Falls back to alternative URLs on failure
 - Respects timeout configurations
 - Efficient resource cleanup
-

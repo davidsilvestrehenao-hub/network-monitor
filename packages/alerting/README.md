@@ -49,6 +49,7 @@ createIncident(data: CreateIncidentData): Promise<IncidentEvent>
 ## Dependencies
 
 This service requires:
+
 - `IAlertRuleRepository` - Alert rule data access
 - `IIncidentEventRepository` - Incident event data access
 - `IEventBus` - Event-driven communication
@@ -58,13 +59,15 @@ These are injected via the DI container.
 
 ## Event-Driven Architecture
 
-### Listens To:
+### Listens To
+
 - `ALERT_RULE_CREATE_REQUESTED`
 - `ALERT_RULE_UPDATE_REQUESTED`
 - `ALERT_RULE_DELETE_REQUESTED`
 - `SPEED_TEST_COMPLETED`
 
-### Emits:
+### Emits
+
 - `ALERT_RULE_CREATED`
 - `ALERT_RULE_UPDATED`
 - `ALERT_RULE_DELETED`
@@ -143,4 +146,3 @@ bun run build
 # Watch mode for development
 bun run dev
 ```
-

@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { t } from "../trpc";
 
-// Helper to get userId from context (TODO: Replace with real auth)
-const getUserId = () => "clerk-user-id-placeholder";
-
 export const notificationsRouter = t.router({
   getByUserId: t.procedure
     .input(
@@ -13,12 +10,12 @@ export const notificationsRouter = t.router({
       })
     )
     .query(({ ctx, input }) => {
-      const userId = input.userId || getUserId();
+      const userId = input.userId || ctx.userId || "clerk-user-id-placeholder";
       return ctx.repositories.notification?.findByUserId(userId, input.limit);
     }),
 
   getUnread: t.procedure.query(({ ctx }) => {
-    const userId = getUserId();
+    const userId = ctx.userId || "clerk-user-id-placeholder";
     return ctx.repositories.notification?.getUnreadByUserId(userId);
   }),
 
@@ -29,7 +26,7 @@ export const notificationsRouter = t.router({
     }),
 
   markAllAsRead: t.procedure.mutation(({ ctx }) => {
-    const userId = getUserId();
+    const userId = ctx.userId || "clerk-user-id-placeholder";
     return ctx.repositories.notification?.markAllAsReadByUserId(userId);
   }),
 

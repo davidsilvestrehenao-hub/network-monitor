@@ -192,24 +192,26 @@ export class SpeedTestResultRepository implements ISpeedTestResultRepository {
 
   private mapToSpeedTestResult(prismaResult: unknown): SpeedTestResult {
     const result = prismaResult as {
-      id: number;
+      id: string;
       ping: number | null;
       download: number | null;
+      upload: number | null;
       status: string;
       error: string | null;
       createdAt: Date;
+      timestamp: Date;
       targetId: string;
     };
 
     return {
-      id: result.id.toString(),
+      id: result.id,
       ping: result.ping,
       download: result.download,
-      upload: null, // Prisma schema doesn't have upload yet
+      upload: result.upload,
       status: result.status as "SUCCESS" | "FAILURE",
       error: result.error ?? undefined,
       createdAt: result.createdAt.toISOString(),
-      timestamp: result.createdAt.toISOString(),
+      timestamp: result.timestamp.toISOString(),
       targetId: result.targetId,
     };
   }

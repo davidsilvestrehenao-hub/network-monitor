@@ -35,6 +35,8 @@ const SERVICE_TYPE_MAP: Record<string, symbol> = {
   INotificationRepository: TYPES.INotificationRepository,
   ITargetRepository: TYPES.ITargetRepository,
   ISpeedTestRepository: TYPES.ISpeedTestRepository,
+  ISpeedTestConfigService: TYPES.ISpeedTestConfigService,
+  IUserSpeedTestPreferenceRepository: TYPES.IUserSpeedTestPreferenceRepository,
 };
 
 export class JsonConfigLoader {
@@ -261,6 +263,10 @@ export class JsonConfigLoader {
         TYPES.ILogger,
       ],
       [TYPES.INotificationRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
+      [TYPES.IUserSpeedTestPreferenceRepository]: [
+        TYPES.IDatabaseService,
+        TYPES.ILogger,
+      ],
       [TYPES.ITargetRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
       [TYPES.ISpeedTestRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
       [TYPES.IMonitorService]: [
@@ -268,6 +274,8 @@ export class JsonConfigLoader {
         TYPES.ISpeedTestRepository,
         TYPES.IMonitoringTargetRepository,
         TYPES.ISpeedTestResultRepository,
+        TYPES.IUserSpeedTestPreferenceRepository,
+        TYPES.ISpeedTestConfigService,
         TYPES.IEventBus,
         TYPES.ILogger,
       ],

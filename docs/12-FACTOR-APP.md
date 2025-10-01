@@ -150,6 +150,9 @@ AUTH_PROVIDERS=mock,github,google
 # Monitoring
 SPEED_TEST_INTERVAL=30000
 ALERT_CHECK_INTERVAL=5000
+# Optional override for download speed test URL
+# Defaults: 10MB file in non-production, 100MB file in production
+SPEED_TEST_URL=
 ```
 
 ### Best Practices

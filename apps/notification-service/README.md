@@ -15,14 +15,16 @@ This service handles all notification-related operations in the Network Monitor 
 
 ## Event-Driven Communication
 
-### Listens To:
+### Listens To
+
 - `PUSH_SUBSCRIPTION_CREATE_REQUESTED` - Register a new push subscription
 - `PUSH_SUBSCRIPTION_DELETE_REQUESTED` - Delete a subscription
 - `TEST_NOTIFICATION_SEND_REQUESTED` - Send a test notification
 - `NOTIFICATION_MARK_READ_REQUESTED` - Mark notification as read
 - `INCIDENT_CREATED` - Send alert notifications to users
 
-### Emits:
+### Emits
+
 - `PUSH_SUBSCRIPTION_CREATED` - Subscription successfully registered
 - `PUSH_SUBSCRIPTION_DELETED` - Subscription successfully deleted
 - `NOTIFICATION_SENT` - Notification sent successfully
@@ -32,6 +34,7 @@ This service handles all notification-related operations in the Network Monitor 
 ## Configuration
 
 Uses JSON-based DI container configuration from `configs/apps/notification-service/`:
+
 - `production.json` - Real database and repositories
 - `development.json` - Mocked database for offline development
 
@@ -62,6 +65,7 @@ CONFIG_PATH=configs/custom.json bun run start
 ## Architecture
 
 Follows the **Router → Service → Repository** pattern with complete loose coupling:
+
 - No direct dependencies on other services
 - All inter-service communication via EventBus
 - Can be scaled independently
@@ -73,4 +77,3 @@ Follows the **Router → Service → Repository** pattern with complete loose co
 - `@network-monitor/infrastructure` - DI container, EventBus, Logger
 - `@network-monitor/database` - Repositories for data access
 - `@network-monitor/notification` - NotificationService business logic
-

@@ -17,9 +17,9 @@ This document contains the core architectural and development guidelines for thi
 
 This is the **most critical pattern** in the codebase. The layers must not be skipped.
 
-1.  **Routers (`src/server/trpc/routers/`)**: Handle API requests. They **must only** call methods on Services.
-2.  **Services (`src/lib/services/`)**: Contain all business logic. They orchestrate operations by calling Repositories.
-3.  **Repositories (`src/lib/services/`)**: Abstract all database access. They are the **only** layer allowed to use the Prisma client.
+1. **Routers (`src/server/trpc/routers/`)**: Handle API requests. They **must only** call methods on Services.
+2. **Services (`src/lib/services/`)**: Contain all business logic. They orchestrate operations by calling Repositories.
+3. **Repositories (`src/lib/services/`)**: Abstract all database access. They are the **only** layer allowed to use the Prisma client.
 
 ```typescript
 // ✅ Correct Flow: Router -> Service -> Repository

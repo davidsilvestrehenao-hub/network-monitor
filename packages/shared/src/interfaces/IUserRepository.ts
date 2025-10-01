@@ -24,6 +24,20 @@ export interface UpdateUserData {
   image?: string;
 }
 
+export interface UserSpeedTestPreference {
+  userId: string;
+  speedTestUrlId: string;
+  updatedAt: Date;
+}
+
+export interface IUserSpeedTestPreferenceRepository {
+  getByUserId(userId: string): Promise<UserSpeedTestPreference | null>;
+  upsert(
+    userId: string,
+    speedTestUrlId: string
+  ): Promise<UserSpeedTestPreference>;
+}
+
 // Repository interface
 export interface IUserRepository {
   // Query methods

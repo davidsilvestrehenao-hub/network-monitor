@@ -21,6 +21,9 @@ export const TYPES = {
   IIncidentEventRepository: Symbol("IIncidentEventRepository"),
   IPushSubscriptionRepository: Symbol("IPushSubscriptionRepository"),
   INotificationRepository: Symbol("INotificationRepository"),
+  IUserSpeedTestPreferenceRepository: Symbol(
+    "IUserSpeedTestPreferenceRepository"
+  ),
 
   // Legacy repository (for backward compatibility)
   ITargetRepository: Symbol("ITargetRepository"),

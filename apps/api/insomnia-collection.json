@@ -1,0 +1,437 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-10-01T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_health",
+      "parentId": "fld_health",
+      "type": "Request",
+      "name": "Health Check",
+      "description": "Check server health and service availability",
+      "url": "{{ _.baseUrl }}/health",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {}
+    },
+    {
+      "_id": "req_get_targets",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Get All Targets",
+      "description": "Get all monitoring targets for the current user",
+      "url": "{{ _.baseUrl }}/api/targets",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_get_target",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Get Target by ID",
+      "description": "Retrieve a specific monitoring target",
+      "url": "{{ _.baseUrl }}/api/targets/{{ _.targetId }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_create_target",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Create Target",
+      "description": "Create a new monitoring target",
+      "url": "{{ _.baseUrl }}/api/targets",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Google DNS\",\n  \"address\": \"https://8.8.8.8\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_update_target",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Update Target",
+      "description": "Update an existing monitoring target",
+      "url": "{{ _.baseUrl }}/api/targets/{{ _.targetId }}",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Google DNS (Updated)\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_delete_target",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Delete Target",
+      "description": "Delete a monitoring target",
+      "url": "{{ _.baseUrl }}/api/targets/{{ _.targetId }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_start_monitoring",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Start Monitoring",
+      "description": "Start automated monitoring for a target",
+      "url": "{{ _.baseUrl }}/api/targets/{{ _.targetId }}/start",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"intervalMs\": 30000\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_stop_monitoring",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Stop Monitoring",
+      "description": "Stop automated monitoring",
+      "url": "{{ _.baseUrl }}/api/targets/{{ _.targetId }}/stop",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_run_speed_test",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Run Speed Test",
+      "description": "Run a speed test immediately",
+      "url": "{{ _.baseUrl }}/api/targets/{{ _.targetId }}/test",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_get_active_targets",
+      "parentId": "fld_targets",
+      "type": "Request",
+      "name": "Get Active Targets",
+      "description": "Get list of actively monitored targets",
+      "url": "{{ _.baseUrl }}/api/targets/active",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_get_alert_rules",
+      "parentId": "fld_alert_rules",
+      "type": "Request",
+      "name": "Get Alert Rules",
+      "description": "Get all alert rules for a target",
+      "url": "{{ _.baseUrl }}/api/alert-rules/target/{{ _.targetId }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_create_alert_rule",
+      "parentId": "fld_alert_rules",
+      "type": "Request",
+      "name": "Create Alert Rule",
+      "description": "Create a new alert rule",
+      "url": "{{ _.baseUrl }}/api/alert-rules",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"High Latency Alert\",\n  \"targetId\": \"{{ _.targetId }}\",\n  \"metric\": \"ping\",\n  \"condition\": \"GREATER_THAN\",\n  \"threshold\": 100,\n  \"enabled\": true\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_update_alert_rule",
+      "parentId": "fld_alert_rules",
+      "type": "Request",
+      "name": "Update Alert Rule",
+      "description": "Update an existing alert rule",
+      "url": "{{ _.baseUrl }}/api/alert-rules/{{ _.alertRuleId }}",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"threshold\": 150\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_delete_alert_rule",
+      "parentId": "fld_alert_rules",
+      "type": "Request",
+      "name": "Delete Alert Rule",
+      "description": "Delete an alert rule",
+      "url": "{{ _.baseUrl }}/api/alert-rules/{{ _.alertRuleId }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_get_incidents",
+      "parentId": "fld_incidents",
+      "type": "Request",
+      "name": "Get Incidents",
+      "description": "Get all incidents for a target",
+      "url": "{{ _.baseUrl }}/api/incidents/target/{{ _.targetId }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_resolve_incident",
+      "parentId": "fld_incidents",
+      "type": "Request",
+      "name": "Resolve Incident",
+      "description": "Mark an incident as resolved",
+      "url": "{{ _.baseUrl }}/api/incidents/{{ _.incidentId }}/resolve",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_get_notifications",
+      "parentId": "fld_notifications",
+      "type": "Request",
+      "name": "Get Notifications",
+      "description": "Get all notifications for a user",
+      "url": "{{ _.baseUrl }}/api/notifications/user/{{ _.userId }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_mark_notification_read",
+      "parentId": "fld_notifications",
+      "type": "Request",
+      "name": "Mark as Read",
+      "description": "Mark a notification as read",
+      "url": "{{ _.baseUrl }}/api/notifications/{{ _.notificationId }}/read",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "req_create_push_subscription",
+      "parentId": "fld_push_subscriptions",
+      "type": "Request",
+      "name": "Create Push Subscription",
+      "description": "Register a web push notification subscription",
+      "url": "{{ _.baseUrl }}/api/push-subscriptions",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"endpoint\": \"https://fcm.googleapis.com/fcm/send/...\",\n  \"p256dh\": \"BN...base64...==\",\n  \"auth\": \"rT...base64...==\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.authToken }}"
+      }
+    },
+    {
+      "_id": "fld_health",
+      "parentId": "wrk_main",
+      "type": "RequestGroup",
+      "name": "Health",
+      "description": "Health check endpoints"
+    },
+    {
+      "_id": "fld_targets",
+      "parentId": "wrk_main",
+      "type": "RequestGroup",
+      "name": "Targets",
+      "description": "Monitoring target management"
+    },
+    {
+      "_id": "fld_alert_rules",
+      "parentId": "wrk_main",
+      "type": "RequestGroup",
+      "name": "Alert Rules",
+      "description": "Alert rule configuration"
+    },
+    {
+      "_id": "fld_incidents",
+      "parentId": "wrk_main",
+      "type": "RequestGroup",
+      "name": "Incidents",
+      "description": "Incident event management"
+    },
+    {
+      "_id": "fld_notifications",
+      "parentId": "wrk_main",
+      "type": "RequestGroup",
+      "name": "Notifications",
+      "description": "In-app notifications"
+    },
+    {
+      "_id": "fld_push_subscriptions",
+      "parentId": "wrk_main",
+      "type": "RequestGroup",
+      "name": "Push Subscriptions",
+      "description": "Web push notification subscriptions"
+    },
+    {
+      "_id": "wrk_main",
+      "type": "Workspace",
+      "name": "Network Monitor API",
+      "description": "Complete REST API collection for Network Monitor",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_main",
+      "type": "Environment",
+      "name": "Development",
+      "data": {
+        "baseUrl": "http://localhost:3000",
+        "authToken": "user-123",
+        "targetId": "",
+        "alertRuleId": "",
+        "incidentId": "",
+        "notificationId": "",
+        "userId": "user-123"
+      }
+    },
+    {
+      "_id": "env_prod",
+      "parentId": "wrk_main",
+      "type": "Environment",
+      "name": "Production",
+      "data": {
+        "baseUrl": "https://api.networkmonitor.example.com",
+        "authToken": "",
+        "targetId": "",
+        "alertRuleId": "",
+        "incidentId": "",
+        "notificationId": "",
+        "userId": ""
+      }
+    }
+  ]
+}
+

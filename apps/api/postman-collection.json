@@ -1,0 +1,441 @@
+{
+  "info": {
+    "name": "Network Monitor API",
+    "description": "Complete REST API collection for the Network Monitor headless API server.\n\n**Features:**\n- Monitor internet connections\n- Configure alert rules\n- Manage notifications\n- Track incidents\n\n**Architecture:** DRY - shares service layer with GraphQL and tRPC",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Check server health and service availability"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Targets",
+      "item": [
+        {
+          "name": "Get All Targets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/targets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets"]
+            },
+            "description": "Get all monitoring targets for the current user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Target by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/{{targetId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "{{targetId}}"]
+            },
+            "description": "Retrieve a specific monitoring target"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Target",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save target ID for later use",
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('targetId', response.id);",
+                  "    pm.collectionVariables.set('lastTargetId', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Google DNS\",\n  \"address\": \"https://8.8.8.8\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/targets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets"]
+            },
+            "description": "Create a new monitoring target"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Target",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Google DNS (Updated)\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/{{targetId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "{{targetId}}"]
+            },
+            "description": "Update an existing monitoring target"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Target",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/{{targetId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "{{targetId}}"]
+            },
+            "description": "Delete a monitoring target"
+          },
+          "response": []
+        },
+        {
+          "name": "Start Monitoring",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"intervalMs\": 30000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/{{targetId}}/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "{{targetId}}", "start"]
+            },
+            "description": "Start automated monitoring (tests every 30 seconds)"
+          },
+          "response": []
+        },
+        {
+          "name": "Stop Monitoring",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/{{targetId}}/stop",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "{{targetId}}", "stop"]
+            },
+            "description": "Stop automated monitoring"
+          },
+          "response": []
+        },
+        {
+          "name": "Run Speed Test",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/{{targetId}}/test",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "{{targetId}}", "test"]
+            },
+            "description": "Run a speed test immediately"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Targets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/targets/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "targets", "active"]
+            },
+            "description": "Get list of actively monitored targets"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Alert Rules",
+      "item": [
+        {
+          "name": "Get Alert Rules for Target",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/alert-rules/target/{{targetId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alert-rules", "target", "{{targetId}}"]
+            },
+            "description": "Get all alert rules for a target"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Alert Rule",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('alertRuleId', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"High Latency Alert\",\n  \"targetId\": \"{{targetId}}\",\n  \"metric\": \"ping\",\n  \"condition\": \"GREATER_THAN\",\n  \"threshold\": 100,\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alert-rules",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alert-rules"]
+            },
+            "description": "Create a new alert rule"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Alert Rule",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"threshold\": 150,\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alert-rules/{{alertRuleId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alert-rules", "{{alertRuleId}}"]
+            },
+            "description": "Update an existing alert rule"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Alert Rule",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/alert-rules/{{alertRuleId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alert-rules", "{{alertRuleId}}"]
+            },
+            "description": "Delete an alert rule"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "Get Incidents for Target",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/incidents/target/{{targetId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "incidents", "target", "{{targetId}}"]
+            },
+            "description": "Get all incident events for a target"
+          },
+          "response": []
+        },
+        {
+          "name": "Resolve Incident",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/incidents/{{incidentId}}/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "incidents", "{{incidentId}}", "resolve"]
+            },
+            "description": "Mark an incident as resolved"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/user/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "user", "{{userId}}"]
+            },
+            "description": "Get all notifications for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/{{notificationId}}/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "{{notificationId}}", "read"]
+            },
+            "description": "Mark a notification as read"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Push Subscriptions",
+      "item": [
+        {
+          "name": "Create Push Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"endpoint\": \"https://fcm.googleapis.com/fcm/send/...\",\n  \"p256dh\": \"BN...base64...==\",\n  \"auth\": \"rT...base64...==\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/push-subscriptions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "push-subscriptions"]
+            },
+            "description": "Register a web push notification subscription"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "user-123",
+      "type": "string"
+    },
+    {
+      "key": "targetId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "alertRuleId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "incidentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "user-123",
+      "type": "string"
+    }
+  ]
+}
+

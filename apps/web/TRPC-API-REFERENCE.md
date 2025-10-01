@@ -27,6 +27,7 @@ Simple health check endpoint.
 **Output:** `string`
 
 **Example:**
+
 ```typescript
 const greeting = await trpc.hello.query({ name: "World" });
 // Returns: "Hello, World!"
@@ -47,6 +48,7 @@ Get all targets for the current user.
 **Output:** `Target[]`
 
 **Example:**
+
 ```typescript
 const targets = await trpc.targets.getAll.query();
 ```
@@ -61,6 +63,7 @@ Get a specific target by ID.
 **Throws:** `NOT_FOUND` if target doesn't exist
 
 **Example:**
+
 ```typescript
 const target = await trpc.targets.getById.query({ id: "target-123" });
 ```
@@ -71,15 +74,18 @@ Create a new monitoring target.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   name: string;        // Min length: 1
   address: string;     // Must be valid URL
 }
 ```
+
 **Output:** `Target`
 
 **Example:**
+
 ```typescript
 const newTarget = await trpc.targets.create.mutate({
   name: "Google DNS",
@@ -93,6 +99,7 @@ Update an existing target.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   id: string;
@@ -100,9 +107,11 @@ Update an existing target.
   address?: string;    // Must be valid URL
 }
 ```
+
 **Output:** `Target`
 
 **Example:**
+
 ```typescript
 const updated = await trpc.targets.update.mutate({
   id: "target-123",
@@ -119,6 +128,7 @@ Delete a target and all associated data.
 **Output:** `void`
 
 **Example:**
+
 ```typescript
 await trpc.targets.delete.mutate({ id: "target-123" });
 ```
@@ -129,15 +139,18 @@ Start automated monitoring for a target.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   targetId: string;
   intervalMs: number;  // Min: 1000, Max: 300000 (5 minutes)
 }
 ```
+
 **Output:** `{ success: boolean }`
 
 **Example:**
+
 ```typescript
 await trpc.targets.startMonitoring.mutate({
   targetId: "target-123",
@@ -154,6 +167,7 @@ Stop automated monitoring for a target.
 **Output:** `{ success: boolean }`
 
 **Example:**
+
 ```typescript
 await trpc.targets.stopMonitoring.mutate({ targetId: "target-123" });
 ```
@@ -167,6 +181,7 @@ Get list of targets currently being monitored.
 **Output:** `string[]` (array of target IDs)
 
 **Example:**
+
 ```typescript
 const activeTargets = await trpc.targets.getActiveTargets.query();
 // Returns: ["target-123", "target-456"]
@@ -184,15 +199,18 @@ Get speed test results for a specific target.
 
 **Type:** Query  
 **Input:**
+
 ```typescript
 {
   targetId: string;
   limit?: number;      // Optional limit
 }
 ```
+
 **Output:** `SpeedTestResult[]`
 
 **Example:**
+
 ```typescript
 const results = await trpc.speedTests.getByTargetId.query({
   targetId: "target-123",
@@ -209,6 +227,7 @@ Get the most recent speed test result for a target.
 **Output:** `SpeedTestResult | null`
 
 **Example:**
+
 ```typescript
 const latest = await trpc.speedTests.getLatest.query({
   targetId: "target-123"
@@ -221,6 +240,7 @@ Run a speed test immediately.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   targetId: string;
@@ -228,9 +248,11 @@ Run a speed test immediately.
   timeout?: number;    // Optional timeout in ms
 }
 ```
+
 **Output:** `SpeedTestResult`
 
 **Example:**
+
 ```typescript
 const result = await trpc.speedTests.runTest.mutate({
   targetId: "target-123",
@@ -253,6 +275,7 @@ Get all alert rules for a target.
 **Output:** `AlertRule[]`
 
 **Example:**
+
 ```typescript
 const rules = await trpc.alertRules.getByTargetId.query({
   targetId: "target-123"
@@ -268,6 +291,7 @@ Get a specific alert rule.
 **Output:** `AlertRule | null`
 
 **Example:**
+
 ```typescript
 const rule = await trpc.alertRules.getById.query({ id: 1 });
 ```
@@ -278,6 +302,7 @@ Create a new alert rule.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   name: string;                               // Min length: 1
@@ -288,9 +313,11 @@ Create a new alert rule.
   enabled?: boolean;                          // Default: true
 }
 ```
+
 **Output:** `AlertRule`
 
 **Example:**
+
 ```typescript
 const rule = await trpc.alertRules.create.mutate({
   name: "High Latency Alert",
@@ -307,6 +334,7 @@ Update an existing alert rule.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   id: number;
@@ -317,9 +345,11 @@ Update an existing alert rule.
   enabled?: boolean;
 }
 ```
+
 **Output:** `AlertRule`
 
 **Example:**
+
 ```typescript
 const updated = await trpc.alertRules.update.mutate({
   id: 1,
@@ -336,6 +366,7 @@ Delete an alert rule.
 **Output:** `void`
 
 **Example:**
+
 ```typescript
 await trpc.alertRules.delete.mutate({ id: 1 });
 ```
@@ -346,15 +377,18 @@ Enable or disable an alert rule.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   id: number;
   enabled: boolean;
 }
 ```
+
 **Output:** `AlertRule`
 
 **Example:**
+
 ```typescript
 const rule = await trpc.alertRules.toggleEnabled.mutate({
   id: 1,
@@ -374,15 +408,18 @@ Get incident events for a specific target.
 
 **Type:** Query  
 **Input:**
+
 ```typescript
 {
   targetId: string;
   limit?: number;
 }
 ```
+
 **Output:** `IncidentEvent[]`
 
 **Example:**
+
 ```typescript
 const incidents = await trpc.incidents.getByTargetId.query({
   targetId: "target-123",
@@ -399,6 +436,7 @@ Get all unresolved incidents across all targets.
 **Output:** `IncidentEvent[]`
 
 **Example:**
+
 ```typescript
 const unresolved = await trpc.incidents.getUnresolved.query();
 ```
@@ -412,6 +450,7 @@ Get unresolved incidents for a specific target.
 **Output:** `IncidentEvent[]`
 
 **Example:**
+
 ```typescript
 const incidents = await trpc.incidents.getUnresolvedByTargetId.query({
   targetId: "target-123"
@@ -427,6 +466,7 @@ Mark an incident as resolved.
 **Output:** `IncidentEvent`
 
 **Example:**
+
 ```typescript
 const resolved = await trpc.incidents.resolve.mutate({ id: 1 });
 ```
@@ -440,6 +480,7 @@ Mark all incidents for a target as resolved.
 **Output:** `number` (count of resolved incidents)
 
 **Example:**
+
 ```typescript
 const count = await trpc.incidents.resolveByTargetId.mutate({
   targetId: "target-123"
@@ -458,15 +499,18 @@ Get notifications for a user.
 
 **Type:** Query  
 **Input:**
+
 ```typescript
 {
   userId?: string;     // Optional, defaults to current user
   limit?: number;
 }
 ```
+
 **Output:** `Notification[]`
 
 **Example:**
+
 ```typescript
 const notifications = await trpc.notifications.getByUserId.query({
   limit: 50
@@ -482,6 +526,7 @@ Get unread notifications for the current user.
 **Output:** `Notification[]`
 
 **Example:**
+
 ```typescript
 const unread = await trpc.notifications.getUnread.query();
 ```
@@ -495,6 +540,7 @@ Mark a notification as read.
 **Output:** `Notification`
 
 **Example:**
+
 ```typescript
 const notification = await trpc.notifications.markAsRead.mutate({ id: 1 });
 ```
@@ -508,6 +554,7 @@ Mark all notifications as read for the current user.
 **Output:** `number` (count of marked notifications)
 
 **Example:**
+
 ```typescript
 const count = await trpc.notifications.markAllAsRead.mutate();
 ```
@@ -521,6 +568,7 @@ Delete a notification.
 **Output:** `void`
 
 **Example:**
+
 ```typescript
 await trpc.notifications.delete.mutate({ id: 1 });
 ```
@@ -540,6 +588,7 @@ Get push subscriptions for the current user.
 **Output:** `PushSubscription[]`
 
 **Example:**
+
 ```typescript
 const subscriptions = await trpc.pushSubscriptions.getByUserId.query();
 ```
@@ -550,6 +599,7 @@ Register a new push subscription.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   endpoint: string;    // Must be valid URL
@@ -557,9 +607,11 @@ Register a new push subscription.
   auth: string;
 }
 ```
+
 **Output:** `PushSubscription`
 
 **Example:**
+
 ```typescript
 const subscription = await trpc.pushSubscriptions.create.mutate({
   endpoint: "https://fcm.googleapis.com/...",
@@ -577,6 +629,7 @@ Delete a push subscription by ID.
 **Output:** `void`
 
 **Example:**
+
 ```typescript
 await trpc.pushSubscriptions.delete.mutate({ id: "sub-123" });
 ```
@@ -590,6 +643,7 @@ Delete a push subscription by endpoint.
 **Output:** `void`
 
 **Example:**
+
 ```typescript
 await trpc.pushSubscriptions.deleteByEndpoint.mutate({
   endpoint: "https://fcm.googleapis.com/..."
@@ -611,6 +665,7 @@ Get the current authenticated user.
 **Output:** `User | null`
 
 **Example:**
+
 ```typescript
 const currentUser = await trpc.users.getCurrent.query();
 ```
@@ -624,6 +679,7 @@ Get a user by ID.
 **Output:** `User | null`
 
 **Example:**
+
 ```typescript
 const user = await trpc.users.getById.query({ id: "user-123" });
 ```
@@ -634,6 +690,7 @@ Update the current user's profile.
 
 **Type:** Mutation  
 **Input:**
+
 ```typescript
 {
   name?: string;
@@ -641,9 +698,11 @@ Update the current user's profile.
   image?: string;      // Must be valid URL
 }
 ```
+
 **Output:** `User`
 
 **Example:**
+
 ```typescript
 const updated = await trpc.users.update.mutate({
   name: "New Name"
@@ -811,4 +870,3 @@ Rate limiting is not currently implemented but should be added for:
 - [ ] Add performance monitoring
 - [ ] Create OpenAPI documentation
 - [ ] Add API versioning
-

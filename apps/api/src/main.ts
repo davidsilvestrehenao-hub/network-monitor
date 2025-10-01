@@ -1,17 +1,23 @@
 /**
- * Monolith Entry Point (12-Factor Compliant)
+ * Headless API Server (REST + GraphQL)
  *
- * This file initializes ALL services in a single Bun process.
+ * This is a multi-protocol API server that exposes the same services via:
+ * - REST API (standard HTTP/JSON)
+ * - GraphQL API (queries, mutations, subscriptions)
+ *
  * Perfect for:
- * - Development
- * - Small deployments (1-10k users)
- * - Cheap hosting ($20/month single container)
+ * - Mobile app backends
+ * - External integrations
+ * - Multi-language clients
+ * - Webhooks and third-party services
  *
- * When ready to scale, just deploy services separately using
- * the microservice entry points (apps/*-service/)
+ * DRY Architecture:
+ * All API styles (REST, GraphQL, tRPC) share the SAME service layer.
+ * No code duplication - services are resolved from the DI container.
  *
  * 12-Factor Compliance:
  * ✅ Factor III: Config from environment variables
+ * ✅ Factor VII: Port binding - self-contained HTTP server
  * ✅ Factor IX: Graceful shutdown
  * ✅ Factor XI: Logs to stdout/stderr
  */
@@ -28,6 +34,19 @@ import type {
   IAlertingService,
   INotificationService,
 } from "@network-monitor/shared";
+import { Hono } from "hono";
+import { logger as honoLogger } from "hono/logger";
+import { cors } from "hono/cors";
+import { createYoga } from "graphql-yoga";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { schema } from "./graphql/schema";
+import { createResolvers, createGraphQLContext } from "./graphql/resolvers";
+import { registerRESTRoutes } from "./rest/routes";
+import {
+  getOpenAPISpec,
+  handleDocsRequest,
+  autoLaunchBrowser,
+} from "./openapi/swagger-ui";
 
 async function startMonolith() {
   // 12-Factor Factor III: Validate environment configuration at startup
@@ -133,12 +152,182 @@ async function startMonolith() {
     },
   });
 
-  // Monolith is now running
-  context.logger.info("Monolith is now running and serving all services", {
+  // Load OpenAPI specification
+  const openAPISpec = getOpenAPISpec();
+
+  // Create GraphQL server
+  const executableSchema = makeExecutableSchema({
+    typeDefs: schema,
+    resolvers: createResolvers(context),
+  });
+
+  const yoga = createYoga({
+    schema: executableSchema,
+    context: (req: { request: Request }) =>
+      createGraphQLContext(req.request, context),
+    graphqlEndpoint: "/graphql",
+    landingPage: true, // GraphQL Playground
+  });
+
+  // Create Hono app
+  const app = new Hono();
+
+  // Middleware
+  app.use("*", honoLogger()); // Request logging
+  app.use(
+    "*",
+    cors({
+      origin: "*", // TODO: Configure allowed origins via environment
+      credentials: true,
+    })
+  );
+
+  // Root - API documentation
+  app.get("/", c => {
+    return c.json(
+      {
+        name: "Network Monitor API",
+        version: "1.0.0",
+        description: "Multi-protocol API server with Hono",
+        documentation: {
+          openapi: `http://${config.host}:${config.port}/api/docs`,
+          graphql: `http://${config.host}:${config.port}/graphql`,
+          postman: "Import postman-collection.json",
+          insomnia: "Import insomnia-collection.json",
+        },
+        endpoints: {
+          rest: {
+            documentation: "/api/docs",
+            spec: "/api/docs/spec.yaml",
+            baseUrl: "/api",
+            health: "/health",
+          },
+          graphql: {
+            endpoint: "/graphql",
+            playground: "/graphql (visit in browser)",
+          },
+        },
+        services: {
+          monitor: !!context.services.monitor,
+          alerting: !!context.services.alerting,
+          notification: !!context.services.notification,
+        },
+      },
+      200
+    );
+  });
+
+  // OpenAPI Documentation (Swagger UI)
+  app.get("/api/docs", c => handleDocsRequest(c.req.raw, openAPISpec));
+  app.get("/api/docs/*", c => handleDocsRequest(c.req.raw, openAPISpec));
+
+  // GraphQL endpoint
+  app.all("/graphql", c => yoga.fetch(c.req.raw));
+
+  // Register REST routes
+  registerRESTRoutes(app, context);
+
+  // Error handling middleware
+  app.onError((err, c) => {
+    context.logger.error("Request error", { error: err, path: c.req.path });
+    return c.json(
+      {
+        error: "Internal Server Error",
+        message: err.message,
+        path: c.req.path,
+      },
+      500
+    );
+  });
+
+  // 404 handler
+  app.notFound(c => {
+    return c.json(
+      {
+        error: "Not Found",
+        path: c.req.path,
+        method: c.req.method,
+        availableEndpoints: [
+          "GET /",
+          "GET /health",
+          "GET /api/docs",
+          "GET /graphql",
+          "GET /api/targets",
+          "POST /api/targets",
+          "GET /api/targets/:id",
+          "PUT /api/targets/:id",
+          "DELETE /api/targets/:id",
+          "POST /api/targets/:id/start",
+          "POST /api/targets/:id/stop",
+          "POST /api/targets/:id/test",
+          "GET /api/targets/active",
+          "GET /api/alert-rules/target/:targetId",
+          "POST /api/alert-rules",
+          "PUT /api/alert-rules/:id",
+          "DELETE /api/alert-rules/:id",
+          "GET /api/incidents/target/:targetId",
+          "POST /api/incidents/:id/resolve",
+          "GET /api/notifications/user/:userId",
+          "POST /api/notifications/:id/read",
+          "POST /api/push-subscriptions",
+        ],
+      },
+      404
+    );
+  });
+
+  // Start HTTP server using Bun with Hono
+  // Justification: Bun global is provided by Bun runtime, not in standard TypeScript types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const BunGlobal = globalThis as any;
+  const server = BunGlobal.Bun.serve({
+    port: config.port,
+    hostname: config.host,
+    fetch: app.fetch, // Hono handles all routing
+  });
+
+  context.logger.info("🚀 API Server is now running", {
     port: config.port,
     host: config.host,
     environment: config.nodeEnv,
+    endpoints: {
+      rest: `http://${config.host}:${config.port}/api`,
+      graphql: `http://${config.host}:${config.port}/graphql`,
+      health: `http://${config.host}:${config.port}/health`,
+      docs: `http://${config.host}:${config.port}/api/docs`,
+    },
   });
+
+  context.logger.info("📚 Available Protocols:");
+  context.logger.info("  ✅ REST API - Standard HTTP/JSON");
+  context.logger.info("  ✅ GraphQL - Flexible queries and mutations");
+  context.logger.info("");
+
+  context.logger.info("📖 Documentation:");
+  context.logger.info(
+    `  📘 OpenAPI/Swagger: http://${config.host}:${config.port}/api/docs`
+  );
+  context.logger.info(
+    `  🎮 GraphQL Playground: http://${config.host}:${config.port}/graphql`
+  );
+  context.logger.info(
+    `  📄 Postman Collection: apps/api/postman-collection.json`
+  );
+  context.logger.info(
+    `  📄 Insomnia Collection: apps/api/insomnia-collection.json`
+  );
+  context.logger.info("");
+
+  // Auto-launch browser in development mode
+  if (config.nodeEnv === "development") {
+    const docsUrl = `http://${config.host}:${config.port}/api/docs`;
+    autoLaunchBrowser(docsUrl, context.logger).catch(() => {
+      // Silently ignore errors
+    });
+  }
+
+  // Return server handle for shutdown
+  return { context, server };
 }
 
 // Start the monolith

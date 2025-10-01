@@ -47,6 +47,7 @@ getActiveTargets(): string[]
 ## Dependencies
 
 This service requires:
+
 - `ITargetRepository` - Simple target data access (basic CRUD)
 - `ISpeedTestRepository` - Speed test result storage (basic CRUD)
 - `IMonitoringTargetRepository` - Full target data access (with relations)
@@ -58,7 +59,8 @@ These are injected via the DI container.
 
 ## Event-Driven Architecture
 
-### Listens To:
+### Listens To
+
 - `TARGET_CREATE_REQUESTED` - Create a new target
 - `TARGET_UPDATE_REQUESTED` - Update an existing target
 - `TARGET_DELETE_REQUESTED` - Delete a target
@@ -66,7 +68,8 @@ These are injected via the DI container.
 - `MONITORING_START_REQUESTED` - Start monitoring
 - `MONITORING_STOP_REQUESTED` - Stop monitoring
 
-### Emits:
+### Emits
+
 - `TARGET_CREATED` - Target successfully created
 - `TARGET_UPDATED` - Target successfully updated
 - `TARGET_DELETED` - Target successfully deleted
@@ -181,8 +184,8 @@ bun run dev
 ## Architecture Notes
 
 This service follows **perfect loose coupling**:
+
 - Does NOT call other services directly
 - Uses EventBus for all inter-service communication
 - Can be deployed independently as a microservice
 - Stateless (monitoring state is ephemeral)
-

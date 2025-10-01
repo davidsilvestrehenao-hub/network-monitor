@@ -2,12 +2,9 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { t } from "../trpc";
 
-// Helper to get userId from context (TODO: Replace with real auth)
-const getUserId = () => "clerk-user-id-placeholder";
-
 export const targetsRouter = t.router({
   getAll: t.procedure.query(({ ctx }) => {
-    const userId = getUserId();
+    const userId = ctx.userId || "clerk-user-id-placeholder";
     return ctx.services.monitor?.getTargets(userId);
   }),
 
@@ -32,7 +29,7 @@ export const targetsRouter = t.router({
       })
     )
     .mutation(({ ctx, input }) => {
-      const ownerId = getUserId();
+      const ownerId = ctx.userId || "clerk-user-id-placeholder";
       return ctx.services.monitor?.createTarget({ ...input, ownerId });
     }),
 

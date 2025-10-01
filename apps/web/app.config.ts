@@ -8,6 +8,7 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       include: ["solid-js", "@solidjs/router"],
+      exclude: ["@network-monitor/speed-test"],
     },
     build: {
       target: "esnext",

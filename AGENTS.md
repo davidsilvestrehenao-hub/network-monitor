@@ -18,9 +18,9 @@ This document contains the core architectural and development guidelines for thi
 
 The API layer is built with tRPC and served by the `apps/web` application.
 
-1.  **tRPC Router (`apps/web/src/server/trpc/router.ts`)**: This is the main router where all API procedures are defined. For now, it contains a simple `hello` procedure.
-2.  **API Handler (`apps/web/src/routes/api/trpc/[...trpc].ts`)**: This SolidStart API route exposes the `appRouter` to the network, making it accessible to the client.
-3.  **Layering**: While the tRPC router itself is simple, it should call **Services** which contain business logic. These services then call **Repositories** for data access. This `Router → Service → Repository` pattern is the goal for all complex backend logic.
+1. **tRPC Router (`apps/web/src/server/trpc/router.ts`)**: This is the main router where all API procedures are defined. For now, it contains a simple `hello` procedure.
+2. **API Handler (`apps/web/src/routes/api/trpc/[...trpc].ts`)**: This SolidStart API route exposes the `appRouter` to the network, making it accessible to the client.
+3. **Layering**: While the tRPC router itself is simple, it should call **Services** which contain business logic. These services then call **Repositories** for data access. This `Router → Service → Repository` pattern is the goal for all complex backend logic.
 
 ### B. Dependency Injection (DI)
 

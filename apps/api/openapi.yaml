@@ -1,0 +1,1010 @@
+openapi: 3.0.3
+info:
+  title: Network Monitor API
+  version: 1.0.0
+  description: |
+    Headless API server for the Network Monitor application.
+    
+    **Multiple Protocol Support:**
+    - REST API (this documentation)
+    - GraphQL API (visit /graphql for playground)
+    - tRPC API (TypeScript clients - see apps/web)
+    
+    **Architecture:**
+    All endpoints share the same loosely coupled service layer with:
+    - Dependency Injection
+    - Event-Driven Communication
+    - Repository Pattern
+    - 12-Factor Compliance
+    
+  contact:
+    name: Network Monitor API Support
+    url: https://github.com/yourorg/network-monitor
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.networkmonitor.example.com
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health check and server status
+  - name: Targets
+    description: Monitoring target management
+  - name: Alert Rules
+    description: Alert rule configuration
+  - name: Incidents
+    description: Incident event management
+  - name: Notifications
+    description: In-app notifications
+  - name: Push Subscriptions
+    description: Web push notification subscriptions
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: User ID token (currently mock auth)
+
+  schemas:
+    Target:
+      type: object
+      properties:
+        id:
+          type: string
+          format: cuid
+          example: "clx123abc456def789"
+        name:
+          type: string
+          minLength: 1
+          example: "Google DNS"
+        address:
+          type: string
+          format: uri
+          example: "https://8.8.8.8"
+        ownerId:
+          type: string
+          example: "user-123"
+        speedTestResults:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpeedTestResult"
+        alertRules:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlertRule"
+      required:
+        - id
+        - name
+        - address
+        - ownerId
+
+    CreateTargetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: "Google DNS"
+        address:
+          type: string
+          format: uri
+          example: "https://8.8.8.8"
+      required:
+        - name
+        - address
+
+    UpdateTargetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        address:
+          type: string
+          format: uri
+      minProperties: 1
+
+    SpeedTestResult:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        ping:
+          type: number
+          format: float
+          nullable: true
+          example: 15.5
+          description: Ping latency in milliseconds
+        download:
+          type: number
+          format: float
+          nullable: true
+          example: 100.5
+          description: Download speed in Mbps
+        status:
+          type: string
+          enum: [SUCCESS, FAILURE]
+          example: "SUCCESS"
+        error:
+          type: string
+          nullable: true
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-10-01T12:00:00.000Z"
+        targetId:
+          type: string
+          example: "clx123abc456def789"
+      required:
+        - id
+        - status
+        - createdAt
+        - targetId
+
+    AlertRule:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "High Latency Alert"
+        targetId:
+          type: string
+          example: "clx123abc456def789"
+        metric:
+          type: string
+          enum: [ping, download]
+          example: "ping"
+        condition:
+          type: string
+          enum: [GREATER_THAN, LESS_THAN]
+          example: "GREATER_THAN"
+        threshold:
+          type: number
+          format: float
+          example: 100.0
+          description: Threshold value (ms for ping, Mbps for download)
+        enabled:
+          type: boolean
+          example: true
+      required:
+        - id
+        - name
+        - targetId
+        - metric
+        - condition
+        - threshold
+        - enabled
+
+    CreateAlertRuleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: "High Latency Alert"
+        targetId:
+          type: string
+          example: "clx123abc456def789"
+        metric:
+          type: string
+          enum: [ping, download]
+          example: "ping"
+        condition:
+          type: string
+          enum: [GREATER_THAN, LESS_THAN]
+          example: "GREATER_THAN"
+        threshold:
+          type: number
+          format: float
+          minimum: 0
+          example: 100.0
+        enabled:
+          type: boolean
+          default: true
+      required:
+        - name
+        - targetId
+        - metric
+        - condition
+        - threshold
+
+    UpdateAlertRuleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        metric:
+          type: string
+          enum: [ping, download]
+        condition:
+          type: string
+          enum: [GREATER_THAN, LESS_THAN]
+        threshold:
+          type: number
+          format: float
+          minimum: 0
+        enabled:
+          type: boolean
+      minProperties: 1
+
+    IncidentEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-10-01T12:00:00.000Z"
+        type:
+          type: string
+          enum: [OUTAGE, ALERT]
+          example: "ALERT"
+        description:
+          type: string
+          example: "Ping exceeded threshold (120ms > 100ms)"
+        resolved:
+          type: boolean
+          example: false
+        targetId:
+          type: string
+          example: "clx123abc456def789"
+        ruleId:
+          type: integer
+          nullable: true
+          example: 1
+      required:
+        - id
+        - timestamp
+        - type
+        - description
+        - resolved
+        - targetId
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        message:
+          type: string
+          example: "Target 'Google DNS' is experiencing high latency"
+        sentAt:
+          type: string
+          format: date-time
+          example: "2025-10-01T12:00:00.000Z"
+        read:
+          type: boolean
+          example: false
+        userId:
+          type: string
+          example: "user-123"
+      required:
+        - id
+        - message
+        - sentAt
+        - read
+        - userId
+
+    PushSubscription:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "clx123abc456def789"
+        endpoint:
+          type: string
+          format: uri
+          example: "https://fcm.googleapis.com/fcm/send/..."
+        p256dh:
+          type: string
+          example: "BN...base64...=="
+        auth:
+          type: string
+          example: "rT...base64...=="
+        userId:
+          type: string
+          example: "user-123"
+      required:
+        - id
+        - endpoint
+        - p256dh
+        - auth
+        - userId
+
+    CreatePushSubscriptionRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          format: uri
+        p256dh:
+          type: string
+        auth:
+          type: string
+      required:
+        - endpoint
+        - p256dh
+        - auth
+
+    MonitoringStatus:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        targetId:
+          type: string
+          example: "clx123abc456def789"
+        intervalMs:
+          type: integer
+          example: 30000
+        message:
+          type: string
+          example: "Monitoring started successfully"
+
+    ActiveTargets:
+      type: object
+      properties:
+        targetIds:
+          type: array
+          items:
+            type: string
+          example: ["clx123abc456def789", "clx987zyx654wvu321"]
+
+    HealthCheck:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, unhealthy]
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-10-01T12:00:00.000Z"
+        services:
+          type: object
+          properties:
+            monitor:
+              type: boolean
+              example: true
+            alerting:
+              type: boolean
+              example: true
+            notification:
+              type: boolean
+              example: true
+        database:
+          type: boolean
+          example: true
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Target not found"
+      required:
+        - error
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check server health and service availability
+      operationId: healthCheck
+      security: []
+      responses:
+        "200":
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+
+  /api/targets:
+    get:
+      tags:
+        - Targets
+      summary: List all targets
+      description: Get all monitoring targets for the current user
+      operationId: getTargets
+      responses:
+        "200":
+          description: List of targets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Target"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      tags:
+        - Targets
+      summary: Create a new target
+      description: Create a new monitoring target
+      operationId: createTarget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTargetRequest"
+      responses:
+        "201":
+          description: Target created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Target"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/targets/{id}:
+    get:
+      tags:
+        - Targets
+      summary: Get target by ID
+      description: Retrieve a specific monitoring target
+      operationId: getTarget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+          example: "clx123abc456def789"
+      responses:
+        "200":
+          description: Target found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Target"
+        "404":
+          description: Target not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      tags:
+        - Targets
+      summary: Update target
+      description: Update an existing monitoring target
+      operationId: updateTarget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTargetRequest"
+      responses:
+        "200":
+          description: Target updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Target"
+        "404":
+          description: Target not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      tags:
+        - Targets
+      summary: Delete target
+      description: Delete a monitoring target and all associated data
+      operationId: deleteTarget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      responses:
+        "204":
+          description: Target deleted successfully
+        "404":
+          description: Target not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/targets/{id}/start:
+    post:
+      tags:
+        - Targets
+      summary: Start monitoring
+      description: Start automated monitoring for a target
+      operationId: startMonitoring
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                intervalMs:
+                  type: integer
+                  minimum: 1000
+                  maximum: 300000
+                  example: 30000
+                  description: Monitoring interval in milliseconds
+              required:
+                - intervalMs
+      responses:
+        "200":
+          description: Monitoring started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonitoringStatus"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/targets/{id}/stop:
+    post:
+      tags:
+        - Targets
+      summary: Stop monitoring
+      description: Stop automated monitoring for a target
+      operationId: stopMonitoring
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      responses:
+        "200":
+          description: Monitoring stopped
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonitoringStatus"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/targets/{id}/test:
+    post:
+      tags:
+        - Targets
+      summary: Run speed test
+      description: Run a speed test immediately for a target
+      operationId: runSpeedTest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      responses:
+        "202":
+          description: Speed test initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Speed test initiated"
+        "404":
+          description: Target not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/targets/active:
+    get:
+      tags:
+        - Targets
+      summary: Get active targets
+      description: Get list of targets currently being monitored
+      operationId: getActiveTargets
+      responses:
+        "200":
+          description: List of active target IDs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActiveTargets"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/alert-rules/target/{targetId}:
+    get:
+      tags:
+        - Alert Rules
+      summary: Get alert rules for target
+      description: Get all alert rules configured for a specific target
+      operationId: getAlertRules
+      parameters:
+        - name: targetId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      responses:
+        "200":
+          description: List of alert rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AlertRule"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/alert-rules:
+    post:
+      tags:
+        - Alert Rules
+      summary: Create alert rule
+      description: Create a new alert rule for a target
+      operationId: createAlertRule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlertRuleRequest"
+      responses:
+        "201":
+          description: Alert rule created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertRule"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/alert-rules/{id}:
+    put:
+      tags:
+        - Alert Rules
+      summary: Update alert rule
+      description: Update an existing alert rule
+      operationId: updateAlertRule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Alert rule ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAlertRuleRequest"
+      responses:
+        "200":
+          description: Alert rule updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertRule"
+        "404":
+          description: Alert rule not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      tags:
+        - Alert Rules
+      summary: Delete alert rule
+      description: Delete an alert rule
+      operationId: deleteAlertRule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Alert rule ID
+      responses:
+        "204":
+          description: Alert rule deleted
+        "404":
+          description: Alert rule not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/incidents/target/{targetId}:
+    get:
+      tags:
+        - Incidents
+      summary: Get incidents for target
+      description: Get all incident events for a specific target
+      operationId: getIncidents
+      parameters:
+        - name: targetId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target ID
+      responses:
+        "200":
+          description: List of incidents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncidentEvent"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/incidents/{id}/resolve:
+    post:
+      tags:
+        - Incidents
+      summary: Resolve incident
+      description: Mark an incident as resolved
+      operationId: resolveIncident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Incident ID
+      responses:
+        "200":
+          description: Incident resolved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  id:
+                    type: integer
+                    example: 1
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/notifications/user/{userId}:
+    get:
+      tags:
+        - Notifications
+      summary: Get notifications
+      description: Get all notifications for a user
+      operationId: getNotifications
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/notifications/{id}/read:
+    post:
+      tags:
+        - Notifications
+      summary: Mark notification as read
+      description: Mark a notification as read
+      operationId: markNotificationAsRead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Notification ID
+      responses:
+        "200":
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  id:
+                    type: integer
+                    example: 1
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/push-subscriptions:
+    post:
+      tags:
+        - Push Subscriptions
+      summary: Create push subscription
+      description: Register a new web push notification subscription
+      operationId: createPushSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePushSubscriptionRequest"
+      responses:
+        "201":
+          description: Push subscription created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PushSubscription"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+

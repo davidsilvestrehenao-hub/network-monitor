@@ -18,6 +18,7 @@ This is the main **user-facing web application** for the Network Monitor. It pro
 ## Features
 
 ### Core Features
+
 - 📊 **Real-time Dashboard** - Live monitoring status and metrics
 - 🎯 **Target Management** - Add, edit, delete monitoring targets
 - 🚨 **Alert Rules** - Configure custom alert thresholds
@@ -26,6 +27,7 @@ This is the main **user-facing web application** for the Network Monitor. It pro
 - ⚙️ **Settings** - Configure monitoring and notification preferences
 
 ### PWA Features
+
 - 📱 **Installable** - Install as native app on any device
 - 🔄 **Offline Support** - View historical data when offline
 - 🎨 **Dark Mode** - Beautiful light/dark theme support
@@ -84,7 +86,8 @@ bun run type-check
 
 The web app serves a **tRPC API** that the frontend consumes. All API procedures are defined in `src/server/trpc/routers/`.
 
-### tRPC Routers:
+### tRPC Routers
+
 - `targets` - Target CRUD and monitoring operations
 - `speedTests` - Speed test execution and results
 - `alertRules` - Alert rule management
@@ -131,6 +134,7 @@ NODE_ENV=production
 ## Dependencies
 
 ### Production
+
 - `@solidjs/start` - SolidStart framework
 - `solid-js` - SolidJS reactive framework
 - `@trpc/client` - tRPC client
@@ -141,7 +145,7 @@ NODE_ENV=production
 - `zod` - Schema validation
 
 ### Workspace Dependencies
+
 - `@network-monitor/shared` - Shared interfaces and types
 - `@network-monitor/infrastructure` - Backend services and DI
 - `@network-monitor/database` - Database access layer
-

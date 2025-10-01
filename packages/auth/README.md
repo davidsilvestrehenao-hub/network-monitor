@@ -81,6 +81,7 @@ mockAuth.setMockSession(customSession);
 ## Dependencies
 
 Requires:
+
 - `IUserRepository` - User data access
 - `IEventBus` - Event-driven communication
 - `ILogger` - Logging
@@ -89,12 +90,14 @@ These are injected via the DI container.
 
 ## Event-Driven Architecture
 
-### Listens To:
+### Listens To
+
 - `USER_LOGIN_REQUESTED`
 - `USER_REGISTER_REQUESTED`
 - `USER_LOGOUT_REQUESTED`
 
-### Emits:
+### Emits
+
 - `USER_LOGGED_IN`
 - `USER_REGISTERED`
 - `USER_LOGGED_OUT`
@@ -153,4 +156,3 @@ bun run build
 # Watch mode for development
 bun run dev
 ```
-

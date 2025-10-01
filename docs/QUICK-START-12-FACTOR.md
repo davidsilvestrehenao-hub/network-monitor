@@ -111,7 +111,7 @@ kill -TERM <PID>
 1. **Remove File-Based Logging** (Factor XI)
    - Search for any file-based logging in your codebase
    - Ensure all logs go to stdout/stderr only
-   
+
    ```bash
    # Find file-based logging
    grep -r "writeFileSync.*log" .
@@ -292,6 +292,7 @@ bun run start
 **Congratulations! Your application is now 12-factor compliant!** 🎉
 
 The application can now:
+
 - ✅ Deploy to any cloud platform
 - ✅ Scale horizontally
 - ✅ Handle graceful shutdowns
@@ -300,4 +301,3 @@ The application can now:
 - ✅ Configure entirely through environment variables
 
 **Next steps:** Deploy to production and enjoy the benefits of a cloud-native, scalable application! 🚀
-

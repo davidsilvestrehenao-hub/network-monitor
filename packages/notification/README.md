@@ -53,6 +53,7 @@ sendTestNotification(userId: string): Promise<void>
 ## Dependencies
 
 This service requires:
+
 - `INotificationRepository` - Notification data access
 - `IPushSubscriptionRepository` - Push subscription data access
 - `IEventBus` - Event-driven communication
@@ -62,13 +63,15 @@ These are injected via the DI container.
 
 ## Event-Driven Architecture
 
-### Listens To:
+### Listens To
+
 - `NOTIFICATION_SEND_REQUESTED` - Send a notification
 - `PUSH_SUBSCRIPTION_CREATE_REQUESTED` - Register push subscription
 - `ALERT_TRIGGERED` - Alert threshold breached (sends notification)
 - `INCIDENT_CREATED` - Incident created (sends notification)
 
-### Emits:
+### Emits
+
 - `NOTIFICATION_SENT` - Notification sent successfully
 - `NOTIFICATION_CREATED` - In-app notification created
 - `NOTIFICATION_READ` - Notification marked as read
@@ -190,4 +193,3 @@ bun run dev
 4. Implement notification expiry
 5. Add user preferences for notification types
 6. Consider notification batching for performance
-

@@ -1,6 +1,5 @@
 import winston from "winston";
-import { existsSync, mkdirSync } from "fs";
-import { join } from "path";
+// Note: File system and path imports removed to comply with 12-Factor logging (no file transports)
 import type { ILogger, LogContext } from "@network-monitor/shared";
 import { LogLevel } from "@network-monitor/shared";
 
@@ -30,37 +29,13 @@ export class WinstonLoggerService implements ILogger {
 
     const transports: winston.transport[] = [
       new winston.transports.Console({
-        format: winston.format.combine(winston.format.colorize(), logFormat),
+        // Stream all logs to stdout/stderr with JSON formatting
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.json()
+        ),
       }),
     ];
-
-    // Add file transports in production
-    if (process.env.NODE_ENV === "production") {
-      // Ensure logs directory exists
-      const logsDir = join(process.cwd(), "logs");
-
-      if (!existsSync(logsDir)) {
-        mkdirSync(logsDir, { recursive: true });
-      }
-
-      transports.push(
-        new winston.transports.File({
-          filename: join(logsDir, "error.log"),
-          level: "error",
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-          ),
-        }),
-        new winston.transports.File({
-          filename: join(logsDir, "combined.log"),
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-          ),
-        })
-      );
-    }
 
     return winston.createLogger({
       level: this.getWinstonLevel(this.level),

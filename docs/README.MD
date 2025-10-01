@@ -7,18 +7,22 @@ Welcome to the Network Monitor documentation! This directory contains all docume
 ## 🚀 **Quick Links**
 
 ### **For New Developers**
+
 1. **[Quick Start Guide](QUICK-START.md)** - Get up and running in 5 minutes
 2. **[Architecture Overview](ARCHITECTURE.md)** - Understand the system design
 3. **[Business Requirements](REQUIREMENTS.md)** - What the app does
 
 ### **For API Users**
+
 - **[API Documentation](API.md)** - Complete API reference
 
 ### **For DevOps/Deployment**
+
 - **[Deployment Guide](DEPLOYMENT.md)** - Production deployment strategies
 - **[Scaling to Microservices](SCALING-TO-MICROSERVICES.md)** - Kubernetes deployment
 
 ### **For Configuration**
+
 - **[Configuration Guide](CONFIGURATION.md)** - Service configuration management
 - **[Logging Implementation](LOGGING-IMPLEMENTATION.md)** - Logging system details
 - **[PM2 Setup](PM2-SETUP.md)** - Process manager for production
@@ -101,29 +105,34 @@ packages/                       # Reusable packages
 ## 🎯 **Documentation by Role**
 
 ### **Frontend Developer**
+
 1. Read **[Quick Start](QUICK-START.md)** to setup dev environment
 2. Review **[API Documentation](API.md)** for tRPC endpoints
 3. Understand **[Architecture](ARCHITECTURE.md)** (Frontend Architecture section)
 4. Reference **[Requirements](REQUIREMENTS.md)** for features
 
 ### **Backend Developer**
+
 1. Read **[Quick Start](QUICK-START.md)** to setup dev environment
 2. Understand **[Architecture](ARCHITECTURE.md)** (Event-Driven section)
 3. Review **[Configuration](CONFIGURATION.md)** for service setup
 4. Check **[Repository Pattern](ARCHITECTURE.md#repository-pattern)** for data access
 
 ### **DevOps/SRE**
+
 1. Review **[Deployment Guide](DEPLOYMENT.md)** for deployment options
 2. Read **[Scaling to Microservices](SCALING-TO-MICROSERVICES.md)** for Kubernetes
 3. Check **[PM2 Setup](PM2-SETUP.md)** for process management
 4. Review **[Logging](LOGGING-IMPLEMENTATION.md)** for monitoring
 
 ### **Product Manager**
+
 1. Read **[Requirements](REQUIREMENTS.md)** for features and acceptance criteria
 2. Review **[Architecture](ARCHITECTURE.md#core-architectural-principles)** for technical overview
 3. Check **[API Documentation](API.md)** for integration capabilities
 
 ### **Architect**
+
 1. Deep dive into **[Architecture](ARCHITECTURE.md)** for complete system design
 2. Review **[Scaling to Microservices](SCALING-TO-MICROSERVICES.md)** for scaling strategy
 3. Check **[Event-Driven Architecture](ARCHITECTURE.md#event-driven-communication)** for communication patterns
@@ -171,6 +180,7 @@ packages/                       # Reusable packages
 - ✅ **Added** REQUIREMENTS with business details
 
 ### **Recent Changes**
+
 - Migrated to Turborepo monorepo structure
 - Implemented event-driven architecture
 - Added microservices deployment support

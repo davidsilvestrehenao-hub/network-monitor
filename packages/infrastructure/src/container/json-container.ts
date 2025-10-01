@@ -19,6 +19,8 @@ import type {
   IAlertingService,
   INotificationService,
   IAuthService,
+  IUserSpeedTestPreferenceRepository,
+  ISpeedTestConfigService,
 } from "@network-monitor/shared";
 
 let containerInitialized = false;
@@ -112,6 +114,7 @@ export async function getJsonAppContext() {
   const container = getContainer();
 
   return {
+    userId: null,
     services: {
       logger: container.has(TYPES.ILogger)
         ? container.get<ILogger>(TYPES.ILogger)
@@ -133,6 +136,11 @@ export async function getJsonAppContext() {
         : null,
       auth: container.has(TYPES.IAuthService)
         ? container.get<IAuthService>(TYPES.IAuthService)
+        : null,
+      speedTestConfigService: container.has(TYPES.ISpeedTestConfigService)
+        ? (container.get(
+            TYPES.ISpeedTestConfigService
+          ) as ISpeedTestConfigService)
         : null,
     },
     repositories: {
@@ -171,6 +179,13 @@ export async function getJsonAppContext() {
         : null,
       speedTest: container.has(TYPES.ISpeedTestRepository)
         ? container.get<ISpeedTestRepository>(TYPES.ISpeedTestRepository)
+        : null,
+      userSpeedTestPreference: container.has(
+        TYPES.IUserSpeedTestPreferenceRepository
+      )
+        ? (container.get(
+            TYPES.IUserSpeedTestPreferenceRepository
+          ) as IUserSpeedTestPreferenceRepository)
         : null,
     },
   };

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { t, getUserId } from "./trpc";
+import { t } from "./trpc";
 import {
   targetsRouter,
   speedTestsRouter,
@@ -31,12 +31,42 @@ export const appRouter = t.router({
   notifications: notificationsRouter,
   pushSubscriptions: pushSubscriptionsRouter,
   users: usersRouter,
+  speedTestConfig: t.router({
+    listUrls: t.procedure.query(({ ctx }) => {
+      // Read from DI-configured SpeedTestConfigService
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const servicesAny: any = ctx.services;
+      const configService = servicesAny?.speedTestConfigService;
+      return configService?.getAllUrls?.() ?? [];
+    }),
+    getPreference: t.procedure.query(async ({ ctx }) => {
+      const userId = ctx.userId || "clerk-user-id-placeholder";
+      return (
+        (await ctx.repositories.userSpeedTestPreference?.getByUserId(userId)) ||
+        null
+      );
+    }),
+    setPreference: t.procedure
+      .input(
+        z.object({
+          speedTestUrlId: z.string().min(1),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const userId = ctx.userId || "clerk-user-id-placeholder";
+        // Optionally validate against known URLs here (when config service is available)
+        return await ctx.repositories.userSpeedTestPreference?.upsert(
+          userId,
+          input.speedTestUrlId
+        );
+      }),
+  }),
 
   // =================================================================
   // LEGACY COMPATIBILITY (deprecated, use nested routers above)
   // =================================================================
   getAllTargets: t.procedure.query(({ ctx }) => {
-    const userId = getUserId();
+    const userId = ctx.userId || "clerk-user-id-placeholder";
     return ctx.services.monitor?.getTargets(userId);
   }),
 
@@ -48,7 +78,7 @@ export const appRouter = t.router({
       })
     )
     .mutation(({ ctx, input }) => {
-      const ownerId = getUserId();
+      const ownerId = ctx.userId || "clerk-user-id-placeholder";
       return ctx.services.monitor?.createTarget({ ...input, ownerId });
     }),
 });

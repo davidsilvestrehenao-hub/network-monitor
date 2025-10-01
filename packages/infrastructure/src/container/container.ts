@@ -17,6 +17,8 @@ import type {
   IAlertingService,
   INotificationService,
   IAuthService,
+  IUserSpeedTestPreferenceRepository,
+  ISpeedTestConfigService,
 } from "@network-monitor/shared";
 import { getJsonAppContext, initializeJsonContainer } from "./json-container";
 import { getBrowserAppContext } from "./container.browser";
@@ -70,6 +72,7 @@ export async function initializeContainer(): Promise<void> {
 }
 
 export type AppContext = {
+  userId: string | null;
   services: {
     logger: ILogger | null;
     eventBus: IEventBus | null;
@@ -78,6 +81,7 @@ export type AppContext = {
     alerting: IAlertingService | null;
     notification: INotificationService | null;
     auth: IAuthService | null;
+    speedTestConfigService: ISpeedTestConfigService | null;
   };
   repositories: {
     user: IUserRepository | null;
@@ -89,6 +93,7 @@ export type AppContext = {
     notification: INotificationRepository | null;
     target: ITargetRepository | null;
     speedTest: ISpeedTestRepository | null;
+    userSpeedTestPreference: IUserSpeedTestPreferenceRepository | null;
   };
 };
 
@@ -123,6 +128,7 @@ export async function getAppContext(): Promise<AppContext> {
   const container = getContainer();
 
   return {
+    userId: null,
     services: {
       logger: container.get<ILogger>(TYPES.ILogger),
       eventBus: container.get<IEventBus>(TYPES.IEventBus),
@@ -133,6 +139,9 @@ export async function getAppContext(): Promise<AppContext> {
         TYPES.INotificationService
       ),
       auth: container.get<IAuthService>(TYPES.IAuthService),
+      speedTestConfigService: container.has(TYPES.ISpeedTestConfigService)
+        ? container.get<ISpeedTestConfigService>(TYPES.ISpeedTestConfigService)
+        : null,
     },
     repositories: {
       user: container.get<IUserRepository>(TYPES.IUserRepository),
@@ -159,6 +168,10 @@ export async function getAppContext(): Promise<AppContext> {
       speedTest: container.get<ISpeedTestRepository>(
         TYPES.ISpeedTestRepository
       ),
+      userSpeedTestPreference:
+        container.get<IUserSpeedTestPreferenceRepository>(
+          TYPES.IUserSpeedTestPreferenceRepository
+        ),
     },
   };
 }

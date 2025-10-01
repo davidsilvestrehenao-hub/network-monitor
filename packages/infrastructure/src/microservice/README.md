@@ -184,6 +184,7 @@ interface MicroserviceContext {
 Get a required service from context, throwing if not available.
 
 **Parameters:**
+
 - `context: MicroserviceContext` - The microservice context
 - `serviceName: string` - The service name (e.g., "monitor", "alerting")
 
@@ -202,6 +203,7 @@ const monitorService = getRequiredService<IMonitorService>(context, "monitor");
 Get a required repository from context, throwing if not available.
 
 **Parameters:**
+
 - `context: MicroserviceContext` - The microservice context
 - `repositoryName: string` - The repository name
 
@@ -220,6 +222,7 @@ const targetRepo = getRequiredRepository<ITargetRepository>(context, "target");
 Create a simple health check endpoint.
 
 **Parameters:**
+
 - `context: MicroserviceContext` - The microservice context
 - `port: number` - Port number for health checks
 
@@ -234,12 +237,14 @@ createHealthCheckEndpoint(context, 3001);
 ### Automatic Graceful Shutdown
 
 The bootstrap utility automatically handles:
+
 - `SIGINT` (Ctrl+C)
 - `SIGTERM` (Docker stop)
 - `uncaughtException`
 - `unhandledRejection`
 
 It will:
+
 1. Log the shutdown signal
 2. Call your custom `onShutdown` callback
 3. Disconnect the database if enabled
@@ -248,6 +253,7 @@ It will:
 ### Error Handling
 
 All errors are logged with context:
+
 ```typescript
 context.logger.error("Operation failed", {
   error,
@@ -258,6 +264,7 @@ context.logger.error("Operation failed", {
 ### Database Connection Management
 
 When `enableDatabase: true`:
+
 - Automatically connects during initialization
 - Automatically disconnects during shutdown
 - Provides `context.database` for manual operations
@@ -269,12 +276,14 @@ When `enableDatabase: true`:
 The project includes pre-configured JSON files:
 
 **Microservices:**
+
 - `configs/monitor-service.json` - Monitor Service
 - `configs/alerting-service.json` - Alerting Service  
 - `configs/notification-service.json` - Notification Service
 - `configs/api-monolith.json` - Monolith (all services)
 
 **Testing:**
+
 - `configs/all-mock.json` - All mocked services
 - `configs/database-testing.json` - Real database, mocked services
 - `configs/offline-development.json` - Minimal dependencies
@@ -388,6 +397,7 @@ Error: Required service 'myService' is not available
 ```
 
 **Solution:** Check your JSON configuration includes the service:
+
 ```json
 {
   "services": {
@@ -407,6 +417,7 @@ Configuration file not found: configs/my-service.json
 ```
 
 **Solution:** Ensure the config file exists and the path is correct:
+
 ```bash
 ls -la configs/my-service.json
 ```
@@ -418,6 +429,7 @@ Failed to connect to database
 ```
 
 **Solution:** Check your `DATABASE_URL` environment variable:
+
 ```bash
 export DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 ```
@@ -436,4 +448,3 @@ When adding new microservices:
 2. Use `bootstrapMicroservice()` in your entry point
 3. Document any special requirements
 4. Add to this README if patterns are reusable
-

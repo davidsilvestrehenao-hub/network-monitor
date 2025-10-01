@@ -1,7 +1,11 @@
 import { getContainer } from "./flexible-container";
 import type { ServiceConfig } from "./types";
 import { TYPES } from "./types";
-import type { ILogger, IEventBus } from "@network-monitor/shared";
+import type {
+  ILogger,
+  IEventBus,
+  ISpeedTestConfigService,
+} from "@network-monitor/shared";
 import { browserServiceConfig } from "./service-config.browser";
 
 let containerInitialized = false;
@@ -36,6 +40,7 @@ export async function getBrowserAppContext() {
   const container = getContainer();
 
   return {
+    userId: null,
     services: {
       logger: container.get<ILogger>(TYPES.ILogger),
       eventBus: container.get<IEventBus>(TYPES.IEventBus),
@@ -44,6 +49,11 @@ export async function getBrowserAppContext() {
       alerting: null,
       notification: null,
       auth: null,
+      speedTestConfigService: container.has(TYPES.ISpeedTestConfigService)
+        ? (container.get(
+            TYPES.ISpeedTestConfigService
+          ) as ISpeedTestConfigService)
+        : null,
     },
     repositories: {
       user: null,
@@ -55,6 +65,7 @@ export async function getBrowserAppContext() {
       notification: null,
       target: null,
       speedTest: null,
+      userSpeedTestPreference: null,
     },
   };
 }

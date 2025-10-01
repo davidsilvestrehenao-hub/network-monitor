@@ -6,6 +6,7 @@ export interface CreateSpeedTestData {
   download?: number;
   status: "SUCCESS" | "FAILURE";
   error?: string;
+  downloadUrl?: string;
 }
 
 export interface SpeedTestQuery {

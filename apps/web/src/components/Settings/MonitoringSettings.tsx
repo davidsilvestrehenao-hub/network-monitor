@@ -1,9 +1,17 @@
-import { type Component, createSignal, createEffect, For } from "solid-js";
+import {
+  type Component,
+  createSignal,
+  createEffect,
+  For,
+  onMount,
+} from "solid-js";
+import { trpc } from "~/lib/trpc";
 
 export interface MonitoringSettingsData {
   monitoringInterval: number;
   dataRetentionDays: number;
   autoCleanup: boolean;
+  speedTestUrlId?: string;
 }
 
 interface MonitoringSettingsProps {
@@ -15,20 +23,58 @@ export const MonitoringSettings: Component<MonitoringSettingsProps> = props => {
   const [monitoringInterval, setMonitoringInterval] = createSignal(30);
   const [dataRetentionDays, setDataRetentionDays] = createSignal(30);
   const [autoCleanup, setAutoCleanup] = createSignal(false);
+  const [speedTestUrlId, setSpeedTestUrlId] = createSignal<string | undefined>(
+    undefined
+  );
+  const [availableUrls, setAvailableUrls] = createSignal<
+    Array<{ id: string; name: string }>
+  >([]);
+
+  onMount(async () => {
+    try {
+      // Load available URLs
+      const urls = (await trpc.speedTestConfig.listUrls.query()) as Array<{
+        id: string;
+        name: string;
+      }>;
+      setAvailableUrls(urls || []);
+
+      // Load existing preference
+      const pref = (await trpc.speedTestConfig.getPreference.query()) as {
+        speedTestUrlId: string;
+      } | null;
+      if (pref?.speedTestUrlId) {
+        setSpeedTestUrlId(pref.speedTestUrlId);
+      }
+    } catch {
+      // best-effort
+    }
+  });
 
   // Initialize from props
   createEffect(() => {
     setMonitoringInterval(props.settings.monitoringInterval);
     setDataRetentionDays(props.settings.dataRetentionDays);
     setAutoCleanup(props.settings.autoCleanup);
+    setSpeedTestUrlId(props.settings.speedTestUrlId);
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     props.onChange({
       monitoringInterval: monitoringInterval(),
       dataRetentionDays: dataRetentionDays(),
       autoCleanup: autoCleanup(),
+      speedTestUrlId: speedTestUrlId(),
     });
+    // Best-effort save to server
+    const id = speedTestUrlId();
+    try {
+      if (id) {
+        await trpc.speedTestConfig.setPreference.mutate({ speedTestUrlId: id });
+      }
+    } catch {
+      // ignore if backend not ready
+    }
   };
 
   const intervalOptions = [
@@ -56,7 +102,29 @@ export const MonitoringSettings: Component<MonitoringSettingsProps> = props => {
           </For>
         </select>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          How often to run speed tests for each target
+          How often to run speed tests for each target. By default, the download
+          test uses a 10MB file in non‑prod and 100MB in prod. Admins can set
+          SPEED_TEST_URL via environment.
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Download Test URL (Optional)
+        </label>
+        <select
+          value={speedTestUrlId()}
+          onChange={e => setSpeedTestUrlId(e.currentTarget.value)}
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+        >
+          <option value="">System default</option>
+          <For each={availableUrls()}>
+            {u => <option value={u.id}>{u.name}</option>}
+          </For>
+        </select>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          Choose one of the available speed test URLs. If not selected, the
+          system default applies.
         </p>
       </div>
 

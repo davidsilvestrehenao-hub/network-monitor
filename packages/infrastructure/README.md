@@ -67,6 +67,7 @@ const monitorService = context.services.monitor;
 ```
 
 **Features:**
+
 - ✅ JSON-based configuration
 - ✅ Automatic dependency resolution
 - ✅ Dynamic service loading
@@ -142,6 +143,7 @@ const context = await bootstrapMicroservice({
 ```
 
 **Features:**
+
 - ✅ Automatic DI container initialization
 - ✅ Graceful shutdown handling (SIGTERM, SIGINT)
 - ✅ Database connection management
@@ -154,12 +156,14 @@ const context = await bootstrapMicroservice({
 Complete mock implementations for all services and repositories:
 
 **Services:**
+
 - `MockMonitor` - Mock monitoring service
 - `MockAlerting` - Mock alerting service
 - `MockNotification` - Mock notification service
 - `MockSpeedTestService` - Mock speed testing
 
 **Repositories:**
+
 - `MockMonitoringTargetRepository`
 - `MockSpeedTestResultRepository`
 - `MockAlertRuleRepository`
@@ -169,11 +173,13 @@ Complete mock implementations for all services and repositories:
 - `MockUserRepository`
 
 **Infrastructure:**
+
 - `MockLogger` - Mock logger with log capture
 - `MockEventBus` - Mock event bus with event history
 - `MockDatabase` - Mock database service
 
 All mocks include:
+
 - ✅ Pre-seeded test data
 - ✅ Full interface compliance
 - ✅ Helper methods for testing
@@ -207,6 +213,7 @@ src/
 ## Configuration Examples
 
 ### Production Config
+
 ```json
 {
   "services": {
@@ -225,6 +232,7 @@ src/
 ```
 
 ### Development Config
+
 ```json
 {
   "services": {
@@ -270,4 +278,3 @@ bun run dev
 - [Microservice Bootstrap Guide](./src/microservice/README.md)
 - [Configuration Guide](../../configs/README.md)
 - [Architecture Documentation](../../docs/ARCHITECTURE.md)
-

@@ -11,5 +11,6 @@ export * from "./repositories/SpeedTestRepository";
 export * from "./repositories/SpeedTestResultRepository";
 export * from "./repositories/TargetRepository";
 export * from "./repositories/UserRepository";
+export * from "./repositories/UserSpeedTestPreferenceRepository";
 
 // Note: Mock repositories are now in @network-monitor/infrastructure package

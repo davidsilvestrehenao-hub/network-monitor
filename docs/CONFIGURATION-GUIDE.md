@@ -195,6 +195,14 @@ The web app doesn't use this system because it initializes the container from `s
 
 ## Recommended Patterns
 
+## Monitoring Settings
+
+- `SPEED_TEST_INTERVAL` controls how often tests run.
+- `SPEED_TEST_URL` can optionally override the download speed test URL.
+  - Default behavior: 10MB file in non-production, 100MB file in production.
+  - Use this to point at an internal mirror or a smaller payload in constrained environments.
+- UI note: The Settings screen shows a note about these defaults. An admin-only field can expose `SPEED_TEST_URL` as a read-only reminder or editable override if desired.
+
 ### For Development
 
 ```bash

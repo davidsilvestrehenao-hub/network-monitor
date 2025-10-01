@@ -44,6 +44,7 @@ export const appRouter = t.router({
 Each domain router is self-contained and focused on a single resource:
 
 **`routers/targets.ts`** - Monitoring Target Operations
+
 - `getAll` - Get all targets for user
 - `getById` - Get specific target
 - `create` - Create new target
@@ -54,11 +55,13 @@ Each domain router is self-contained and focused on a single resource:
 - `getActiveTargets` - Get list of active monitors
 
 **`routers/speedTests.ts`** - Speed Test Operations
+
 - `getByTargetId` - Get results for target
 - `getLatest` - Get latest result
 - `runTest` - Run test immediately
 
 **`routers/alertRules.ts`** - Alert Rule Management
+
 - `getByTargetId` - Get rules for target
 - `getById` - Get specific rule
 - `create` - Create new rule
@@ -67,6 +70,7 @@ Each domain router is self-contained and focused on a single resource:
 - `toggleEnabled` - Enable/disable rule
 
 **`routers/incidents.ts`** - Incident Event Management
+
 - `getByTargetId` - Get incidents for target
 - `getUnresolved` - Get all unresolved
 - `getUnresolvedByTargetId` - Get unresolved for target
@@ -74,6 +78,7 @@ Each domain router is self-contained and focused on a single resource:
 - `resolveByTargetId` - Resolve all for target
 
 **`routers/notifications.ts`** - Notification Operations
+
 - `getByUserId` - Get user notifications
 - `getUnread` - Get unread notifications
 - `markAsRead` - Mark as read
@@ -81,12 +86,14 @@ Each domain router is self-contained and focused on a single resource:
 - `delete` - Delete notification
 
 **`routers/pushSubscriptions.ts`** - Push Subscription Management
+
 - `getByUserId` - Get subscriptions
 - `create` - Register subscription
 - `delete` - Delete by ID
 - `deleteByEndpoint` - Delete by endpoint
 
 **`routers/users.ts`** - User Profile Operations
+
 - `getCurrent` - Get current user
 - `getById` - Get user by ID
 - `update` - Update profile
@@ -114,6 +121,7 @@ export const myRouter = t.router({
 To add a new domain router:
 
 1. **Create the router file** in `routers/`:
+
    ```typescript
    // routers/myDomain.ts
    import { z } from "zod";
@@ -128,11 +136,13 @@ To add a new domain router:
    ```
 
 2. **Export from `routers/index.ts`**:
+
    ```typescript
    export { myDomainRouter } from "./myDomain";
    ```
 
 3. **Add to main router**:
+
    ```typescript
    import { myDomainRouter } from "./routers";
 
@@ -145,10 +155,13 @@ To add a new domain router:
 ## Best Practices
 
 ### 1. Keep Routers Focused
+
 Each router should handle operations for a single domain/resource.
 
 ### 2. Use Zod for Validation
+
 Always validate inputs with Zod schemas:
+
 ```typescript
 .input(z.object({
   name: z.string().min(1),
@@ -157,7 +170,9 @@ Always validate inputs with Zod schemas:
 ```
 
 ### 3. Proper Error Handling
+
 Use TRPCError for structured errors:
+
 ```typescript
 import { TRPCError } from "@trpc/server";
 
@@ -170,11 +185,14 @@ if (!resource) {
 ```
 
 ### 4. Follow Naming Conventions
+
 - **Queries**: `getAll`, `getById`, `getByUserId`, etc.
 - **Mutations**: `create`, `update`, `delete`, `toggle...`, etc.
 
 ### 5. Document Complex Logic
+
 Add comments for non-obvious business logic:
+
 ```typescript
 // Monitoring intervals must be between 1 second and 5 minutes
 intervalMs: z.number().min(1000).max(300000)
@@ -225,4 +243,3 @@ When refactoring routes:
 - [tRPC API Reference](../../TRPC-API-REFERENCE.md) - Complete API documentation
 - [tRPC Architecture](../../TRPC-ARCHITECTURE.md) - Architecture patterns
 - [Official tRPC Docs](https://trpc.io/docs) - tRPC documentation
-

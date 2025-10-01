@@ -42,6 +42,7 @@ const handler = (event: APIEvent) =>
 ```
 
 **Key Points:**
+
 - Container is initialized from `service-config.json`
 - `AppContext` provides all services and repositories
 - Services are injected via DI, not manually instantiated
@@ -74,6 +75,7 @@ export const appRouter = t.router({
 ```
 
 **Key Points:**
+
 - Router calls services from `ctx.services`
 - Services are resolved from the DI container
 - Input validation with Zod
@@ -109,6 +111,7 @@ export class MonitorService implements IMonitorService {
 ```
 
 **Key Points:**
+
 - All dependencies injected via constructor
 - Uses EventBus for inter-service communication
 - Calls repositories for data access
@@ -150,6 +153,7 @@ export class TargetRepository implements ITargetRepository {
 ```
 
 **Key Points:**
+
 - Only layer that touches Prisma
 - Maps Prisma models to domain types
 - Returns domain types, never raw Prisma models
@@ -194,6 +198,7 @@ private async handleTargetCreateRequested(data?: {
 ```
 
 **Key Points:**
+
 - Services never call each other directly
 - All inter-service communication via EventBus
 - Supports both request-response (with `requestId`) and pub-sub patterns
@@ -230,6 +235,7 @@ export default function TargetsPage() {
 ```
 
 **Key Points:**
+
 - Type-safe calls with full IntelliSense
 - Automatic type inference from backend
 - No manual type definitions needed
@@ -261,6 +267,7 @@ Services are configured in `service-config.json`:
 ```
 
 **Key Points:**
+
 - JSON configuration for service implementations
 - Automatic dependency resolution
 - Can swap implementations without code changes
@@ -303,4 +310,3 @@ const caller = appRouter.createCaller({
 - [ ] Add mutation optimistic updates
 - [ ] Create mock implementations for offline development
 - [ ] Add E2E tests for complete flows
-

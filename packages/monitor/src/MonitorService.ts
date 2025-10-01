@@ -284,7 +284,10 @@ export class MonitorService implements IMonitorService {
 
     try {
       const pingResult = await this.measurePing(config.target);
-      const downloadResult = await this.measureDownloadSpeed();
+      const downloadUrlUsed = await this.resolveDownloadTestUrl(
+        config.targetId
+      );
+      const downloadResult = await this.measureDownloadSpeed(downloadUrlUsed);
 
       const result: SpeedTestResult = {
         id: crypto.randomUUID(),
@@ -424,9 +427,7 @@ export class MonitorService implements IMonitorService {
     }
   }
 
-  private async measureDownloadSpeed(): Promise<number> {
-    const testUrl = "http://cachefly.cachefly.net/100mb.test";
-
+  private async measureDownloadSpeed(testUrl: string): Promise<number> {
     const start = Date.now();
 
     try {
@@ -435,8 +436,20 @@ export class MonitorService implements IMonitorService {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      const buffer = await response.arrayBuffer();
-      const sizeInBytes = buffer.byteLength;
+      const reader = response.body?.getReader();
+      let sizeInBytes = 0;
+      if (reader) {
+        // Stream and count bytes to avoid holding large buffers in memory
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          sizeInBytes += value?.byteLength || 0;
+        }
+      } else {
+        const buffer = await response.arrayBuffer();
+        sizeInBytes = buffer.byteLength;
+      }
       const durationInSeconds = (Date.now() - start) / 1000;
 
       const speedMbps = (sizeInBytes * 8) / durationInSeconds / 1_000_000;
@@ -455,5 +468,45 @@ export class MonitorService implements IMonitorService {
       });
       throw error;
     }
+  }
+
+  private async resolveDownloadTestUrl(targetId: string): Promise<string> {
+    // 1) explicit env override
+    if (process.env.SPEED_TEST_URL && process.env.SPEED_TEST_URL.length > 0) {
+      return process.env.SPEED_TEST_URL;
+    }
+
+    // 2) user preference (if available via DI repository)
+    try {
+      // We infer owner by reading the target
+      const target = await this.targetRepository.findById(targetId);
+      const ownerId = target?.ownerId;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const anyThis: any = this as unknown;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userPrefRepo: any = anyThis.userSpeedTestPreferenceRepository;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const speedTestConfigService: any = anyThis.speedTestConfigService;
+      if (ownerId && userPrefRepo && speedTestConfigService) {
+        const pref = await userPrefRepo.getByUserId(ownerId);
+        if (pref) {
+          const urls = speedTestConfigService.getAllUrls?.() || [];
+          const match = urls.find(
+            (u: { id: string }) => u.id === pref.speedTestUrlId
+          );
+          if (match?.url) {
+            return match.url;
+          }
+        }
+      }
+    } catch {
+      // fall through to defaults
+    }
+
+    // 3) defaults by environment
+    const isProd = process.env.NODE_ENV === "production";
+    return isProd
+      ? "https://speed.hetzner.de/100MB.bin"
+      : "https://speed.hetzner.de/10MB.bin";
   }
 }

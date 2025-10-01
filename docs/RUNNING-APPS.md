@@ -274,6 +274,7 @@ When multiple methods are used:
 3. **Hardcoded default** (`"development"`) - fallback
 
 Example:
+
 ```bash
 # CONFIG_PATH takes precedence over NODE_ENV
 NODE_ENV=production CONFIG_PATH=configs/shared/all-mock.json \
@@ -287,4 +288,3 @@ NODE_ENV=production CONFIG_PATH=configs/shared/all-mock.json \
 - [Microservice Bootstrap Guide](./docs/MICROSERVICE-BOOTSTRAP.md) - Microservice utilities
 - [App-Specific READMEs](./apps/) - See each app's README for details
 - [Config Library](./configs/README.md) - All available configurations
-

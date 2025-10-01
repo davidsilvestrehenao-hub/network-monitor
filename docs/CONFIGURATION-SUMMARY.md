@@ -48,6 +48,7 @@ configs/
 Three ways to control which config is used:
 
 **Method 1: Package Scripts** (easiest)
+
 ```bash
 cd apps/monitor-service
 bun run dev              # development.json
@@ -57,11 +58,13 @@ bun run start            # production.json
 ```
 
 **Method 2: NODE_ENV** (standard)
+
 ```bash
 NODE_ENV=production bun run apps/monitor-service/dist/main.js
 ```
 
 **Method 3: CONFIG_PATH** (full control)
+
 ```bash
 CONFIG_PATH=configs/shared/all-mock.json bun run apps/api/src/main.ts
 ```
@@ -71,6 +74,7 @@ CONFIG_PATH=configs/shared/all-mock.json bun run apps/api/src/main.ts
 Created **16 README files** covering all apps and packages:
 
 **Apps (5 files):**
+
 - ✅ apps/monitor-service/README.md
 - ✅ apps/alerting-service/README.md
 - ✅ apps/notification-service/README.md
@@ -78,6 +82,7 @@ Created **16 README files** covering all apps and packages:
 - ✅ apps/web/README.md
 
 **Packages (8 files):**
+
 - ✅ packages/alerting/README.md
 - ✅ packages/auth/README.md
 - ✅ packages/database/README.md
@@ -88,6 +93,7 @@ Created **16 README files** covering all apps and packages:
 - ✅ packages/speed-test/README.md
 
 **Guides (3 files):**
+
 - ✅ CONFIG-QUICK-START.md - Quick reference
 - ✅ RUNNING-APPS.md - All running options
 - ✅ docs/CONFIGURATION-GUIDE.md - Complete guide
@@ -134,6 +140,7 @@ Created **16 README files** covering all apps and packages:
 ## 🎯 Common Use Cases
 
 ### Development (Default)
+
 ```bash
 bun run apps/api/src/main.ts
 # Uses: configs/apps/api/development.json
@@ -141,6 +148,7 @@ bun run apps/api/src/main.ts
 ```
 
 ### Offline Development
+
 ```bash
 cd apps/api
 bun run dev:offline
@@ -149,6 +157,7 @@ bun run dev:offline
 ```
 
 ### Testing in Complete Isolation
+
 ```bash
 cd apps/api
 bun run dev:mock
@@ -157,6 +166,7 @@ bun run dev:mock
 ```
 
 ### Production
+
 ```bash
 cd apps/monitor-service
 bun run start
@@ -165,6 +175,7 @@ bun run start
 ```
 
 ### Custom Environment
+
 ```bash
 # 1. Create configs/apps/api/staging.json
 # 2. Run with NODE_ENV
@@ -201,4 +212,3 @@ bun run apps/api/src/main.ts
 ```
 
 That's it! Everything else is automatic. 🎉
-
