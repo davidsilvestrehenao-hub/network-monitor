@@ -1,6 +1,6 @@
 import type { IAuthService, AuthSession } from "@network-monitor/shared";
 import type { IUserRepository } from "@network-monitor/shared";
-import type { IEventBus, BackendEvents } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 import type {
   User,
@@ -82,7 +82,7 @@ export class AuthService implements IAuthService {
         expiresAt,
       });
 
-      this.eventBus.emitTyped("USER_LOGGED_IN", {
+      this.eventBus.emit("USER_LOGGED_IN", {
         userId: user.id,
         email: user.email,
         sessionToken,
@@ -137,7 +137,7 @@ export class AuthService implements IAuthService {
         expiresAt,
       });
 
-      this.eventBus.emitTyped("USER_REGISTERED", {
+      this.eventBus.emit("USER_REGISTERED", {
         userId: user.id,
         email: user.email,
         sessionToken,
@@ -169,7 +169,7 @@ export class AuthService implements IAuthService {
       const session = this.sessions.get(sessionToken);
       if (session) {
         this.sessions.delete(sessionToken);
-        this.eventBus.emitTyped("USER_LOGGED_OUT", {
+        this.eventBus.emit("USER_LOGGED_OUT", {
           userId: session.userId,
           sessionToken,
         });
@@ -253,7 +253,7 @@ export class AuthService implements IAuthService {
         expiresAt,
       });
 
-      this.eventBus.emitTyped("SESSION_REFRESHED", {
+      this.eventBus.emit("SESSION_REFRESHED", {
         userId: user.id,
         oldSessionToken: sessionToken,
         newSessionToken,
@@ -283,7 +283,7 @@ export class AuthService implements IAuthService {
 
     try {
       const user = await this.userRepository.update(userId, data);
-      this.eventBus.emitTyped("USER_PROFILE_UPDATED", {
+      this.eventBus.emit("USER_PROFILE_UPDATED", {
         userId: user.id,
         data,
       });
@@ -312,7 +312,7 @@ export class AuthService implements IAuthService {
       // Delete user
       await this.userRepository.delete(userId);
 
-      this.eventBus.emitTyped("USER_ACCOUNT_DELETED", { userId });
+      this.eventBus.emit("USER_ACCOUNT_DELETED", { userId });
 
       this.logger.info("AuthService: User account deleted successfully", {
         userId,
@@ -362,21 +362,21 @@ export class AuthService implements IAuthService {
     return result;
   }
 
-  private async handleUserLoginRequested(
-    data: BackendEvents["USER_LOGIN_REQUESTED"]
-  ): Promise<void> {
+  private async handleUserLoginRequested(data: {
+    credentials: unknown;
+  }): Promise<void> {
     await this.login(data.credentials as LoginCredentials);
   }
 
-  private async handleUserRegisterRequested(
-    data: BackendEvents["USER_REGISTER_REQUESTED"]
-  ): Promise<void> {
+  private async handleUserRegisterRequested(data: {
+    data: unknown;
+  }): Promise<void> {
     await this.register(data.data as RegisterData);
   }
 
-  private async handleUserLogoutRequested(
-    data: BackendEvents["USER_LOGOUT_REQUESTED"]
-  ): Promise<void> {
+  private async handleUserLogoutRequested(data: {
+    sessionToken: string;
+  }): Promise<void> {
     await this.logout(data.sessionToken);
   }
 
@@ -434,5 +434,38 @@ export class AuthService implements IAuthService {
     // This would need to be implemented based on the actual session management
     // For now, return false as this is a mock implementation
     return false;
+  }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<User | null> {
+    this.logger.debug("AuthService: Getting user by ID", { id });
+    return this.userRepository.findById(
+      typeof id === "string" ? id : id.toString()
+    );
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<User[]> {
+    this.logger.debug("AuthService: Getting all users", { limit, offset });
+    return this.userRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateUserData): Promise<User> {
+    this.logger.debug("AuthService: Creating user", { data });
+    return this.userRepository.create(data);
+  }
+
+  async update(id: string | number, data: UpdateUserData): Promise<User> {
+    this.logger.debug("AuthService: Updating user", { id, data });
+    return this.userRepository.update(
+      typeof id === "string" ? id : id.toString(),
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger.debug("AuthService: Deleting user", { id });
+    return this.userRepository.delete(
+      typeof id === "string" ? id : id.toString()
+    );
   }
 }

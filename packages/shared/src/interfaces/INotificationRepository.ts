@@ -27,21 +27,23 @@ export interface NotificationQuery {
 }
 
 // Repository interface
-export interface INotificationRepository {
-  // Query methods
-  findById(id: number): Promise<Notification | null>;
+export interface INotificationRepository
+  extends IRepository<
+    Notification,
+    CreateNotificationData,
+    UpdateNotificationData
+  > {
+  // Domain-specific query methods
   findByUserId(userId: string, limit?: number): Promise<Notification[]>;
   findByQuery(query: NotificationQuery): Promise<Notification[]>;
   getUnreadByUserId(userId: string): Promise<Notification[]>;
-  getAll(limit?: number, offset?: number): Promise<Notification[]>;
-  count(): Promise<number>;
 
-  // Command methods
-  create(data: CreateNotificationData): Promise<Notification>;
-  update(id: number, data: UpdateNotificationData): Promise<Notification>;
-  delete(id: number): Promise<void>;
+  // Domain-specific command methods
   deleteByUserId(userId: string): Promise<void>;
   markAsRead(id: number): Promise<Notification>;
   markAllAsReadByUserId(userId: string): Promise<number>;
   deleteOldNotifications(olderThan: Date): Promise<number>;
 }
+
+// Import base repository interface
+import type { IRepository } from "./base/IRepository";

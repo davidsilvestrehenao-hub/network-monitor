@@ -4,16 +4,13 @@ import type {
   UpdateTargetData,
   SpeedTestResult,
   AlertRule,
-} from "@network-monitor/shared";
-import type {
-  AlertRuleData,
-  Incident,
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
   Notification,
   PushSubscription,
-  TestNotificationData,
   User,
-  AuthSession,
-} from "./IAPIClient";
+} from "@network-monitor/shared";
+import type { Incident, TestNotificationData, AuthSession } from "./IAPIClient";
 
 export interface ICommandQueryService {
   // Commands (write operations)
@@ -25,8 +22,8 @@ export interface ICommandQueryService {
   stopMonitoring(targetId: string): Promise<void>;
 
   // Alert commands
-  createAlertRule(data: AlertRuleData): Promise<AlertRule>;
-  updateAlertRule(id: number, data: Partial<AlertRuleData>): Promise<AlertRule>;
+  createAlertRule(data: CreateAlertRuleData): Promise<AlertRule>;
+  updateAlertRule(id: number, data: UpdateAlertRuleData): Promise<AlertRule>;
   deleteAlertRule(id: number): Promise<void>;
   resolveIncident(id: number): Promise<void>;
 

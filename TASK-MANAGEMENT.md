@@ -4,10 +4,10 @@ This project uses **GitHub Issues** for task management, integrated with Cursor 
 
 ## 🎯 Quick Links
 
-- **All Issues**: https://github.com/davidsilvestrehenao-hub/network-monitor/issues
-- **Open Tasks**: https://github.com/davidsilvestrehenao-hub/network-monitor/issues?q=is%3Aissue+is%3Aopen+label%3Atask
-- **Bugs**: https://github.com/davidsilvestrehenao-hub/network-monitor/issues?q=is%3Aissue+is%3Aopen+label%3Abug
-- **Features**: https://github.com/davidsilvestrehenao-hub/network-monitor/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement
+- **All Issues**: <https://github.com/davidsilvestrehenao-hub/network-monitor/issues>
+- **Open Tasks**: <https://github.com/davidsilvestrehenao-hub/network-monitor/issues?q=is%3Aissue+is%3Aopen+label%3Atask>
+- **Bugs**: <https://github.com/davidsilvestrehenao-hub/network-monitor/issues?q=is%3Aissue+is%3Aopen+label%3Abug>
+- **Features**: <https://github.com/davidsilvestrehenao-hub/network-monitor/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement>
 
 ## 📋 Available Labels
 
@@ -59,6 +59,7 @@ When creating issues via GitHub UI, use these templates:
 ## 🚀 CLI Commands
 
 ### View Issues
+
 ```bash
 gh issue list                          # List all open issues
 gh issue list --label bug              # List only bugs
@@ -67,12 +68,14 @@ gh issue view 5                        # View issue #5
 ```
 
 ### Create Issues
+
 ```bash
 gh issue create                        # Interactive creation
 gh issue create --title "Title" --body "Description" --label "task,frontend"
 ```
 
 ### Update Issues
+
 ```bash
 gh issue close 5                       # Close issue #5
 gh issue reopen 5                      # Reopen issue #5
@@ -94,6 +97,7 @@ gh issue comment 5 --body "Comment"    # Add comment
 **Epic #7**: Implement PLG Stack (Prometheus, Loki, Grafana) for Observability
 
 **Implementation Tasks**:
+
 - **Issue #8**: PLG Stack Architecture Planning and Docker Setup
 - **Issue #9**: Set up Prometheus for Metrics Collection
 - **Issue #10**: Set up Loki and Promtail for Log Aggregation
@@ -124,6 +128,7 @@ View the complete implementation plan: [docs/PLG-STACK-IMPLEMENTATION.md](docs/P
 ## 📈 Staying Under Limits
 
 GitHub Issues are **FREE** with:
+
 - ✅ Unlimited issues
 - ✅ Unlimited labels
 - ✅ Unlimited comments
@@ -138,4 +143,3 @@ No need to worry about hitting any limits! 🎉
 - [GitHub Issues Documentation](https://docs.github.com/en/issues)
 - [GitHub CLI Manual](https://cli.github.com/manual/)
 - [MCP GitHub Server](https://github.com/modelcontextprotocol/servers/tree/main/src/github)
-

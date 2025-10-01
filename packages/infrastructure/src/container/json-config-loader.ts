@@ -43,7 +43,7 @@ export class JsonConfigLoader {
   private configPath: string;
   private projectRoot: string;
 
-  constructor(configPath: string = "service-config.json") {
+  constructor(configPath: string = "service-wiring/development.json") {
     this.configPath = configPath;
     // Justification: Use browser-compatible path for project root
     this.projectRoot =
@@ -274,8 +274,6 @@ export class JsonConfigLoader {
         TYPES.ISpeedTestRepository,
         TYPES.IMonitoringTargetRepository,
         TYPES.ISpeedTestResultRepository,
-        TYPES.IUserSpeedTestPreferenceRepository,
-        TYPES.ISpeedTestConfigService,
         TYPES.IEventBus,
         TYPES.ILogger,
       ],

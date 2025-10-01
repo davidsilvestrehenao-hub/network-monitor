@@ -1,0 +1,115 @@
+{
+  "name": "Real Database Service Wiring",
+  "description": "Uses real database but removes user filtering",
+  "environment": "real-db",
+  "services": {
+    "ILogger": {
+      "module": "@network-monitor/infrastructure",
+      "className": "LoggerService",
+      "isMock": false,
+      "description": "Real logger service"
+    },
+    "IEventBus": {
+      "module": "@network-monitor/infrastructure",
+      "className": "EventBus",
+      "isMock": false,
+      "description": "Real event bus"
+    },
+    "IDatabaseService": {
+      "module": "@network-monitor/database",
+      "className": "DatabaseService",
+      "isMock": false,
+      "description": "Real database service"
+    },
+    "IMonitoringTargetRepository": {
+      "module": "@network-monitor/database",
+      "className": "MonitoringTargetRepository",
+      "isMock": false,
+      "description": "Real repository for monitoring targets"
+    },
+    "ISpeedTestResultRepository": {
+      "module": "@network-monitor/database",
+      "className": "SpeedTestResultRepository",
+      "isMock": false,
+      "description": "Real repository for speed test results"
+    },
+    "IAlertRuleRepository": {
+      "module": "@network-monitor/database",
+      "className": "AlertRuleRepository",
+      "isMock": false,
+      "description": "Real repository for alert rules"
+    },
+    "IIncidentEventRepository": {
+      "module": "@network-monitor/database",
+      "className": "IncidentEventRepository",
+      "isMock": false,
+      "description": "Real repository for incident events"
+    },
+    "INotificationRepository": {
+      "module": "@network-monitor/database",
+      "className": "NotificationRepository",
+      "isMock": false,
+      "description": "Real repository for notifications"
+    },
+    "IPushSubscriptionRepository": {
+      "module": "@network-monitor/database",
+      "className": "PushSubscriptionRepository",
+      "isMock": false,
+      "description": "Real repository for push subscriptions"
+    },
+    "ITargetRepository": {
+      "module": "@network-monitor/database",
+      "className": "TargetRepository",
+      "isMock": false,
+      "description": "Real legacy target repository"
+    },
+    "ISpeedTestRepository": {
+      "module": "@network-monitor/database",
+      "className": "SpeedTestRepository",
+      "isMock": false,
+      "description": "Real legacy speed test repository"
+    },
+    "IUserRepository": {
+      "module": "@network-monitor/database",
+      "className": "UserRepository",
+      "isMock": false,
+      "description": "Real user repository"
+    },
+    "IUserSpeedTestPreferenceRepository": {
+      "module": "@network-monitor/database",
+      "className": "UserSpeedTestPreferenceRepository",
+      "isMock": false,
+      "description": "Real user speed test preference repository"
+    },
+    "ISpeedTestConfigService": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockSpeedTestConfigService",
+      "isMock": true,
+      "description": "Mock speed test configuration service"
+    },
+    "IMonitorService": {
+      "module": "@network-monitor/monitor",
+      "className": "MonitorService",
+      "isMock": false,
+      "description": "Real monitor service"
+    },
+    "IAlertingService": {
+      "module": "@network-monitor/alerting",
+      "className": "AlertingService",
+      "isMock": false,
+      "description": "Real alerting service"
+    },
+    "INotificationService": {
+      "module": "@network-monitor/notification",
+      "className": "NotificationService",
+      "isMock": false,
+      "description": "Real notification service"
+    },
+    "IAuthService": {
+      "module": "@network-monitor/auth",
+      "className": "MockAuth",
+      "isMock": true,
+      "description": "Mock authentication"
+    }
+  }
+}

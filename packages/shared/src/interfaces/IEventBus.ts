@@ -1,17 +1,7 @@
-export interface IEventBus {
-  emit(event: string, data?: unknown): void;
-  emitTyped<T>(event: string, data: T): void;
+import type { IEventBus as IBaseEventBus } from "./base/IEventBus";
 
-  // Generic overloads for type-safe event handlers
-  on<T = unknown>(event: string, handler: (data?: T) => void): void;
-  onTyped<T>(event: string, handler: (data: T) => void): void;
-
-  off<T = unknown>(event: string, handler: (data?: T) => void): void;
-
-  once<T = unknown>(event: string, handler: (data?: T) => void): void;
-  onceTyped<T>(event: string, handler: (data: T) => void): void;
-
-  removeAllListeners(event?: string): void;
+export interface IEventBus extends IBaseEventBus {
+  // All methods inherited from base interface
 }
 
 // Event type definitions for type safety

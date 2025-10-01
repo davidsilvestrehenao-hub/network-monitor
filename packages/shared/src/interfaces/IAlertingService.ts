@@ -5,9 +5,12 @@ import type {
 } from "./IAlertRepository";
 import type { AlertRule } from "./ITargetRepository";
 import type { SpeedTestResult } from "./ITargetRepository";
+import type { IService, IObservableService } from "./base/IService";
 
-export interface IAlertingService {
-  // Alert rule management
+export interface IAlertingService
+  extends IService<AlertRule, CreateAlertRuleData, UpdateAlertRuleData>,
+    IObservableService {
+  // Domain-specific alert rule methods
   createAlertRule(data: CreateAlertRuleData): Promise<AlertRule>;
   getAlertRule(id: number): Promise<AlertRule | null>;
   getAlertRulesByTargetId(targetId: string): Promise<AlertRule[]>;

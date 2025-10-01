@@ -121,7 +121,7 @@ interface MicroserviceBootstrapOptions {
   // Name of the microservice (e.g., "Monitor Service")
   serviceName: string;
   
-  // Path to JSON configuration (defaults to "service-config.json")
+  // Path to JSON configuration (defaults to "service-wiring/development.json")
   configPath?: string;
   
   // Enable database connection (default: true)
@@ -292,10 +292,10 @@ The project includes pre-configured JSON files:
 
 ```bash
 # Use Monitor Service config
-ln -sf configs/monitor-service.json service-config.json
+ln -sf service-wiring/production.json service-wiring/active.json
 
 # Or copy directly
-cp configs/monitor-service.json service-config.json
+cp service-wiring/production.json service-wiring/active.json
 ```
 
 ## Best Practices

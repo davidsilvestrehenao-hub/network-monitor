@@ -6,7 +6,7 @@ import type {
   IEventBus,
   ISpeedTestConfigService,
 } from "@network-monitor/shared";
-import { browserServiceConfig } from "./service-config.browser.js";
+import { browserServiceConfig } from "./service-wiring.browser.js";
 
 let containerInitialized = false;
 

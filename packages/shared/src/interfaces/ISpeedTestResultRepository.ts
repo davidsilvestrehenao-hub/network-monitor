@@ -20,6 +20,14 @@ export interface CreateSpeedTestResultData {
   error?: string;
 }
 
+export interface UpdateSpeedTestResultData {
+  ping?: number | null;
+  download?: number | null;
+  upload?: number | null;
+  status?: "SUCCESS" | "FAILURE";
+  error?: string;
+}
+
 export interface SpeedTestResultQuery {
   targetId?: string;
   limit?: number;
@@ -30,22 +38,25 @@ export interface SpeedTestResultQuery {
 }
 
 // Repository interface
-export interface ISpeedTestResultRepository {
-  // Query methods
-  findById(id: string): Promise<SpeedTestResult | null>;
+export interface ISpeedTestResultRepository
+  extends IRepository<
+    SpeedTestResult,
+    CreateSpeedTestResultData,
+    UpdateSpeedTestResultData
+  > {
+  // Domain-specific query methods
   findByTargetId(targetId: string, limit?: number): Promise<SpeedTestResult[]>;
   findLatestByTargetId(targetId: string): Promise<SpeedTestResult | null>;
   findByQuery(query: SpeedTestResultQuery): Promise<SpeedTestResult[]>;
-  getAll(limit?: number, offset?: number): Promise<SpeedTestResult[]>;
-  count(): Promise<number>;
 
-  // Command methods
-  create(data: CreateSpeedTestResultData): Promise<SpeedTestResult>;
+  // Domain-specific command methods
   update(
     id: string,
     data: Partial<CreateSpeedTestResultData>
   ): Promise<SpeedTestResult>;
-  delete(id: string): Promise<void>;
   deleteByTargetId(targetId: string): Promise<void>;
   deleteOldResults(olderThan: Date): Promise<number>;
 }
+
+// Import base repository interface
+import type { IRepository } from "./base/IRepository";

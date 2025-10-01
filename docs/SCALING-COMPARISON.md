@@ -146,7 +146,7 @@ class MonitorService {
 
 ```typescript
 // ONE FILE TO CHANGE
-// src/lib/container/service-config.ts
+// src/lib/container/service-wiring.ts
 
 // Old (in-memory)
 [TYPES.IEventBus]: {
@@ -233,7 +233,7 @@ kubectl apply -f k8s/
 
 ```diff
 // Change ONE file
-// src/lib/container/service-config.ts
+// src/lib/container/service-wiring.ts
 - new EventBus()
 + new RabbitMQEventBus(url)
 

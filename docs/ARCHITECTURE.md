@@ -9,6 +9,7 @@
 - [Event-Driven Communication](#event-driven-communication)
 - [Dependency Injection](#dependency-injection)
 - [Repository Pattern](#repository-pattern)
+- [Interface Polymorphism](#interface-polymorphism)
 - [Frontend Architecture](#frontend-architecture)
 - [Backend Architecture](#backend-architecture)
 - [Data Flow](#data-flow)
@@ -394,7 +395,7 @@ eventBus.on('TARGET_CREATE_REQUESTED', async (data) => {
 
 ### **Container Configuration**
 
-Services are configured via `service-config.json`:
+Services are configured via `service-wiring/` directory:
 
 ```json
 {
@@ -498,6 +499,23 @@ export class TargetRepository implements ITargetRepository {
 - Prisma client **never** leaves repository layer
 - All methods return **domain types**, not Prisma types
 - Repositories handle all type mapping
+
+---
+
+## **Interface Polymorphism**
+
+The project strictly adheres to interface-first design principles to ensure high cohesion, loose coupling, and robust polymorphism. All core components (Repositories, Services, and API Clients) are defined by interfaces that extend a set of foundational base interfaces. This approach guarantees consistency in core functionalities while allowing for domain-specific extensions.
+
+For detailed patterns and examples, refer to the [Interface Implementation Patterns](INTERFACE-IMPLEMENTATION-PATTERNS.md) documentation.
+
+### **Key Principles:**
+
+- **Base Contracts**: Core interfaces (`IRepository`, `IService`, `IAPIClient`) define fundamental operations (e.g., CRUD, connection management, event handling).
+- **Specialization**: Domain-specific interfaces extend these base contracts, adding methods relevant to their specific business logic or data access needs.
+- **Consistency**: All implementations must adhere to the contracts defined by their interfaces, ensuring predictable behavior across the codebase.
+- **Testability**: Mocking and testing become straightforward as dependencies are defined by interfaces, allowing for easy substitution of concrete implementations with test doubles.
+
+This hierarchical interface structure is critical for maintaining a scalable and maintainable codebase, enabling future refactoring and feature development with minimal impact on existing components.
 
 ---
 

@@ -37,6 +37,7 @@ import type {
 import { Hono } from "hono";
 import { logger as honoLogger } from "hono/logger";
 import { cors } from "hono/cors";
+import { findAvailablePort } from "./utils/port-utils";
 import { createYoga } from "graphql-yoga";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { schema } from "./graphql/schema";
@@ -276,71 +277,60 @@ async function startMonolith() {
     );
   });
 
-  // Start HTTP server using Bun with Hono with automatic port conflict resolution
+  // Find an available port starting from the configured port
+  context.logger.info(
+    `🔍 Looking for available port starting from ${config.port}...`
+  );
+  let availablePort = await findAvailablePort(config.port);
+  context.logger.info(`✅ Found available port: ${availablePort}`);
+
+  // Start HTTP server using Bun with Hono with retry logic
   // Justification: Bun global is provided by Bun runtime, not in standard TypeScript types
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const BunGlobal = globalThis as any;
 
-  // Function to find an available port starting from the configured port
-  const findAvailablePort = async (
-    startPort: number,
-    maxAttempts: number = 10
-  ): Promise<number> => {
-    for (let i = 0; i < maxAttempts; i++) {
-      const port = startPort + i;
-      try {
-        // Try to create a test server to check if port is available
-        const testServer = BunGlobal.Bun.serve({
-          port,
-          hostname: config.host,
-          fetch: () => new Response("test"),
-        });
-        // If successful, close the test server and return the port
-        testServer.stop();
-        return port;
-      } catch (error: unknown) {
-        if (
-          error &&
-          typeof error === "object" &&
-          "code" in error &&
-          error.code === "EADDRINUSE"
-        ) {
-          // Port is in use, try next one
-          continue;
-        }
-        // Other error, re-throw
-        throw error;
+  let server;
+  let retryCount = 0;
+  const maxRetries = 3;
+
+  while (retryCount < maxRetries) {
+    try {
+      server = BunGlobal.Bun.serve({
+        port: availablePort,
+        hostname: config.host,
+        fetch: app.fetch, // Hono handles all routing
+      });
+      break; // Success, exit retry loop
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "EADDRINUSE" &&
+        retryCount < maxRetries - 1
+      ) {
+        retryCount++;
+        context.logger.warn(
+          `Port ${availablePort} is now in use, finding new port...`
+        );
+        const newPort = await findAvailablePort(availablePort + 1);
+        context.logger.info(`✅ Found new available port: ${newPort}`);
+        availablePort = newPort;
+      } else {
+        throw error; // Re-throw if not a port conflict or max retries reached
       }
     }
-    throw new Error(
-      `No available port found after ${maxAttempts} attempts starting from ${startPort}`
-    );
-  };
-
-  const actualPort = await findAvailablePort(config.port);
-
-  // Log port resolution if different from configured port
-  if (actualPort !== config.port) {
-    context.logger.info(
-      `🔄 Port conflict resolved: ${config.port} → ${actualPort}`
-    );
   }
 
-  const server = BunGlobal.Bun.serve({
-    port: actualPort,
-    hostname: config.host,
-    fetch: app.fetch, // Hono handles all routing
-  });
-
   context.logger.info("🚀 API Server is now running", {
-    port: actualPort,
+    port: availablePort,
     host: config.host,
     environment: config.nodeEnv,
     endpoints: {
-      rest: `http://${config.host}:${actualPort}/api`,
-      graphql: `http://${config.host}:${actualPort}/graphql`,
-      health: `http://${config.host}:${actualPort}/health`,
-      docs: `http://${config.host}:${actualPort}/api/docs`,
+      rest: `http://${config.host}:${availablePort}/api`,
+      graphql: `http://${config.host}:${availablePort}/graphql`,
+      health: `http://${config.host}:${availablePort}/health`,
+      docs: `http://${config.host}:${availablePort}/api/docs`,
     },
   });
 
@@ -351,10 +341,10 @@ async function startMonolith() {
 
   context.logger.info("📖 Documentation:");
   context.logger.info(
-    `  📘 OpenAPI/Swagger: http://${config.host}:${actualPort}/api/docs`
+    `  📘 OpenAPI/Swagger: http://${config.host}:${availablePort}/api/docs`
   );
   context.logger.info(
-    `  🎮 GraphQL Playground: http://${config.host}:${actualPort}/graphql`
+    `  🎮 GraphQL Playground: http://${config.host}:${availablePort}/graphql`
   );
   context.logger.info(
     `  📄 Postman Collection: apps/api/postman-collection.json`
@@ -364,9 +354,10 @@ async function startMonolith() {
   );
   context.logger.info("");
 
-  // Auto-launch browser in development mode
-  if (config.nodeEnv === "development") {
-    const docsUrl = `http://${config.host}:${actualPort}/api/docs`;
+  // Auto-launch browser if enabled
+  if (config.enableBrowserLaunch) {
+    const docsUrl = `http://${config.host}:${availablePort}/api/docs`;
+    context.logger.info(`🚀 Opening API documentation in browser: ${docsUrl}`);
     autoLaunchBrowser(docsUrl, context.logger).catch(() => {
       // Silently ignore errors
     });

@@ -4,53 +4,32 @@ import type {
   UpdateTargetData,
   SpeedTestResult,
   AlertRule,
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
+  IncidentEvent,
+  Notification,
+  PushSubscription,
+  User,
+  IAPIClient as BaseIAPIClient,
 } from "@network-monitor/shared";
 
-// Additional interfaces for alerts and notifications
-export interface AlertRuleData {
-  targetId: string;
-  name: string;
-  metric: "ping" | "download";
-  condition: "GREATER_THAN" | "LESS_THAN";
-  threshold: number;
-}
+// Re-export shared types for convenience
+export type {
+  AlertRule,
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
+  IncidentEvent,
+  Notification,
+  PushSubscription,
+  User,
+};
 
-export interface Incident {
-  id: number;
-  timestamp: string;
-  type: "OUTAGE" | "ALERT";
-  description: string;
-  resolved: boolean;
-  targetId: string;
-  ruleId?: number;
-}
-
-export interface Notification {
-  id: number;
-  message: string;
-  sentAt: string;
-  read: boolean;
-  userId: string;
-}
-
-export interface PushSubscription {
-  id: string;
-  endpoint: string;
-  p256dh: string;
-  auth: string;
-  userId: string;
-}
+// Use IncidentEvent from shared package instead of Incident
+export type Incident = IncidentEvent;
 
 export interface TestNotificationData {
   message: string;
   userId: string;
-}
-
-export interface User {
-  id: string;
-  name?: string;
-  email?: string;
-  image?: string;
 }
 
 export interface AuthSession {
@@ -60,7 +39,7 @@ export interface AuthSession {
   refreshToken?: string;
 }
 
-export interface IAPIClient {
+export interface IAPIClient extends BaseIAPIClient {
   // Target operations
   createTarget(data: CreateTargetData): Promise<Target>;
   getTarget(id: string): Promise<Target | null>;
@@ -79,11 +58,11 @@ export interface IAPIClient {
   ): Promise<SpeedTestResult[]>;
 
   // Alert operations
-  createAlertRule(data: AlertRuleData): Promise<AlertRule>;
+  createAlertRule(data: CreateAlertRuleData): Promise<AlertRule>;
   getAlertRules(targetId: string): Promise<AlertRule[]>;
-  updateAlertRule(id: number, data: Partial<AlertRuleData>): Promise<AlertRule>;
+  updateAlertRule(id: number, data: UpdateAlertRuleData): Promise<AlertRule>;
   deleteAlertRule(id: number): Promise<void>;
-  getIncidents(targetId: string): Promise<Incident[]>;
+  getIncidents(targetId: string): Promise<IncidentEvent[]>;
   resolveIncident(id: number): Promise<void>;
 
   // Notification operations
@@ -110,5 +89,4 @@ export interface IAPIClient {
   signOut(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
   getSession(): Promise<AuthSession | null>;
-  isAuthenticated(): Promise<boolean>;
 }

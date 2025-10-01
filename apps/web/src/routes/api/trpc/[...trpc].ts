@@ -40,6 +40,8 @@ async function getWiredContext(): Promise<AppContext> {
       "development";
     const configPath = `service-wiring/${wiringConfig}.json`;
 
+    // Justification: Bootstrap logging is necessary for debugging service initialization
+    // eslint-disable-next-line no-console
     console.log(`[Web App] Bootstrapping with config: ${configPath}`);
 
     try {
@@ -49,6 +51,8 @@ async function getWiredContext(): Promise<AppContext> {
         showBanner: false,
       });
     } catch (error) {
+      // Justification: Error logging is necessary for debugging service initialization failures
+      // eslint-disable-next-line no-console
       console.error(`[Web App] Bootstrap error:`, error);
       throw error;
     }

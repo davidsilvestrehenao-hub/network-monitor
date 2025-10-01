@@ -107,7 +107,7 @@ See [TRPC-API-REFERENCE.md](./TRPC-API-REFERENCE.md) for complete API documentat
 
 ## Configuration
 
-The web app initializes the backend DI container automatically using the config at `configs/service-config.json`.
+The web app initializes the backend DI container automatically using the config at `service-wiring/development.json`.
 
 ## Building for Production
 

@@ -1,15 +1,18 @@
 import type { ICommandQueryService } from "../interfaces/ICommandQueryService";
 import type {
   IAPIClient,
-  AlertRuleData,
   Incident,
-  Notification,
-  PushSubscription,
   TestNotificationData,
-  User,
   AuthSession,
 } from "../interfaces/IAPIClient";
-import type { IEventBus, FrontendEvents } from "@network-monitor/shared";
+import type {
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
+  Notification,
+  PushSubscription,
+  User,
+} from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type { ILogger, LogContext } from "@network-monitor/shared";
 import type {
   Target,
@@ -35,20 +38,16 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const target = await this.apiClient.createTarget(data);
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOADED"]>(
-        "TARGETS_LOADED",
-        { targets: [target] }
-      );
+      this.eventBus.emit("TARGETS_LOADED", { targets: [target] });
       return target;
     } catch (error) {
       this.logger.error("CommandQueryService: Target creation failed", {
         error,
         data,
       });
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOAD_FAILED"]>(
-        "TARGETS_LOAD_FAILED",
-        { error: error instanceof Error ? error.message : "An error occurred" }
-      );
+      this.eventBus.emit("TARGETS_LOAD_FAILED", {
+        error: error instanceof Error ? error.message : "An error occurred",
+      });
       throw error;
     }
   }
@@ -58,10 +57,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const target = await this.apiClient.updateTarget(id, data);
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOADED"]>(
-        "TARGETS_LOADED",
-        { targets: [target] }
-      );
+      this.eventBus.emit("TARGETS_LOADED", { targets: [target] });
       return target;
     } catch (error) {
       this.logger.error("CommandQueryService: Target update failed", {
@@ -69,10 +65,9 @@ export class CommandQueryService implements ICommandQueryService {
         id,
         data,
       });
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOAD_FAILED"]>(
-        "TARGETS_LOAD_FAILED",
-        { error: error instanceof Error ? error.message : "An error occurred" }
-      );
+      this.eventBus.emit("TARGETS_LOAD_FAILED", {
+        error: error instanceof Error ? error.message : "An error occurred",
+      });
       throw error;
     }
   }
@@ -84,19 +79,15 @@ export class CommandQueryService implements ICommandQueryService {
       await this.apiClient.deleteTarget(id);
       // Emit event to refresh targets list
       const targets = await this.getTargets();
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOADED"]>(
-        "TARGETS_LOADED",
-        { targets }
-      );
+      this.eventBus.emit("TARGETS_LOADED", { targets });
     } catch (error) {
       this.logger.error("CommandQueryService: Target deletion failed", {
         error,
         id,
       });
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOAD_FAILED"]>(
-        "TARGETS_LOAD_FAILED",
-        { error: error instanceof Error ? error.message : "An error occurred" }
-      );
+      this.eventBus.emit("TARGETS_LOAD_FAILED", {
+        error: error instanceof Error ? error.message : "An error occurred",
+      });
       throw error;
     }
   }
@@ -112,26 +103,20 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const result = await this.apiClient.runSpeedTest(targetId, timeout);
-      this.eventBus.emitTyped<FrontendEvents["SPEED_TEST_RESULTS_LOADED"]>(
-        "SPEED_TEST_RESULTS_LOADED",
-        {
-          targetId,
-          results: [result],
-        }
-      );
+      this.eventBus.emit("SPEED_TEST_RESULTS_LOADED", {
+        targetId,
+        results: [result],
+      });
       return result;
     } catch (error) {
       this.logger.error("CommandQueryService: Speed test failed", {
         error,
         targetId,
       });
-      this.eventBus.emitTyped<FrontendEvents["SPEED_TEST_RESULTS_LOAD_FAILED"]>(
-        "SPEED_TEST_RESULTS_LOAD_FAILED",
-        {
-          targetId,
-          error: error instanceof Error ? error.message : "An error occurred",
-        }
-      );
+      this.eventBus.emit("SPEED_TEST_RESULTS_LOAD_FAILED", {
+        targetId,
+        error: error instanceof Error ? error.message : "An error occurred",
+      });
       throw error;
     }
   }
@@ -188,17 +173,13 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const targets = await this.apiClient.getTargets();
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOADED"]>(
-        "TARGETS_LOADED",
-        { targets }
-      );
+      this.eventBus.emit("TARGETS_LOADED", { targets });
       return targets;
     } catch (error) {
       this.logger.error("CommandQueryService: Get targets failed", { error });
-      this.eventBus.emitTyped<FrontendEvents["TARGETS_LOAD_FAILED"]>(
-        "TARGETS_LOAD_FAILED",
-        { error: error instanceof Error ? error.message : "An error occurred" }
-      );
+      this.eventBus.emit("TARGETS_LOAD_FAILED", {
+        error: error instanceof Error ? error.message : "An error occurred",
+      });
       throw error;
     }
   }
@@ -227,32 +208,26 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const results = await this.apiClient.getTargetResults(targetId, limit);
-      this.eventBus.emitTyped<FrontendEvents["SPEED_TEST_RESULTS_LOADED"]>(
-        "SPEED_TEST_RESULTS_LOADED",
-        {
-          targetId,
-          results,
-        }
-      );
+      this.eventBus.emit("SPEED_TEST_RESULTS_LOADED", {
+        targetId,
+        results,
+      });
       return results;
     } catch (error) {
       this.logger.error("CommandQueryService: Get target results failed", {
         error,
         targetId,
       });
-      this.eventBus.emitTyped<FrontendEvents["SPEED_TEST_RESULTS_LOAD_FAILED"]>(
-        "SPEED_TEST_RESULTS_LOAD_FAILED",
-        {
-          targetId,
-          error: error instanceof Error ? error.message : "An error occurred",
-        }
-      );
+      this.eventBus.emit("SPEED_TEST_RESULTS_LOAD_FAILED", {
+        targetId,
+        error: error instanceof Error ? error.message : "An error occurred",
+      });
       throw error;
     }
   }
 
   // Alert commands
-  async createAlertRule(data: AlertRuleData): Promise<AlertRule> {
+  async createAlertRule(data: CreateAlertRuleData): Promise<AlertRule> {
     this.logger.debug(
       "CommandQueryService: Creating alert rule",
       data as unknown as LogContext
@@ -260,10 +235,10 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const rule = await this.apiClient.createAlertRule(data);
-      this.eventBus.emitTyped<FrontendEvents["ALERT_RULES_LOADED"]>(
-        "ALERT_RULES_LOADED",
-        { targetId: data.targetId, rules: [rule] }
-      );
+      this.eventBus.emit("ALERT_RULES_LOADED", {
+        targetId: data.targetId,
+        rules: [rule],
+      });
       return rule;
     } catch (error) {
       this.logger.error("CommandQueryService: Alert rule creation failed", {
@@ -276,16 +251,16 @@ export class CommandQueryService implements ICommandQueryService {
 
   async updateAlertRule(
     id: number,
-    data: Partial<AlertRuleData>
+    data: UpdateAlertRuleData
   ): Promise<AlertRule> {
     this.logger.debug("CommandQueryService: Updating alert rule", { id, data });
 
     try {
       const rule = await this.apiClient.updateAlertRule(id, data);
-      this.eventBus.emitTyped<FrontendEvents["ALERT_RULES_LOADED"]>(
-        "ALERT_RULES_LOADED",
-        { targetId: rule.targetId, rules: [rule] }
-      );
+      this.eventBus.emit("ALERT_RULES_LOADED", {
+        targetId: rule.targetId,
+        rules: [rule],
+      });
       return rule;
     } catch (error) {
       this.logger.error("CommandQueryService: Alert rule update failed", {
@@ -302,10 +277,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.deleteAlertRule(id);
-      this.eventBus.emitTyped<FrontendEvents["ALERT_RULE_DELETED"]>(
-        "ALERT_RULE_DELETED",
-        { id }
-      );
+      this.eventBus.emit("ALERT_RULE_DELETED", { id });
     } catch (error) {
       this.logger.error("CommandQueryService: Alert rule deletion failed", {
         error,
@@ -320,10 +292,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.resolveIncident(id);
-      this.eventBus.emitTyped<FrontendEvents["INCIDENT_RESOLVED"]>(
-        "INCIDENT_RESOLVED",
-        { id }
-      );
+      this.eventBus.emit("INCIDENT_RESOLVED", { id });
     } catch (error) {
       this.logger.error("CommandQueryService: Incident resolution failed", {
         error,
@@ -341,10 +310,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.markNotificationAsRead(id);
-      this.eventBus.emitTyped<FrontendEvents["NOTIFICATION_READ"]>(
-        "NOTIFICATION_READ",
-        { id }
-      );
+      this.eventBus.emit("NOTIFICATION_READ", { id });
     } catch (error) {
       this.logger.error(
         "CommandQueryService: Mark notification as read failed",
@@ -365,10 +331,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.markAllNotificationsAsRead(userId);
-      this.eventBus.emitTyped<FrontendEvents["ALL_NOTIFICATIONS_READ"]>(
-        "ALL_NOTIFICATIONS_READ",
-        { userId }
-      );
+      this.eventBus.emit("ALL_NOTIFICATIONS_READ", { userId });
     } catch (error) {
       this.logger.error(
         "CommandQueryService: Mark all notifications as read failed",
@@ -388,10 +351,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const subscription = await this.apiClient.createPushSubscription(data);
-      this.eventBus.emitTyped<FrontendEvents["PUSH_SUBSCRIPTION_CREATED"]>(
-        "PUSH_SUBSCRIPTION_CREATED",
-        { subscription }
-      );
+      this.eventBus.emit("PUSH_SUBSCRIPTION_CREATED", { subscription });
       return subscription;
     } catch (error) {
       this.logger.error(
@@ -412,10 +372,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.deletePushSubscription(id);
-      this.eventBus.emitTyped<FrontendEvents["PUSH_SUBSCRIPTION_DELETED"]>(
-        "PUSH_SUBSCRIPTION_DELETED",
-        { id }
-      );
+      this.eventBus.emit("PUSH_SUBSCRIPTION_DELETED", { id });
     } catch (error) {
       this.logger.error(
         "CommandQueryService: Push subscription deletion failed",
@@ -436,10 +393,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.sendPushNotification(data);
-      this.eventBus.emitTyped<FrontendEvents["PUSH_NOTIFICATION_SENT"]>(
-        "PUSH_NOTIFICATION_SENT",
-        { data }
-      );
+      this.eventBus.emit("PUSH_NOTIFICATION_SENT", { data });
     } catch (error) {
       this.logger.error("CommandQueryService: Send push notification failed", {
         error,
@@ -458,10 +412,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const result = await this.apiClient.signIn(email, password);
-      this.eventBus.emitTyped<FrontendEvents["USER_SIGNED_IN"]>(
-        "USER_SIGNED_IN",
-        { user: result.user }
-      );
+      this.eventBus.emit("USER_SIGNED_IN", { user: result.user });
       return result;
     } catch (error) {
       this.logger.error("CommandQueryService: Sign in failed", {
@@ -481,10 +432,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const result = await this.apiClient.signUp(email, password, name);
-      this.eventBus.emitTyped<FrontendEvents["USER_SIGNED_UP"]>(
-        "USER_SIGNED_UP",
-        { user: result.user }
-      );
+      this.eventBus.emit("USER_SIGNED_UP", { user: result.user });
       return result;
     } catch (error) {
       this.logger.error("CommandQueryService: Sign up failed", {
@@ -501,10 +449,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       await this.apiClient.signOut();
-      this.eventBus.emitTyped<FrontendEvents["USER_SIGNED_OUT"]>(
-        "USER_SIGNED_OUT",
-        {}
-      );
+      this.eventBus.emit("USER_SIGNED_OUT", {});
     } catch (error) {
       this.logger.error("CommandQueryService: Sign out failed", { error });
       throw error;
@@ -517,10 +462,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const rules = await this.apiClient.getAlertRules(targetId);
-      this.eventBus.emitTyped<FrontendEvents["ALERT_RULES_LOADED"]>(
-        "ALERT_RULES_LOADED",
-        { targetId, rules }
-      );
+      this.eventBus.emit("ALERT_RULES_LOADED", { targetId, rules });
       return rules;
     } catch (error) {
       this.logger.error("CommandQueryService: Get alert rules failed", {
@@ -536,10 +478,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const incidents = await this.apiClient.getIncidents(targetId);
-      this.eventBus.emitTyped<FrontendEvents["INCIDENTS_LOADED"]>(
-        "INCIDENTS_LOADED",
-        { targetId, incidents }
-      );
+      this.eventBus.emit("INCIDENTS_LOADED", { targetId, incidents });
       return incidents;
     } catch (error) {
       this.logger.error("CommandQueryService: Get incidents failed", {
@@ -556,10 +495,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const notifications = await this.apiClient.getNotifications(userId);
-      this.eventBus.emitTyped<FrontendEvents["NOTIFICATIONS_LOADED"]>(
-        "NOTIFICATIONS_LOADED",
-        { notifications }
-      );
+      this.eventBus.emit("NOTIFICATIONS_LOADED", { notifications });
       return notifications;
     } catch (error) {
       this.logger.error("CommandQueryService: Get notifications failed", {
@@ -577,10 +513,7 @@ export class CommandQueryService implements ICommandQueryService {
 
     try {
       const subscriptions = await this.apiClient.getPushSubscriptions(userId);
-      this.eventBus.emitTyped<FrontendEvents["PUSH_SUBSCRIPTIONS_LOADED"]>(
-        "PUSH_SUBSCRIPTIONS_LOADED",
-        { subscriptions }
-      );
+      this.eventBus.emit("PUSH_SUBSCRIPTIONS_LOADED", { subscriptions });
       return subscriptions;
     } catch (error) {
       this.logger.error("CommandQueryService: Get push subscriptions failed", {

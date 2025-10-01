@@ -1,6 +1,7 @@
 import type { IMonitorService } from "@network-monitor/shared";
 import type {
   Target,
+  TargetData,
   CreateTargetData,
   UpdateTargetData,
   SpeedTestResult,
@@ -9,14 +10,72 @@ import type {
 
 export class SimpleMockMonitor implements IMonitorService {
   private targets: Map<string, Target> = new Map();
+  private idCounter = 0;
 
   constructor() {
     // No dependencies needed - simple mock implementation
   }
 
+  // Base interface methods
+  async getById(id: string): Promise<Target | null> {
+    return this.getTarget(id);
+  }
+
+  async getAll(): Promise<Target[]> {
+    return this.getAllTargets();
+  }
+
+  async create(data: CreateTargetData): Promise<Target> {
+    return this.createTarget(data);
+  }
+
+  async update(id: string, data: UpdateTargetData): Promise<Target> {
+    return this.updateTarget(id, data);
+  }
+
+  async delete(id: string): Promise<void> {
+    return this.deleteTarget(id);
+  }
+
+  async getByUserId(userId: string): Promise<Target[]> {
+    return this.getTargets(userId);
+  }
+
+  // Observable service methods
+  on<T = unknown>(_event: string, _handler: (data?: T) => void): void {
+    // Simple mock - no event bus
+  }
+
+  off<T = unknown>(_event: string, _handler: (data?: T) => void): void {
+    // Simple mock - no event bus
+  }
+
+  emit<T = unknown>(_event: string, _data?: T): void {
+    // Simple mock - no event bus
+  }
+
+  // Background service methods
+  async start(): Promise<void> {
+    // Simple mock - no background processing
+  }
+
+  async stop(): Promise<void> {
+    // Simple mock - no background processing
+  }
+
+  // Helper method to convert Target to TargetData
+  private toTargetData(target: Target): TargetData {
+    return {
+      id: target.id,
+      name: target.name,
+      address: target.address,
+      ownerId: target.ownerId,
+    };
+  }
+
   async createTarget(data: CreateTargetData): Promise<Target> {
     const target: Target = {
-      id: `target-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `target-${Date.now()}-${++this.idCounter}`,
       name: data.name,
       address: data.address,
       ownerId: data.ownerId,

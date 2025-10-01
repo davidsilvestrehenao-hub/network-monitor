@@ -240,7 +240,7 @@ network-monitor/
 │
 ├── turbo.json                  # Turborepo configuration
 ├── package.json                # Root package.json
-└── service-config.json         # DI service configuration
+└── service-wiring/             # DI service configuration directory
 ```text
 
 ---
@@ -273,7 +273,7 @@ network-monitor/
 
 4. Implement service in `packages/my-service/src/MyService.ts`
 
-5. Register service in `service-config.json`
+5. Register service in `service-wiring/development.json`
 
 ### **Add a New Frontend Route**
 

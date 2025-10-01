@@ -1,9 +1,8 @@
-import type { IEventBus } from "@network-monitor/shared";
-
-type EventHandler = (data?: unknown) => void;
+import type { IEventBus, EventHandler } from "@network-monitor/shared";
 
 export class EventBus implements IEventBus {
   private listeners: Map<string, Set<EventHandler>> = new Map();
+  private connected: boolean = false;
 
   emit(event: string, data?: unknown): void {
     const handlers = this.listeners.get(event);
@@ -68,12 +67,50 @@ export class EventBus implements IEventBus {
     }
   }
 
-  // Utility methods for debugging
-  getListenerCount(event: string): number {
+  // Base interface methods
+  async emitAsync<T = unknown>(event: string, data: T): Promise<void> {
+    const handlers = this.listeners.get(event);
+    if (handlers) {
+      const promises = Array.from(handlers).map(async handler => {
+        try {
+          await handler(data);
+        } catch (error) {
+          // Justification: EventBus is infrastructure - must use console for error handling
+          // eslint-disable-next-line no-console
+          console.error(`Error in async event handler for ${event}:`, error);
+        }
+      });
+      await Promise.all(promises);
+    }
+  }
+
+  listenerCount(event: string): number {
     return this.listeners.get(event)?.size || 0;
   }
 
-  getEvents(): string[] {
+  eventNames(): string[] {
     return Array.from(this.listeners.keys());
+  }
+
+  async connect(): Promise<void> {
+    this.connected = true;
+  }
+
+  async disconnect(): Promise<void> {
+    this.connected = false;
+    this.listeners.clear();
+  }
+
+  isConnected(): boolean {
+    return this.connected;
+  }
+
+  // Utility methods for debugging
+  getListenerCount(event: string): number {
+    return this.listenerCount(event);
+  }
+
+  getEvents(): string[] {
+    return this.eventNames();
   }
 }

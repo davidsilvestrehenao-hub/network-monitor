@@ -3,8 +3,8 @@ import type {
   SpeedTestUrl,
   SpeedTestUrlConfig,
   SpeedTestUrlSelection,
+  ILogger,
 } from "@network-monitor/shared";
-import type { ILogger } from "@network-monitor/shared";
 
 export class SpeedTestConfigService implements ISpeedTestConfigService {
   private config: SpeedTestUrlConfig;
@@ -103,15 +103,19 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
   }
 
   getEnabledUrls(): SpeedTestUrl[] {
-    return this.config.urls.filter(url => url.enabled);
+    return this.config.urls.filter((url: SpeedTestUrl) => url.enabled);
   }
 
   getUrlsByProvider(provider: string): SpeedTestUrl[] {
-    return this.config.urls.filter(url => url.provider === provider);
+    return this.config.urls.filter(
+      (url: SpeedTestUrl) => url.provider === provider
+    );
   }
 
   getUrlsBySize(sizeBytes: number): SpeedTestUrl[] {
-    return this.config.urls.filter(url => url.sizeBytes === sizeBytes);
+    return this.config.urls.filter(
+      (url: SpeedTestUrl) => url.sizeBytes === sizeBytes
+    );
   }
 
   addCustomUrl(url: Omit<SpeedTestUrl, "id">): SpeedTestUrl {
@@ -137,7 +141,9 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
   }
 
   updateUrl(id: string, updates: Partial<SpeedTestUrl>): SpeedTestUrl | null {
-    const urlIndex = this.config.urls.findIndex(url => url.id === id);
+    const urlIndex = this.config.urls.findIndex(
+      (url: SpeedTestUrl) => url.id === id
+    );
     if (urlIndex === -1) {
       this.logger.warn("SpeedTestConfigService: URL not found for update", {
         id,
@@ -162,7 +168,9 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
   }
 
   removeUrl(id: string): boolean {
-    const urlIndex = this.config.urls.findIndex(url => url.id === id);
+    const urlIndex = this.config.urls.findIndex(
+      (url: SpeedTestUrl) => url.id === id
+    );
     if (urlIndex === -1) {
       this.logger.warn("SpeedTestConfigService: URL not found for removal", {
         id,
@@ -181,7 +189,7 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
   }
 
   enableUrl(id: string): boolean {
-    const url = this.config.urls.find(url => url.id === id);
+    const url = this.config.urls.find((url: SpeedTestUrl) => url.id === id);
     if (!url) {
       this.logger.warn("SpeedTestConfigService: URL not found for enabling", {
         id,
@@ -196,7 +204,7 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
   }
 
   disableUrl(id: string): boolean {
-    const url = this.config.urls.find(url => url.id === id);
+    const url = this.config.urls.find((url: SpeedTestUrl) => url.id === id);
     if (!url) {
       this.logger.warn("SpeedTestConfigService: URL not found for disabling", {
         id,
@@ -351,7 +359,7 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
 
     // Check for duplicate IDs
     const existingUrl = this.config.urls.find(
-      existing => existing.id === url.id
+      (existing: SpeedTestUrl) => existing.id === url.id
     );
     if (existingUrl && existingUrl !== url) {
       errors.push("ID already exists");
@@ -370,9 +378,11 @@ export class SpeedTestConfigService implements ISpeedTestConfigService {
     sizeRange: { min: number; max: number };
   } {
     const enabledUrls = this.getEnabledUrls();
-    const providers = [...new Set(this.config.urls.map(url => url.provider))];
+    const providers = [
+      ...new Set(this.config.urls.map((url: SpeedTestUrl) => url.provider)),
+    ];
 
-    const sizes = this.config.urls.map(url => url.sizeBytes);
+    const sizes = this.config.urls.map((url: SpeedTestUrl) => url.sizeBytes);
     const sizeRange = {
       min: Math.min(...sizes),
       max: Math.max(...sizes),

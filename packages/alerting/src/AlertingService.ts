@@ -1,7 +1,7 @@
 import type { IAlertingService } from "@network-monitor/shared";
 import type { IAlertRuleRepository } from "@network-monitor/shared";
 import type { IIncidentEventRepository } from "@network-monitor/shared";
-import type { IEventBus, BackendEvents } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 import type {
   AlertRule,
@@ -49,31 +49,6 @@ export class AlertingService implements IAlertingService {
     );
   }
 
-  async createAlertRule(data: CreateAlertRuleData): Promise<AlertRule> {
-    this.logger.debug("AlertingService: Creating alert rule", { data });
-
-    try {
-      const rule = await this.alertRuleRepository.create(data);
-      this.eventBus.emitTyped("ALERT_RULE_CREATED", {
-        id: rule.id,
-        targetId: rule.targetId,
-        rule: rule,
-      });
-      return rule;
-    } catch (error) {
-      this.logger.error("AlertingService: Alert rule creation failed", {
-        error,
-        data,
-      });
-      throw error;
-    }
-  }
-
-  async getAlertRule(id: number): Promise<AlertRule | null> {
-    this.logger.debug("AlertingService: Getting alert rule", { id });
-    return await this.alertRuleRepository.findById(id);
-  }
-
   async getAlertRulesByTargetId(targetId: string): Promise<AlertRule[]> {
     this.logger.debug("AlertingService: Getting alert rules by target ID", {
       targetId,
@@ -81,50 +56,12 @@ export class AlertingService implements IAlertingService {
     return await this.alertRuleRepository.findByTargetId(targetId);
   }
 
-  async updateAlertRule(
-    id: number,
-    data: UpdateAlertRuleData
-  ): Promise<AlertRule> {
-    this.logger.debug("AlertingService: Updating alert rule", { id, data });
-
-    try {
-      const rule = await this.alertRuleRepository.update(id, data);
-      this.eventBus.emitTyped("ALERT_RULE_UPDATED", {
-        id: rule.id,
-        rule: rule,
-      });
-      return rule;
-    } catch (error) {
-      this.logger.error("AlertingService: Alert rule update failed", {
-        error,
-        id,
-        data,
-      });
-      throw error;
-    }
-  }
-
-  async deleteAlertRule(id: number): Promise<void> {
-    this.logger.debug("AlertingService: Deleting alert rule", { id });
-
-    try {
-      await this.alertRuleRepository.delete(id);
-      this.eventBus.emitTyped("ALERT_RULE_DELETED", { id });
-    } catch (error) {
-      this.logger.error("AlertingService: Alert rule deletion failed", {
-        error,
-        id,
-      });
-      throw error;
-    }
-  }
-
   async toggleAlertRule(id: number, enabled: boolean): Promise<AlertRule> {
     this.logger.debug("AlertingService: Toggling alert rule", { id, enabled });
 
     try {
       const rule = await this.alertRuleRepository.toggleEnabled(id, enabled);
-      this.eventBus.emitTyped("ALERT_RULE_UPDATED", {
+      this.eventBus.emit("ALERT_RULE_UPDATED", {
         id: rule.id,
         rule: rule,
       });
@@ -151,7 +88,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       await this.incidentEventRepository.resolve(id);
-      this.eventBus.emitTyped("INCIDENT_RESOLVED", {
+      this.eventBus.emit("INCIDENT_RESOLVED", {
         id,
       });
     } catch (error) {
@@ -194,7 +131,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       const incident = await this.incidentEventRepository.create(data);
-      this.eventBus.emitTyped("INCIDENT_CREATED", {
+      this.eventBus.emit("INCIDENT_CREATED", {
         id: incident.id,
         targetId: incident.targetId,
         type: incident.type,
@@ -305,14 +242,14 @@ export class AlertingService implements IAlertingService {
         ruleId: rule.id,
       });
 
-      this.eventBus.emitTyped("ALERT_TRIGGERED", {
+      this.eventBus.emit("ALERT_TRIGGERED", {
         targetId: result.targetId,
         ruleId: rule.id,
         value,
         threshold: rule.threshold,
       });
 
-      this.eventBus.emitTyped("INCIDENT_CREATED", {
+      this.eventBus.emit("INCIDENT_CREATED", {
         id: incident.id,
         targetId: incident.targetId,
         type: incident.type,
@@ -327,27 +264,146 @@ export class AlertingService implements IAlertingService {
     }
   }
 
-  private async handleAlertRuleCreateRequested(
-    data: BackendEvents["ALERT_RULE_CREATE_REQUESTED"]
-  ): Promise<void> {
+  private async handleAlertRuleCreateRequested(data: {
+    targetId: string;
+    rule: unknown;
+  }): Promise<void> {
     await this.createAlertRule(data.rule as CreateAlertRuleData);
   }
 
-  private async handleAlertRuleUpdateRequested(
-    data: BackendEvents["ALERT_RULE_UPDATE_REQUESTED"]
-  ): Promise<void> {
+  private async handleAlertRuleUpdateRequested(data: {
+    id: number;
+    rule: unknown;
+  }): Promise<void> {
     await this.updateAlertRule(data.id, data.rule as UpdateAlertRuleData);
   }
 
-  private async handleAlertRuleDeleteRequested(
-    data: BackendEvents["ALERT_RULE_DELETE_REQUESTED"]
-  ): Promise<void> {
+  private async handleAlertRuleDeleteRequested(data: {
+    id: number;
+  }): Promise<void> {
     await this.deleteAlertRule(data.id);
   }
 
-  private async handleSpeedTestCompleted(
-    data: BackendEvents["SPEED_TEST_COMPLETED"]
-  ): Promise<void> {
+  private async handleSpeedTestCompleted(data: {
+    targetId: string;
+    result: unknown;
+  }): Promise<void> {
     await this.evaluateSpeedTestResult(data.result as SpeedTestResult);
+  }
+
+  // Domain-specific alert rule methods
+  async createAlertRule(data: CreateAlertRuleData): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Creating alert rule", { data });
+
+    try {
+      const rule = await this.alertRuleRepository.create(data);
+      this.eventBus.emit("ALERT_RULE_CREATED", {
+        id: rule.id,
+        targetId: rule.targetId,
+        rule: rule,
+      });
+      return rule;
+    } catch (error) {
+      this.logger.error("AlertingService: Alert rule creation failed", {
+        error,
+        data,
+      });
+      throw error;
+    }
+  }
+
+  async getAlertRule(id: number): Promise<AlertRule | null> {
+    this.logger.debug("AlertingService: Getting alert rule", { id });
+    return await this.alertRuleRepository.findById(id);
+  }
+
+  async updateAlertRule(
+    id: number,
+    data: UpdateAlertRuleData
+  ): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Updating alert rule", { id, data });
+
+    try {
+      const rule = await this.alertRuleRepository.update(id, data);
+      this.eventBus.emit("ALERT_RULE_UPDATED", {
+        id: rule.id,
+        rule: rule,
+      });
+      return rule;
+    } catch (error) {
+      this.logger.error("AlertingService: Alert rule update failed", {
+        error,
+        id,
+        data,
+      });
+      throw error;
+    }
+  }
+
+  async deleteAlertRule(id: number): Promise<void> {
+    this.logger.debug("AlertingService: Deleting alert rule", { id });
+
+    try {
+      await this.alertRuleRepository.delete(id);
+      this.eventBus.emit("ALERT_RULE_DELETED", { id });
+    } catch (error) {
+      this.logger.error("AlertingService: Alert rule deletion failed", {
+        error,
+        id,
+      });
+      throw error;
+    }
+  }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<AlertRule | null> {
+    this.logger.debug("AlertingService: Getting alert rule by ID", { id });
+    return this.alertRuleRepository.findById(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<AlertRule[]> {
+    this.logger.debug("AlertingService: Getting all alert rules", {
+      limit,
+      offset,
+    });
+    return this.alertRuleRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateAlertRuleData): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Creating alert rule", { data });
+    return this.alertRuleRepository.create(data);
+  }
+
+  async update(
+    id: string | number,
+    data: UpdateAlertRuleData
+  ): Promise<AlertRule> {
+    this.logger.debug("AlertingService: Updating alert rule", { id, data });
+    return this.alertRuleRepository.update(
+      typeof id === "string" ? parseInt(id) : id,
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger.debug("AlertingService: Deleting alert rule", { id });
+    return this.alertRuleRepository.delete(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
+
+  // IObservableService interface methods
+  on<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.on(event, handler);
+  }
+
+  off<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.off(event, handler);
+  }
+
+  emit<T = unknown>(event: string, data?: T): void {
+    this.eventBus.emit(event, data);
   }
 }

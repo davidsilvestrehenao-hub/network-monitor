@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@network-monitor/shared": "workspace:*",
+    "@network-monitor/speed-test": "workspace:*",
     "winston": "^3.17.0"
   },
   "devDependencies": {

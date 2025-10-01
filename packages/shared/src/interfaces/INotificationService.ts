@@ -1,19 +1,24 @@
 import type {
   Notification,
   CreateNotificationData,
+  UpdateNotificationData,
 } from "./INotificationRepository";
 import type {
   PushSubscription,
   CreatePushSubscriptionData,
 } from "./IPushSubscriptionRepository";
+import type { IService } from "./base/IService";
 
-export interface INotificationService {
-  // Notifications
-  createNotification(data: CreateNotificationData): Promise<Notification>;
+export interface INotificationService
+  extends IService<
+    Notification,
+    CreateNotificationData,
+    UpdateNotificationData
+  > {
+  // Domain-specific notification methods
   getNotifications(userId: string): Promise<Notification[]>;
   markNotificationAsRead(id: number): Promise<void>;
   markAllNotificationsAsRead(userId: string): Promise<void>;
-  deleteNotification(id: number): Promise<void>;
 
   // Push subscriptions
   createPushSubscription(

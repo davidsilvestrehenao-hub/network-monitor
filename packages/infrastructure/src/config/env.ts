@@ -58,6 +58,7 @@ export interface EnvironmentConfig {
   enableMockAuth: boolean;
   enableDebugMode: boolean;
   enableMaintenanceMode: boolean;
+  enableBrowserLaunch: boolean;
 
   // Deployment
   deploymentEnv: string;
@@ -254,6 +255,10 @@ export function loadEnvironment(): EnvironmentConfig {
     enableMaintenanceMode: parseBoolean(
       process.env.ENABLE_MAINTENANCE_MODE,
       false
+    ),
+    enableBrowserLaunch: parseBoolean(
+      process.env.ENABLE_BROWSER_LAUNCH,
+      !isProduction && process.env.CI !== "true"
     ),
 
     // Deployment

@@ -1,7 +1,7 @@
 import type { INotificationService } from "@network-monitor/shared";
 import type { INotificationRepository } from "@network-monitor/shared";
 import type { IPushSubscriptionRepository } from "@network-monitor/shared";
-import type { IEventBus, BackendEvents } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 import type {
   Notification,
@@ -61,7 +61,7 @@ export class NotificationService implements INotificationService {
 
     try {
       const notification = await this.notificationRepository.create(data);
-      this.eventBus.emitTyped("NOTIFICATION_CREATED", {
+      this.eventBus.emit("NOTIFICATION_CREATED", {
         id: notification.id,
         userId: notification.userId,
         message: notification.message,
@@ -90,7 +90,7 @@ export class NotificationService implements INotificationService {
 
     try {
       await this.notificationRepository.markAsRead(id);
-      this.eventBus.emitTyped("NOTIFICATION_READ", {
+      this.eventBus.emit("NOTIFICATION_READ", {
         id,
       });
     } catch (error) {
@@ -112,7 +112,7 @@ export class NotificationService implements INotificationService {
 
     try {
       await this.notificationRepository.markAllAsReadByUserId(userId);
-      this.eventBus.emitTyped("ALL_NOTIFICATIONS_READ", {
+      this.eventBus.emit("ALL_NOTIFICATIONS_READ", {
         userId,
       });
     } catch (error) {
@@ -131,7 +131,7 @@ export class NotificationService implements INotificationService {
 
     try {
       const notification = await this.notificationRepository.markAsRead(id);
-      this.eventBus.emitTyped("NOTIFICATION_READ", {
+      this.eventBus.emit("NOTIFICATION_READ", {
         id: notification.id,
         userId: notification.userId,
       });
@@ -156,7 +156,7 @@ export class NotificationService implements INotificationService {
     try {
       const count =
         await this.notificationRepository.markAllAsReadByUserId(userId);
-      this.eventBus.emitTyped("ALL_NOTIFICATIONS_READ", {
+      this.eventBus.emit("ALL_NOTIFICATIONS_READ", {
         userId,
         count,
       });
@@ -175,7 +175,7 @@ export class NotificationService implements INotificationService {
 
     try {
       await this.notificationRepository.delete(id);
-      this.eventBus.emitTyped("NOTIFICATION_DELETED", { id });
+      this.eventBus.emit("NOTIFICATION_DELETED", { id });
     } catch (error) {
       this.logger.error("NotificationService: Notification deletion failed", {
         error,
@@ -194,7 +194,7 @@ export class NotificationService implements INotificationService {
 
     try {
       const subscription = await this.pushSubscriptionRepository.create(data);
-      this.eventBus.emitTyped("PUSH_SUBSCRIPTION_CREATED", {
+      this.eventBus.emit("PUSH_SUBSCRIPTION_CREATED", {
         id: subscription.id,
         userId: subscription.userId,
       });
@@ -228,7 +228,7 @@ export class NotificationService implements INotificationService {
 
     try {
       await this.pushSubscriptionRepository.delete(id);
-      this.eventBus.emitTyped("PUSH_SUBSCRIPTION_DELETED", { id });
+      this.eventBus.emit("PUSH_SUBSCRIPTION_DELETED", { id });
     } catch (error) {
       this.logger.error(
         "NotificationService: Push subscription deletion failed",
@@ -251,7 +251,7 @@ export class NotificationService implements INotificationService {
 
     try {
       await this.pushSubscriptionRepository.deleteByEndpoint(endpoint);
-      this.eventBus.emitTyped("PUSH_SUBSCRIPTION_DELETED_BY_ENDPOINT", {
+      this.eventBus.emit("PUSH_SUBSCRIPTION_DELETED_BY_ENDPOINT", {
         endpoint,
       });
     } catch (error) {
@@ -302,7 +302,7 @@ export class NotificationService implements INotificationService {
         message: title ? `${title}: ${message}` : message,
       });
 
-      this.eventBus.emitTyped("PUSH_NOTIFICATION_SENT", {
+      this.eventBus.emit("PUSH_NOTIFICATION_SENT", {
         userId,
         message,
         title,
@@ -344,33 +344,41 @@ export class NotificationService implements INotificationService {
     });
   }
 
-  private async handleNotificationSendRequested(
-    data: BackendEvents["NOTIFICATION_SEND_REQUESTED"]
-  ): Promise<void> {
+  private async handleNotificationSendRequested(data: {
+    userId: string;
+    message: string;
+  }): Promise<void> {
     await this.createNotification({
       userId: data.userId,
       message: data.message,
     });
   }
 
-  private async handlePushSubscriptionCreateRequested(
-    data: BackendEvents["PUSH_SUBSCRIPTION_CREATE_REQUESTED"]
-  ): Promise<void> {
+  private async handlePushSubscriptionCreateRequested(data: {
+    userId: string;
+    subscription: unknown;
+  }): Promise<void> {
     await this.createPushSubscription(
       data.subscription as CreatePushSubscriptionData
     );
   }
 
-  private async handleAlertTriggered(
-    data: BackendEvents["ALERT_TRIGGERED"]
-  ): Promise<void> {
+  private async handleAlertTriggered(data: {
+    targetId: string;
+    ruleId: number;
+    value: number;
+    threshold: number;
+  }): Promise<void> {
     const message = `Alert: ${data.value} ${data.threshold} threshold exceeded`;
     await this.sendPushNotification("anonymous", message, "Connection Alert");
   }
 
-  private async handleIncidentCreated(
-    data: BackendEvents["INCIDENT_CREATED"]
-  ): Promise<void> {
+  private async handleIncidentCreated(data: {
+    id: number;
+    targetId: string;
+    type: string;
+    description: string;
+  }): Promise<void> {
     const message = `Incident: ${data.description}`;
     await this.sendPushNotification("anonymous", message, "System Alert");
   }
@@ -396,5 +404,48 @@ export class NotificationService implements INotificationService {
 
     const message = "This is a test notification from Network Monitor";
     await this.sendPushNotification(userId, message, "Test Notification");
+  }
+
+  // Base IService interface methods
+  async getById(id: string | number): Promise<Notification | null> {
+    this.logger.debug("NotificationService: Getting notification by ID", {
+      id,
+    });
+    return this.notificationRepository.findById(
+      typeof id === "string" ? parseInt(id) : id
+    );
+  }
+
+  async getAll(limit?: number, offset?: number): Promise<Notification[]> {
+    this.logger.debug("NotificationService: Getting all notifications", {
+      limit,
+      offset,
+    });
+    return this.notificationRepository.getAll(limit, offset);
+  }
+
+  async create(data: CreateNotificationData): Promise<Notification> {
+    return this.createNotification(data);
+  }
+
+  async update(
+    id: string | number,
+    data: { message?: string; read?: boolean }
+  ): Promise<Notification> {
+    this.logger.debug("NotificationService: Updating notification", {
+      id,
+      data,
+    });
+    return this.notificationRepository.update(
+      typeof id === "string" ? parseInt(id) : id,
+      data
+    );
+  }
+
+  async delete(id: string | number): Promise<void> {
+    this.logger.debug("NotificationService: Deleting notification", { id });
+    return this.notificationRepository.delete(
+      typeof id === "string" ? parseInt(id) : id
+    );
   }
 }

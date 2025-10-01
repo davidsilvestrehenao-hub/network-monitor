@@ -11,11 +11,15 @@ Complete guide to the CI/CD workflow and pull request process. This is the autho
 Model Context Protocol (MCP) server configuration for Cursor AI integration.
 
 **Setup Instructions:**
-1. Copy `mcp-config.example.json` to `mcp-config.json`
-2. Get your GitHub Personal Access Token:
-   - Go to GitHub Settings → Developer settings → Personal access tokens
-   - Create token with `repo` scope
-3. Replace `your-github-token-here` with your actual token
+1. The `mcp-config.json` is already configured to use environment variables
+2. Set your GitHub Personal Access Token in your `.env` file:
+   ```bash
+   echo "GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token)" >> .env
+   ```
+3. Or manually add to `.env`:
+   ```
+   GITHUB_PERSONAL_ACCESS_TOKEN=your-github-token-here
+   ```
 4. Restart Cursor to load the configuration
 
 **Note:** This file is gitignored to keep your token secure.

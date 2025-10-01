@@ -4,6 +4,11 @@ import type {
   UpdateTargetData,
   SpeedTestResult,
 } from "./ITargetRepository";
+import type {
+  IUserOwnedService,
+  IObservableService,
+  IBackgroundService,
+} from "./base/IService";
 
 export interface SpeedTestConfig {
   targetId: string;
@@ -12,8 +17,11 @@ export interface SpeedTestConfig {
   downloadUrl?: string;
 }
 
-export interface IMonitorService {
-  // Target management
+export interface IMonitorService
+  extends IUserOwnedService<Target, CreateTargetData, UpdateTargetData>,
+    IObservableService,
+    IBackgroundService {
+  // Target management (legacy methods for backward compatibility)
   createTarget(data: CreateTargetData): Promise<Target>;
   getTarget(id: string): Promise<Target | null>;
   getTargets(userId: string): Promise<Target[]>;

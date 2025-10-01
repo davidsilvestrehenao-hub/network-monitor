@@ -27,7 +27,7 @@ export interface MicroserviceBootstrapOptions {
   serviceName: string;
 
   /**
-   * Path to the JSON configuration file (defaults to service-config.json)
+   * Path to the JSON configuration file (defaults to service-wiring/development.json)
    */
   configPath?: string;
 
@@ -77,7 +77,7 @@ export interface MicroserviceContext {
  *
  * await bootstrapMicroservice({
  *   serviceName: "Monitor Service",
- *   configPath: "service-config.json",
+ *   configPath: "service-wiring/development.json",
  *   onInitialized: async (ctx) => {
  *     // Setup event handlers
  *     ctx.eventBus.on("TARGET_CREATE_REQUESTED", handleTargetCreate);
@@ -128,7 +128,7 @@ export async function bootstrapMicroservice(
 
     // Log startup info
     logger.info(`${serviceName}: Initializing...`, {
-      configPath: configPath || "service-config.json",
+      configPath: configPath || "service-wiring/development.json",
       database: enableDatabase ? "enabled" : "disabled",
     });
 
