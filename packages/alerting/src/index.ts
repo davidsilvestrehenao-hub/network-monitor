@@ -1,1 +1,2 @@
-export { AlertingService } from './AlertingService';
+// Alerting service package
+export * from './AlertingService';

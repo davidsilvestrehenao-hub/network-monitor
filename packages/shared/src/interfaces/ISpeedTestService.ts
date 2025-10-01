@@ -24,7 +24,6 @@ export interface SpeedResult {
 
 export interface ComprehensiveSpeedTestResult extends SpeedTestResult {
   jitter?: number;
-  upload?: number;
   testDuration?: number;
   serverInfo?: {
     location?: string;

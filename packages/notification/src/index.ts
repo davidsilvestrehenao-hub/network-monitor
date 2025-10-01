@@ -1,1 +1,2 @@
-export { NotificationService } from './NotificationService';
+// Notification service package
+export * from './NotificationService';

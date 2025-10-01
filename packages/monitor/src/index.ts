@@ -1,2 +1,2 @@
-// Export MonitorService
-export { MonitorService } from './MonitorService';
+// Monitor service package
+export * from './MonitorService';

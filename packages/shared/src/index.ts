@@ -1,3 +1,3 @@
-// Main entry point for @network-monitor/shared
+// Shared package - interfaces and types only
 export * from './interfaces';
 export * from './types';

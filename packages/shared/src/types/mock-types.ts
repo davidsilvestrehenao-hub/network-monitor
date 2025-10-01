@@ -1,20 +1,5 @@
 // Types for mock services and test data
-
-import type {
-  Notification,
-  CreateNotificationData,
-} from "~/lib/services/interfaces/INotificationRepository";
-import type {
-  PushSubscription,
-  CreatePushSubscriptionData,
-} from "~/lib/services/interfaces/IPushSubscriptionRepository";
-import type { CreateAlertRuleData } from "~/lib/services/interfaces/IAlertRepository";
-import type {
-  Target,
-  CreateTargetData,
-  SpeedTestResult,
-  AlertRule,
-} from "~/lib/services/interfaces/ITargetRepository";
+// These are simplified versions without external dependencies
 
 // Mock notification types
 export interface MockNotification {
@@ -61,8 +46,11 @@ export interface MockTriggeredAlert {
 }
 
 // Mock target types
-export interface MockTarget extends Target {
-  id: string; // Ensure string ID for mocks
+export interface MockTarget {
+  id: string;
+  name: string;
+  address: string;
+  ownerId: string;
 }
 
 export interface MockSpeedTestResult {
@@ -87,7 +75,7 @@ export interface AlertTriggeredEventData {
 
 export interface SpeedTestCompletedEventData {
   targetId: string;
-  result: SpeedTestResult;
+  result: MockSpeedTestResult;
   success: boolean;
   error?: string;
 }
@@ -97,52 +85,4 @@ export interface NotificationEventData {
   userId: string;
   type?: "info" | "warning" | "error" | "success";
   data?: Record<string, unknown>;
-}
-
-// Mock database client interface
-export interface MockPrismaClient {
-  monitoringTarget: {
-    findUnique: (args: { where: { id: string } }) => Promise<Target | null>;
-    findMany: (args?: { where?: Record<string, unknown> }) => Promise<Target[]>;
-    create: (args: { data: CreateTargetData }) => Promise<Target>;
-    update: (args: {
-      where: { id: string };
-      data: Partial<CreateTargetData>;
-    }) => Promise<Target>;
-    delete: (args: { where: { id: string } }) => Promise<Target>;
-  };
-  speedTestResult: {
-    findMany: (args?: {
-      where?: Record<string, unknown>;
-    }) => Promise<SpeedTestResult[]>;
-    create: (args: {
-      data: Omit<SpeedTestResult, "id">;
-    }) => Promise<SpeedTestResult>;
-  };
-  alertRule: {
-    findMany: (args?: {
-      where?: Record<string, unknown>;
-    }) => Promise<AlertRule[]>;
-    create: (args: { data: CreateAlertRuleData }) => Promise<AlertRule>;
-    update: (args: {
-      where: { id: number };
-      data: Partial<CreateAlertRuleData>;
-    }) => Promise<AlertRule>;
-    delete: (args: { where: { id: number } }) => Promise<AlertRule>;
-  };
-  notification: {
-    findMany: (args?: {
-      where?: Record<string, unknown>;
-    }) => Promise<Notification[]>;
-    create: (args: { data: CreateNotificationData }) => Promise<Notification>;
-  };
-  pushSubscription: {
-    findMany: (args?: {
-      where?: Record<string, unknown>;
-    }) => Promise<PushSubscription[]>;
-    create: (args: {
-      data: CreatePushSubscriptionData;
-    }) => Promise<PushSubscription>;
-    delete: (args: { where: { id: string } }) => Promise<PushSubscription>;
-  };
 }
