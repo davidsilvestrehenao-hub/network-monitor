@@ -162,6 +162,7 @@ export const runSpeedTest = async (data: { targetId: string }) => {
 
     const result = await ctx.services.monitor.runSpeedTest({
       targetId: data.targetId,
+      target: `target-${data.targetId}`, // Add required target property
       timeout: 30000, // 30 second timeout
     });
 

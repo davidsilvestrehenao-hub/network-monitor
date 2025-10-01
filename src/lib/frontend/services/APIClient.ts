@@ -78,7 +78,7 @@ export class APIClient implements IAPIClient {
     });
     return {
       ...result,
-      error: null, // Add missing error property
+      error: result.error ?? undefined, // Convert null to undefined
     };
   }
 
@@ -110,7 +110,7 @@ export class APIClient implements IAPIClient {
     });
     return result.map(item => ({
       ...item,
-      error: null, // Add missing error property
+      error: item.error ?? undefined, // Convert null to undefined
     }));
   }
 
