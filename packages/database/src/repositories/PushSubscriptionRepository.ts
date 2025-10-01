@@ -43,7 +43,9 @@ export class PushSubscriptionRepository implements IPushSubscriptionRepository {
         orderBy: { id: "desc" },
       });
 
-    return prismaSubscriptions.map(sub => this.mapToPushSubscription(sub));
+    return prismaSubscriptions.map((sub: unknown) =>
+      this.mapToPushSubscription(sub)
+    );
   }
 
   async findByEndpoint(endpoint: string): Promise<PushSubscription | null> {
@@ -77,7 +79,9 @@ export class PushSubscriptionRepository implements IPushSubscriptionRepository {
         skip: offset,
       });
 
-    return prismaSubscriptions.map(sub => this.mapToPushSubscription(sub));
+    return prismaSubscriptions.map((sub: unknown) =>
+      this.mapToPushSubscription(sub)
+    );
   }
 
   async count(): Promise<number> {

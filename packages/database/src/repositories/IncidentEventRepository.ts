@@ -49,7 +49,7 @@ export class IncidentEventRepository implements IIncidentEventRepository {
         take: limit,
       });
 
-    return prismaEvents.map(event => this.mapToIncidentEvent(event));
+    return prismaEvents.map((event: unknown) => this.mapToIncidentEvent(event));
   }
 
   async findByQuery(query: IncidentEventQuery): Promise<IncidentEvent[]> {
@@ -97,7 +97,7 @@ export class IncidentEventRepository implements IIncidentEventRepository {
         skip: query.offset || 0,
       });
 
-    return prismaEvents.map(event => this.mapToIncidentEvent(event));
+    return prismaEvents.map((event: unknown) => this.mapToIncidentEvent(event));
   }
 
   async getUnresolvedByTargetId(targetId: string): Promise<IncidentEvent[]> {
@@ -119,7 +119,7 @@ export class IncidentEventRepository implements IIncidentEventRepository {
         orderBy: { timestamp: "desc" },
       });
 
-    return prismaEvents.map(event => this.mapToIncidentEvent(event));
+    return prismaEvents.map((event: unknown) => this.mapToIncidentEvent(event));
   }
 
   async findUnresolved(): Promise<IncidentEvent[]> {
@@ -137,7 +137,7 @@ export class IncidentEventRepository implements IIncidentEventRepository {
         orderBy: { timestamp: "desc" },
       });
 
-    return prismaEvents.map(event => this.mapToIncidentEvent(event));
+    return prismaEvents.map((event: unknown) => this.mapToIncidentEvent(event));
   }
 
   async getAll(limit = 100, offset = 0): Promise<IncidentEvent[]> {
@@ -157,7 +157,7 @@ export class IncidentEventRepository implements IIncidentEventRepository {
         skip: offset,
       });
 
-    return prismaEvents.map(event => this.mapToIncidentEvent(event));
+    return prismaEvents.map((event: unknown) => this.mapToIncidentEvent(event));
   }
 
   async count(): Promise<number> {

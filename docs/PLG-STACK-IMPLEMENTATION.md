@@ -11,24 +11,28 @@ This document outlines the implementation plan for the **PLG Stack** (Prometheus
 ## 📦 Components
 
 ### Prometheus
+
 - **Purpose**: Metrics collection and time-series storage
 - **Port**: 9090
 - **Features**: PromQL, alerting, service discovery
 - **Data**: CPU, memory, HTTP metrics, custom application metrics
 
 ### Loki
+
 - **Purpose**: Log aggregation and querying
 - **Port**: 3100
 - **Features**: LogQL, label-based indexing, efficient storage
 - **Data**: Application logs, error logs, access logs
 
 ### Grafana
+
 - **Purpose**: Unified visualization and alerting
 - **Port**: 3200
 - **Features**: Dashboards, alerts, multi-datasource
 - **Data Sources**: Prometheus + Loki
 
 ### Promtail
+
 - **Purpose**: Log shipping agent
 - **Port**: 9080
 - **Features**: Log parsing, label extraction, filtering
@@ -74,6 +78,7 @@ graph TB
 ## 📋 Implementation Tasks
 
 ### Phase 1: Foundation (Issues #8-11)
+
 1. **[Issue #8](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/8)** - Architecture Planning & Docker Setup
    - Design architecture
    - Create Docker Compose configuration
@@ -99,6 +104,7 @@ graph TB
    - **Estimated Time**: 1 day
 
 ### Phase 2: Integration (Issue #12)
+
 5. **[Issue #12](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/12)** - Application Integration
    - Add metrics endpoints to all services
    - Implement custom application metrics
@@ -106,6 +112,7 @@ graph TB
    - **Estimated Time**: 2-3 days
 
 ### Phase 3: Visualization (Issue #13)
+
 6. **[Issue #13](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/13)** - Dashboard Creation
    - System overview dashboard
    - Per-service dashboards
@@ -114,6 +121,7 @@ graph TB
    - **Estimated Time**: 2-3 days
 
 ### Phase 4: Alerting (Issue #14)
+
 7. **[Issue #14](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/14)** - Alert Configuration
    - Define alert rules
    - Set up Alertmanager
@@ -121,6 +129,7 @@ graph TB
    - **Estimated Time**: 1-2 days
 
 ### Phase 5: Documentation (Issue #15)
+
 8. **[Issue #15](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/15)** - Documentation
    - Architecture documentation
    - Setup guides
@@ -137,6 +146,7 @@ graph TB
 ## 🎯 Success Metrics
 
 ### Technical Metrics
+
 - ✅ All services exposing metrics
 - ✅ Logs flowing from all services
 - ✅ 6+ dashboards created
@@ -145,6 +155,7 @@ graph TB
 - ✅ <1s query response time
 
 ### Business Metrics
+
 - ✅ 100% service health visibility
 - ✅ <5 minute mean time to detection (MTTD)
 - ✅ <15 minute mean time to resolution (MTTR)
@@ -153,6 +164,7 @@ graph TB
 ## 📈 Metrics to Track
 
 ### Infrastructure Metrics
+
 - CPU usage per service
 - Memory consumption per service
 - Disk I/O
@@ -160,6 +172,7 @@ graph TB
 - Container health
 
 ### Application Metrics
+
 - HTTP request rate
 - Response time (p50, p95, p99)
 - Error rate by status code
@@ -167,6 +180,7 @@ graph TB
 - Database query performance
 
 ### Business Metrics
+
 - Active monitoring targets
 - Speed test success rate
 - Alert trigger rate
@@ -176,18 +190,21 @@ graph TB
 ## 🚨 Alert Categories
 
 ### Critical Alerts (Immediate Action)
+
 - Service down
 - High error rate (>5%)
 - Database connection issues
 - Disk space critical (<10%)
 
 ### Warning Alerts (Investigation Needed)
+
 - High CPU usage (>80%)
 - High memory usage (>500MB)
 - Slow response time (>2s p95)
 - Speed test failures (>20%)
 
 ### Info Alerts (Awareness)
+
 - Deployment completed
 - Configuration changed
 - Scheduled maintenance
@@ -220,6 +237,7 @@ Promtail:
 ## 📦 Dependencies
 
 ### Application Dependencies
+
 ```bash
 # Prometheus client for Node.js/Bun
 bun add prom-client
@@ -229,6 +247,7 @@ bun add winston
 ```
 
 ### Infrastructure Requirements
+
 - Docker 20.10+
 - Docker Compose 2.0+
 - 10GB free disk space
@@ -237,16 +256,19 @@ bun add winston
 ## 🔐 Security Considerations
 
 ### Authentication
+
 - Grafana admin credentials via environment variables
 - No public access to Prometheus/Loki directly
 - Use reverse proxy for production
 
 ### Data Retention
+
 - Metrics: 30 days
 - Logs: 31 days
 - Configurable based on storage capacity
 
 ### Network Security
+
 - Internal Docker network for service communication
 - Only Grafana exposed externally
 - TLS/SSL for production deployments
@@ -254,29 +276,34 @@ bun add winston
 ## 📚 Resources
 
 ### Official Documentation
+
 - [Prometheus](https://prometheus.io/docs/)
 - [Loki](https://grafana.com/docs/loki/latest/)
 - [Grafana](https://grafana.com/docs/grafana/latest/)
 - [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/)
 
 ### Guides & Tutorials
+
 - [PLG Stack Tutorial](https://grafana.com/docs/loki/latest/getting-started/get-logs-into-loki/)
 - [Prometheus Best Practices](https://prometheus.io/docs/practices/)
 - [Dashboard Design Guide](https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/best-practices/)
 
 ### Community
+
 - [Grafana Community](https://community.grafana.com/)
 - [Prometheus Mailing List](https://groups.google.com/forum/#!forum/prometheus-users)
 
 ## 🎓 Learning Path
 
 ### For Developers
+
 1. Understand Prometheus metrics types
 2. Learn PromQL basics
 3. Practice LogQL queries
 4. Dashboard creation
 
 ### For Operators
+
 1. Docker Compose deployment
 2. Configuration management
 3. Alert rule creation
@@ -285,16 +312,19 @@ bun add winston
 ## 🔄 Maintenance
 
 ### Daily
+
 - Review dashboards for anomalies
 - Check active alerts
 - Monitor disk usage
 
 ### Weekly
+
 - Review metrics retention
 - Update dashboards as needed
 - Test alert delivery
 
 ### Monthly
+
 - Audit alert rules
 - Optimize slow queries
 - Review and archive old data
@@ -302,6 +332,7 @@ bun add winston
 ## 📞 Support
 
 For questions or issues:
+
 - **GitHub Issues**: [Create an issue](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/new)
 - **Epic Issue**: [Issue #7](https://github.com/davidsilvestrehenao-hub/network-monitor/issues/7)
 - **Documentation**: See `/docs/` directory
@@ -311,4 +342,3 @@ For questions or issues:
 **Last Updated**: October 1, 2025  
 **Version**: 1.0  
 **Status**: Planning Phase
-

@@ -44,7 +44,9 @@ export class NotificationRepository implements INotificationRepository {
         take: limit,
       });
 
-    return prismaNotifications.map(notif => this.mapToNotification(notif));
+    return prismaNotifications.map((notif: unknown) =>
+      this.mapToNotification(notif)
+    );
   }
 
   async findByQuery(query: NotificationQuery): Promise<Notification[]> {
@@ -82,7 +84,9 @@ export class NotificationRepository implements INotificationRepository {
         skip: query.offset || 0,
       });
 
-    return prismaNotifications.map(notif => this.mapToNotification(notif));
+    return prismaNotifications.map((notif: unknown) =>
+      this.mapToNotification(notif)
+    );
   }
 
   async getUnreadByUserId(userId: string): Promise<Notification[]> {
@@ -101,7 +105,9 @@ export class NotificationRepository implements INotificationRepository {
         orderBy: { sentAt: "desc" },
       });
 
-    return prismaNotifications.map(notif => this.mapToNotification(notif));
+    return prismaNotifications.map((notif: unknown) =>
+      this.mapToNotification(notif)
+    );
   }
 
   async getAll(limit = 100, offset = 0): Promise<Notification[]> {
@@ -118,7 +124,9 @@ export class NotificationRepository implements INotificationRepository {
         skip: offset,
       });
 
-    return prismaNotifications.map(notif => this.mapToNotification(notif));
+    return prismaNotifications.map((notif: unknown) =>
+      this.mapToNotification(notif)
+    );
   }
 
   async count(): Promise<number> {

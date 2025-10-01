@@ -75,7 +75,7 @@ export class UserRepository implements IUserRepository {
       orderBy: { id: "desc" },
     });
 
-    return prismaUsers.map(user => this.mapToUser(user));
+    return prismaUsers.map((user: unknown) => this.mapToUser(user));
   }
 
   async count(): Promise<number> {

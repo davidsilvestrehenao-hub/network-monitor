@@ -58,7 +58,9 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
         orderBy: { id: "desc" },
       });
 
-    return prismaTargets.map(target => this.mapToMonitoringTarget(target));
+    return prismaTargets.map((target: unknown) =>
+      this.mapToMonitoringTarget(target)
+    );
   }
 
   async getAll(limit = 100, offset = 0): Promise<MonitoringTarget[]> {
@@ -84,7 +86,9 @@ export class MonitoringTargetRepository implements IMonitoringTargetRepository {
         orderBy: { id: "desc" },
       });
 
-    return prismaTargets.map(target => this.mapToMonitoringTarget(target));
+    return prismaTargets.map((target: unknown) =>
+      this.mapToMonitoringTarget(target)
+    );
   }
 
   async count(): Promise<number> {
