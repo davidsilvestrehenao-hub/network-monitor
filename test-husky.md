@@ -1,1 +1,1 @@
-# Husky Pre-commit Setup
+Updated Husky hooks
