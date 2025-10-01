@@ -1,8 +1,13 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+echo "🔍 Running pre-commit checks..."
 
-# Run full quality gate (format check, type-check, lint check, markdownlint)
-bun run quality
+# Run our CI checks locally
+./scripts/ci-check.sh
 
-# Ensure only affected packages build before committing
-bunx turbo run build --filter=...^...
+# Check if CI checks passed
+if [ $? -ne 0 ]; then
+    echo "❌ Pre-commit checks failed. Please fix the issues before committing."
+    echo "💡 You can run './scripts/ci-check.sh' to see detailed error messages."
+    exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"
