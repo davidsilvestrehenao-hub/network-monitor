@@ -8,7 +8,7 @@ import type {
   IEventBus,
   ISpeedTestConfigService,
 } from "@network-monitor/shared";
-import { SpeedTestConfigService } from "@network-monitor/speed-test";
+import { MockSpeedTestConfigService } from "../mocks/MockSpeedTestConfigService.js";
 
 export const browserServiceConfig = {
   [TYPES.ILogger]: {
@@ -27,10 +27,10 @@ export const browserServiceConfig = {
   },
   [TYPES.ISpeedTestConfigService]: {
     factory: createServiceFactory<ISpeedTestConfigService>(
-      container => new SpeedTestConfigService(container.get(TYPES.ILogger))
+      container => new MockSpeedTestConfigService(container.get(TYPES.ILogger))
     ),
     dependencies: [TYPES.ILogger],
     singleton: true,
-    description: "Speed test URL configuration service",
+    description: "Mock speed test URL configuration service for browser",
   },
 };

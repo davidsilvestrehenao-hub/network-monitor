@@ -276,25 +276,71 @@ async function startMonolith() {
     );
   });
 
-  // Start HTTP server using Bun with Hono
+  // Start HTTP server using Bun with Hono with automatic port conflict resolution
   // Justification: Bun global is provided by Bun runtime, not in standard TypeScript types
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const BunGlobal = globalThis as any;
+
+  // Function to find an available port starting from the configured port
+  const findAvailablePort = async (
+    startPort: number,
+    maxAttempts: number = 10
+  ): Promise<number> => {
+    for (let i = 0; i < maxAttempts; i++) {
+      const port = startPort + i;
+      try {
+        // Try to create a test server to check if port is available
+        const testServer = BunGlobal.Bun.serve({
+          port,
+          hostname: config.host,
+          fetch: () => new Response("test"),
+        });
+        // If successful, close the test server and return the port
+        testServer.stop();
+        return port;
+      } catch (error: unknown) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "code" in error &&
+          error.code === "EADDRINUSE"
+        ) {
+          // Port is in use, try next one
+          continue;
+        }
+        // Other error, re-throw
+        throw error;
+      }
+    }
+    throw new Error(
+      `No available port found after ${maxAttempts} attempts starting from ${startPort}`
+    );
+  };
+
+  const actualPort = await findAvailablePort(config.port);
+
+  // Log port resolution if different from configured port
+  if (actualPort !== config.port) {
+    context.logger.info(
+      `🔄 Port conflict resolved: ${config.port} → ${actualPort}`
+    );
+  }
+
   const server = BunGlobal.Bun.serve({
-    port: config.port,
+    port: actualPort,
     hostname: config.host,
     fetch: app.fetch, // Hono handles all routing
   });
 
   context.logger.info("🚀 API Server is now running", {
-    port: config.port,
+    port: actualPort,
     host: config.host,
     environment: config.nodeEnv,
     endpoints: {
-      rest: `http://${config.host}:${config.port}/api`,
-      graphql: `http://${config.host}:${config.port}/graphql`,
-      health: `http://${config.host}:${config.port}/health`,
-      docs: `http://${config.host}:${config.port}/api/docs`,
+      rest: `http://${config.host}:${actualPort}/api`,
+      graphql: `http://${config.host}:${actualPort}/graphql`,
+      health: `http://${config.host}:${actualPort}/health`,
+      docs: `http://${config.host}:${actualPort}/api/docs`,
     },
   });
 
@@ -305,10 +351,10 @@ async function startMonolith() {
 
   context.logger.info("📖 Documentation:");
   context.logger.info(
-    `  📘 OpenAPI/Swagger: http://${config.host}:${config.port}/api/docs`
+    `  📘 OpenAPI/Swagger: http://${config.host}:${actualPort}/api/docs`
   );
   context.logger.info(
-    `  🎮 GraphQL Playground: http://${config.host}:${config.port}/graphql`
+    `  🎮 GraphQL Playground: http://${config.host}:${actualPort}/graphql`
   );
   context.logger.info(
     `  📄 Postman Collection: apps/api/postman-collection.json`
@@ -320,7 +366,7 @@ async function startMonolith() {
 
   // Auto-launch browser in development mode
   if (config.nodeEnv === "development") {
-    const docsUrl = `http://${config.host}:${config.port}/api/docs`;
+    const docsUrl = `http://${config.host}:${actualPort}/api/docs`;
     autoLaunchBrowser(docsUrl, context.logger).catch(() => {
       // Silently ignore errors
     });

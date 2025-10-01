@@ -37,6 +37,10 @@ export class SimpleMockMonitor implements IMonitorService {
     );
   }
 
+  async getAllTargets(): Promise<Target[]> {
+    return Array.from(this.targets.values());
+  }
+
   async updateTarget(id: string, data: UpdateTargetData): Promise<Target> {
     const target = this.targets.get(id);
     if (!target) {

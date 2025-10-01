@@ -592,7 +592,7 @@ const defuFn = createDefu((object, key, currentValue) => {
   }
 });
 
-function o(n){throw new Error(`${n} is not implemented yet!`)}let i$1 = class i extends EventEmitter{__unenv__={};readableEncoding=null;readableEnded=true;readableFlowing=false;readableHighWaterMark=0;readableLength=0;readableObjectMode=false;readableAborted=false;readableDidRead=false;closed=false;errored=null;readable=false;destroyed=false;static from(e,t){return new i(t)}constructor(e){super();}_read(e){}read(e){}setEncoding(e){return this}pause(){return this}resume(){return this}isPaused(){return  true}unpipe(e){return this}unshift(e,t){}wrap(e){return this}push(e,t){return  false}_destroy(e,t){this.removeAllListeners();}destroy(e){return this.destroyed=true,this._destroy(e),this}pipe(e,t){return {}}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return this.destroy(),Promise.resolve()}async*[Symbol.asyncIterator](){throw o("Readable.asyncIterator")}iterator(e){throw o("Readable.iterator")}map(e,t){throw o("Readable.map")}filter(e,t){throw o("Readable.filter")}forEach(e,t){throw o("Readable.forEach")}reduce(e,t,r){throw o("Readable.reduce")}find(e,t){throw o("Readable.find")}findIndex(e,t){throw o("Readable.findIndex")}some(e,t){throw o("Readable.some")}toArray(e){throw o("Readable.toArray")}every(e,t){throw o("Readable.every")}flatMap(e,t){throw o("Readable.flatMap")}drop(e,t){throw o("Readable.drop")}take(e,t){throw o("Readable.take")}asIndexedPairs(e){throw o("Readable.asIndexedPairs")}};let l$1 = class l extends EventEmitter{__unenv__={};writable=true;writableEnded=false;writableFinished=false;writableHighWaterMark=0;writableLength=0;writableObjectMode=false;writableCorked=0;closed=false;errored=null;writableNeedDrain=false;writableAborted=false;destroyed=false;_data;_encoding="utf8";constructor(e){super();}pipe(e,t){return {}}_write(e,t,r){if(this.writableEnded){r&&r();return}if(this._data===void 0)this._data=e;else {const s=typeof this._data=="string"?Buffer$1.from(this._data,this._encoding||t||"utf8"):this._data,a=typeof e=="string"?Buffer$1.from(e,t||this._encoding||"utf8"):e;this._data=Buffer$1.concat([s,a]);}this._encoding=t,r&&r();}_writev(e,t){}_destroy(e,t){}_final(e){}write(e,t,r){const s=typeof t=="string"?this._encoding:"utf8",a=typeof t=="function"?t:typeof r=="function"?r:void 0;return this._write(e,s,a),true}setDefaultEncoding(e){return this}end(e,t,r){const s=typeof e=="function"?e:typeof t=="function"?t:typeof r=="function"?r:void 0;if(this.writableEnded)return s&&s(),this;const a=e===s?void 0:e;if(a){const u=t===s?void 0:t;this.write(a,u,s);}return this.writableEnded=true,this.writableFinished=true,this.emit("close"),this.emit("finish"),this}cork(){}uncork(){}destroy(e){return this.destroyed=true,delete this._data,this.removeAllListeners(),this}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return Promise.resolve()}};const c$1=class c{allowHalfOpen=true;_destroy;constructor(e=new i$1,t=new l$1){Object.assign(this,e),Object.assign(this,t),this._destroy=m$1(e._destroy,t._destroy);}};function _$2(){return Object.assign(c$1.prototype,i$1.prototype),Object.assign(c$1.prototype,l$1.prototype),c$1}function m$1(...n){return function(...e){for(const t of n)t(...e);}}const g$1=_$2();class A extends g$1{__unenv__={};bufferSize=0;bytesRead=0;bytesWritten=0;connecting=false;destroyed=false;pending=false;localAddress="";localPort=0;remoteAddress="";remoteFamily="";remotePort=0;autoSelectFamilyAttemptedAddresses=[];readyState="readOnly";constructor(e){super();}write(e,t,r){return  false}connect(e,t,r){return this}end(e,t,r){return this}setEncoding(e){return this}pause(){return this}resume(){return this}setTimeout(e,t){return this}setNoDelay(e){return this}setKeepAlive(e,t){return this}address(){return {}}unref(){return this}ref(){return this}destroySoon(){this.destroy();}resetAndDestroy(){const e=new Error("ERR_SOCKET_CLOSED");return e.code="ERR_SOCKET_CLOSED",this.destroy(e),this}}let y$2 = class y extends i$1{aborted=false;httpVersion="1.1";httpVersionMajor=1;httpVersionMinor=1;complete=true;connection;socket;headers={};trailers={};method="GET";url="/";statusCode=200;statusMessage="";closed=false;errored=null;readable=false;constructor(e){super(),this.socket=this.connection=e||new A;}get rawHeaders(){const e=this.headers,t=[];for(const r in e)if(Array.isArray(e[r]))for(const s of e[r])t.push(r,s);else t.push(r,e[r]);return t}get rawTrailers(){return []}setTimeout(e,t){return this}get headersDistinct(){return p(this.headers)}get trailersDistinct(){return p(this.trailers)}};function p(n){const e={};for(const[t,r]of Object.entries(n))t&&(e[t]=(Array.isArray(r)?r:[r]).filter(Boolean));return e}let w$2 = class w extends l$1{statusCode=200;statusMessage="";upgrading=false;chunkedEncoding=false;shouldKeepAlive=false;useChunkedEncodingByDefault=false;sendDate=false;finished=false;headersSent=false;strictContentLength=false;connection=null;socket=null;req;_headers={};constructor(e){super(),this.req=e;}assignSocket(e){e._httpMessage=this,this.socket=e,this.connection=e,this.emit("socket",e),this._flush();}_flush(){this.flushHeaders();}detachSocket(e){}writeContinue(e){}writeHead(e,t,r){e&&(this.statusCode=e),typeof t=="string"&&(this.statusMessage=t,t=void 0);const s=r||t;if(s&&!Array.isArray(s))for(const a in s)this.setHeader(a,s[a]);return this.headersSent=true,this}writeProcessing(){}setTimeout(e,t){return this}appendHeader(e,t){e=e.toLowerCase();const r=this._headers[e],s=[...Array.isArray(r)?r:[r],...Array.isArray(t)?t:[t]].filter(Boolean);return this._headers[e]=s.length>1?s:s[0],this}setHeader(e,t){return this._headers[e.toLowerCase()]=t,this}setHeaders(e){for(const[t,r]of Object.entries(e))this.setHeader(t,r);return this}getHeader(e){return this._headers[e.toLowerCase()]}getHeaders(){return this._headers}getHeaderNames(){return Object.keys(this._headers)}hasHeader(e){return e.toLowerCase()in this._headers}removeHeader(e){delete this._headers[e.toLowerCase()];}addTrailers(e){}flushHeaders(){}writeEarlyHints(e,t){typeof t=="function"&&t();}};const E$1=(()=>{const n=function(){};return n.prototype=Object.create(null),n})();function R$2(n={}){const e=new E$1,t=Array.isArray(n)||H$1(n)?n:Object.entries(n);for(const[r,s]of t)if(s){if(e[r]===void 0){e[r]=s;continue}e[r]=[...Array.isArray(e[r])?e[r]:[e[r]],...Array.isArray(s)?s:[s]];}return e}function H$1(n){return typeof n?.entries=="function"}function v$1(n={}){if(n instanceof Headers)return n;const e=new Headers;for(const[t,r]of Object.entries(n))if(r!==void 0){if(Array.isArray(r)){for(const s of r)e.append(t,String(s));continue}e.set(t,String(r));}return e}const S$2=new Set([101,204,205,304]);async function b$2(n,e){const t=new y$2,r=new w$2(t);t.url=e.url?.toString()||"/";let s;if(!t.url.startsWith("/")){const d=new URL(t.url);s=d.host,t.url=d.pathname+d.search+d.hash;}t.method=e.method||"GET",t.headers=R$2(e.headers||{}),t.headers.host||(t.headers.host=e.host||s||"localhost"),t.connection.encrypted=t.connection.encrypted||e.protocol==="https",t.body=e.body||null,t.__unenv__=e.context,await n(t,r);let a=r._data;(S$2.has(r.statusCode)||t.method.toUpperCase()==="HEAD")&&(a=null,delete r._headers["content-length"]);const u={status:r.statusCode,statusText:r.statusMessage,headers:r._headers,body:a};return t.destroy(),r.destroy(),u}async function C$2(n,e,t={}){try{const r=await b$2(n,{url:e,...t});return new Response(r.body,{status:r.status,statusText:r.statusText,headers:v$1(r.headers)})}catch(r){return new Response(r.toString(),{status:Number.parseInt(r.statusCode||r.code)||500,statusText:r.statusText})}}
+function o(n){throw new Error(`${n} is not implemented yet!`)}let i$1 = class i extends EventEmitter{__unenv__={};readableEncoding=null;readableEnded=true;readableFlowing=false;readableHighWaterMark=0;readableLength=0;readableObjectMode=false;readableAborted=false;readableDidRead=false;closed=false;errored=null;readable=false;destroyed=false;static from(e,t){return new i(t)}constructor(e){super();}_read(e){}read(e){}setEncoding(e){return this}pause(){return this}resume(){return this}isPaused(){return  true}unpipe(e){return this}unshift(e,t){}wrap(e){return this}push(e,t){return  false}_destroy(e,t){this.removeAllListeners();}destroy(e){return this.destroyed=true,this._destroy(e),this}pipe(e,t){return {}}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return this.destroy(),Promise.resolve()}async*[Symbol.asyncIterator](){throw o("Readable.asyncIterator")}iterator(e){throw o("Readable.iterator")}map(e,t){throw o("Readable.map")}filter(e,t){throw o("Readable.filter")}forEach(e,t){throw o("Readable.forEach")}reduce(e,t,r){throw o("Readable.reduce")}find(e,t){throw o("Readable.find")}findIndex(e,t){throw o("Readable.findIndex")}some(e,t){throw o("Readable.some")}toArray(e){throw o("Readable.toArray")}every(e,t){throw o("Readable.every")}flatMap(e,t){throw o("Readable.flatMap")}drop(e,t){throw o("Readable.drop")}take(e,t){throw o("Readable.take")}asIndexedPairs(e){throw o("Readable.asIndexedPairs")}};let l$2 = class l extends EventEmitter{__unenv__={};writable=true;writableEnded=false;writableFinished=false;writableHighWaterMark=0;writableLength=0;writableObjectMode=false;writableCorked=0;closed=false;errored=null;writableNeedDrain=false;writableAborted=false;destroyed=false;_data;_encoding="utf8";constructor(e){super();}pipe(e,t){return {}}_write(e,t,r){if(this.writableEnded){r&&r();return}if(this._data===void 0)this._data=e;else {const s=typeof this._data=="string"?Buffer$1.from(this._data,this._encoding||t||"utf8"):this._data,a=typeof e=="string"?Buffer$1.from(e,t||this._encoding||"utf8"):e;this._data=Buffer$1.concat([s,a]);}this._encoding=t,r&&r();}_writev(e,t){}_destroy(e,t){}_final(e){}write(e,t,r){const s=typeof t=="string"?this._encoding:"utf8",a=typeof t=="function"?t:typeof r=="function"?r:void 0;return this._write(e,s,a),true}setDefaultEncoding(e){return this}end(e,t,r){const s=typeof e=="function"?e:typeof t=="function"?t:typeof r=="function"?r:void 0;if(this.writableEnded)return s&&s(),this;const a=e===s?void 0:e;if(a){const u=t===s?void 0:t;this.write(a,u,s);}return this.writableEnded=true,this.writableFinished=true,this.emit("close"),this.emit("finish"),this}cork(){}uncork(){}destroy(e){return this.destroyed=true,delete this._data,this.removeAllListeners(),this}compose(e,t){throw new Error("Method not implemented.")}[Symbol.asyncDispose](){return Promise.resolve()}};const c=class{allowHalfOpen=true;_destroy;constructor(e=new i$1,t=new l$2){Object.assign(this,e),Object.assign(this,t),this._destroy=m$1(e._destroy,t._destroy);}};function _$2(){return Object.assign(c.prototype,i$1.prototype),Object.assign(c.prototype,l$2.prototype),c}function m$1(...n){return function(...e){for(const t of n)t(...e);}}const g$2=_$2();class A extends g$2{__unenv__={};bufferSize=0;bytesRead=0;bytesWritten=0;connecting=false;destroyed=false;pending=false;localAddress="";localPort=0;remoteAddress="";remoteFamily="";remotePort=0;autoSelectFamilyAttemptedAddresses=[];readyState="readOnly";constructor(e){super();}write(e,t,r){return  false}connect(e,t,r){return this}end(e,t,r){return this}setEncoding(e){return this}pause(){return this}resume(){return this}setTimeout(e,t){return this}setNoDelay(e){return this}setKeepAlive(e,t){return this}address(){return {}}unref(){return this}ref(){return this}destroySoon(){this.destroy();}resetAndDestroy(){const e=new Error("ERR_SOCKET_CLOSED");return e.code="ERR_SOCKET_CLOSED",this.destroy(e),this}}let y$1 = class y extends i$1{aborted=false;httpVersion="1.1";httpVersionMajor=1;httpVersionMinor=1;complete=true;connection;socket;headers={};trailers={};method="GET";url="/";statusCode=200;statusMessage="";closed=false;errored=null;readable=false;constructor(e){super(),this.socket=this.connection=e||new A;}get rawHeaders(){const e=this.headers,t=[];for(const r in e)if(Array.isArray(e[r]))for(const s of e[r])t.push(r,s);else t.push(r,e[r]);return t}get rawTrailers(){return []}setTimeout(e,t){return this}get headersDistinct(){return p$1(this.headers)}get trailersDistinct(){return p$1(this.trailers)}};function p$1(n){const e={};for(const[t,r]of Object.entries(n))t&&(e[t]=(Array.isArray(r)?r:[r]).filter(Boolean));return e}let w$2 = class w extends l$2{statusCode=200;statusMessage="";upgrading=false;chunkedEncoding=false;shouldKeepAlive=false;useChunkedEncodingByDefault=false;sendDate=false;finished=false;headersSent=false;strictContentLength=false;connection=null;socket=null;req;_headers={};constructor(e){super(),this.req=e;}assignSocket(e){e._httpMessage=this,this.socket=e,this.connection=e,this.emit("socket",e),this._flush();}_flush(){this.flushHeaders();}detachSocket(e){}writeContinue(e){}writeHead(e,t,r){e&&(this.statusCode=e),typeof t=="string"&&(this.statusMessage=t,t=void 0);const s=r||t;if(s&&!Array.isArray(s))for(const a in s)this.setHeader(a,s[a]);return this.headersSent=true,this}writeProcessing(){}setTimeout(e,t){return this}appendHeader(e,t){e=e.toLowerCase();const r=this._headers[e],s=[...Array.isArray(r)?r:[r],...Array.isArray(t)?t:[t]].filter(Boolean);return this._headers[e]=s.length>1?s:s[0],this}setHeader(e,t){return this._headers[e.toLowerCase()]=t,this}setHeaders(e){for(const[t,r]of Object.entries(e))this.setHeader(t,r);return this}getHeader(e){return this._headers[e.toLowerCase()]}getHeaders(){return this._headers}getHeaderNames(){return Object.keys(this._headers)}hasHeader(e){return e.toLowerCase()in this._headers}removeHeader(e){delete this._headers[e.toLowerCase()];}addTrailers(e){}flushHeaders(){}writeEarlyHints(e,t){typeof t=="function"&&t();}};const E$1=(()=>{const n=function(){};return n.prototype=Object.create(null),n})();function R$2(n={}){const e=new E$1,t=Array.isArray(n)||H$1(n)?n:Object.entries(n);for(const[r,s]of t)if(s){if(e[r]===void 0){e[r]=s;continue}e[r]=[...Array.isArray(e[r])?e[r]:[e[r]],...Array.isArray(s)?s:[s]];}return e}function H$1(n){return typeof n?.entries=="function"}function v(n={}){if(n instanceof Headers)return n;const e=new Headers;for(const[t,r]of Object.entries(n))if(r!==void 0){if(Array.isArray(r)){for(const s of r)e.append(t,String(s));continue}e.set(t,String(r));}return e}const S$2=new Set([101,204,205,304]);async function b$2(n,e){const t=new y$1,r=new w$2(t);t.url=e.url?.toString()||"/";let s;if(!t.url.startsWith("/")){const d=new URL(t.url);s=d.host,t.url=d.pathname+d.search+d.hash;}t.method=e.method||"GET",t.headers=R$2(e.headers||{}),t.headers.host||(t.headers.host=e.host||s||"localhost"),t.connection.encrypted=t.connection.encrypted||e.protocol==="https",t.body=e.body||null,t.__unenv__=e.context,await n(t,r);let a=r._data;(S$2.has(r.statusCode)||t.method.toUpperCase()==="HEAD")&&(a=null,delete r._headers["content-length"]);const u={status:r.statusCode,statusText:r.statusMessage,headers:r._headers,body:a};return t.destroy(),r.destroy(),u}async function C$2(n,e,t={}){try{const r=await b$2(n,{url:e,...t});return new Response(r.body,{status:r.status,statusText:r.statusText,headers:v(r.headers)})}catch(r){return new Response(r.toString(),{status:Number.parseInt(r.statusCode||r.code)||500,statusText:r.statusText})}}
 
 function hasProp$1(obj, prop) {
   try {
@@ -2069,7 +2069,7 @@ function createHooks() {
   return new Hookable();
 }
 
-const s$1=globalThis.Headers,i=globalThis.AbortController,l=globalThis.fetch||(()=>{throw new Error("[node-fetch-native] Failed to fetch: `globalThis.fetch` is not available!")});
+const s$1=globalThis.Headers,i=globalThis.AbortController,l$1=globalThis.fetch||(()=>{throw new Error("[node-fetch-native] Failed to fetch: `globalThis.fetch` is not available!")});
 
 class FetchError extends Error {
   constructor(message, opts) {
@@ -2403,7 +2403,7 @@ function createFetch(globalOptions = {}) {
 function createNodeFetch() {
   const useKeepAlive = JSON.parse(process.env.FETCH_KEEP_ALIVE || "false");
   if (!useKeepAlive) {
-    return l;
+    return l$1;
   }
   const agentOptions = { keepAlive: true };
   const httpAgent = new http.Agent(agentOptions);
@@ -2414,7 +2414,7 @@ function createNodeFetch() {
     }
   };
   return function nodeFetchWithKeepAlive(input, init) {
-    return l(input, { ...nodeFetchOptions, ...init });
+    return l$1(input, { ...nodeFetchOptions, ...init });
   };
 }
 const fetch = globalThis.fetch ? (...args) => globalThis.fetch(...args) : createNodeFetch();
@@ -4244,7 +4244,7 @@ async function errorHandler(error, event) {
 }
 
 const appConfig = {"name":"vinxi","routers":[{"name":"public","type":"static","base":"/","dir":"./public","root":"/Users/david/Documents/Projects/network-monitor/apps/web","order":0,"outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/public"},{"name":"ssr","type":"http","link":{"client":"client"},"handler":"src/entry-server.tsx","extensions":["js","jsx","ts","tsx"],"target":"server","root":"/Users/david/Documents/Projects/network-monitor/apps/web","base":"/","outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/ssr","order":1},{"name":"client","type":"client","base":"/_build","handler":"src/entry-client.tsx","extensions":["js","jsx","ts","tsx"],"target":"browser","root":"/Users/david/Documents/Projects/network-monitor/apps/web","outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/client","order":2},{"name":"server-fns","type":"http","base":"/_server","handler":"../../node_modules/@solidjs/start/dist/runtime/server-handler.js","target":"server","root":"/Users/david/Documents/Projects/network-monitor/apps/web","outDir":"/Users/david/Documents/Projects/network-monitor/apps/web/.vinxi/build/server-fns","order":3}],"server":{"compressPublicAssets":{"brotli":true},"routeRules":{"/_build/assets/**":{"headers":{"cache-control":"public, immutable, max-age=31536000"}}},"experimental":{"asyncContext":true},"preset":"node-server"},"root":"/Users/david/Documents/Projects/network-monitor/apps/web"};
-				const buildManifest = {"ssr":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-DgPx_trM.js":{"file":"assets/UptimeChart-DgPx_trM.js","name":"UptimeChart","imports":["_container-a_eHAKW0.js"]},"_container-BxI3aDH-.js":{"file":"assets/container-BxI3aDH-.js","name":"container"},"_container-a_eHAKW0.js":{"file":"assets/container-a_eHAKW0.js","name":"container","imports":["_container-BxI3aDH-.js"]},"_router-DwlLWxXi.js":{"file":"assets/router-DwlLWxXi.js","name":"router","imports":["_container-BxI3aDH-.js"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-DwlLWxXi.js","_container-BxI3aDH-.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-DwlLWxXi.js","_container-BxI3aDH-.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-DgPx_trM.js","_container-a_eHAKW0.js","_TargetCard-Bjgo4gzU.js","_container-BxI3aDH-.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_container-BxI3aDH-.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-a_eHAKW0.js","_UptimeChart-DgPx_trM.js","_TargetCard-Bjgo4gzU.js","_container-BxI3aDH-.js"]},"virtual:$vinxi/handler/ssr":{"file":"ssr.js","name":"ssr","src":"virtual:$vinxi/handler/ssr","isEntry":true,"imports":["_container-a_eHAKW0.js","_container-BxI3aDH-.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST"],"css":["assets/ssr-BjoaO50o.css"]}},"client":{"_TestNotificationModal-CGJzdTkf.js":{"file":"assets/TestNotificationModal-CGJzdTkf.js","name":"TestNotificationModal","imports":["___vite-browser-external-Cf35KMhY.js"]},"___vite-browser-external-Cf35KMhY.js":{"file":"assets/__vite-browser-external-Cf35KMhY.js","name":"__vite-browser-external"},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"assets/alerts-s4GfSo1M.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"assets/charts-DVIISjrs.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"assets/index-BeVyEAAP.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_TestNotificationModal-CGJzdTkf.js","___vite-browser-external-Cf35KMhY.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"assets/notifications-BK_Ctv6W.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"assets/settings-CzNzunqA.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"assets/targets-Dbyf3FNl.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js","_TestNotificationModal-CGJzdTkf.js"]},"virtual:$vinxi/handler/client":{"file":"assets/client-BTe1mcpT.js","name":"client","src":"virtual:$vinxi/handler/client","isEntry":true,"imports":["___vite-browser-external-Cf35KMhY.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css"],"css":["assets/client-BjoaO50o.css"]}},"server-fns":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-DpIqj3wE.js":{"file":"assets/UptimeChart-DpIqj3wE.js","name":"UptimeChart","imports":["_routing-BtkaN0N8.js"]},"_container-Dn6QYIGz.js":{"file":"assets/container-Dn6QYIGz.js","name":"container"},"_router-SOUM5df7.js":{"file":"assets/router-SOUM5df7.js","name":"router","imports":["_container-Dn6QYIGz.js"]},"_routing-BtkaN0N8.js":{"file":"assets/routing-BtkaN0N8.js","name":"routing","imports":["_container-Dn6QYIGz.js"]},"_server-fns-9jI2eI5S.js":{"file":"assets/server-fns-9jI2eI5S.js","name":"server-fns","dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST","src/app.tsx"]},"src/app.tsx":{"file":"assets/app-CZI4m8QT.js","name":"app","src":"src/app.tsx","isDynamicEntry":true,"imports":["_server-fns-9jI2eI5S.js","_routing-BtkaN0N8.js","_container-Dn6QYIGz.js"],"css":["assets/app-BjoaO50o.css"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-SOUM5df7.js","_container-Dn6QYIGz.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-SOUM5df7.js","_container-Dn6QYIGz.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-DpIqj3wE.js","_routing-BtkaN0N8.js","_TargetCard-Bjgo4gzU.js","_container-Dn6QYIGz.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_container-Dn6QYIGz.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BtkaN0N8.js","_UptimeChart-DpIqj3wE.js","_TargetCard-Bjgo4gzU.js","_container-Dn6QYIGz.js"]},"virtual:$vinxi/handler/server-fns":{"file":"server-fns.js","name":"server-fns","src":"virtual:$vinxi/handler/server-fns","isEntry":true,"imports":["_server-fns-9jI2eI5S.js"]}}};
+				const buildManifest = {"ssr":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-BZZNTZjd.js":{"file":"assets/UptimeChart-BZZNTZjd.js","name":"UptimeChart","imports":["_container-B_MuS2rR.js"]},"_container-B_MuS2rR.js":{"file":"assets/container-B_MuS2rR.js","name":"container","imports":["_container-M4kA0Lpj.js"]},"_container-M4kA0Lpj.js":{"file":"assets/container-M4kA0Lpj.js","name":"container"},"_router-BzsHK-V0.js":{"file":"assets/router-BzsHK-V0.js","name":"router","imports":["_container-M4kA0Lpj.js"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-B_MuS2rR.js","_UptimeChart-BZZNTZjd.js","_container-M4kA0Lpj.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-BzsHK-V0.js","_container-M4kA0Lpj.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-BzsHK-V0.js","_container-M4kA0Lpj.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-B_MuS2rR.js","_UptimeChart-BZZNTZjd.js","_container-M4kA0Lpj.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-BZZNTZjd.js","_container-B_MuS2rR.js","_TargetCard-Bjgo4gzU.js","_container-M4kA0Lpj.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-B_MuS2rR.js","_UptimeChart-BZZNTZjd.js","_container-M4kA0Lpj.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-B_MuS2rR.js","_UptimeChart-BZZNTZjd.js","_container-M4kA0Lpj.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_container-B_MuS2rR.js","_UptimeChart-BZZNTZjd.js","_TargetCard-Bjgo4gzU.js","_container-M4kA0Lpj.js"]},"virtual:$vinxi/handler/ssr":{"file":"ssr.js","name":"ssr","src":"virtual:$vinxi/handler/ssr","isEntry":true,"imports":["_container-B_MuS2rR.js","_container-M4kA0Lpj.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST"],"css":["assets/ssr-BjoaO50o.css"]}},"client":{"_TestNotificationModal-DPOtCcZx.js":{"file":"assets/TestNotificationModal-DPOtCcZx.js","name":"TestNotificationModal","imports":["___vite-browser-external-CFGrbMLL.js"]},"___vite-browser-external-CFGrbMLL.js":{"file":"assets/__vite-browser-external-CFGrbMLL.js","name":"__vite-browser-external"},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"assets/alerts-BjWkF2SU.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-CFGrbMLL.js","_TestNotificationModal-DPOtCcZx.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"assets/charts-BIPiX63h.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-CFGrbMLL.js","_TestNotificationModal-DPOtCcZx.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"assets/index-DEYiQ7KU.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_TestNotificationModal-DPOtCcZx.js","___vite-browser-external-CFGrbMLL.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"assets/notifications-BveZLvMJ.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-CFGrbMLL.js","_TestNotificationModal-DPOtCcZx.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"assets/settings-D5NMsFtN.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-CFGrbMLL.js","_TestNotificationModal-DPOtCcZx.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"assets/targets-CP5rXuul.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["___vite-browser-external-CFGrbMLL.js","_TestNotificationModal-DPOtCcZx.js"]},"virtual:$vinxi/handler/client":{"file":"assets/client-Cg-JdxCZ.js","name":"client","src":"virtual:$vinxi/handler/client","isEntry":true,"imports":["___vite-browser-external-CFGrbMLL.js"],"dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css"],"css":["assets/client-BjoaO50o.css"]}},"server-fns":{"_TargetCard-Bjgo4gzU.js":{"file":"assets/TargetCard-Bjgo4gzU.js","name":"TargetCard"},"_UptimeChart-Cg1W-4dT.js":{"file":"assets/UptimeChart-Cg1W-4dT.js","name":"UptimeChart","imports":["_routing-BuvachQx.js"]},"_container-L2LlDb0s.js":{"file":"assets/container-L2LlDb0s.js","name":"container"},"_router-DHVY9RUY.js":{"file":"assets/router-DHVY9RUY.js","name":"router","imports":["_container-L2LlDb0s.js"]},"_routing-BuvachQx.js":{"file":"assets/routing-BuvachQx.js","name":"routing","imports":["_container-L2LlDb0s.js"]},"_server-fns-DJA2HZf-.js":{"file":"assets/server-fns-DJA2HZf-.js","name":"server-fns","dynamicImports":["src/routes/alerts.tsx?pick=default&pick=$css","src/routes/alerts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/charts.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/index.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/notifications.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/settings.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/targets.tsx?pick=default&pick=$css","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=GET","src/routes/api/trpc/[...trpc].ts?pick=POST","src/routes/api/trpc/[...trpc].ts?pick=POST","src/app.tsx"]},"src/app.tsx":{"file":"assets/app-QiOgf4yA.js","name":"app","src":"src/app.tsx","isDynamicEntry":true,"imports":["_server-fns-DJA2HZf-.js","_routing-BuvachQx.js","_container-L2LlDb0s.js"],"css":["assets/app-BjoaO50o.css"]},"src/routes/alerts.tsx?pick=default&pick=$css":{"file":"alerts.js","name":"alerts","src":"src/routes/alerts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BuvachQx.js","_UptimeChart-Cg1W-4dT.js","_container-L2LlDb0s.js"]},"src/routes/api/trpc/[...trpc].ts?pick=GET":{"file":"_...trpc_.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=GET","isEntry":true,"isDynamicEntry":true,"imports":["_router-DHVY9RUY.js","_container-L2LlDb0s.js"]},"src/routes/api/trpc/[...trpc].ts?pick=POST":{"file":"_...trpc_2.js","name":"_...trpc_","src":"src/routes/api/trpc/[...trpc].ts?pick=POST","isEntry":true,"isDynamicEntry":true,"imports":["_router-DHVY9RUY.js","_container-L2LlDb0s.js"]},"src/routes/charts.tsx?pick=default&pick=$css":{"file":"charts.js","name":"charts","src":"src/routes/charts.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BuvachQx.js","_UptimeChart-Cg1W-4dT.js","_container-L2LlDb0s.js"]},"src/routes/index.tsx?pick=default&pick=$css":{"file":"index.js","name":"index","src":"src/routes/index.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_UptimeChart-Cg1W-4dT.js","_routing-BuvachQx.js","_TargetCard-Bjgo4gzU.js","_container-L2LlDb0s.js"]},"src/routes/notifications.tsx?pick=default&pick=$css":{"file":"notifications.js","name":"notifications","src":"src/routes/notifications.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BuvachQx.js","_UptimeChart-Cg1W-4dT.js","_container-L2LlDb0s.js"]},"src/routes/settings.tsx?pick=default&pick=$css":{"file":"settings.js","name":"settings","src":"src/routes/settings.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BuvachQx.js","_UptimeChart-Cg1W-4dT.js","_container-L2LlDb0s.js"]},"src/routes/targets.tsx?pick=default&pick=$css":{"file":"targets.js","name":"targets","src":"src/routes/targets.tsx?pick=default&pick=$css","isEntry":true,"isDynamicEntry":true,"imports":["_routing-BuvachQx.js","_UptimeChart-Cg1W-4dT.js","_TargetCard-Bjgo4gzU.js","_container-L2LlDb0s.js"]},"virtual:$vinxi/handler/server-fns":{"file":"server-fns.js","name":"server-fns","src":"virtual:$vinxi/handler/server-fns","isEntry":true,"imports":["_server-fns-DJA2HZf-.js"]}}};
 
 				const routeManifest = {"ssr":{},"client":{},"server-fns":{}};
 
@@ -4508,7 +4508,7 @@ const assets = {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
     "etag": "\"4a1-gofeK281p8VRuSnOXJ7A6/cMmLI\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 1185,
     "path": "../public/assets/TargetCard-Bjgo4gzU.js.br"
   },
@@ -4516,78 +4516,78 @@ const assets = {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"552-dE2A4LbjJUxYTbgnztk50jXv1EE\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 1362,
     "path": "../public/assets/TargetCard-Bjgo4gzU.js.gz"
   },
-  "/assets/UptimeChart-DgPx_trM.js.br": {
+  "/assets/UptimeChart-BZZNTZjd.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"973-TjchZmxc49I8cGjO5PXgvtIEMvc\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 2419,
-    "path": "../public/assets/UptimeChart-DgPx_trM.js.br"
+    "etag": "\"976-JiwXIiTfWzzg3v3SH9ERogqdN0U\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 2422,
+    "path": "../public/assets/UptimeChart-BZZNTZjd.js.br"
   },
-  "/assets/UptimeChart-DgPx_trM.js.gz": {
+  "/assets/UptimeChart-BZZNTZjd.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"ad4-Rbjzuw70NWmGa9DsxgKh/Prk3g8\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 2772,
-    "path": "../public/assets/UptimeChart-DgPx_trM.js.gz"
+    "etag": "\"ad5-KMaQVsJkBe7k2fHY3tJ2Bopwaig\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 2773,
+    "path": "../public/assets/UptimeChart-BZZNTZjd.js.gz"
   },
-  "/assets/container-BxI3aDH-.js.br": {
+  "/assets/container-B_MuS2rR.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"1126-wQLQH44Vq9q3nSXhhrEkY05N2IE\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 4390,
-    "path": "../public/assets/container-BxI3aDH-.js.br"
+    "etag": "\"16b1-JljFenZxUnbIsnF1ml0n4dnzI9A\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 5809,
+    "path": "../public/assets/container-B_MuS2rR.js.br"
   },
-  "/assets/container-BxI3aDH-.js.gz": {
+  "/assets/container-B_MuS2rR.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1337-MB9Qo9baetMjXZP2v5VZdV3uNBM\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 4919,
-    "path": "../public/assets/container-BxI3aDH-.js.gz"
+    "etag": "\"1956-oXqPojYn6gt/s5a25ApN5PATvXs\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 6486,
+    "path": "../public/assets/container-B_MuS2rR.js.gz"
   },
-  "/assets/container-a_eHAKW0.js.br": {
+  "/assets/container-M4kA0Lpj.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"16b2-nT3a8D+U2Q3QbXRmD8uK3L1GHIY\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 5810,
-    "path": "../public/assets/container-a_eHAKW0.js.br"
+    "etag": "\"f34-h9NcryOW8jUajSku3+0LP5MZaow\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 3892,
+    "path": "../public/assets/container-M4kA0Lpj.js.br"
   },
-  "/assets/container-a_eHAKW0.js.gz": {
+  "/assets/container-M4kA0Lpj.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1955-YTbS301gX2NM8w1lyEWpVOzoYqc\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 6485,
-    "path": "../public/assets/container-a_eHAKW0.js.gz"
+    "etag": "\"1110-J6Jm17PP0xEFuR6V3hfTFf5Cv6U\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 4368,
+    "path": "../public/assets/container-M4kA0Lpj.js.gz"
   },
-  "/assets/router-DwlLWxXi.js.br": {
+  "/assets/router-BzsHK-V0.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"737-5XpEVqWO+q2SGkZbbvkIXsf1Avk\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1847,
-    "path": "../public/assets/router-DwlLWxXi.js.br"
+    "etag": "\"733-zDWwdHBnBAWTX5/9VlkVEeHJkYs\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1843,
+    "path": "../public/assets/router-BzsHK-V0.js.br"
   },
-  "/assets/router-DwlLWxXi.js.gz": {
+  "/assets/router-BzsHK-V0.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"830-2UeMF1lqQ12X4Zrd2tSFvdtiof4\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 2096,
-    "path": "../public/assets/router-DwlLWxXi.js.gz"
+    "etag": "\"831-Wo9GVYUxQCivJ0CNupdAFczndh4\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 2097,
+    "path": "../public/assets/router-BzsHK-V0.js.gz"
   },
   "/assets/ssr-BjoaO50o.css": {
     "type": "text/css; charset=utf-8",
     "etag": "\"2202-ygL4IXs5/vgBxlP62V7HPkPOxds\"",
-    "mtime": "2025-10-01T19:24:04.517Z",
+    "mtime": "2025-10-01T20:09:58.863Z",
     "size": 8706,
     "path": "../public/assets/ssr-BjoaO50o.css"
   },
@@ -4595,7 +4595,7 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "br",
     "etag": "\"8e1-HSY0FmU8JRIt0cSKfDV/gEkyPXU\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2273,
     "path": "../public/assets/ssr-BjoaO50o.css.br"
   },
@@ -4603,152 +4603,129 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"a5f-gTch4uEXODYLZQjFBi8lfhzrEHs\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2655,
     "path": "../public/assets/ssr-BjoaO50o.css.gz"
   },
   "/_build/.vite/manifest.json": {
     "type": "application/json",
-    "etag": "\"c0f-L7D+DkfjhfxbAIsZsmpfRs99c5Q\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"c0f-1XntZdjpDaYez9yYfxndeRIU7RA\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 3087,
     "path": "../public/_build/.vite/manifest.json"
   },
   "/_build/.vite/manifest.json.br": {
     "type": "application/json",
     "encoding": "br",
-    "etag": "\"1b3-QbE8G85D8nf+vkZWFIzndXHMM8Y\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
-    "size": 435,
+    "etag": "\"1b8-K9E3G6y5WR55DsM9j77B8U6kl5I\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 440,
     "path": "../public/_build/.vite/manifest.json.br"
   },
   "/_build/.vite/manifest.json.gz": {
     "type": "application/json",
     "encoding": "gzip",
-    "etag": "\"1fc-C7rBZuq4L9GSxF+LiUGuzh2dq8E\"",
-    "mtime": "2025-10-01T19:24:04.611Z",
+    "etag": "\"1fc-zSbK3aYpFoRzdBIcAsAvV2WkDKM\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 508,
     "path": "../public/_build/.vite/manifest.json.gz"
   },
-  "/_build/assets/TestNotificationModal-CGJzdTkf.js": {
+  "/_build/assets/TestNotificationModal-DPOtCcZx.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"defd-DcdrFaurctaHAemPy07wJo4X8r0\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"defd-6A+fXV4/nPAVsJYiR4esWH7NpO8\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 57085,
-    "path": "../public/_build/assets/TestNotificationModal-CGJzdTkf.js"
+    "path": "../public/_build/assets/TestNotificationModal-DPOtCcZx.js"
   },
-  "/_build/assets/TestNotificationModal-CGJzdTkf.js.br": {
+  "/_build/assets/TestNotificationModal-DPOtCcZx.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"2b02-gIgjs6coVtXW94x58dwjrVCdmDs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 11010,
-    "path": "../public/_build/assets/TestNotificationModal-CGJzdTkf.js.br"
+    "etag": "\"2afa-Xp9A8zz8LjlkuviZZFJ/A8t9s9Q\"",
+    "mtime": "2025-10-01T20:09:58.942Z",
+    "size": 11002,
+    "path": "../public/_build/assets/TestNotificationModal-DPOtCcZx.js.br"
   },
-  "/_build/assets/TestNotificationModal-CGJzdTkf.js.gz": {
+  "/_build/assets/TestNotificationModal-DPOtCcZx.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"323e-i4b3vzV9KxDRsdF0qrBmoW+2RlQ\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"323e-pe37hNqQpy919xzYV+orvHuawZc\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 12862,
-    "path": "../public/_build/assets/TestNotificationModal-CGJzdTkf.js.gz"
+    "path": "../public/_build/assets/TestNotificationModal-DPOtCcZx.js.gz"
   },
-  "/_build/assets/__vite-browser-external-Cf35KMhY.js": {
+  "/_build/assets/__vite-browser-external-CFGrbMLL.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"4082c-L1WvrbC+4xvbP4Z+P078UHs7TP8\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
-    "size": 264236,
-    "path": "../public/_build/assets/__vite-browser-external-Cf35KMhY.js"
+    "etag": "\"3ffb6-nGAvzwbS92eg3E4KLyvKXEOuqRs\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
+    "size": 262070,
+    "path": "../public/_build/assets/__vite-browser-external-CFGrbMLL.js"
   },
-  "/_build/assets/__vite-browser-external-Cf35KMhY.js.br": {
+  "/_build/assets/__vite-browser-external-CFGrbMLL.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"12c0e-vtlwlJNtOJa48MOLjoK169gQFlo\"",
-    "mtime": "2025-10-01T19:24:04.805Z",
-    "size": 76814,
-    "path": "../public/_build/assets/__vite-browser-external-Cf35KMhY.js.br"
+    "etag": "\"12a04-u9gMelx5VfmJhf+fcxTCf6W7Wdg\"",
+    "mtime": "2025-10-01T20:09:59.187Z",
+    "size": 76292,
+    "path": "../public/_build/assets/__vite-browser-external-CFGrbMLL.js.br"
   },
-  "/_build/assets/__vite-browser-external-Cf35KMhY.js.gz": {
+  "/_build/assets/__vite-browser-external-CFGrbMLL.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"15751-PW7LTY3X5kssZIJt2L9GHflJuqs\"",
-    "mtime": "2025-10-01T19:24:04.616Z",
-    "size": 87889,
-    "path": "../public/_build/assets/__vite-browser-external-Cf35KMhY.js.gz"
+    "etag": "\"15507-BmR9ft9j/kkdXFGHpuUrDXNj+JI\"",
+    "mtime": "2025-10-01T20:09:58.938Z",
+    "size": 87303,
+    "path": "../public/_build/assets/__vite-browser-external-CFGrbMLL.js.gz"
   },
-  "/_build/assets/alerts-s4GfSo1M.js": {
+  "/_build/assets/alerts-BjWkF2SU.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1405-zcqG82lQ4h+Bm06LMBPa5J4nJ/A\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"1405-wyfwO5CRCSBtRYUQwDcH+QMNyOI\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 5125,
-    "path": "../public/_build/assets/alerts-s4GfSo1M.js"
+    "path": "../public/_build/assets/alerts-BjWkF2SU.js"
   },
-  "/_build/assets/alerts-s4GfSo1M.js.br": {
+  "/_build/assets/alerts-BjWkF2SU.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"64f-B7CgInCx0vCR0vvo7gPCYwvc2pA\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1615,
-    "path": "../public/_build/assets/alerts-s4GfSo1M.js.br"
+    "etag": "\"64d-CoNnfYwgIfpLeFbTsdIxXAb+K9g\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1613,
+    "path": "../public/_build/assets/alerts-BjWkF2SU.js.br"
   },
-  "/_build/assets/alerts-s4GfSo1M.js.gz": {
+  "/_build/assets/alerts-BjWkF2SU.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"742-VkQ/vz8R5iD7JzjjAdLwCquPQUM\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1858,
-    "path": "../public/_build/assets/alerts-s4GfSo1M.js.gz"
+    "etag": "\"744-cx9b4wGnnxbVp+SCFhou1G8B+q8\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1860,
+    "path": "../public/_build/assets/alerts-BjWkF2SU.js.gz"
   },
-  "/_build/assets/charts-DVIISjrs.js": {
+  "/_build/assets/charts-BIPiX63h.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"347c-ZTl/FNqiYGzWZ4ExjNumVT0AlZY\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"347c-q2XIJiRHtIXsskRbfHrpUZp5Oyw\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 13436,
-    "path": "../public/_build/assets/charts-DVIISjrs.js"
+    "path": "../public/_build/assets/charts-BIPiX63h.js"
   },
-  "/_build/assets/charts-DVIISjrs.js.br": {
+  "/_build/assets/charts-BIPiX63h.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"d43-uCAq2tJCWqdLuVuLqvs9wfrUC+s\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"d43-1xfC0hdzPI4JO6X2cnE88eRO7Ds\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 3395,
-    "path": "../public/_build/assets/charts-DVIISjrs.js.br"
+    "path": "../public/_build/assets/charts-BIPiX63h.js.br"
   },
-  "/_build/assets/charts-DVIISjrs.js.gz": {
+  "/_build/assets/charts-BIPiX63h.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"efa-uI0ZV+R72EthR8MwaE48JsheRBM\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"efa-fSmvQvKXTpT3DkQJCIr1gIWRrjY\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 3834,
-    "path": "../public/_build/assets/charts-DVIISjrs.js.gz"
-  },
-  "/_build/assets/client-BTe1mcpT.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"f98c-TrmCafz1ALOqQgiQUUFsCq8qgvc\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
-    "size": 63884,
-    "path": "../public/_build/assets/client-BTe1mcpT.js"
-  },
-  "/_build/assets/client-BTe1mcpT.js.br": {
-    "type": "text/javascript; charset=utf-8",
-    "encoding": "br",
-    "etag": "\"3cfe-AtDANWbiHDDqJC1MeAtlic/q0Mw\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 15614,
-    "path": "../public/_build/assets/client-BTe1mcpT.js.br"
-  },
-  "/_build/assets/client-BTe1mcpT.js.gz": {
-    "type": "text/javascript; charset=utf-8",
-    "encoding": "gzip",
-    "etag": "\"44f2-P6wGSwTmWL8CwWXnLk7ESgBnZFM\"",
-    "mtime": "2025-10-01T19:24:04.615Z",
-    "size": 17650,
-    "path": "../public/_build/assets/client-BTe1mcpT.js.gz"
+    "path": "../public/_build/assets/charts-BIPiX63h.js.gz"
   },
   "/_build/assets/client-BjoaO50o.css": {
     "type": "text/css; charset=utf-8",
     "etag": "\"2202-ygL4IXs5/vgBxlP62V7HPkPOxds\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 8706,
     "path": "../public/_build/assets/client-BjoaO50o.css"
   },
@@ -4756,7 +4733,7 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "br",
     "etag": "\"8e1-HSY0FmU8JRIt0cSKfDV/gEkyPXU\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2273,
     "path": "../public/_build/assets/client-BjoaO50o.css.br"
   },
@@ -4764,107 +4741,130 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"a5f-gTch4uEXODYLZQjFBi8lfhzrEHs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2655,
     "path": "../public/_build/assets/client-BjoaO50o.css.gz"
   },
-  "/_build/assets/index-BeVyEAAP.js": {
+  "/_build/assets/client-Cg-JdxCZ.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1379-IvfNEW1awKI/togexX2Jg33dYWs\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"f98c-NB16IxQZ/67DhRf6jRlmM7eCJ1g\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
+    "size": 63884,
+    "path": "../public/_build/assets/client-Cg-JdxCZ.js"
+  },
+  "/_build/assets/client-Cg-JdxCZ.js.br": {
+    "type": "text/javascript; charset=utf-8",
+    "encoding": "br",
+    "etag": "\"3cd2-xSZpLQ7YrgMuBBz8YtmTCSSx/W0\"",
+    "mtime": "2025-10-01T20:09:58.963Z",
+    "size": 15570,
+    "path": "../public/_build/assets/client-Cg-JdxCZ.js.br"
+  },
+  "/_build/assets/client-Cg-JdxCZ.js.gz": {
+    "type": "text/javascript; charset=utf-8",
+    "encoding": "gzip",
+    "etag": "\"44f1-hQuUYy2mJK1P/uS+MZjnX1YYJ+E\"",
+    "mtime": "2025-10-01T20:09:58.937Z",
+    "size": 17649,
+    "path": "../public/_build/assets/client-Cg-JdxCZ.js.gz"
+  },
+  "/_build/assets/index-DEYiQ7KU.js": {
+    "type": "text/javascript; charset=utf-8",
+    "etag": "\"1379-yujb6imr/+NFI48LS8Q1dSEufss\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 4985,
-    "path": "../public/_build/assets/index-BeVyEAAP.js"
+    "path": "../public/_build/assets/index-DEYiQ7KU.js"
   },
-  "/_build/assets/index-BeVyEAAP.js.br": {
+  "/_build/assets/index-DEYiQ7KU.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"670-9g9WIWItnQQcyVVgFV6YwdCT0OQ\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1648,
-    "path": "../public/_build/assets/index-BeVyEAAP.js.br"
+    "etag": "\"668-VL1R6ebK272dpjsWmI5LMFgONw0\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1640,
+    "path": "../public/_build/assets/index-DEYiQ7KU.js.br"
   },
-  "/_build/assets/index-BeVyEAAP.js.gz": {
+  "/_build/assets/index-DEYiQ7KU.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"74c-6kjr2gn527V6ZuyQxP/xzcrtPqs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1868,
-    "path": "../public/_build/assets/index-BeVyEAAP.js.gz"
+    "etag": "\"74d-0C89/ZS/+nm0eQkBg7q8m778OhI\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1869,
+    "path": "../public/_build/assets/index-DEYiQ7KU.js.gz"
   },
-  "/_build/assets/notifications-BK_Ctv6W.js": {
+  "/_build/assets/notifications-BveZLvMJ.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1369-TV87vX/ZIP7N4SlP+D6Jy7TMOAc\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"1369-WZ9cFPp1QsoDm7IxiQsxwUriBJM\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 4969,
-    "path": "../public/_build/assets/notifications-BK_Ctv6W.js"
+    "path": "../public/_build/assets/notifications-BveZLvMJ.js"
   },
-  "/_build/assets/notifications-BK_Ctv6W.js.br": {
+  "/_build/assets/notifications-BveZLvMJ.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"5de-34+z1e1fJVPGa93LdDHs/NumSnM\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1502,
-    "path": "../public/_build/assets/notifications-BK_Ctv6W.js.br"
+    "etag": "\"5dd-uuC7onjEUQcsdSbecd9ReZ31NWg\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1501,
+    "path": "../public/_build/assets/notifications-BveZLvMJ.js.br"
   },
-  "/_build/assets/notifications-BK_Ctv6W.js.gz": {
+  "/_build/assets/notifications-BveZLvMJ.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"6bc-roZh3YuazXZ0mPJ5D16cMtRrGZU\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1724,
-    "path": "../public/_build/assets/notifications-BK_Ctv6W.js.gz"
+    "etag": "\"6ba-Vf/1QWYowGFLJLxDlgF9y6aYHH4\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1722,
+    "path": "../public/_build/assets/notifications-BveZLvMJ.js.gz"
   },
-  "/_build/assets/settings-CzNzunqA.js": {
+  "/_build/assets/settings-D5NMsFtN.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"14dd-fASwA/+KooAxx/TieMtMo8/RB2w\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"14dd-+SAfUtGkWe6FTr3i5CfvdkwhJWM\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 5341,
-    "path": "../public/_build/assets/settings-CzNzunqA.js"
+    "path": "../public/_build/assets/settings-D5NMsFtN.js"
   },
-  "/_build/assets/settings-CzNzunqA.js.br": {
+  "/_build/assets/settings-D5NMsFtN.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"5c4-RLTmpjfsi11jnZ10wKskmAtC4LE\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1476,
-    "path": "../public/_build/assets/settings-CzNzunqA.js.br"
+    "etag": "\"5c6-xmHx3dU/gHHKPdBfrDIKsEVMdgQ\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1478,
+    "path": "../public/_build/assets/settings-D5NMsFtN.js.br"
   },
-  "/_build/assets/settings-CzNzunqA.js.gz": {
+  "/_build/assets/settings-D5NMsFtN.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"704-hQkQDlqqa6vuRb8knfZ2U3llyso\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1796,
-    "path": "../public/_build/assets/settings-CzNzunqA.js.gz"
+    "etag": "\"706-1o7HN9ihtPDeCWdBldAKqywNC+Y\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1798,
+    "path": "../public/_build/assets/settings-D5NMsFtN.js.gz"
   },
-  "/_build/assets/targets-Dbyf3FNl.js": {
+  "/_build/assets/targets-CP5rXuul.js": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"aab-6C8YHJ0wY232DxiGAnJsgJmad7k\"",
-    "mtime": "2025-10-01T19:24:04.526Z",
+    "etag": "\"aab-xTsSEGHyqnIdbxl1ikuVaj1NeUI\"",
+    "mtime": "2025-10-01T20:09:58.865Z",
     "size": 2731,
-    "path": "../public/_build/assets/targets-Dbyf3FNl.js"
+    "path": "../public/_build/assets/targets-CP5rXuul.js"
   },
-  "/_build/assets/targets-Dbyf3FNl.js.br": {
+  "/_build/assets/targets-CP5rXuul.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"46b-iTE2S/oq/XsneKflII+wFShKf+U\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"46b-KfVnEIERAsQhnPa4JtZLr6rAvwY\"",
+    "mtime": "2025-10-01T20:09:58.937Z",
     "size": 1131,
-    "path": "../public/_build/assets/targets-Dbyf3FNl.js.br"
+    "path": "../public/_build/assets/targets-CP5rXuul.js.br"
   },
-  "/_build/assets/targets-Dbyf3FNl.js.gz": {
+  "/_build/assets/targets-CP5rXuul.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"521-aWJ0iy21HvY8fbBhJ7GY5m5TGiI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"521-HJnnD1jTzyj+L7CPjSoaZuvHK3g\"",
+    "mtime": "2025-10-01T20:09:58.937Z",
     "size": 1313,
-    "path": "../public/_build/assets/targets-Dbyf3FNl.js.gz"
+    "path": "../public/_build/assets/targets-CP5rXuul.js.gz"
   },
   "/_server/assets/TargetCard-Bjgo4gzU.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
     "etag": "\"4a1-gofeK281p8VRuSnOXJ7A6/cMmLI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 1185,
     "path": "../public/_server/assets/TargetCard-Bjgo4gzU.js.br"
   },
@@ -4872,30 +4872,30 @@ const assets = {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"552-dE2A4LbjJUxYTbgnztk50jXv1EE\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 1362,
     "path": "../public/_server/assets/TargetCard-Bjgo4gzU.js.gz"
   },
-  "/_server/assets/UptimeChart-DpIqj3wE.js.br": {
+  "/_server/assets/UptimeChart-Cg1W-4dT.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"979-2RV4fKpbcd9izpRJ/DCWme9V5N0\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 2425,
-    "path": "../public/_server/assets/UptimeChart-DpIqj3wE.js.br"
+    "etag": "\"976-VLsrelBOQo1DDfjXhpGy0e5ZYps\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 2422,
+    "path": "../public/_server/assets/UptimeChart-Cg1W-4dT.js.br"
   },
-  "/_server/assets/UptimeChart-DpIqj3wE.js.gz": {
+  "/_server/assets/UptimeChart-Cg1W-4dT.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"ad3-ij46R7kTLRszIT9Y/eZxTF898TI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "etag": "\"ad3-W+b7gexBbnxZ1CRzcRtmj0EM6+4\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2771,
-    "path": "../public/_server/assets/UptimeChart-DpIqj3wE.js.gz"
+    "path": "../public/_server/assets/UptimeChart-Cg1W-4dT.js.gz"
   },
   "/_server/assets/app-BjoaO50o.css": {
     "type": "text/css; charset=utf-8",
     "etag": "\"2202-ygL4IXs5/vgBxlP62V7HPkPOxds\"",
-    "mtime": "2025-10-01T19:24:04.528Z",
+    "mtime": "2025-10-01T20:09:58.868Z",
     "size": 8706,
     "path": "../public/_server/assets/app-BjoaO50o.css"
   },
@@ -4903,7 +4903,7 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "br",
     "etag": "\"8e1-HSY0FmU8JRIt0cSKfDV/gEkyPXU\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2273,
     "path": "../public/_server/assets/app-BjoaO50o.css.br"
   },
@@ -4911,89 +4911,89 @@ const assets = {
     "type": "text/css; charset=utf-8",
     "encoding": "gzip",
     "etag": "\"a5f-gTch4uEXODYLZQjFBi8lfhzrEHs\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
+    "mtime": "2025-10-01T20:09:58.934Z",
     "size": 2655,
     "path": "../public/_server/assets/app-BjoaO50o.css.gz"
   },
-  "/_server/assets/app-CZI4m8QT.js.br": {
+  "/_server/assets/app-QiOgf4yA.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"abb-2DGMJjkPzG4lCUap+soN76ZRPnY\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 2747,
-    "path": "../public/_server/assets/app-CZI4m8QT.js.br"
+    "etag": "\"abc-hlRxUeI/YExQtV48xkG8SbFOUMs\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 2748,
+    "path": "../public/_server/assets/app-QiOgf4yA.js.br"
   },
-  "/_server/assets/app-CZI4m8QT.js.gz": {
+  "/_server/assets/app-QiOgf4yA.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"bf6-YudrX4qtZJdfj7Y4negfx29nF5I\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 3062,
-    "path": "../public/_server/assets/app-CZI4m8QT.js.gz"
+    "etag": "\"bf1-8GLxcy7vDdwrcm5Jy2eW3G8S0hU\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 3057,
+    "path": "../public/_server/assets/app-QiOgf4yA.js.gz"
   },
-  "/_server/assets/container-Dn6QYIGz.js.br": {
+  "/_server/assets/container-L2LlDb0s.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"1126-oJqwLuO8DRPkPqRi622u6/tyLo4\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 4390,
-    "path": "../public/_server/assets/container-Dn6QYIGz.js.br"
+    "etag": "\"f34-PI6LRGBRStoJvDZu9qXqFw5FXpU\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 3892,
+    "path": "../public/_server/assets/container-L2LlDb0s.js.br"
   },
-  "/_server/assets/container-Dn6QYIGz.js.gz": {
+  "/_server/assets/container-L2LlDb0s.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1337-cll7TR1QYWDfEcraliganJtlLrA\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 4919,
-    "path": "../public/_server/assets/container-Dn6QYIGz.js.gz"
+    "etag": "\"1110-PuyVN0sQ5Mb5OluK3EIe8WDgtt4\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 4368,
+    "path": "../public/_server/assets/container-L2LlDb0s.js.gz"
   },
-  "/_server/assets/router-SOUM5df7.js.br": {
+  "/_server/assets/router-DHVY9RUY.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"734-yAiI+LiWdMypJPLgnm0g6u1o3PI\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 1844,
-    "path": "../public/_server/assets/router-SOUM5df7.js.br"
+    "etag": "\"733-6vG/ea34PHfOcVil+p4zGO3+J3c\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 1843,
+    "path": "../public/_server/assets/router-DHVY9RUY.js.br"
   },
-  "/_server/assets/router-SOUM5df7.js.gz": {
+  "/_server/assets/router-DHVY9RUY.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"832-d/jyQdLkFA5qbO4m+S3L6RhAX40\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 2098,
-    "path": "../public/_server/assets/router-SOUM5df7.js.gz"
+    "etag": "\"830-H7sXBv+SxSWN+IoCVvmp++4K6hQ\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 2096,
+    "path": "../public/_server/assets/router-DHVY9RUY.js.gz"
   },
-  "/_server/assets/routing-BtkaN0N8.js.br": {
+  "/_server/assets/routing-BuvachQx.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"16ae-pknMaLz5g3Ub854oiSyYTBgPlDs\"",
-    "mtime": "2025-10-01T19:24:04.619Z",
-    "size": 5806,
-    "path": "../public/_server/assets/routing-BtkaN0N8.js.br"
+    "etag": "\"16ab-OGuwuVeYJIA/pSocshByBjqDAjk\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 5803,
+    "path": "../public/_server/assets/routing-BuvachQx.js.br"
   },
-  "/_server/assets/routing-BtkaN0N8.js.gz": {
+  "/_server/assets/routing-BuvachQx.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1954-JBR+pVlSr66Xc3UU/pVENHGWHLc\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 6484,
-    "path": "../public/_server/assets/routing-BtkaN0N8.js.gz"
+    "etag": "\"1951-3pOtz/WgoXZoZTP4Myuwwefi9So\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 6481,
+    "path": "../public/_server/assets/routing-BuvachQx.js.gz"
   },
-  "/_server/assets/server-fns-9jI2eI5S.js.br": {
+  "/_server/assets/server-fns-DJA2HZf-.js.br": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "br",
-    "etag": "\"1158-nIeL1Mjew2bFEW2intLnkIsjhek\"",
-    "mtime": "2025-10-01T19:24:04.615Z",
-    "size": 4440,
-    "path": "../public/_server/assets/server-fns-9jI2eI5S.js.br"
+    "etag": "\"1157-kHSsWreRftcP2f3ssQ0S2zNuakI\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 4439,
+    "path": "../public/_server/assets/server-fns-DJA2HZf-.js.br"
   },
-  "/_server/assets/server-fns-9jI2eI5S.js.gz": {
+  "/_server/assets/server-fns-DJA2HZf-.js.gz": {
     "type": "text/javascript; charset=utf-8",
     "encoding": "gzip",
-    "etag": "\"1342-JScdgCcMY/O0K8NOHAHb7lpApic\"",
-    "mtime": "2025-10-01T19:24:04.612Z",
-    "size": 4930,
-    "path": "../public/_server/assets/server-fns-9jI2eI5S.js.gz"
+    "etag": "\"1341-ZFSEvOYz6DxmVaXXJNa4UJSJNIA\"",
+    "mtime": "2025-10-01T20:09:58.934Z",
+    "size": 4929,
+    "path": "../public/_server/assets/server-fns-DJA2HZf-.js.gz"
   }
 };
 
@@ -6305,7 +6305,7 @@ const G$2 = Symbol("$HTTPEvent");
 function Ue$1(e) {
   return typeof e == "object" && (e instanceof H3Event || (e == null ? void 0 : e[G$2]) instanceof H3Event || (e == null ? void 0 : e.__is_event__) === true);
 }
-function u(e) {
+function u$1(e) {
   return function(...s) {
     var _a;
     let t = s[0];
@@ -6318,7 +6318,7 @@ function u(e) {
     return e(...s);
   };
 }
-const J$1 = u(getRequestURL), je$1 = u(getRequestIP), w$1 = u(setResponseStatus), I$1 = u(getResponseStatus), Fe$1 = u(getResponseStatusText), y$1 = u(getResponseHeaders), _$1 = u(getResponseHeader), Le$1 = u(setResponseHeader), V$1 = u(appendResponseHeader), Oe$1 = u(parseCookies), Ie$1 = u(getCookie), _e = u(setCookie), R$1 = u(setHeader), De$1 = u(getRequestWebStream), Me$1 = u(removeResponseHeader), We$1 = u(Ce);
+const J$1 = u$1(getRequestURL), je$1 = u$1(getRequestIP), w$1 = u$1(setResponseStatus), I$2 = u$1(getResponseStatus), Fe$1 = u$1(getResponseStatusText), y = u$1(getResponseHeaders), _$1 = u$1(getResponseHeader), Le$1 = u$1(setResponseHeader), V$1 = u$1(appendResponseHeader), Oe$1 = u$1(parseCookies), Ie$1 = u$1(getCookie), _e = u$1(setCookie), R$1 = u$1(setHeader), De$1 = u$1(getRequestWebStream), Me$1 = u$1(removeResponseHeader), We$1 = u$1(Ce);
 function Ne$1() {
   var _a;
   return getContext("nitro-app", { asyncContext: !!((_a = globalThis.app.config.server.experimental) == null ? void 0 : _a.asyncContext), AsyncLocalStorage: AsyncLocalStorage });
@@ -6383,16 +6383,16 @@ let Ke$1 = class Ke {
     return Array.isArray(s) ? s : [s];
   }
   forEach(s) {
-    return Object.entries(y$1(this.event)).forEach(([t, n]) => s(Array.isArray(n) ? n.join(", ") : n, t, this));
+    return Object.entries(y(this.event)).forEach(([t, n]) => s(Array.isArray(n) ? n.join(", ") : n, t, this));
   }
   entries() {
-    return Object.entries(y$1(this.event)).map(([s, t]) => [s, Array.isArray(t) ? t.join(", ") : t])[Symbol.iterator]();
+    return Object.entries(y(this.event)).map(([s, t]) => [s, Array.isArray(t) ? t.join(", ") : t])[Symbol.iterator]();
   }
   keys() {
-    return Object.keys(y$1(this.event))[Symbol.iterator]();
+    return Object.keys(y(this.event))[Symbol.iterator]();
   }
   values() {
-    return Object.values(y$1(this.event)).map((s) => Array.isArray(s) ? s.join(", ") : s)[Symbol.iterator]();
+    return Object.values(y(this.event)).map((s) => Array.isArray(s) ? s.join(", ") : s)[Symbol.iterator]();
   }
   [Symbol.iterator]() {
     return this.entries()[Symbol.iterator]();
@@ -6400,13 +6400,13 @@ let Ke$1 = class Ke {
 };
 function Qe$1(e) {
   return { get status() {
-    return I$1(e);
+    return I$2(e);
   }, set status(s) {
     w$1(e, s);
   }, get statusText() {
     return Fe$1(e);
   }, set statusText(s) {
-    w$1(e, I$1(e), s);
+    w$1(e, I$2(e), s);
   }, headers: new Ke$1(e) };
 }
 const K$1 = [{ page: true, $component: { src: "src/routes/alerts.tsx?pick=default&pick=$css", build: () => import('../build/alerts.mjs'), import: () => import('../build/alerts.mjs') }, path: "/alerts", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/alerts.tsx" }, { page: true, $component: { src: "src/routes/charts.tsx?pick=default&pick=$css", build: () => import('../build/charts.mjs'), import: () => import('../build/charts.mjs') }, path: "/charts", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/charts.tsx" }, { page: true, $component: { src: "src/routes/index.tsx?pick=default&pick=$css", build: () => import('../build/index.mjs'), import: () => import('../build/index.mjs') }, path: "/", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/index.tsx" }, { page: true, $component: { src: "src/routes/notifications.tsx?pick=default&pick=$css", build: () => import('../build/notifications.mjs'), import: () => import('../build/notifications.mjs') }, path: "/notifications", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/notifications.tsx" }, { page: true, $component: { src: "src/routes/settings.tsx?pick=default&pick=$css", build: () => import('../build/settings.mjs'), import: () => import('../build/settings.mjs') }, path: "/settings", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/settings.tsx" }, { page: true, $component: { src: "src/routes/targets.tsx?pick=default&pick=$css", build: () => import('../build/targets.mjs'), import: () => import('../build/targets.mjs') }, path: "/targets", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/targets.tsx" }, { page: false, $GET: { src: "src/routes/api/trpc/[...trpc].ts?pick=GET", build: () => import('../build/_...trpc_.mjs'), import: () => import('../build/_...trpc_.mjs') }, $HEAD: { src: "src/routes/api/trpc/[...trpc].ts?pick=GET", build: () => import('../build/_...trpc_.mjs'), import: () => import('../build/_...trpc_.mjs') }, $POST: { src: "src/routes/api/trpc/[...trpc].ts?pick=POST", build: () => import('../build/_...trpc_2.mjs'), import: () => import('../build/_...trpc_2.mjs') }, path: "/api/trpc/*trpc", filePath: "/Users/david/Documents/Projects/network-monitor/apps/web/src/routes/api/trpc/[...trpc].ts" }], Ye = Ze$1(K$1.filter((e) => e.page));
@@ -6517,21 +6517,21 @@ async function dt(e) {
   }
   try {
     let r = await provideRequestEvent(s, async () => (sharedConfig.context = { event: s }, s.locals.serverFunctionMeta = { id: c + "#" + l }, Y(...f)));
-    if (a && o && (r = await B$2(s, r)), r instanceof Response) {
+    if (a && o && (r = await B$1(s, r)), r instanceof Response) {
       if (r.headers && r.headers.has("X-Content-Raw")) return r;
       o && (r.headers && D(e, r.headers), r.status && (r.status < 300 || r.status >= 400) && w$1(e, r.status), r.customBody ? r = await r.customBody() : r.body == null && (r = null));
     }
-    return o ? (R$1(e, "content-type", "text/javascript"), W$1(o, r)) : N$2(r, t, f);
+    return o ? (R$1(e, "content-type", "text/javascript"), W$1(o, r)) : N$1(r, t, f);
   } catch (r) {
-    if (r instanceof Response) a && o && (r = await B$2(s, r)), r.headers && D(e, r.headers), r.status && (!o || r.status < 300 || r.status >= 400) && w$1(e, r.status), r.customBody ? r = r.customBody() : r.body == null && (r = null), R$1(e, "X-Error", "true");
+    if (r instanceof Response) a && o && (r = await B$1(s, r)), r.headers && D(e, r.headers), r.status && (!o || r.status < 300 || r.status >= 400) && w$1(e, r.status), r.customBody ? r = r.customBody() : r.body == null && (r = null), R$1(e, "X-Error", "true");
     else if (o) {
       const p = r instanceof Error ? r.message : typeof r == "string" ? r : "true";
       R$1(e, "X-Error", p.replace(/[\r\n]+/g, ""));
-    } else r = N$2(r, t, f, true);
+    } else r = N$1(r, t, f, true);
     return o ? (R$1(e, "content-type", "text/javascript"), W$1(o, r)) : r;
   }
 }
-function N$2(e, s, t, n) {
+function N$1(e, s, t, n) {
   const o = new URL(s.url), a = e instanceof Error;
   let i = 302, c;
   return e instanceof Response ? (c = new Headers(e.headers), e.headers.has("Location") && (c.set("Location", new URL(e.headers.get("Location"), o.origin + "").toString()), i = ut(e))) : c = new Headers({ Location: new URL(s.headers.get("referer")).toString() }), e && c.append("Set-Cookie", `flash=${encodeURIComponent(JSON.stringify({ url: o.pathname + o.search, result: a ? e.message : e, thrown: n, error: a, input: [...t.slice(0, -1), [...t[t.length - 1].entries()]] }))}; Secure; HttpOnly;`), new Response(null, { status: i, headers: c });
@@ -6550,12 +6550,12 @@ function ft$1(e) {
     s.append("cookie", `${a}=${i}`), o && (e.nativeEvent.node.req.headers.cookie += `${a}=${i};`);
   }), s;
 }
-async function B$2(e, s) {
+async function B$1(e, s) {
   let t, n = new URL(e.request.headers.get("referer")).toString();
   s instanceof Response && (s.headers.has("X-Revalidate") && (t = s.headers.get("X-Revalidate").split(",")), s.headers.has("Location") && (n = new URL(s.headers.get("Location"), new URL(e.request.url).origin + "").toString()));
   const o = Je(e);
   return o.request = new Request(n, { headers: ft$1(e) }), await provideRequestEvent(o, async () => {
-    await it$1(o), $ || ($ = (await import('../build/app-CZI4m8QT.mjs')).default), o.router.dataOnly = t || true, o.router.previousUrl = e.request.headers.get("referer");
+    await it$1(o), $ || ($ = (await import('../build/app-QiOgf4yA.mjs')).default), o.router.dataOnly = t || true, o.router.previousUrl = e.request.headers.get("referer");
     try {
       renderToString(() => {
         sharedConfig.context.event = o, $();
@@ -6575,7 +6575,7 @@ const kt$1 = eventHandler(dt);
 var __defProp$1 = Object.defineProperty;
 var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField$1 = (obj, key, value) => __defNormalProp$1(obj, typeof key !== "symbol" ? key + "" : key, value);
-let C$1 = class C {
+class R {
   constructor() {
     __publicField$1(this, "listeners", /* @__PURE__ */ new Map());
   }
@@ -6623,27 +6623,27 @@ let C$1 = class C {
   getEvents() {
     return Array.from(this.listeners.keys());
   }
-};
-var c;
+}
+var a;
 (function(o) {
   o[o.DEBUG = 0] = "DEBUG", o[o.INFO = 1] = "INFO", o[o.WARN = 2] = "WARN", o[o.ERROR = 3] = "ERROR";
-})(c || (c = {}));
-let U$2 = class U {
-  constructor(e = c.INFO) {
-    __publicField$1(this, "level", c.INFO);
+})(a || (a = {}));
+class m {
+  constructor(e = a.INFO) {
+    __publicField$1(this, "level", a.INFO);
     this.level = e;
   }
   debug(e, i) {
-    this.level <= c.DEBUG && console.debug(`[DEBUG] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+    this.level <= a.DEBUG && console.debug(`[DEBUG] ${e}`, i ? JSON.stringify(i, null, 2) : "");
   }
   info(e, i) {
-    this.level <= c.INFO && console.info(`[INFO] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+    this.level <= a.INFO && console.info(`[INFO] ${e}`, i ? JSON.stringify(i, null, 2) : "");
   }
   warn(e, i) {
-    this.level <= c.WARN && console.warn(`[WARN] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+    this.level <= a.WARN && console.warn(`[WARN] ${e}`, i ? JSON.stringify(i, null, 2) : "");
   }
   error(e, i) {
-    this.level <= c.ERROR && console.error(`[ERROR] ${e}`, i ? JSON.stringify(i, null, 2) : "");
+    this.level <= a.ERROR && console.error(`[ERROR] ${e}`, i ? JSON.stringify(i, null, 2) : "");
   }
   setLevel(e) {
     this.level = e;
@@ -6651,8 +6651,8 @@ let U$2 = class U {
   getLevel() {
     return this.level;
   }
-};
-class E {
+}
+class w {
   constructor() {
     __publicField$1(this, "services", /* @__PURE__ */ new Map());
     __publicField$1(this, "instances", /* @__PURE__ */ new Map());
@@ -6683,12 +6683,12 @@ class E {
     }
   }
 }
-let v = null;
-function S() {
-  return v || (v = new E()), v;
+let g$1 = null;
+function l() {
+  return g$1 || (g$1 = new w()), g$1;
 }
-const t = { ILogger: Symbol("ILogger"), IEventBus: Symbol("IEventBus"), IDatabaseService: Symbol("IDatabaseService"), IMonitorService: Symbol("IMonitorService"), ISpeedTestService: Symbol("ISpeedTestService"), ISpeedTestConfigService: Symbol("ISpeedTestConfigService"), IAlertingService: Symbol("IAlertingService"), INotificationService: Symbol("INotificationService"), IAuthService: Symbol("IAuthService"), IUserRepository: Symbol("IUserRepository"), IMonitoringTargetRepository: Symbol("IMonitoringTargetRepository"), ISpeedTestResultRepository: Symbol("ISpeedTestResultRepository"), IAlertRuleRepository: Symbol("IAlertRuleRepository"), IIncidentEventRepository: Symbol("IIncidentEventRepository"), IPushSubscriptionRepository: Symbol("IPushSubscriptionRepository"), INotificationRepository: Symbol("INotificationRepository"), IUserSpeedTestPreferenceRepository: Symbol("IUserSpeedTestPreferenceRepository"), ITargetRepository: Symbol("ITargetRepository"), ISpeedTestRepository: Symbol("ISpeedTestRepository"), IAPIClient: Symbol("IAPIClient"), ICommandQueryService: Symbol("ICommandQueryService"), IPerformanceMonitor: Symbol("IPerformanceMonitor"), ICacheManager: Symbol("ICacheManager"), IPWAService: Symbol("IPWAService") }, y = { ILogger: t.ILogger, IEventBus: t.IEventBus, IDatabaseService: t.IDatabaseService, IMonitorService: t.IMonitorService, IAlertingService: t.IAlertingService, INotificationService: t.INotificationService, IAuthService: t.IAuthService, IUserRepository: t.IUserRepository, IMonitoringTargetRepository: t.IMonitoringTargetRepository, ISpeedTestResultRepository: t.ISpeedTestResultRepository, IAlertRuleRepository: t.IAlertRuleRepository, IIncidentEventRepository: t.IIncidentEventRepository, IPushSubscriptionRepository: t.IPushSubscriptionRepository, INotificationRepository: t.INotificationRepository, ITargetRepository: t.ITargetRepository, ISpeedTestRepository: t.ISpeedTestRepository, ISpeedTestConfigService: t.ISpeedTestConfigService, IUserSpeedTestPreferenceRepository: t.IUserSpeedTestPreferenceRepository };
-let B$1 = class B {
+const t = { ILogger: Symbol("ILogger"), IEventBus: Symbol("IEventBus"), IDatabaseService: Symbol("IDatabaseService"), IMonitorService: Symbol("IMonitorService"), ISpeedTestService: Symbol("ISpeedTestService"), ISpeedTestConfigService: Symbol("ISpeedTestConfigService"), IAlertingService: Symbol("IAlertingService"), INotificationService: Symbol("INotificationService"), IAuthService: Symbol("IAuthService"), IUserRepository: Symbol("IUserRepository"), IMonitoringTargetRepository: Symbol("IMonitoringTargetRepository"), ISpeedTestResultRepository: Symbol("ISpeedTestResultRepository"), IAlertRuleRepository: Symbol("IAlertRuleRepository"), IIncidentEventRepository: Symbol("IIncidentEventRepository"), IPushSubscriptionRepository: Symbol("IPushSubscriptionRepository"), INotificationRepository: Symbol("INotificationRepository"), IUserSpeedTestPreferenceRepository: Symbol("IUserSpeedTestPreferenceRepository"), ITargetRepository: Symbol("ITargetRepository"), ISpeedTestRepository: Symbol("ISpeedTestRepository"), IAPIClient: Symbol("IAPIClient"), ICommandQueryService: Symbol("ICommandQueryService"), IPerformanceMonitor: Symbol("IPerformanceMonitor"), ICacheManager: Symbol("ICacheManager"), IPWAService: Symbol("IPWAService") }, d = { ILogger: t.ILogger, IEventBus: t.IEventBus, IDatabaseService: t.IDatabaseService, IMonitorService: t.IMonitorService, IAlertingService: t.IAlertingService, INotificationService: t.INotificationService, IAuthService: t.IAuthService, IUserRepository: t.IUserRepository, IMonitoringTargetRepository: t.IMonitoringTargetRepository, ISpeedTestResultRepository: t.ISpeedTestResultRepository, IAlertRuleRepository: t.IAlertRuleRepository, IIncidentEventRepository: t.IIncidentEventRepository, IPushSubscriptionRepository: t.IPushSubscriptionRepository, INotificationRepository: t.INotificationRepository, ITargetRepository: t.ITargetRepository, ISpeedTestRepository: t.ISpeedTestRepository, ISpeedTestConfigService: t.ISpeedTestConfigService, IUserSpeedTestPreferenceRepository: t.IUserSpeedTestPreferenceRepository };
+class b {
   constructor(e = "service-config.json") {
     __publicField$1(this, "configPath");
     __publicField$1(this, "projectRoot");
@@ -6699,8 +6699,8 @@ let B$1 = class B {
       const { join: e } = await import('path'), i = e(this.projectRoot, this.configPath), { readFileSync: r, existsSync: n } = await import('fs');
       if (!n(i)) throw new Error(`Configuration file not found: ${i}`);
       try {
-        const s = r(i, "utf-8"), a = JSON.parse(s);
-        return this.validateConfiguration(a), a;
+        const s = r(i, "utf-8"), c = JSON.parse(s);
+        return this.validateConfiguration(c), c;
       } catch (s) {
         throw new Error(`Failed to load configuration: ${s}`);
       }
@@ -6709,18 +6709,18 @@ let B$1 = class B {
   async convertToServiceConfig(e) {
     const i = {};
     for (const [r, n] of Object.entries(e.services)) {
-      const s = y[r];
+      const s = d[r];
       if (!s) {
         console.warn(`[ConfigLoader] Unknown service type: ${r} - skipping`);
         continue;
       }
       try {
-        const l = (await this.loadServiceModule(n.module))[n.className];
-        if (!l) throw new Error(`Class ${n.className} not found in module ${n.module}`);
-        const d = this.createServiceFactory(s, l), u = this.getServiceDependencies(s);
-        i[s] = { factory: d, dependencies: u, singleton: true, description: n.description };
-      } catch (a) {
-        throw new Error(`Failed to load service ${r}: ${a}`);
+        const f = (await this.loadServiceModule(n.module))[n.className];
+        if (!f) throw new Error(`Class ${n.className} not found in module ${n.module}`);
+        const v = this.createServiceFactory(s, f), y = this.getServiceDependencies(s);
+        i[s] = { factory: v, dependencies: y, singleton: true, description: n.description };
+      } catch (c) {
+        throw new Error(`Failed to load service ${r}: ${c}`);
       }
     }
     return i;
@@ -6750,7 +6750,7 @@ let B$1 = class B {
   }
   createServiceFactory(e, i) {
     return (r) => {
-      const s = this.getServiceDependencies(e).map((a) => r.get(a));
+      const s = this.getServiceDependencies(e).map((c) => r.get(c));
       return new i(...s);
     };
   }
@@ -6762,28 +6762,28 @@ let B$1 = class B {
     if (!e.services || typeof e.services != "object") throw new Error("Configuration must have services object");
     for (const [i, r] of Object.entries(e.services)) {
       if (!r.module || !r.className || !r.description) throw new Error(`Service ${i} must have module, className, and description`);
-      y[i] || console.warn(`[ConfigLoader] Unknown service type in validation: ${i}`);
+      d[i] || console.warn(`[ConfigLoader] Unknown service type in validation: ${i}`);
     }
   }
   static async getAvailableConfigurations() {
     const { join: e } = await import('path'), i = typeof process < "u" && typeof process.cwd == "function" ? process.cwd() : "/", r = e(i, "configs"), n = ["all-concrete.json", "auth-mock-only.json", "all-mock.json", "offline-development.json", "performance-testing.json", "database-testing.json", "notification-testing.json", "monitoring-testing.json", "alerting-testing.json"], { existsSync: s } = await import('fs');
-    return n.filter((a) => s(e(r, a)));
+    return n.filter((c) => s(e(r, c)));
   }
-};
-let b = false;
-async function T(o) {
-  if (!b) try {
-    const e = S(), i = new B$1(o), r = await i.loadConfiguration();
+}
+let u = false;
+async function h$1(o) {
+  if (!u) try {
+    const e = l(), i = new b(o), r = await i.loadConfiguration();
     console.log(`\u{1F4CB} Loading configuration: ${r.name} (${r.environment})`);
     const n = await i.convertToServiceConfig(r);
     for (const s of Object.getOwnPropertySymbols(n)) {
-      const a = n[s];
-      e.register(s, a);
+      const c = n[s];
+      e.register(s, c);
     }
-    await e.initialize(), e.has(t.IDatabaseService) && await e.get(t.IDatabaseService).connect(), b = true, e.has(t.ILogger) ? e.get(t.ILogger).info("Container initialized with JSON configuration") : console.log("\u2705 Container initialized with JSON configuration");
+    await e.initialize(), e.has(t.IDatabaseService) && await e.get(t.IDatabaseService).connect(), u = true, e.has(t.ILogger) ? e.get(t.ILogger).info("Container initialized with JSON configuration") : console.log("\u2705 Container initialized with JSON configuration");
   } catch (e) {
     try {
-      const i = S();
+      const i = l();
       if (i.has(t.ILogger)) i.get(t.ILogger).error("Failed to initialize container with JSON configuration", { error: e });
       else throw new Error("Logger not available");
     } catch {
@@ -6792,19 +6792,20 @@ async function T(o) {
     throw e instanceof Error ? e : new Error(String(e));
   }
 }
-async function P() {
-  await T();
-  const o = S();
+async function U$2() {
+  await h$1();
+  const o = l();
   return { userId: null, services: { logger: o.has(t.ILogger) ? o.get(t.ILogger) : null, eventBus: o.has(t.IEventBus) ? o.get(t.IEventBus) : null, database: o.has(t.IDatabaseService) ? o.get(t.IDatabaseService) : null, monitor: o.has(t.IMonitorService) ? o.get(t.IMonitorService) : null, alerting: o.has(t.IAlertingService) ? o.get(t.IAlertingService) : null, notification: o.has(t.INotificationService) ? o.get(t.INotificationService) : null, auth: o.has(t.IAuthService) ? o.get(t.IAuthService) : null, speedTestConfigService: o.has(t.ISpeedTestConfigService) ? o.get(t.ISpeedTestConfigService) : null }, repositories: { user: o.has(t.IUserRepository) ? o.get(t.IUserRepository) : null, monitoringTarget: o.has(t.IMonitoringTargetRepository) ? o.get(t.IMonitoringTargetRepository) : null, speedTestResult: o.has(t.ISpeedTestResultRepository) ? o.get(t.ISpeedTestResultRepository) : null, alertRule: o.has(t.IAlertRuleRepository) ? o.get(t.IAlertRuleRepository) : null, incidentEvent: o.has(t.IIncidentEventRepository) ? o.get(t.IIncidentEventRepository) : null, pushSubscription: o.has(t.IPushSubscriptionRepository) ? o.get(t.IPushSubscriptionRepository) : null, notification: o.has(t.INotificationRepository) ? o.get(t.INotificationRepository) : null, target: o.has(t.ITargetRepository) ? o.get(t.ITargetRepository) : null, speedTest: o.has(t.ISpeedTestRepository) ? o.get(t.ISpeedTestRepository) : null, userSpeedTestPreference: o.has(t.IUserSpeedTestPreferenceRepository) ? o.get(t.IUserSpeedTestPreferenceRepository) : null } };
 }
-let N$1 = class N {
+class T {
   constructor(e) {
     __publicField$1(this, "config");
     __publicField$1(this, "logger");
-    this.logger = e, this.config = this.getDefaultConfig(), this.logger.debug("SpeedTestConfigService: Initialized with default configuration");
+    var _a;
+    this.logger = e, this.config = this.getDefaultConfig(), (_a = this.logger) == null ? void 0 : _a.debug("MockSpeedTestConfigService: Initialized with default configuration");
   }
   getDefaultConfig() {
-    return { urls: [{ id: "cachefly-10mb", name: "CacheFly 10MB", url: "http://cachefly.cachefly.net/10mb.test", sizeBytes: 10 * 1024 * 1024, provider: "CacheFly", region: "Global CDN", enabled: true, priority: 1, description: "Small test file for quick speed tests" }, { id: "cachefly-100mb", name: "CacheFly 100MB", url: "http://cachefly.cachefly.net/100mb.test", sizeBytes: 100 * 1024 * 1024, provider: "CacheFly", region: "Global CDN", enabled: true, priority: 2, description: "Standard test file for accurate speed measurements" }, { id: "cachefly-1gb", name: "CacheFly 1GB", url: "http://cachefly.cachefly.net/1gb.test", sizeBytes: 1024 * 1024 * 1024, provider: "CacheFly", region: "Global CDN", enabled: true, priority: 3, description: "Large test file for high-speed connection testing" }, { id: "thinkbroadband-5mb", name: "ThinkBroadband 5MB", url: "http://ipv4.download.thinkbroadband.com/5MB.zip", sizeBytes: 5 * 1024 * 1024, provider: "ThinkBroadband", region: "UK", enabled: true, priority: 4, description: "Small compressed test file from UK provider" }, { id: "thinkbroadband-50mb", name: "ThinkBroadband 50MB", url: "http://ipv4.download.thinkbroadband.com/50MB.zip", sizeBytes: 50 * 1024 * 1024, provider: "ThinkBroadband", region: "UK", enabled: true, priority: 5, description: "Medium compressed test file from UK provider" }, { id: "thinkbroadband-200mb", name: "ThinkBroadband 200MB", url: "http://ipv4.download.thinkbroadband.com/200MB.zip", sizeBytes: 200 * 1024 * 1024, provider: "ThinkBroadband", region: "UK", enabled: true, priority: 6, description: "Large compressed test file from UK provider" }], defaultProvider: "CacheFly", maxConcurrentTests: 3, timeoutMs: 3e4, retryAttempts: 2, fallbackEnabled: true };
+    return { urls: [{ id: "mock-10mb", name: "Mock 10MB Test", url: "https://httpbin.org/bytes/10485760", sizeBytes: 10 * 1024 * 1024, provider: "Mock", region: "Test", enabled: true, priority: 1, description: "Mock test file for browser testing" }], defaultProvider: "Mock", maxConcurrentTests: 1, timeoutMs: 3e4, retryAttempts: 1, fallbackEnabled: false };
   }
   getAllUrls() {
     return [...this.config.urls];
@@ -6819,58 +6820,45 @@ let N$1 = class N {
     return this.config.urls.filter((i) => i.sizeBytes === e);
   }
   addCustomUrl(e) {
-    const i = { ...e, id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` }, r = this.validateUrlConfig(i);
-    if (!r.valid) throw new Error(`Invalid URL configuration: ${r.errors.join(", ")}`);
-    return this.config.urls.push(i), this.logger.debug("SpeedTestConfigService: Added custom URL", { url: i }), i;
+    var _a;
+    const i = { ...e, id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
+    return this.config.urls.push(i), (_a = this.logger) == null ? void 0 : _a.debug("MockSpeedTestConfigService: Added custom URL", { url: i }), i;
   }
   updateUrl(e, i) {
-    const r = this.config.urls.findIndex((a) => a.id === e);
-    if (r === -1) return this.logger.warn("SpeedTestConfigService: URL not found for update", { id: e }), null;
-    const n = { ...this.config.urls[r], ...i }, s = this.validateUrlConfig(n);
-    if (!s.valid) throw new Error(`Invalid URL configuration: ${s.errors.join(", ")}`);
-    return this.config.urls[r] = n, this.logger.debug("SpeedTestConfigService: Updated URL", { id: e, updates: i }), n;
+    var _a, _b;
+    const r = this.config.urls.findIndex((s) => s.id === e);
+    if (r === -1) return (_a = this.logger) == null ? void 0 : _a.warn("MockSpeedTestConfigService: URL not found for update", { id: e }), null;
+    const n = { ...this.config.urls[r], ...i };
+    return this.config.urls[r] = n, (_b = this.logger) == null ? void 0 : _b.debug("MockSpeedTestConfigService: Updated URL", { id: e, updates: i }), n;
   }
   removeUrl(e) {
-    const i = this.config.urls.findIndex((n) => n.id === e);
-    if (i === -1) return this.logger.warn("SpeedTestConfigService: URL not found for removal", { id: e }), false;
-    const r = this.config.urls[i];
-    return this.config.urls.splice(i, 1), this.logger.debug("SpeedTestConfigService: Removed URL", { id: e, removedUrl: r }), true;
+    var _a, _b;
+    const i = this.config.urls.findIndex((r) => r.id === e);
+    return i === -1 ? ((_a = this.logger) == null ? void 0 : _a.warn("MockSpeedTestConfigService: URL not found for removal", { id: e }), false) : (this.config.urls.splice(i, 1), (_b = this.logger) == null ? void 0 : _b.debug("MockSpeedTestConfigService: Removed URL", { id: e }), true);
   }
   enableUrl(e) {
+    var _a, _b;
     const i = this.config.urls.find((r) => r.id === e);
-    return i ? (i.enabled = true, this.logger.debug("SpeedTestConfigService: Enabled URL", { id: e }), true) : (this.logger.warn("SpeedTestConfigService: URL not found for enabling", { id: e }), false);
+    return i ? (i.enabled = true, (_a = this.logger) == null ? void 0 : _a.debug("MockSpeedTestConfigService: Enabled URL", { id: e }), true) : ((_b = this.logger) == null ? void 0 : _b.warn("MockSpeedTestConfigService: URL not found for enabling", { id: e }), false);
   }
   disableUrl(e) {
+    var _a, _b;
     const i = this.config.urls.find((r) => r.id === e);
-    return i ? (i.enabled = false, this.logger.debug("SpeedTestConfigService: Disabled URL", { id: e }), true) : (this.logger.warn("SpeedTestConfigService: URL not found for disabling", { id: e }), false);
+    return i ? (i.enabled = false, (_a = this.logger) == null ? void 0 : _a.debug("MockSpeedTestConfigService: Disabled URL", { id: e }), true) : ((_b = this.logger) == null ? void 0 : _b.warn("MockSpeedTestConfigService: URL not found for disabling", { id: e }), false);
   }
   selectBestUrl(e = {}) {
-    const { preferredSize: i, preferredProvider: r, excludeProviders: n = [], maxSize: s, minSize: a } = e;
-    let l = this.getEnabledUrls().filter((g) => !(n.includes(g.provider) || s && g.sizeBytes > s || a && g.sizeBytes < a));
-    l.length === 0 && (l = this.getEnabledUrls()), l.sort((g, I) => {
-      if (r) {
-        const f = g.provider === r, p = I.provider === r;
-        if (f && !p) return -1;
-        if (!f && p) return 1;
-      }
-      if (i) {
-        const f = Math.abs(g.sizeBytes - i), p = Math.abs(I.sizeBytes - i);
-        if (f !== p) return f - p;
-      }
-      return g.priority - I.priority;
-    });
-    const d = l[0], u = l.slice(1, 4);
-    let h = `Selected ${d.name} (${d.provider})`;
-    return r && d.provider === r && (h += " - preferred provider"), i && (h += ` - closest size to ${i} bytes`), this.logger.debug("SpeedTestConfigService: Selected URL", { selectedUrl: d.id, selectionReason: h, fallbackCount: u.length }), { selectedUrl: d, fallbackUrls: u, selectionReason: h };
+    return { selectedUrl: this.getEnabledUrls()[0] || this.config.urls[0], fallbackUrls: [], selectionReason: "Mock service - single test URL" };
   }
   getConfig() {
     return { ...this.config };
   }
   updateConfig(e) {
-    this.config = { ...this.config, ...e }, this.logger.debug("SpeedTestConfigService: Updated configuration", { config: e });
+    var _a;
+    this.config = { ...this.config, ...e }, (_a = this.logger) == null ? void 0 : _a.debug("MockSpeedTestConfigService: Updated configuration", { config: e });
   }
   resetToDefaults() {
-    this.config = this.getDefaultConfig(), this.logger.debug("SpeedTestConfigService: Reset to default configuration");
+    var _a;
+    this.config = this.getDefaultConfig(), (_a = this.logger) == null ? void 0 : _a.debug("MockSpeedTestConfigService: Reset to default configuration");
   }
   validateUrl(e) {
     try {
@@ -6881,30 +6869,28 @@ let N$1 = class N {
   }
   validateUrlConfig(e) {
     const i = [];
-    (!e.id || e.id.trim() === "") && i.push("ID is required"), (!e.name || e.name.trim() === "") && i.push("Name is required"), this.validateUrl(e.url) || i.push("Invalid URL format"), (!e.provider || e.provider.trim() === "") && i.push("Provider is required"), e.sizeBytes <= 0 && i.push("Size must be greater than 0"), e.priority < 0 && i.push("Priority must be non-negative");
-    const r = this.config.urls.find((n) => n.id === e.id);
-    return r && r !== e && i.push("ID already exists"), { valid: i.length === 0, errors: i };
+    return (!e.id || e.id.trim() === "") && i.push("ID is required"), (!e.name || e.name.trim() === "") && i.push("Name is required"), this.validateUrl(e.url) || i.push("Invalid URL format"), (!e.provider || e.provider.trim() === "") && i.push("Provider is required"), e.sizeBytes <= 0 && i.push("Size must be greater than 0"), e.priority < 0 && i.push("Priority must be non-negative"), { valid: i.length === 0, errors: i };
   }
   getUrlStats() {
     const e = this.getEnabledUrls(), i = [...new Set(this.config.urls.map((s) => s.provider))], r = this.config.urls.map((s) => s.sizeBytes), n = { min: Math.min(...r), max: Math.max(...r) };
     return { totalUrls: this.config.urls.length, enabledUrls: e.length, providers: i, sizeRange: n };
   }
-};
-const m = { [t.ILogger]: { factory: () => new U$2(c.DEBUG), dependencies: [], singleton: true, description: "Browser logger service" }, [t.IEventBus]: { factory: () => new C$1(), dependencies: [], singleton: true, description: "Browser event bus" }, [t.ISpeedTestConfigService]: { factory: (o) => new N$1(o.get(t.ILogger)), dependencies: [t.ILogger], singleton: true, description: "Speed test URL configuration service" } };
-let R = false;
-async function z$1() {
-  if (R) return;
-  const o = S();
-  for (const e of Object.getOwnPropertySymbols(m)) o.register(e, m[e]);
-  await o.initialize(), R = true;
 }
-let w = false;
-async function L() {
-  if (!w) {
+const p = { [t.ILogger]: { factory: () => new m(a.DEBUG), dependencies: [], singleton: true, description: "Browser logger service" }, [t.IEventBus]: { factory: () => new R(), dependencies: [], singleton: true, description: "Browser event bus" }, [t.ISpeedTestConfigService]: { factory: (o) => new T(o.get(t.ILogger)), dependencies: [t.ILogger], singleton: true, description: "Mock speed test URL configuration service for browser" } };
+let I$1 = false;
+async function C$1() {
+  if (I$1) return;
+  const o = l();
+  for (const e of Object.getOwnPropertySymbols(p)) o.register(e, p[e]);
+  await o.initialize(), I$1 = true;
+}
+let S = false;
+async function E() {
+  if (!S) {
     if (typeof process < "u" && typeof process.cwd == "function") {
       const { join: o } = await import('path'), e = process.cwd(), i = o(e, "service-config.json"), { existsSync: r } = await import('fs');
       if (r(i)) try {
-        await T(), w = true;
+        await h$1(), S = true;
         return;
       } catch (n) {
         console.warn("\u26A0\uFE0F Failed to load JSON configuration, falling back to hardcoded configuration:", n instanceof Error ? n.message : String(n));
@@ -6913,7 +6899,7 @@ async function L() {
     throw console.error("\u274C No service configuration found! JSON config is required."), new Error("Service configuration not found. Please ensure service-config.json exists in the project root.");
   }
 }
-process.env.SKIP_AUTO_INIT !== "true" && !"production".includes("web") && !process.env.VITE && L().catch((o) => {
+process.env.SKIP_AUTO_INIT !== "true" && !"production".includes("web") && !process.env.VITE && E().catch((o) => {
   console.error("Failed to initialize container:", o);
 });
 
@@ -7559,8 +7545,8 @@ function We(n) {
   const [e, t$1] = createSignal(null), [r, s] = createSignal(null);
   return createEffect(async () => {
     try {
-      await z$1();
-      const i = S(), a = i.get(t.ILogger), c = i.get(t.IEventBus), g = new je(), d = new $e(g, c, a);
+      await C$1();
+      const i = l(), a = i.get(t.ILogger), c = i.get(t.IEventBus), g = new je(), d = new $e(g, c, a);
       t$1({ apiClient: g, commandQuery: d, eventBus: c, logger: a }), a.info("Frontend services initialized successfully");
     } catch (i) {
       const a = i instanceof Error ? i : new Error("Unknown error");
@@ -8502,5 +8488,5 @@ trapUnhandledNodeErrors();
 setupGracefulShutdown(listener, nitroApp);
 const nodeServer = {};
 
-export { P, S, T, _, t as a, nodeServer as b, h, nt as n, ot as o, rt as r, tt as t, vt$1 as v };
+export { U$2 as U, _, h$1 as a, t as b, nodeServer as c, h, l, nt as n, ot as o, rt as r, tt as t, vt$1 as v };
 //# sourceMappingURL=nitro.mjs.map

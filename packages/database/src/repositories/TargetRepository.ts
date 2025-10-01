@@ -32,6 +32,14 @@ export class TargetRepository implements ITargetRepository {
     return targets.map(this.toDomainModel.bind(this));
   }
 
+  async getAll(limit?: number, offset?: number): Promise<Target[]> {
+    const targets = await this.prisma.monitoringTarget.findMany({
+      take: limit,
+      skip: offset,
+    });
+    return targets.map(this.toDomainModel.bind(this));
+  }
+
   async findById(id: string): Promise<Target | null> {
     const target = await this.prisma.monitoringTarget.findUnique({
       where: { id },
@@ -65,5 +73,9 @@ export class TargetRepository implements ITargetRepository {
     await this.prisma.monitoringTarget.delete({
       where: { id },
     });
+  }
+
+  async count(): Promise<number> {
+    return await this.prisma.monitoringTarget.count();
   }
 }

@@ -269,6 +269,11 @@ export class MonitorService implements IMonitorService {
     return await this.targetRepository.findByUserId(userId);
   }
 
+  async getAllTargets(): Promise<Target[]> {
+    this.logger.debug("MonitorService: Getting all targets");
+    return await this.targetRepository.getAll();
+  }
+
   async updateTarget(
     id: string,
     data: { name?: string; address?: string }

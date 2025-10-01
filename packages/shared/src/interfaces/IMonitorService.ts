@@ -17,6 +17,7 @@ export interface IMonitorService {
   createTarget(data: CreateTargetData): Promise<Target>;
   getTarget(id: string): Promise<Target | null>;
   getTargets(userId: string): Promise<Target[]>;
+  getAllTargets(): Promise<Target[]>;
   updateTarget(id: string, data: UpdateTargetData): Promise<Target>;
   deleteTarget(id: string): Promise<void>;
 

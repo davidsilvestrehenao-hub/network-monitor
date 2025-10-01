@@ -50,6 +50,11 @@ export class MockMonitor implements IMonitorService {
     return await this.targetRepository.findByUserId(userId);
   }
 
+  async getAllTargets(): Promise<Target[]> {
+    this.logger?.debug("MockMonitor: Getting all targets");
+    return await this.targetRepository.getAll();
+  }
+
   async updateTarget(id: string, data: UpdateTargetData): Promise<Target> {
     this.logger?.debug("MockMonitor: Updating target", { id, data });
     const target = await this.targetRepository.update(id, data);
