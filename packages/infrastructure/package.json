@@ -12,9 +12,9 @@
     "./container": "./src/container/index.ts"
   },
   "scripts": {
-    "build": "echo 'Infrastructure package - no build needed'",
-    "dev": "echo 'Infrastructure package - no dev needed'",
-    "lint": "echo 'Linting infrastructure package'"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/**/*.ts"
   },
   "dependencies": {
     "@network-monitor/shared": "workspace:*",

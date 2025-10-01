@@ -3,18 +3,18 @@
 import type {
   Notification,
   CreateNotificationData,
-} from "~/lib/services/interfaces/INotificationRepository";
+} from "@network-monitor/shared";
 import type {
   PushSubscription,
   CreatePushSubscriptionData,
-} from "~/lib/services/interfaces/IPushSubscriptionRepository";
-import type { CreateAlertRuleData } from "~/lib/services/interfaces/IAlertRepository";
+} from "@network-monitor/shared";
+import type { CreateAlertRuleData } from "@network-monitor/shared";
 import type {
   Target,
   CreateTargetData,
   SpeedTestResult,
   AlertRule,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 // Mock notification types
 export interface MockNotification {

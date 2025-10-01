@@ -12,7 +12,7 @@ import {
 import type {
   Target,
   AlertRule,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 import type {
   AlertRuleData,
   Incident,

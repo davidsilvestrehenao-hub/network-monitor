@@ -2,7 +2,7 @@ import { createSignal, createEffect, For, Show } from "solid-js";
 import type {
   Target,
   SpeedTestResult,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 interface TargetCardProps {
   target: Target;

@@ -1,7 +1,7 @@
 import { getOptionalAuthContext } from "./auth-context";
 import type { AuthContext } from "./auth-context";
-import type { ILogger } from "~/lib/services/interfaces/ILogger";
-import type { IEventBus } from "~/lib/services/interfaces/IEventBus";
+import type { ILogger } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import { EventRPC } from "~/lib/container/flexible-container"; // Will be updated to use package
 
 // Validated context with EventBus (no direct service dependencies!)

@@ -1,3 +1,6 @@
+// Import SpeedTestResult from its canonical source
+import type { SpeedTestResult } from './ISpeedTestResultRepository';
+
 // Domain types
 export interface Target {
   id: string;

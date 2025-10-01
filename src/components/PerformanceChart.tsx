@@ -4,7 +4,7 @@ import { Line } from "solid-chartjs";
 import type {
   Target,
   SpeedTestResult,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 interface PerformanceChartProps {
   targets: Target[];

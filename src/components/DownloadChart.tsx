@@ -1,7 +1,7 @@
 import { createMemo, Show } from "solid-js";
 import { Line } from "solid-chartjs";
 import type { ChartData, ChartOptions } from "chart.js";
-import type { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type { Target } from "@network-monitor/shared";
 
 interface DownloadChartProps {
   targets: Target[];

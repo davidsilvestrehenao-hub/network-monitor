@@ -1,5 +1,5 @@
 import { createSignal, For } from "solid-js";
-import type { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type { Target } from "@network-monitor/shared";
 import type {
   AlertRuleFormData,
   FormSubmitHandler,

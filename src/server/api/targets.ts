@@ -3,8 +3,8 @@ import type {
   CreateTargetData,
   UpdateTargetData,
   SpeedTestResult,
-} from "~/lib/services/interfaces/ITargetRepository";
-import type { SpeedTestConfig } from "~/lib/services/interfaces/IMonitorService";
+} from "@network-monitor/shared";
+import type { SpeedTestConfig } from "@network-monitor/shared";
 
 // Target management endpoints
 export async function createTarget(data: CreateTargetData) {

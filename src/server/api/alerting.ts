@@ -2,9 +2,9 @@ import { getAppContext } from "~/lib/container/container";
 import type {
   CreateAlertRuleData,
   UpdateAlertRuleData,
-} from "~/lib/services/interfaces/IAlertRuleRepository";
-import type { AlertRule } from "~/lib/services/interfaces/ITargetRepository";
-import type { IncidentEvent } from "~/lib/services/interfaces/IAlertRepository";
+} from "@network-monitor/shared";
+import type { AlertRule } from "@network-monitor/shared";
+import type { IncidentEvent } from "@network-monitor/shared";
 
 // Alert rule management endpoints
 export async function createAlertRule(

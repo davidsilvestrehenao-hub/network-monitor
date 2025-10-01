@@ -1,4 +1,4 @@
-import { LogLevel } from "~/lib/services/interfaces/ILogger";
+import { LogLevel } from "@network-monitor/shared";
 
 /**
  * Frontend-specific configuration

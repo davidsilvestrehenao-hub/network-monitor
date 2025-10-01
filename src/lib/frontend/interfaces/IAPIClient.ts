@@ -4,7 +4,7 @@ import type {
   UpdateTargetData,
   SpeedTestResult,
   AlertRule,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 // Additional interfaces for alerts and notifications
 export interface AlertRuleData {

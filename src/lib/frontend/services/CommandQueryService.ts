@@ -12,15 +12,15 @@ import type {
 import type {
   IEventBus,
   FrontendEvents,
-} from "~/lib/services/interfaces/IEventBus";
-import type { ILogger, LogContext } from "~/lib/services/interfaces/ILogger";
+} from "@network-monitor/shared";
+import type { ILogger, LogContext } from "@network-monitor/shared";
 import type {
   Target,
   CreateTargetData,
   UpdateTargetData,
   SpeedTestResult,
   AlertRule,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 export class CommandQueryService implements ICommandQueryService {
   constructor(

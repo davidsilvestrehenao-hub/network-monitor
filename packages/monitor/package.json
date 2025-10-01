@@ -8,9 +8,9 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "echo 'Monitor package - no build needed'",
-    "dev": "echo 'Monitor package - no dev needed'",
-    "lint": "echo 'Linting monitor package'",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/**/*.ts",
     "test": "bun test"
   },
   "dependencies": {

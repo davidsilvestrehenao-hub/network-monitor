@@ -3,11 +3,11 @@ import type {
   CreateNotificationData,
   Notification,
   NotificationQuery,
-} from "~/lib/services/interfaces/INotificationRepository";
+} from "@network-monitor/shared";
 import type {
   PushSubscription,
   CreatePushSubscriptionData,
-} from "~/lib/services/interfaces/IPushSubscriptionRepository";
+} from "@network-monitor/shared";
 
 // Notification management endpoints
 export async function createNotification(

@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import { useCommandQuery, useEventBus } from "~/lib/frontend/container";
-import type { FrontendEvents } from "~/lib/services/interfaces/IEventBus";
+import type { FrontendEvents } from "@network-monitor/shared";
 
 export function AddTargetForm() {
   const commandQuery = useCommandQuery();

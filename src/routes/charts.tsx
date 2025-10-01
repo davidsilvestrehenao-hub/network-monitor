@@ -8,7 +8,7 @@ import {
 } from "solid-js";
 import "~/lib/chart-config";
 import { useCommandQuery } from "~/lib/frontend/container";
-import type { Target } from "~/lib/services/interfaces/ITargetRepository";
+import type { Target } from "@network-monitor/shared";
 import { PingChart } from "~/components/PingChart";
 import { DownloadChart } from "~/components/DownloadChart";
 import { SuccessRateChart } from "~/components/SuccessRateChart";

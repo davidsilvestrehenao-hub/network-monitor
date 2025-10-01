@@ -8,9 +8,9 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "echo 'Notification package - no build needed'",
-    "dev": "echo 'Notification package - no dev needed'",
-    "lint": "echo 'Linting notification package'",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/**/*.ts",
     "test": "bun test"
   },
   "dependencies": {

@@ -2,12 +2,12 @@ import { getAppContext } from "~/lib/container/container";
 import type {
   User,
   UpdateUserData,
-} from "~/lib/services/interfaces/IUserRepository";
+} from "@network-monitor/shared";
 import type {
   LoginCredentials,
   RegisterData,
   AuthResult,
-} from "~/lib/services/concrete/AuthService";
+} from "@network-monitor/auth";
 
 // Authentication endpoints
 export async function login(

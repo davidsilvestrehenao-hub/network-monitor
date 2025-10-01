@@ -1,13 +1,13 @@
 import { getOptionalAuthContext } from "./auth-context";
-import type { UpdateTargetData } from "~/lib/services/interfaces/ITargetRepository";
-import type { UpdateAlertRuleData } from "~/lib/services/interfaces/IAlertRepository";
+import type { UpdateTargetData } from "@network-monitor/shared";
+import type { UpdateAlertRuleData } from "@network-monitor/shared";
 
 import type { AuthContext } from "./auth-context";
-import type { ILogger } from "~/lib/services/interfaces/ILogger";
-import type { IMonitorService } from "~/lib/services/interfaces/IMonitorService";
-import type { IAlertingService } from "~/lib/services/interfaces/IAlertingService";
-import type { INotificationService } from "~/lib/services/interfaces/INotificationService";
-import type { IAuthService } from "~/lib/services/interfaces/IAuthService";
+import type { ILogger } from "@network-monitor/shared";
+import type { IMonitorService } from "@network-monitor/shared";
+import type { IAlertingService } from "@network-monitor/shared";
+import type { INotificationService } from "@network-monitor/shared";
+import type { IAuthService } from "@network-monitor/shared";
 
 // Validated context with non-null services
 type ValidatedContext = AuthContext & {

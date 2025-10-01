@@ -5,11 +5,11 @@ import { useCommandQuery, useEventBus } from "~/lib/frontend/container";
 import type {
   Target,
   SpeedTestResult,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 import type {
   FrontendEvents,
   BackendEvents,
-} from "~/lib/services/interfaces/IEventBus";
+} from "@network-monitor/shared";
 import { PerformanceChart } from "~/components/PerformanceChart";
 import { StatusCard } from "~/components/StatusCard";
 import { RecentActivity } from "~/components/RecentActivity";

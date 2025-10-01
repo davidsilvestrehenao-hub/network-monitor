@@ -2,7 +2,7 @@ import { createSignal, createEffect } from "solid-js";
 import type {
   Target,
   UpdateTargetData,
-} from "~/lib/services/interfaces/ITargetRepository";
+} from "@network-monitor/shared";
 
 interface EditTargetModalProps {
   target: Target;
