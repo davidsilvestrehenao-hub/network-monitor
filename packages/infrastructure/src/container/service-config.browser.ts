@@ -1,6 +1,7 @@
 import { TYPES } from "./types";
 import { createServiceFactory } from "./flexible-container";
-import { LoggerService, LogLevel } from "../logger/LoggerService";
+import { LoggerService } from "../logger/LoggerService";
+import { LogLevel } from "@network-monitor/shared";
 import { EventBus } from "../event-bus/EventBus";
 import type { ILogger, IEventBus } from "@network-monitor/shared";
 

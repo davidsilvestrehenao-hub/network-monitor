@@ -1,4 +1,5 @@
-import type { ILogger, LogContext, LogLevel } from "@network-monitor/shared";
+import type { ILogger, LogContext } from "@network-monitor/shared";
+import { LogLevel } from "@network-monitor/shared";
 
 export { LogLevel };
 

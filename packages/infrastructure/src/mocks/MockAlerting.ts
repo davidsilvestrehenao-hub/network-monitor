@@ -14,6 +14,7 @@ import type {
 import type {
   AlertRule,
   SpeedTestResult,
+  MockSpeedTestResult,
 } from "@network-monitor/shared";
 
 export class MockAlerting implements IAlertingService {
@@ -181,6 +182,7 @@ export class MockAlerting implements IAlertingService {
           threshold: rules[ruleIndex].threshold,
           enabled: rules[ruleIndex].enabled,
           targetId: rules[ruleIndex].targetId,
+          triggeredEvents: [],
         };
       }
     }
@@ -221,6 +223,7 @@ export class MockAlerting implements IAlertingService {
           threshold: rule.threshold,
           enabled: rule.enabled,
           targetId: rule.targetId,
+          triggeredEvents: [],
         };
       }
     }
@@ -242,6 +245,7 @@ export class MockAlerting implements IAlertingService {
       threshold: rule.threshold,
       enabled: rule.enabled,
       targetId: rule.targetId,
+      triggeredEvents: [],
     }));
   }
 
@@ -271,7 +275,7 @@ export class MockAlerting implements IAlertingService {
       if (shouldTrigger) {
         await this.triggerAlert(rule, targetId, {
           targetId,
-          result,
+          result: result as unknown as MockSpeedTestResult,
           success: true,
         });
       }

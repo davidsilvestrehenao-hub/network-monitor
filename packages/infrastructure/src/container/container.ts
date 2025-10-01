@@ -59,95 +59,13 @@ export async function initializeContainer(): Promise<void> {
     }
   }
 
-  // Fallback to hardcoded configuration
-  console.log("📋 Using hardcoded service configuration");
-  const container = getContainer();
-
-  // Dynamically import baseServiceConfig to avoid loading Winston when using JSON config
-  const { baseServiceConfig } = await import("./service-config");
-
-  // Register all services
-  container.register(
-    TYPES.ILogger,
-    baseServiceConfig[TYPES.ILogger] as ServiceConfig
+  // Fallback: Throw error if JSON config not found
+  // Justification: Console usage in container initialization for critical system setup logging
+  // eslint-disable-next-line no-console
+  console.error("❌ No service configuration found! JSON config is required.");
+  throw new Error(
+    "Service configuration not found. Please ensure service-config.json exists in the project root."
   );
-  container.register(
-    TYPES.IEventBus,
-    baseServiceConfig[TYPES.IEventBus] as ServiceConfig
-  );
-  container.register(
-    TYPES.IDatabaseService,
-    baseServiceConfig[TYPES.IDatabaseService] as ServiceConfig
-  );
-
-  // Register all repositories
-  container.register(
-    TYPES.IUserRepository,
-    baseServiceConfig[TYPES.IUserRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.IMonitoringTargetRepository,
-    baseServiceConfig[TYPES.IMonitoringTargetRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.ISpeedTestResultRepository,
-    baseServiceConfig[TYPES.ISpeedTestResultRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.IAlertRuleRepository,
-    baseServiceConfig[TYPES.IAlertRuleRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.IIncidentEventRepository,
-    baseServiceConfig[TYPES.IIncidentEventRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.IPushSubscriptionRepository,
-    baseServiceConfig[TYPES.IPushSubscriptionRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.INotificationRepository,
-    baseServiceConfig[TYPES.INotificationRepository] as ServiceConfig
-  );
-
-  // Register legacy repositories
-  container.register(
-    TYPES.ITargetRepository,
-    baseServiceConfig[TYPES.ITargetRepository] as ServiceConfig
-  );
-  container.register(
-    TYPES.ISpeedTestRepository,
-    baseServiceConfig[TYPES.ISpeedTestRepository] as ServiceConfig
-  );
-
-  // Register business services
-  container.register(
-    TYPES.IMonitorService,
-    baseServiceConfig[TYPES.IMonitorService] as ServiceConfig
-  );
-  container.register(
-    TYPES.IAlertingService,
-    baseServiceConfig[TYPES.IAlertingService] as ServiceConfig
-  );
-  container.register(
-    TYPES.INotificationService,
-    baseServiceConfig[TYPES.INotificationService] as ServiceConfig
-  );
-  container.register(
-    TYPES.IAuthService,
-    baseServiceConfig[TYPES.IAuthService] as ServiceConfig
-  );
-
-  // Initialize container
-  await container.initialize();
-
-  // Initialize database connection
-  const databaseService = container.get<IDatabaseService>(
-    TYPES.IDatabaseService
-  );
-  await databaseService.connect();
-
-  containerInitialized = true;
 }
 
 export type AppContext = {

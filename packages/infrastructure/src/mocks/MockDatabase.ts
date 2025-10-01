@@ -32,16 +32,16 @@ export class MockDatabase implements IDatabaseService {
   }
 
   // Mock-specific methods for testing
-  setMockClient(client: MockPrismaClient): void {
+  setMockClient(client: PrismaClient): void {
     this.mockClient = client;
   }
 
-  getMockClient(): MockPrismaClient {
+  getMockClient(): PrismaClient {
     return this.mockClient;
   }
 
   reset(): void {
     this.connected = false;
-    this.mockClient = {} as MockPrismaClient;
+    this.mockClient = {} as PrismaClient;
   }
 }
