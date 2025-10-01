@@ -14,6 +14,7 @@ import { spawn } from "node:child_process";
 
 interface MonitoringTarget {
   targetId: string;
+  address: string;
   interval: NodeJS.Timeout;
   isPaused: boolean;
   lastRun?: Date;
@@ -102,7 +103,7 @@ export class SpeedTestService implements ISpeedTestService {
 
   async runSpeedTest(
     targetAddress: string,
-    config: SpeedTestConfig = {}
+    config: Partial<SpeedTestConfig> = {}
   ): Promise<SpeedResult> {
     const timeout = config.timeout || this.defaultTimeout;
     const startTime = Date.now();
@@ -189,10 +190,11 @@ export class SpeedTestService implements ISpeedTestService {
         targetId: config.targetId,
         ping: savedResult.ping,
         download: savedResult.download,
-        upload: speedResult.upload ?? undefined,
+        upload: speedResult.upload ?? null,
         status: savedResult.status,
         error: savedResult.error,
         createdAt: savedResult.createdAt,
+        timestamp: savedResult.timestamp,
         jitter: pingResult.jitter ?? undefined,
         testDuration,
         serverInfo: {
@@ -223,9 +225,10 @@ export class SpeedTestService implements ISpeedTestService {
     }
   }
 
-  startContinuousMonitoring(targetId: string, intervalMs: number): void {
+  startContinuousMonitoring(targetId: string, targetAddress: string, intervalMs: number): void {
     this.logger.debug("SpeedTestService: Starting continuous monitoring", {
       targetId,
+      targetAddress,
       intervalMs,
     });
 
@@ -236,6 +239,7 @@ export class SpeedTestService implements ISpeedTestService {
       try {
         await this.runComprehensiveTest({
           targetId,
+          target: targetAddress,
           timeout: this.defaultTimeout,
         });
 
@@ -255,6 +259,7 @@ export class SpeedTestService implements ISpeedTestService {
 
     this.monitoringTargets.set(targetId, {
       targetId,
+      address: targetAddress,
       interval,
       isPaused: false,
       nextRun: new Date(Date.now() + intervalMs),
@@ -299,15 +304,16 @@ export class SpeedTestService implements ISpeedTestService {
       targetId,
     });
 
-    const target = this.monitoringTargets.get(targetId);
-    if (target && target.isPaused) {
-      target.isPaused = false;
+    const monitoringTarget = this.monitoringTargets.get(targetId);
+    if (monitoringTarget && monitoringTarget.isPaused) {
+      monitoringTarget.isPaused = false;
 
       // Restart interval (we need the interval value, so we'll use default)
       const interval = setInterval(async () => {
         try {
           await this.runComprehensiveTest({
             targetId,
+            target: monitoringTarget.address,
             timeout: this.defaultTimeout,
           });
 
@@ -325,8 +331,8 @@ export class SpeedTestService implements ISpeedTestService {
         }
       }, this.defaultInterval);
 
-      target.interval = interval;
-      target.nextRun = new Date(Date.now() + this.defaultInterval);
+      monitoringTarget.interval = interval;
+      monitoringTarget.nextRun = new Date(Date.now() + this.defaultInterval);
 
       this.eventBus.emitTyped("CONTINUOUS_MONITORING_RESUMED", { targetId });
     }
@@ -342,7 +348,7 @@ export class SpeedTestService implements ISpeedTestService {
 
   async runBatchTests(
     targetIds: string[],
-    config: SpeedTestConfig = {}
+    config: Partial<SpeedTestConfig> = {}
   ): Promise<ComprehensiveSpeedTestResult[]> {
     this.logger.debug("SpeedTestService: Running batch tests", {
       targetIds,
@@ -357,7 +363,7 @@ export class SpeedTestService implements ISpeedTestService {
       const batch = targetIds.slice(i, i + batchSize);
       const batchPromises = batch.map(async targetId => {
         try {
-          return await this.runComprehensiveTest({ ...config, targetId });
+          return await this.runComprehensiveTest({ targetId, target: config.target || '', timeout: config.timeout });
         } catch (error) {
           this.logger.error("SpeedTestService: Batch test failed", {
             targetId,
@@ -366,15 +372,23 @@ export class SpeedTestService implements ISpeedTestService {
 
           // Return error result
           return {
-            id: 0,
+            id: crypto.randomUUID(),
             targetId,
             ping: null,
             download: null,
-            upload: undefined,
+            upload: null,
             status: "FAILURE" as const,
             error: error instanceof Error ? error.message : "Unknown error",
-            createdAt: new Date(),
-          };
+            createdAt: new Date().toISOString(),
+            timestamp: new Date().toISOString(),
+            jitter: undefined,
+            testDuration: 0,
+            serverInfo: {
+              location: "Unknown",
+              country: "Unknown",
+              sponsor: "Unknown",
+            },
+          } as ComprehensiveSpeedTestResult;
         }
       });
 
@@ -425,12 +439,9 @@ export class SpeedTestService implements ISpeedTestService {
     this.logger.debug("SpeedTestService: Default interval set", { interval });
   }
 
-  getDefaultConfig(): SpeedTestConfig {
+  getDefaultConfig(): Partial<SpeedTestConfig> {
     return {
       timeout: this.defaultTimeout,
-      testPing: true,
-      testDownload: true,
-      testUpload: false,
     };
   }
 
@@ -860,9 +871,10 @@ export class SpeedTestService implements ISpeedTestService {
 
   private handleContinuousMonitoringStart(data: {
     targetId: string;
+    targetAddress: string;
     intervalMs: number;
   }): void {
-    this.startContinuousMonitoring(data.targetId, data.intervalMs);
+    this.startContinuousMonitoring(data.targetId, data.targetAddress, data.intervalMs);
   }
 
   private handleContinuousMonitoringStop(data: { targetId: string }): void {

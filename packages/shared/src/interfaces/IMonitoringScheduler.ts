@@ -1,5 +1,6 @@
 export interface MonitoringTargetConfig {
   targetId: string;
+  targetAddress: string;
   intervalMs: number;
   enabled: boolean;
   lastRun?: Date;

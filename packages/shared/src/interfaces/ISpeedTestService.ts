@@ -47,7 +47,7 @@ export interface ISpeedTestService {
   ): Promise<ComprehensiveSpeedTestResult>;
 
   // Continuous monitoring
-  startContinuousMonitoring(targetId: string, intervalMs: number): void;
+  startContinuousMonitoring(targetId: string, targetAddress: string, intervalMs: number): void;
   stopContinuousMonitoring(targetId: string): void;
   pauseContinuousMonitoring(targetId: string): void;
   resumeContinuousMonitoring(targetId: string): void;
@@ -68,5 +68,5 @@ export interface ISpeedTestService {
   // Configuration
   setDefaultTimeout(timeout: number): void;
   setDefaultInterval(interval: number): void;
-  getDefaultConfig(): SpeedTestConfig;
+  getDefaultConfig(): Partial<SpeedTestConfig>;
 }

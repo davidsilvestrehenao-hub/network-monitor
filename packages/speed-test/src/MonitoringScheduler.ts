@@ -9,6 +9,7 @@ import type { ILogger } from "@network-monitor/shared";
 
 interface ScheduledTarget {
   config: MonitoringTargetConfig;
+  address: string;
   interval?: NodeJS.Timeout;
   isPaused: boolean;
   lastRun?: Date;
@@ -61,6 +62,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
 
     const scheduledTarget: ScheduledTarget = {
       config,
+      address: config.targetAddress || '',
       isPaused: false,
       failureCount: 0,
     };
