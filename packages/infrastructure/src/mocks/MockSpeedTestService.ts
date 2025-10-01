@@ -168,7 +168,11 @@ export class MockSpeedTestService implements ISpeedTestService {
     return result;
   }
 
-  startContinuousMonitoring(targetId: string, _targetAddress: string, intervalMs: number): void {
+  startContinuousMonitoring(
+    targetId: string,
+    _targetAddress: string,
+    intervalMs: number
+  ): void {
     this.logger?.debug(
       "MockSpeedTestService: Starting mock continuous monitoring",
       {

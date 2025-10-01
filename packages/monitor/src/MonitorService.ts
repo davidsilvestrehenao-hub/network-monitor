@@ -1,7 +1,4 @@
-import type {
-  IMonitorService,
-  SpeedTestConfig,
-} from "@network-monitor/shared";
+import type { IMonitorService, SpeedTestConfig } from "@network-monitor/shared";
 import type {
   ITargetRepository,
   SpeedTestResult,
@@ -13,7 +10,8 @@ import type { ISpeedTestResultRepository } from "@network-monitor/shared";
 import type { IEventBus, ILogger } from "@network-monitor/shared";
 
 export class MonitorService implements IMonitorService {
-  private activeTargets: Map<string, ReturnType<typeof setInterval>> = new Map();
+  private activeTargets: Map<string, ReturnType<typeof setInterval>> =
+    new Map();
 
   constructor(
     private targetRepository: ITargetRepository,
@@ -61,7 +59,7 @@ export class MonitorService implements IMonitorService {
     ownerId: string;
   }): Promise<void> {
     if (!data) return;
-    
+
     try {
       const target = await this.createTarget({
         name: data.name,
@@ -73,12 +71,15 @@ export class MonitorService implements IMonitorService {
       if (data.requestId) {
         this.eventBus.emit(`TARGET_CREATED_${data.requestId}`, target);
       }
-      
+
       // Emit general event for subscribers
       this.eventBus.emit("TARGET_CREATED", { target });
     } catch (error) {
-      this.logger.error("MonitorService: Failed to create target", { error, data });
-      
+      this.logger.error("MonitorService: Failed to create target", {
+        error,
+        data,
+      });
+
       if (data.requestId) {
         this.eventBus.emit(`TARGET_CREATE_FAILED_${data.requestId}`, {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -94,7 +95,7 @@ export class MonitorService implements IMonitorService {
     address?: string;
   }): Promise<void> {
     if (!data) return;
-    
+
     try {
       const { id, requestId, ...updateData } = data;
       const target = await this.updateTarget(id, updateData);
@@ -102,11 +103,14 @@ export class MonitorService implements IMonitorService {
       if (requestId) {
         this.eventBus.emit(`TARGET_UPDATED_${requestId}`, target);
       }
-      
+
       this.eventBus.emit("TARGET_UPDATED", { target });
     } catch (error) {
-      this.logger.error("MonitorService: Failed to update target", { error, data });
-      
+      this.logger.error("MonitorService: Failed to update target", {
+        error,
+        data,
+      });
+
       if (data.requestId) {
         this.eventBus.emit(`TARGET_UPDATE_FAILED_${data.requestId}`, {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -120,18 +124,23 @@ export class MonitorService implements IMonitorService {
     id: string;
   }): Promise<void> {
     if (!data) return;
-    
+
     try {
       await this.deleteTarget(data.id);
 
       if (data.requestId) {
-        this.eventBus.emit(`TARGET_DELETED_${data.requestId}`, { success: true });
+        this.eventBus.emit(`TARGET_DELETED_${data.requestId}`, {
+          success: true,
+        });
       }
-      
+
       this.eventBus.emit("TARGET_DELETED", { id: data.id });
     } catch (error) {
-      this.logger.error("MonitorService: Failed to delete target", { error, data });
-      
+      this.logger.error("MonitorService: Failed to delete target", {
+        error,
+        data,
+      });
+
       if (data.requestId) {
         this.eventBus.emit(`TARGET_DELETE_FAILED_${data.requestId}`, {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -146,18 +155,23 @@ export class MonitorService implements IMonitorService {
     intervalMs: number;
   }): Promise<void> {
     if (!data) return;
-    
+
     try {
       this.startMonitoring(data.targetId, data.intervalMs);
 
       if (data.requestId) {
-        this.eventBus.emit(`MONITORING_STARTED_${data.requestId}`, { success: true });
+        this.eventBus.emit(`MONITORING_STARTED_${data.requestId}`, {
+          success: true,
+        });
       }
-      
+
       this.eventBus.emit("MONITORING_STARTED", { targetId: data.targetId });
     } catch (error) {
-      this.logger.error("MonitorService: Failed to start monitoring", { error, data });
-      
+      this.logger.error("MonitorService: Failed to start monitoring", {
+        error,
+        data,
+      });
+
       if (data.requestId) {
         this.eventBus.emit(`MONITORING_START_FAILED_${data.requestId}`, {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -171,18 +185,23 @@ export class MonitorService implements IMonitorService {
     targetId: string;
   }): Promise<void> {
     if (!data) return;
-    
+
     try {
       this.stopMonitoring(data.targetId);
 
       if (data.requestId) {
-        this.eventBus.emit(`MONITORING_STOPPED_${data.requestId}`, { success: true });
+        this.eventBus.emit(`MONITORING_STOPPED_${data.requestId}`, {
+          success: true,
+        });
       }
-      
+
       this.eventBus.emit("MONITORING_STOPPED", { targetId: data.targetId });
     } catch (error) {
-      this.logger.error("MonitorService: Failed to stop monitoring", { error, data });
-      
+      this.logger.error("MonitorService: Failed to stop monitoring", {
+        error,
+        data,
+      });
+
       if (data.requestId) {
         this.eventBus.emit(`MONITORING_STOP_FAILED_${data.requestId}`, {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -196,18 +215,18 @@ export class MonitorService implements IMonitorService {
     config: SpeedTestConfig;
   }): Promise<void> {
     if (!data) return;
-    
+
     try {
       const result = await this.runSpeedTest(data.config);
 
       if (data.requestId) {
         this.eventBus.emit(`SPEED_TEST_COMPLETED_${data.requestId}`, result);
       }
-      
+
       this.eventBus.emit("SPEED_TEST_COMPLETED", { result });
     } catch (error) {
       this.logger.error("MonitorService: Speed test failed", { error, data });
-      
+
       if (data.requestId) {
         this.eventBus.emit(`SPEED_TEST_FAILED_${data.requestId}`, {
           error: error instanceof Error ? error.message : "Unknown error",
@@ -392,7 +411,7 @@ export class MonitorService implements IMonitorService {
 
   private async measurePing(target: string): Promise<number> {
     const start = Date.now();
-    
+
     try {
       const response = await fetch(target, { method: "HEAD" });
       if (!response.ok) {
@@ -407,7 +426,6 @@ export class MonitorService implements IMonitorService {
 
   private async measureDownloadSpeed(): Promise<number> {
     const testUrl = "http://cachefly.cachefly.net/100mb.test";
-    const testSizeBytes = 100 * 1024 * 1024; // 100 MB
 
     const start = Date.now();
 

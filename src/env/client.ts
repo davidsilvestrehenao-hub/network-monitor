@@ -1,12 +1,16 @@
 import type { ZodFormattedError } from "zod";
 import { clientScheme } from "./schema";
 
-export const formatErrors = (
-  errors: ZodFormattedError<unknown, string>
-) =>
+export const formatErrors = (errors: ZodFormattedError<unknown, string>) =>
   Object.entries(errors)
     .map(([name, value]) => {
-      if (value && typeof value === "object" && "_errors" in value && Array.isArray(value._errors) && value._errors.length > 0)
+      if (
+        value &&
+        typeof value === "object" &&
+        "_errors" in value &&
+        Array.isArray(value._errors) &&
+        value._errors.length > 0
+      )
         return `${name}: ${value._errors.join(", ")}\n`;
       return null;
     })

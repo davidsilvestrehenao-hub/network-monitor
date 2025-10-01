@@ -9,10 +9,7 @@ import {
   FrontendServicesProvider,
   useCommandQuery,
 } from "~/lib/frontend/container";
-import type {
-  Target,
-  AlertRule,
-} from "@network-monitor/shared";
+import type { Target, AlertRule } from "@network-monitor/shared";
 import type {
   AlertRuleData,
   Incident,

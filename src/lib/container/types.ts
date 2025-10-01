@@ -56,3 +56,43 @@ export interface Container {
 
 // Service registry type
 export type ServiceRegistry = Map<symbol, ServiceConfig>;
+
+export type ServiceConfigMap = Record<string, ServiceConfig>;
+
+import type { ILogger } from "../services/interfaces/ILogger";
+import type { IEventBus } from "../services/interfaces/IEventBus";
+import type { IMonitorService } from "../services/interfaces/IMonitorService";
+import type { IAlertingService } from "../services/interfaces/IAlertingService";
+import type { INotificationService } from "../services/interfaces/INotificationService";
+import type { IAuthService } from "../services/interfaces/IAuthService";
+import type { IUserRepository } from "../services/interfaces/IUserRepository";
+import type { IMonitoringTargetRepository } from "../services/interfaces/IMonitoringTargetRepository";
+import type { ISpeedTestResultRepository } from "../services/interfaces/ISpeedTestResultRepository";
+import type { IAlertRuleRepository } from "../services/interfaces/IAlertRuleRepository";
+import type { IIncidentEventRepository } from "../services/interfaces/IIncidentEventRepository";
+import type { IPushSubscriptionRepository } from "../services/interfaces/IPushSubscriptionRepository";
+import type { INotificationRepository } from "../services/interfaces/INotificationRepository";
+import type { ITargetRepository } from "../services/interfaces/ITargetRepository";
+import type { ISpeedTestRepository } from "../services/interfaces/ISpeedTestRepository";
+
+export interface AppContext {
+  services: {
+    logger: ILogger;
+    eventBus: IEventBus;
+    monitor: IMonitorService;
+    alerting: IAlertingService;
+    notification: INotificationService;
+    auth: IAuthService;
+  };
+  repositories?: {
+    user: IUserRepository;
+    monitoringTarget: IMonitoringTargetRepository;
+    speedTestResult: ISpeedTestResultRepository;
+    alertRule: IAlertRuleRepository;
+    incidentEvent: IIncidentEventRepository;
+    pushSubscription: IPushSubscriptionRepository;
+    notification: INotificationRepository;
+    target: ITargetRepository;
+    speedTest: ISpeedTestRepository;
+  };
+}

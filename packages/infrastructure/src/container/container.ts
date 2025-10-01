@@ -1,5 +1,4 @@
 import { getContainer } from "./flexible-container";
-import type { ServiceConfig } from "./types";
 import { TYPES } from "./types";
 import type {
   IDatabaseService,
@@ -51,6 +50,8 @@ export async function initializeContainer(): Promise<void> {
         containerInitialized = true;
         return;
       } catch (error) {
+        // Justification: Console usage for fallback error handling when JSON config fails
+        // eslint-disable-next-line no-console
         console.warn(
           "⚠️ Failed to load JSON configuration, falling back to hardcoded configuration:",
           error instanceof Error ? error.message : String(error)
@@ -107,6 +108,8 @@ export async function getAppContext(): Promise<AppContext> {
       try {
         return await getJsonAppContext();
       } catch (error) {
+        // Justification: Console usage for fallback error handling when JSON app context fails
+        // eslint-disable-next-line no-console
         console.warn(
           "⚠️ Failed to get JSON app context, falling back to hardcoded configuration:",
           error instanceof Error ? error.message : String(error)

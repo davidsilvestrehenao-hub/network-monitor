@@ -1,0 +1,68 @@
+{
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/concrete/WinstonLoggerService",
+      "className": "WinstonLoggerService"
+    },
+    "IDatabaseService": {
+      "module": "../src/lib/services/concrete/DatabaseService",
+      "className": "DatabaseService"
+    },
+    "ISpeedTestService": {
+      "module": "../src/lib/services/concrete/SpeedTestService",
+      "className": "SpeedTestService"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/concrete/MonitorService",
+      "className": "MonitorService"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/concrete/AlertingService",
+      "className": "AlertingService"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/concrete/NotificationService",
+      "className": "NotificationService"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/AuthService",
+      "className": "AuthService"
+    },
+    "IUserRepository": {
+      "module": "../src/lib/services/concrete/UserRepository",
+      "className": "UserRepository"
+    },
+    "IMonitoringTargetRepository": {
+      "module": "../src/lib/services/concrete/MonitoringTargetRepository",
+      "className": "MonitoringTargetRepository"
+    },
+    "ISpeedTestResultRepository": {
+      "module": "../src/lib/services/concrete/SpeedTestResultRepository",
+      "className": "SpeedTestResultRepository"
+    },
+    "IAlertRuleRepository": {
+      "module": "../src/lib/services/concrete/AlertRuleRepository",
+      "className": "AlertRuleRepository"
+    },
+    "IIncidentEventRepository": {
+      "module": "../src/lib/services/concrete/IncidentEventRepository",
+      "className": "IncidentEventRepository"
+    },
+    "IPushSubscriptionRepository": {
+      "module": "../src/lib/services/concrete/PushSubscriptionRepository",
+      "className": "PushSubscriptionRepository"
+    },
+    "INotificationRepository": {
+      "module": "../src/lib/services/concrete/NotificationRepository",
+      "className": "NotificationRepository"
+    },
+    "ITargetRepository": {
+      "module": "../src/lib/services/concrete/TargetRepository",
+      "className": "TargetRepository"
+    },
+    "ISpeedTestRepository": {
+      "module": "../src/lib/services/concrete/SpeedTestRepository",
+      "className": "SpeedTestRepository"
+    }
+  }
+}

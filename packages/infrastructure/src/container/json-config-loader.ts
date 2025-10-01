@@ -37,7 +37,6 @@ const SERVICE_TYPE_MAP: Record<string, symbol> = {
   ISpeedTestRepository: TYPES.ISpeedTestRepository,
 };
 
-
 export class JsonConfigLoader {
   private configPath: string;
   private projectRoot: string;
@@ -45,7 +44,10 @@ export class JsonConfigLoader {
   constructor(configPath: string = "service-config.json") {
     this.configPath = configPath;
     // Justification: Use browser-compatible path for project root
-    this.projectRoot = typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/';
+    this.projectRoot =
+      typeof process !== "undefined" && typeof process.cwd === "function"
+        ? process.cwd()
+        : "/";
   }
 
   /**
@@ -53,23 +55,29 @@ export class JsonConfigLoader {
    */
   public async loadConfiguration(): Promise<JsonConfiguration> {
     // Check if we're in a browser environment
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Browser environment - use fetch
       try {
-        const response = await fetch('/service-config.json');
+        const response = await fetch("/service-config.json");
         if (!response.ok) {
           throw new Error(`Configuration file not found: ${response.status}`);
         }
         const configContent = await response.text();
         const config = JSON.parse(configContent) as JsonConfiguration;
-        console.log("Loaded JSON config:", config);
-        
+        // Justification: Console usage for debugging configuration loading in development
+        // eslint-disable-next-line no-console
+        console.log(
+          `[ConfigLoader] Loaded configuration: ${config.name} (${config.environment})`
+        );
+
         // Validate configuration structure
         this.validateConfiguration(config);
-        
+
         return config;
       } catch (error) {
-        throw new Error(`Failed to load configuration: ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(
+          `Failed to load configuration: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     } else {
       // Node.js environment - use fs
@@ -112,7 +120,11 @@ export class JsonConfigLoader {
       const serviceType = SERVICE_TYPE_MAP[serviceName];
 
       if (!serviceType) {
-        console.warn(`Unknown service type: ${serviceName}`);
+        // Justification: Console usage for warning about unknown service types during config loading
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[ConfigLoader] Unknown service type: ${serviceName} - skipping`
+        );
         continue;
       }
 
@@ -172,7 +184,10 @@ export class JsonConfigLoader {
       // Justification: Dynamic import of path module to avoid browser compatibility issues
       const { resolve } = await import("path");
       // Justification: Use browser-compatible path resolution
-      const cwd = typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/';
+      const cwd =
+        typeof process !== "undefined" && typeof process.cwd === "function"
+          ? process.cwd()
+          : "/";
       resolvedPath = resolve(cwd, modulePath);
     } else {
       // Assume it's a module name or absolute path
@@ -303,7 +318,11 @@ export class JsonConfigLoader {
       }
 
       if (!SERVICE_TYPE_MAP[serviceName]) {
-        console.warn(`Unknown service type: ${serviceName}`);
+        // Justification: Console usage for warning about unknown service types during config validation
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[ConfigLoader] Unknown service type in validation: ${serviceName}`
+        );
       }
     }
   }
@@ -315,7 +334,10 @@ export class JsonConfigLoader {
     // Justification: Dynamic import of path module to avoid browser compatibility issues
     const { join } = await import("path");
     // Justification: Use browser-compatible path for configs directory
-    const cwd = typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/';
+    const cwd =
+      typeof process !== "undefined" && typeof process.cwd === "function"
+        ? process.cwd()
+        : "/";
     const configsDir = join(cwd, "configs");
     const configs = [
       "all-concrete.json",

@@ -62,7 +62,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
 
     const scheduledTarget: ScheduledTarget = {
       config,
-      address: config.targetAddress || '',
+      address: config.targetAddress || "",
       isPaused: false,
       failureCount: 0,
     };

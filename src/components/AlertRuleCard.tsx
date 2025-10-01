@@ -1,8 +1,5 @@
 import { createSignal } from "solid-js";
-import type {
-  AlertRule,
-  Target,
-} from "@network-monitor/shared";
+import type { AlertRule, Target } from "@network-monitor/shared";
 
 interface AlertRuleCardProps {
   rule: AlertRule;

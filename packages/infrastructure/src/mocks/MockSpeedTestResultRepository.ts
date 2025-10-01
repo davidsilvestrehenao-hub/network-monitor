@@ -56,7 +56,10 @@ export class MockSpeedTestResultRepository
     );
     return this.results
       .filter(result => result.targetId === targetId)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
       .slice(0, limit);
   }
 
@@ -69,7 +72,10 @@ export class MockSpeedTestResultRepository
     );
     const results = this.results
       .filter(result => result.targetId === targetId)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
 
     return results.length > 0 ? results[0] : null;
   }
@@ -107,7 +113,10 @@ export class MockSpeedTestResultRepository
     }
 
     return filteredResults
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
       .slice(query.offset || 0, (query.offset || 0) + (query.limit || 100));
   }
 
@@ -117,7 +126,10 @@ export class MockSpeedTestResultRepository
       offset,
     });
     return this.results
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
       .slice(offset, offset + limit);
   }
 

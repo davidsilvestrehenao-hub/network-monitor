@@ -42,6 +42,8 @@ export class MockLogger implements ILogger {
   private log(level: LogLevel, message: string, context?: LogContext): void {
     if (level >= this.level) {
       this.logs.push({ level, message, context });
+      // Justification: MockLogger implementation - console usage for testing and development
+      // eslint-disable-next-line no-console
       console.log(`[${LogLevel[level]}] ${message}`, context || "");
     }
   }

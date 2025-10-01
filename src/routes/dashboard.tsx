@@ -2,14 +2,8 @@ import { createSignal, createEffect, Show, type VoidComponent } from "solid-js";
 import "~/lib/chart-config";
 import { useCommandQuery, useEventBus } from "~/lib/frontend/container";
 // import * as prpc from "~/server/prpc";
-import type {
-  Target,
-  SpeedTestResult,
-} from "@network-monitor/shared";
-import type {
-  FrontendEvents,
-  BackendEvents,
-} from "@network-monitor/shared";
+import type { Target, SpeedTestResult } from "@network-monitor/shared";
+import type { FrontendEvents, BackendEvents } from "@network-monitor/shared";
 import { PerformanceChart } from "~/components/PerformanceChart";
 import { StatusCard } from "~/components/StatusCard";
 import { RecentActivity } from "~/components/RecentActivity";

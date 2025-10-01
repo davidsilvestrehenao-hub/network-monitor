@@ -108,4 +108,3 @@ export function getFrontendConfig(): FrontendConfig {
   }
   return productionFrontendConfig;
 }
-

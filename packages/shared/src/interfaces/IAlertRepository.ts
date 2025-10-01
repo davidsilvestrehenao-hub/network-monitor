@@ -1,9 +1,18 @@
 // Import from canonical sources to avoid duplication
-import type { AlertRule, CreateAlertRuleData, UpdateAlertRuleData } from "./IAlertRuleRepository";
+import type {
+  AlertRule,
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
+} from "./IAlertRuleRepository";
 import type { IncidentEvent } from "./IIncidentEventRepository";
 
 // Re-export for convenience
-export type { AlertRule, CreateAlertRuleData, UpdateAlertRuleData, IncidentEvent };
+export type {
+  AlertRule,
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
+  IncidentEvent,
+};
 
 export interface CreateIncidentData {
   type: "OUTAGE" | "ALERT";

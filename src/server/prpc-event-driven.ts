@@ -2,7 +2,7 @@ import { getOptionalAuthContext } from "./auth-context";
 import type { AuthContext } from "./auth-context";
 import type { ILogger } from "@network-monitor/shared";
 import type { IEventBus } from "@network-monitor/shared";
-import { EventRPC } from "~/lib/container/flexible-container"; // Will be updated to use package
+import { EventRPC } from "@network-monitor/infrastructure";
 
 // Validated context with EventBus (no direct service dependencies!)
 type ValidatedContext = AuthContext & {
@@ -21,12 +21,6 @@ async function getContext(): Promise<ValidatedContext> {
   }
 
   return ctx as ValidatedContext;
-}
-
-// Helper to create EventRPC instance
-async function createEventRPC(): Promise<EventRPC> {
-  const ctx = await getContext();
-  return new EventRPC(ctx.services.eventBus, ctx.services.logger);
 }
 
 // ============================================================================

@@ -1,10 +1,7 @@
 import { createMemo, Show } from "solid-js";
 import type { ChartData, ChartOptions } from "chart.js";
 import { Line } from "solid-chartjs";
-import type {
-  Target,
-  SpeedTestResult,
-} from "@network-monitor/shared";
+import type { Target, SpeedTestResult } from "@network-monitor/shared";
 
 interface PerformanceChartProps {
   targets: Target[];

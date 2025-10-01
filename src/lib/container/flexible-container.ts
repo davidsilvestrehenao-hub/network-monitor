@@ -76,24 +76,3 @@ export class FlexibleContainer implements Container {
     this.initialized = true;
   }
 }
-
-// Factory function for creating service factories
-export function createServiceFactory<T>(
-  factory: ServiceFactory<T>
-): ServiceFactory<T> {
-  return factory;
-}
-
-// Global container instance
-let globalContainer: Container | null = null;
-
-export function getContainer(): Container {
-  if (!globalContainer) {
-    globalContainer = new FlexibleContainer();
-  }
-  return globalContainer;
-}
-
-export function setContainer(container: Container): void {
-  globalContainer = container;
-}

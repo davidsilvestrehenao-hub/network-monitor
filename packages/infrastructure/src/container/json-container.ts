@@ -39,6 +39,8 @@ export async function initializeJsonContainer(
 
     // Load JSON configuration
     const jsonConfig = await configLoader.loadConfiguration();
+    // Justification: Console usage for debugging configuration loading during container initialization
+    // eslint-disable-next-line no-console
     console.log(
       `📋 Loading configuration: ${jsonConfig.name} (${jsonConfig.environment})`
     );
@@ -64,14 +66,38 @@ export async function initializeJsonContainer(
     }
 
     containerInitialized = true;
-    console.log("✅ Container initialized with JSON configuration");
+
+    // Use logger service now that container is initialized
+    if (container.has(TYPES.ILogger)) {
+      const logger = container.get<ILogger>(TYPES.ILogger);
+      logger.info("Container initialized with JSON configuration");
+    } else {
+      // Fallback to console if logger not available
+      // Justification: Console usage for success logging during container initialization when logger unavailable
+      // eslint-disable-next-line no-console
+      console.log("✅ Container initialized with JSON configuration");
+    }
   } catch (error) {
-    // Use console here as logger may not be initialized yet during container initialization
-    // eslint-disable-next-line no-console
-    console.error(
-      "❌ Failed to initialize container with JSON configuration:",
-      error
-    );
+    // Try to use logger if container was partially initialized, otherwise fallback to console
+    try {
+      const container = getContainer();
+      if (container.has(TYPES.ILogger)) {
+        const logger = container.get<ILogger>(TYPES.ILogger);
+        logger.error("Failed to initialize container with JSON configuration", {
+          error,
+        });
+      } else {
+        throw new Error("Logger not available");
+      }
+    } catch {
+      // Fallback to console if logger not available or container failed to initialize
+      // Justification: Console usage for critical error logging during container initialization failure
+      // eslint-disable-next-line no-console
+      console.error(
+        "❌ Failed to initialize container with JSON configuration:",
+        error
+      );
+    }
     throw error instanceof Error ? error : new Error(String(error));
   }
 }

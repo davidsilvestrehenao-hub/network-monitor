@@ -1,8 +1,5 @@
 import { createSignal, createEffect } from "solid-js";
-import type {
-  Target,
-  UpdateTargetData,
-} from "@network-monitor/shared";
+import type { Target, UpdateTargetData } from "@network-monitor/shared";
 
 interface EditTargetModalProps {
   target: Target;

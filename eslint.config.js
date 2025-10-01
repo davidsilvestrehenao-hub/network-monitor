@@ -6,7 +6,11 @@ import solid from "eslint-plugin-solid";
 export default [
   js.configs.recommended,
   {
-    files: ["src/**/*.{ts,tsx}"],
+    files: [
+      "src/**/*.{ts,tsx}",
+      "packages/**/src/**/*.{ts,tsx}",
+      "apps/**/src/**/*.{ts,tsx}",
+    ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -46,7 +50,10 @@ export default [
       ...typescript.configs.recommended.rules,
       ...solid.configs.typescript.rules,
       "@typescript-eslint/consistent-type-imports": "warn",
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/no-explicit-any": "error",
       "no-console": "warn",
       "prefer-const": "error",
@@ -55,7 +62,12 @@ export default [
     },
   },
   {
-    files: ["prisma/**/*.ts", "scripts/**/*.ts"],
+    files: [
+      "prisma/**/*.ts",
+      "scripts/**/*.ts",
+      "packages/**/prisma/**/*.ts",
+      "packages/**/scripts/**/*.ts",
+    ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -79,7 +91,10 @@ export default [
     },
     rules: {
       ...typescript.configs.recommended.rules,
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       "no-console": "off", // Allow console in scripts
       "no-undef": "off",
     },
@@ -112,6 +127,10 @@ export default [
       ".output/**",
       ".vinxi/**",
       "prisma/migrations/**",
+      "packages/**/node_modules/**",
+      "packages/**/dist/**",
+      "apps/**/node_modules/**",
+      "apps/**/dist/**",
       "**/*.d.ts",
       "public/sw.js",
       "app.config.ts",

@@ -12,6 +12,8 @@ export class LoggerService implements ILogger {
 
   debug(message: string, context?: LogContext): void {
     if (this.level <= LogLevel.DEBUG) {
+      // Justification: LoggerService implementation - must use console.debug for debug logs
+      // eslint-disable-next-line no-console
       console.debug(
         `[DEBUG] ${message}`,
         context ? JSON.stringify(context, null, 2) : ""
@@ -21,6 +23,8 @@ export class LoggerService implements ILogger {
 
   info(message: string, context?: LogContext): void {
     if (this.level <= LogLevel.INFO) {
+      // Justification: LoggerService implementation - must use console.info for info logs
+      // eslint-disable-next-line no-console
       console.info(
         `[INFO] ${message}`,
         context ? JSON.stringify(context, null, 2) : ""
@@ -30,6 +34,8 @@ export class LoggerService implements ILogger {
 
   warn(message: string, context?: LogContext): void {
     if (this.level <= LogLevel.WARN) {
+      // Justification: LoggerService implementation - must use console.warn for warning logs
+      // eslint-disable-next-line no-console
       console.warn(
         `[WARN] ${message}`,
         context ? JSON.stringify(context, null, 2) : ""

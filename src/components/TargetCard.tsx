@@ -1,8 +1,5 @@
 import { createSignal, createEffect, For, Show } from "solid-js";
-import type {
-  Target,
-  SpeedTestResult,
-} from "@network-monitor/shared";
+import type { Target, SpeedTestResult } from "@network-monitor/shared";
 
 interface TargetCardProps {
   target: Target;

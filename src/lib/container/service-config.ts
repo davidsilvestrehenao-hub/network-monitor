@@ -1,5 +1,5 @@
 import { TYPES } from "./types";
-import { createServiceFactory } from "./flexible-container";
+import { createServiceFactory } from "./utils";
 import { LoggerService } from "@network-monitor/infrastructure";
 import { LogLevel } from "@network-monitor/infrastructure";
 import { EventBus } from "@network-monitor/infrastructure";
@@ -39,7 +39,9 @@ import type { IAlertingService } from "@network-monitor/shared";
 import type { INotificationService } from "@network-monitor/shared";
 import type { IAuthService } from "@network-monitor/shared";
 
-export const baseServiceConfig = {
+import type { ServiceConfigMap } from "./types";
+
+export const baseServiceConfig: ServiceConfigMap = {
   // Core services
   [TYPES.ILogger]: {
     factory: createServiceFactory<ILogger>(
@@ -233,13 +235,9 @@ export const baseServiceConfig = {
           container.get<ISpeedTestConfigService>(TYPES.ISpeedTestConfigService)
         )
     ),
-    dependencies: [
-      TYPES.ILogger,
-      TYPES.ISpeedTestConfigService,
-    ],
+    dependencies: [TYPES.ILogger, TYPES.ISpeedTestConfigService],
     singleton: true,
-    description:
-      "Mock speed test service for browser environment",
+    description: "Mock speed test service for browser environment",
   },
 
   [TYPES.IAlertingService]: {

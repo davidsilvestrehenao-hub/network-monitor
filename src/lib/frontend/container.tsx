@@ -1,5 +1,10 @@
 import type { ParentProps } from "solid-js";
-import { createContext, useContext, createEffect, createSignal } from "solid-js";
+import {
+  createContext,
+  useContext,
+  createEffect,
+  createSignal,
+} from "solid-js";
 import type { IAPIClient } from "./interfaces/IAPIClient";
 import type { ICommandQueryService } from "./interfaces/ICommandQueryService";
 import type { IEventBus } from "@network-monitor/shared";

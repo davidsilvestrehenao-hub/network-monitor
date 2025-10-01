@@ -2,7 +2,7 @@ import type { VoidComponent } from "solid-js";
 
 const Targets: VoidComponent = () => {
   console.log("Targets component rendering...");
-  
+
   // Simple test to see if the component is working
   return (
     <div>

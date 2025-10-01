@@ -1,6 +1,6 @@
 // Import from canonical sources to avoid duplication
-import type { SpeedTestResult } from './ISpeedTestResultRepository';
-import type { AlertRule } from './IAlertRuleRepository';
+import type { SpeedTestResult } from "./ISpeedTestResultRepository";
+import type { AlertRule } from "./IAlertRuleRepository";
 
 // Re-export for convenience
 export type { SpeedTestResult, AlertRule };

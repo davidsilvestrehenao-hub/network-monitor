@@ -9,10 +9,7 @@ import type {
   User,
   AuthSession,
 } from "../interfaces/IAPIClient";
-import type {
-  IEventBus,
-  FrontendEvents,
-} from "@network-monitor/shared";
+import type { IEventBus, FrontendEvents } from "@network-monitor/shared";
 import type { ILogger, LogContext } from "@network-monitor/shared";
 import type {
   Target,

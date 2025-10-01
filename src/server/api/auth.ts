@@ -1,8 +1,5 @@
 import { getAppContext } from "~/lib/container/container";
-import type {
-  User,
-  UpdateUserData,
-} from "@network-monitor/shared";
+import type { User, UpdateUserData } from "@network-monitor/shared";
 import type {
   LoginCredentials,
   RegisterData,

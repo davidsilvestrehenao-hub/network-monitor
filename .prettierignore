@@ -1,14 +1,68 @@
-node_modules
-.vinxi
-.output
-dist
-build
-coverage
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.output/
+.vinxi/
+.turbo/
+
+# Cache directories
+.cache/
+*.cache
+
+# Logs
 *.log
+logs/
+
+# Database
+*.db
+*.sqlite
+
+# Environment files
 .env
 .env.local
 .env.production
-.env.development
-public/icons
-*.db
-*.sqlite
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+
+# Generated files
+*.d.ts
+*.generated.*
+
+# Prisma
+prisma/migrations/
+
+# Documentation (keep as-is)
+docs/
+*.md
+
+# Configuration files that should stay as-is
+*.json
+*.yaml
+*.yml
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Scripts
+scripts/
+*.sh
+*.mjs
+
+# Service worker
+public/sw.js
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

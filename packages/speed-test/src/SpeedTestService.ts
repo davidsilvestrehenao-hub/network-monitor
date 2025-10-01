@@ -225,7 +225,11 @@ export class SpeedTestService implements ISpeedTestService {
     }
   }
 
-  startContinuousMonitoring(targetId: string, targetAddress: string, intervalMs: number): void {
+  startContinuousMonitoring(
+    targetId: string,
+    targetAddress: string,
+    intervalMs: number
+  ): void {
     this.logger.debug("SpeedTestService: Starting continuous monitoring", {
       targetId,
       targetAddress,
@@ -363,7 +367,11 @@ export class SpeedTestService implements ISpeedTestService {
       const batch = targetIds.slice(i, i + batchSize);
       const batchPromises = batch.map(async targetId => {
         try {
-          return await this.runComprehensiveTest({ targetId, target: config.target || '', timeout: config.timeout });
+          return await this.runComprehensiveTest({
+            targetId,
+            target: config.target || "",
+            timeout: config.timeout,
+          });
         } catch (error) {
           this.logger.error("SpeedTestService: Batch test failed", {
             targetId,
@@ -874,7 +882,11 @@ export class SpeedTestService implements ISpeedTestService {
     targetAddress: string;
     intervalMs: number;
   }): void {
-    this.startContinuousMonitoring(data.targetId, data.targetAddress, data.intervalMs);
+    this.startContinuousMonitoring(
+      data.targetId,
+      data.targetAddress,
+      data.intervalMs
+    );
   }
 
   private handleContinuousMonitoringStop(data: { targetId: string }): void {

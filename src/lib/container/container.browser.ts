@@ -1,4 +1,4 @@
-import { getContainer } from "./flexible-container";
+import { getContainer } from "./container-instance";
 import type { ServiceConfig } from "./types";
 import { TYPES } from "./types";
 import type { ILogger } from "@network-monitor/shared";

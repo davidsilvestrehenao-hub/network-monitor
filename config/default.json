@@ -1,0 +1,64 @@
+{
+  "services": {
+    "ILogger": {
+      "module": "../src/lib/services/concrete/LoggerService",
+      "className": "LoggerService"
+    },
+    "IEventBus": {
+      "module": "../src/lib/services/concrete/EventBus",
+      "className": "EventBus"
+    },
+    "ISpeedTestConfigService": {
+      "module": "../src/lib/services/mocks/MockSpeedTestConfigService",
+      "className": "MockSpeedTestConfigService"
+    },
+    "ISpeedTestService": {
+      "module": "../src/lib/services/mocks/MockSpeedTestService",
+      "className": "MockSpeedTestService"
+    },
+    "IMonitorService": {
+      "module": "../src/lib/services/mocks/MockMonitor",
+      "className": "MockMonitor"
+    },
+    "IAlertingService": {
+      "module": "../src/lib/services/mocks/MockAlerting",
+      "className": "MockAlerting"
+    },
+    "INotificationService": {
+      "module": "../src/lib/services/mocks/MockNotification",
+      "className": "MockNotification"
+    },
+    "IAuthService": {
+      "module": "../src/lib/services/concrete/MockAuth",
+      "className": "MockAuth"
+    },
+    "IUserRepository": {
+      "module": "../src/lib/services/mocks/MockUserRepository",
+      "className": "MockUserRepository"
+    },
+    "IMonitoringTargetRepository": {
+      "module": "../src/lib/services/mocks/MockMonitoringTargetRepository",
+      "className": "MockMonitoringTargetRepository"
+    },
+    "ISpeedTestResultRepository": {
+      "module": "../src/lib/services/mocks/MockSpeedTestResultRepository",
+      "className": "MockSpeedTestResultRepository"
+    },
+    "IAlertRuleRepository": {
+      "module": "../src/lib/services/mocks/MockAlertRuleRepository",
+      "className": "MockAlertRuleRepository"
+    },
+    "IIncidentEventRepository": {
+      "module": "../src/lib/services/mocks/MockIncidentEventRepository",
+      "className": "MockIncidentEventRepository"
+    },
+    "IPushSubscriptionRepository": {
+      "module": "../src/lib/services/mocks/MockPushSubscriptionRepository",
+      "className": "MockPushSubscriptionRepository"
+    },
+    "INotificationRepository": {
+      "module": "../src/lib/services/mocks/MockNotificationRepository",
+      "className": "MockNotificationRepository"
+    }
+  }
+}

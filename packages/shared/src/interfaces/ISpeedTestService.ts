@@ -47,7 +47,11 @@ export interface ISpeedTestService {
   ): Promise<ComprehensiveSpeedTestResult>;
 
   // Continuous monitoring
-  startContinuousMonitoring(targetId: string, targetAddress: string, intervalMs: number): void;
+  startContinuousMonitoring(
+    targetId: string,
+    targetAddress: string,
+    intervalMs: number
+  ): void;
   stopContinuousMonitoring(targetId: string): void;
   pauseContinuousMonitoring(targetId: string): void;
   resumeContinuousMonitoring(targetId: string): void;

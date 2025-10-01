@@ -1,2 +1,2 @@
 // Alerting service package
-export * from './AlertingService';
+export * from "./AlertingService";
