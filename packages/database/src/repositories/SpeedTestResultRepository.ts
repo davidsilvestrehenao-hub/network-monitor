@@ -8,10 +8,13 @@ import type { IDatabaseService } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 
 export class SpeedTestResultRepository implements ISpeedTestResultRepository {
-  constructor(
-    private databaseService: IDatabaseService,
-    private logger: ILogger
-  ) {}
+  private databaseService: IDatabaseService;
+  private logger: ILogger;
+
+  constructor(databaseService: IDatabaseService, logger: ILogger) {
+    this.databaseService = databaseService;
+    this.logger = logger;
+  }
 
   async findById(id: string): Promise<SpeedTestResult | null> {
     this.logger.debug("SpeedTestResultRepository: Finding result by ID", {

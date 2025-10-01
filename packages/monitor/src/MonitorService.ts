@@ -12,15 +12,27 @@ import type { IEventBus, ILogger } from "@network-monitor/shared";
 export class MonitorService implements IMonitorService {
   private activeTargets: Map<string, ReturnType<typeof setInterval>> =
     new Map();
+  private targetRepository: ITargetRepository;
+  private speedTestRepository: ISpeedTestRepository;
+  private monitoringTargetRepository: IMonitoringTargetRepository;
+  private speedTestResultRepository: ISpeedTestResultRepository;
+  private eventBus: IEventBus;
+  private logger: ILogger;
 
   constructor(
-    private targetRepository: ITargetRepository,
-    private speedTestRepository: ISpeedTestRepository,
-    private monitoringTargetRepository: IMonitoringTargetRepository,
-    private speedTestResultRepository: ISpeedTestResultRepository,
-    private eventBus: IEventBus,
-    private logger: ILogger
+    targetRepository: ITargetRepository,
+    speedTestRepository: ISpeedTestRepository,
+    monitoringTargetRepository: IMonitoringTargetRepository,
+    speedTestResultRepository: ISpeedTestResultRepository,
+    eventBus: IEventBus,
+    logger: ILogger
   ) {
+    this.targetRepository = targetRepository;
+    this.speedTestRepository = speedTestRepository;
+    this.monitoringTargetRepository = monitoringTargetRepository;
+    this.speedTestResultRepository = speedTestResultRepository;
+    this.eventBus = eventBus;
+    this.logger = logger;
     this.setupEventHandlers();
   }
 
@@ -255,6 +267,11 @@ export class MonitorService implements IMonitorService {
   async getTargets(userId: string): Promise<Target[]> {
     this.logger.debug("MonitorService: Getting targets for user", { userId });
     return await this.targetRepository.findByUserId(userId);
+  }
+
+  async getAllTargets(): Promise<Target[]> {
+    this.logger.debug("MonitorService: Getting all targets");
+    return await this.targetRepository.getAll();
   }
 
   async updateTarget(

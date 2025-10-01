@@ -7,12 +7,13 @@
 
 import { readFileSync } from "fs";
 import { join } from "path";
+import * as yaml from "js-yaml";
 
 /**
  * Gets the OpenAPI spec from the YAML file
  */
 export function getOpenAPISpec(): string {
-  const specPath = join(process.cwd(), "apps/api/openapi.yaml");
+  const specPath = join(process.cwd(), "openapi.yaml");
   return readFileSync(specPath, "utf-8");
 }
 
@@ -60,25 +61,9 @@ export function createScalarHTML(): string {
 <body>
   <script
     id="api-reference"
-    type="application/json"
+    data-url="/api/docs/spec.yaml"
     data-configuration='{"theme":"purple","layout":"modern","defaultHttpClient":{"targetKey":"shell","clientKey":"curl"}}'
-  >${JSON.stringify({
-    openapi: "3.0.3",
-    info: {
-      title: "Network Monitor API",
-      version: "1.0.0",
-      description: "Multi-protocol API server (REST + GraphQL + tRPC)",
-    },
-  })}</script>
-  <script>
-    // Load OpenAPI spec from /api/docs/spec.yaml
-    fetch('/api/docs/spec.yaml')
-      .then(r => r.text())
-      .then(spec => {
-        const el = document.getElementById('api-reference');
-        el.setAttribute('data-url', '/api/docs/spec.yaml');
-      });
-  </script>
+  ></script>
   <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
 </body>
 </html>
@@ -106,13 +91,24 @@ export async function handleDocsRequest(
 
   // Serve the OpenAPI spec (JSON)
   if (url.pathname === "/api/docs/spec.json") {
-    // Convert YAML to JSON (simple approach - in production use a proper YAML parser)
-    return new Response(spec, {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-    });
+    // Convert YAML to JSON using js-yaml
+    try {
+      const jsonSpec = yaml.load(spec);
+      return new Response(JSON.stringify(jsonSpec, null, 2), {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        },
+      });
+    } catch (error) {
+      // Fallback: return YAML as-is (some tools can handle YAML)
+      return new Response(spec, {
+        headers: {
+          "Content-Type": "text/yaml",
+          "Cache-Control": "no-cache",
+        },
+      });
+    }
   }
 
   // Serve Swagger UI HTML

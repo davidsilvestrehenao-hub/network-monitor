@@ -1,3 +1,3 @@
 // Auth service exports
-export * from "./AuthService";
-export * from "./MockAuth";
+export * from "./AuthService.js";
+export * from "./MockAuth.js";

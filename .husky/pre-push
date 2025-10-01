@@ -1,0 +1,13 @@
+echo "🚀 Running pre-push checks..."
+
+# Run our CI checks locally before pushing
+./scripts/ci-check.sh
+
+# Check if CI checks passed
+if [ $? -ne 0 ]; then
+    echo "❌ Pre-push checks failed. Please fix the issues before pushing."
+    echo "💡 You can run './scripts/ci-check.sh' to see detailed error messages."
+    exit 1
+fi
+
+echo "✅ All pre-push checks passed! Ready to push."

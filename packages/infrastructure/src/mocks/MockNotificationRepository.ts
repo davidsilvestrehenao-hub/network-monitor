@@ -10,8 +10,10 @@ import type { ILogger } from "@network-monitor/shared";
 export class MockNotificationRepository implements INotificationRepository {
   private notifications: Notification[] = [];
   private nextId = 1;
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedNotifications();
   }
 

@@ -15,12 +15,21 @@ export class MockMonitor implements IMonitorService {
   private activeTargets: Set<string> = new Set();
   private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
 
+  private targetRepository: ITargetRepository;
+  private speedTestRepository: ISpeedTestRepository;
+  private eventBus: IEventBus;
+  private logger?: ILogger;
+
   constructor(
-    private targetRepository: ITargetRepository,
-    private speedTestRepository: ISpeedTestRepository,
-    private eventBus: IEventBus,
-    private logger?: ILogger
+    targetRepository: ITargetRepository,
+    speedTestRepository: ISpeedTestRepository,
+    eventBus: IEventBus,
+    logger?: ILogger
   ) {
+    this.targetRepository = targetRepository;
+    this.speedTestRepository = speedTestRepository;
+    this.eventBus = eventBus;
+    this.logger = logger;
     this.logger?.debug("MockMonitor: Initialized");
   }
 
@@ -39,6 +48,11 @@ export class MockMonitor implements IMonitorService {
   async getTargets(userId: string): Promise<Target[]> {
     this.logger?.debug("MockMonitor: Getting targets for user", { userId });
     return await this.targetRepository.findByUserId(userId);
+  }
+
+  async getAllTargets(): Promise<Target[]> {
+    this.logger?.debug("MockMonitor: Getting all targets");
+    return await this.targetRepository.getAll();
   }
 
   async updateTarget(id: string, data: UpdateTargetData): Promise<Target> {

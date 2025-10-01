@@ -2,11 +2,18 @@
   "name": "@network-monitor/speed-test",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./config": "./src/SpeedTestConfigService.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/SpeedTestConfigService.d.ts",
+      "default": "./dist/SpeedTestConfigService.js"
+    }
   },
   "scripts": {
     "build": "tsc",

@@ -8,15 +8,15 @@
   "services": {
     "ILogger": {
       "module": "@network-monitor/infrastructure",
-      "className": "LoggerService",
-      "isMock": false,
-      "description": "Console logger for development"
+      "className": "MockLogger",
+      "isMock": true,
+      "description": "Mock logger for development"
     },
     "IEventBus": {
       "module": "@network-monitor/infrastructure",
-      "className": "EventBus",
-      "isMock": false,
-      "description": "In-memory event bus for single-process deployment"
+      "className": "MockEventBus",
+      "isMock": true,
+      "description": "Mock event bus for development"
     },
     "IDatabaseService": {
       "module": "@network-monitor/infrastructure",
@@ -64,7 +64,7 @@
       "module": "@network-monitor/infrastructure",
       "className": "MockMonitoringTargetRepository",
       "isMock": true,
-      "description": "Mock legacy repository"
+      "description": "Mock legacy repository - alias for IMonitoringTargetRepository"
     },
     "ISpeedTestRepository": {
       "module": "@network-monitor/infrastructure",
@@ -78,11 +78,23 @@
       "isMock": true,
       "description": "Mock user repository"
     },
-    "IMonitorService": {
-      "module": "@network-monitor/monitor",
-      "className": "MonitorService",
+    "IUserSpeedTestPreferenceRepository": {
+      "module": "@network-monitor/database",
+      "className": "UserSpeedTestPreferenceRepository",
       "isMock": false,
-      "description": "Real monitor service"
+      "description": "Real user speed test preference repository"
+    },
+    "ISpeedTestConfigService": {
+      "module": "@network-monitor/infrastructure",
+      "className": "MockSpeedTestConfigService",
+      "isMock": true,
+      "description": "Mock speed test configuration service for development"
+    },
+    "IMonitorService": {
+      "module": "@network-monitor/infrastructure",
+      "className": "SimpleMockMonitor",
+      "isMock": true,
+      "description": "Simple mock monitor service without dependencies"
     },
     "IAlertingService": {
       "module": "@network-monitor/alerting",

@@ -69,12 +69,12 @@ export interface EnvironmentConfig {
  * Validation error class
  */
 export class EnvironmentValidationError extends Error {
-  constructor(
-    message: string,
-    public readonly missingVariables: string[]
-  ) {
+  public readonly missingVariables: string[];
+
+  constructor(message: string, missingVariables: string[]) {
     super(message);
     this.name = "EnvironmentValidationError";
+    this.missingVariables = missingVariables;
   }
 }
 

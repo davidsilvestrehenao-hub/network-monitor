@@ -8,10 +8,13 @@ import type { IDatabaseService } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 
 export class MonitoringTargetRepository implements IMonitoringTargetRepository {
-  constructor(
-    private databaseService: IDatabaseService,
-    private logger: ILogger
-  ) {}
+  private databaseService: IDatabaseService;
+  private logger: ILogger;
+
+  constructor(databaseService: IDatabaseService, logger: ILogger) {
+    this.databaseService = databaseService;
+    this.logger = logger;
+  }
 
   async findById(id: string): Promise<MonitoringTarget | null> {
     this.logger.debug("MonitoringTargetRepository: Finding target by ID", {

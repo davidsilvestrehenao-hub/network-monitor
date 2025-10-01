@@ -1,7 +1,7 @@
-import { getContainer } from "./flexible-container";
-import { JsonConfigLoader } from "./json-config-loader";
-import type { ServiceConfig } from "./types";
-import { TYPES } from "./types";
+import { getContainer } from "./flexible-container.js";
+import { JsonConfigLoader } from "./json-config-loader.js";
+import type { ServiceConfig } from "./types.js";
+import { TYPES } from "./types.js";
 import type {
   IDatabaseService,
   ILogger,

@@ -21,10 +21,12 @@ export class MockAlerting implements IAlertingService {
   private alertRules: Map<string, MockAlertRule[]> = new Map();
   private triggeredAlerts: MockTriggeredAlert[] = [];
 
-  constructor(
-    private eventBus: IEventBus,
-    private logger?: ILogger
-  ) {
+  private eventBus: IEventBus;
+  private logger?: ILogger;
+
+  constructor(eventBus: IEventBus, logger?: ILogger) {
+    this.eventBus = eventBus;
+    this.logger = logger;
     this.logger?.debug("MockAlerting: Initialized");
     this.setupEventHandlers();
   }

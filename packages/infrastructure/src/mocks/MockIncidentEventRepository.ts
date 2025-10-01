@@ -10,8 +10,10 @@ import type { ILogger } from "@network-monitor/shared";
 export class MockIncidentEventRepository implements IIncidentEventRepository {
   private events: IncidentEvent[] = [];
   private nextId = 1;
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedEvents();
   }
 

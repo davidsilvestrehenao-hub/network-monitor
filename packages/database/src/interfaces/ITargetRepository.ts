@@ -16,4 +16,6 @@ export interface ITargetRepository {
   create(data: CreateTargetData): Promise<Target>;
   update(id: string, data: UpdateTargetData): Promise<Target>;
   delete(id: string): Promise<void>;
+  count(): Promise<number>;
+  getAll(limit?: number, offset?: number): Promise<Target[]>;
 }

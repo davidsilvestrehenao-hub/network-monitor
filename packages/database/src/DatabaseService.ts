@@ -5,8 +5,10 @@ import type { ILogger } from "@network-monitor/shared";
 export class DatabaseService implements IDatabaseService {
   private client: PrismaClient;
   private connected = false;
+  private logger: ILogger;
 
-  constructor(private logger: ILogger) {
+  constructor(logger: ILogger) {
+    this.logger = logger;
     this.client = new PrismaClient({
       log: [
         { level: "error", emit: "stdout" },

@@ -10,8 +10,10 @@ export class MockMonitoringTargetRepository
   implements IMonitoringTargetRepository
 {
   private targets: MonitoringTarget[] = [];
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedTargets();
   }
 

@@ -10,8 +10,10 @@ import type { ILogger } from "@network-monitor/shared";
 export class MockAlertRuleRepository implements IAlertRuleRepository {
   private rules: AlertRule[] = [];
   private nextId = 1;
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.seedRules();
   }
 

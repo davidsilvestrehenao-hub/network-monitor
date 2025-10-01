@@ -5,8 +5,10 @@ import type { User } from "@network-monitor/shared";
 export class MockAuth implements IAuthService {
   private currentSession: AuthSession | null = null;
   private mockUsers: Map<string, User> = new Map();
+  private logger?: ILogger;
 
-  constructor(private logger?: ILogger) {
+  constructor(logger?: ILogger) {
+    this.logger = logger;
     this.logger?.debug("MockAuth: Initialized");
     this.seedMockUsers();
   }

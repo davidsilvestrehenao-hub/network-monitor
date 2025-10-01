@@ -20,10 +20,13 @@ import type { IEventBus, ILogger } from "@network-monitor/shared";
  * ```
  */
 export class EventRPC {
-  constructor(
-    private eventBus: IEventBus,
-    private logger: ILogger
-  ) {}
+  private eventBus: IEventBus;
+  private logger: ILogger;
+
+  constructor(eventBus: IEventBus, logger: ILogger) {
+    this.eventBus = eventBus;
+    this.logger = logger;
+  }
 
   /**
    * Make an event-driven request and wait for response

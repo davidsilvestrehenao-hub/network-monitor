@@ -1,14 +1,14 @@
-import { TYPES } from "./types";
-import { createServiceFactory } from "./flexible-container";
-import { LoggerService } from "../logger/LoggerService";
+import { TYPES } from "./types.js";
+import { createServiceFactory } from "./flexible-container.js";
+import { LoggerService } from "../logger/LoggerService.js";
 import { LogLevel } from "@network-monitor/shared";
-import { EventBus } from "../event-bus/EventBus";
+import { EventBus } from "../event-bus/EventBus.js";
 import type {
   ILogger,
   IEventBus,
   ISpeedTestConfigService,
 } from "@network-monitor/shared";
-import { SpeedTestConfigService } from "@network-monitor/speed-test/config";
+import { MockSpeedTestConfigService } from "../mocks/MockSpeedTestConfigService.js";
 
 export const browserServiceConfig = {
   [TYPES.ILogger]: {
@@ -27,10 +27,10 @@ export const browserServiceConfig = {
   },
   [TYPES.ISpeedTestConfigService]: {
     factory: createServiceFactory<ISpeedTestConfigService>(
-      container => new SpeedTestConfigService(container.get(TYPES.ILogger))
+      container => new MockSpeedTestConfigService(container.get(TYPES.ILogger))
     ),
     dependencies: [TYPES.ILogger],
     singleton: true,
-    description: "Speed test URL configuration service",
+    description: "Mock speed test URL configuration service for browser",
   },
 };

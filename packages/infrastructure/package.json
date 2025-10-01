@@ -2,14 +2,30 @@
   "name": "@network-monitor/infrastructure",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./event-bus": "./src/event-bus/index.ts",
-    "./event-rpc": "./src/event-rpc/index.ts",
-    "./logger": "./src/logger/index.ts",
-    "./container": "./src/container/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./event-bus": {
+      "types": "./dist/event-bus/index.d.ts",
+      "default": "./dist/event-bus/index.js"
+    },
+    "./event-rpc": {
+      "types": "./dist/event-rpc/index.d.ts",
+      "default": "./dist/event-rpc/index.js"
+    },
+    "./logger": {
+      "types": "./dist/logger/index.d.ts",
+      "default": "./dist/logger/index.js"
+    },
+    "./container": {
+      "types": "./dist/container/index.d.ts",
+      "default": "./dist/container/index.js"
+    }
   },
   "scripts": {
     "build": "tsc",
