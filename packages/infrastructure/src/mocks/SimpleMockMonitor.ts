@@ -10,6 +10,7 @@ import type {
 
 export class SimpleMockMonitor implements IMonitorService {
   private targets: Map<string, Target> = new Map();
+  private idCounter = 0;
 
   constructor() {
     // No dependencies needed - simple mock implementation
@@ -74,7 +75,7 @@ export class SimpleMockMonitor implements IMonitorService {
 
   async createTarget(data: CreateTargetData): Promise<Target> {
     const target: Target = {
-      id: `target-${Date.now()}`,
+      id: `target-${Date.now()}-${++this.idCounter}`,
       name: data.name,
       address: data.address,
       ownerId: data.ownerId,
