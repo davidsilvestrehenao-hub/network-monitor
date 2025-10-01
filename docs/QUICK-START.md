@@ -14,6 +14,7 @@ Before you begin, ensure you have:
 - A modern web browser (Chrome, Firefox, Safari, or Edge)
 
 ### **Optional for Production:**
+
 - **PostgreSQL** 15+ (for production database)
 - **Redis** 7+ (for distributed EventBus in microservices)
 
@@ -26,13 +27,13 @@ Before you begin, ensure you have:
 ```bash
 git clone https://github.com/your-org/network-monitor.git
 cd network-monitor
-```
+```text
 
 ### **Step 2: Install Dependencies**
 
 ```bash
 bun install
-```
+```text
 
 This installs all dependencies for all packages in the Turborepo monorepo.
 
@@ -47,15 +48,16 @@ bun run db:push
 
 # Seed database with test data (optional)
 bun run db:seed
-```
+```text
 
 ### **Step 4: Start Development Server**
 
 ```bash
 bun run dev
-```
+```text
 
 This starts:
+
 - **Frontend** at `http://localhost:3000`
 - **API server** with hot reload
 - **All Turborepo packages** in watch mode
@@ -63,9 +65,10 @@ This starts:
 ### **Step 5: Open in Browser**
 
 Navigate to:
-```
+
+```text
 http://localhost:3000
-```
+```text
 
 You should see the Network Monitor dashboard! 🎉
 
@@ -76,7 +79,8 @@ You should see the Network Monitor dashboard! 🎉
 When you ran `bun run dev`, Turborepo:
 
 1. **Built all packages** in dependency order:
-   ```
+
+   ```text
    shared → infrastructure → database → services → apps
    ```
 
@@ -97,7 +101,7 @@ When you ran `bun run dev`, Turborepo:
 1. Click **"Add Target"** button
 2. Enter:
    - **Name**: "Google"
-   - **Address**: "https://google.com"
+   - **Address**: "<https://google.com>"
 3. Click **"Save"**
 
 ### **2. Run a Speed Test**
@@ -139,7 +143,7 @@ bun run dev:api
 
 # Specific package
 bunx turbo run dev --filter=@network-monitor/monitor
-```
+```text
 
 ### **Building for Production**
 
@@ -149,7 +153,7 @@ bun run build
 
 # Build specific package
 bunx turbo run build --filter=@network-monitor/web
-```
+```text
 
 ### **Database Management**
 
@@ -163,7 +167,7 @@ bunx turbo run db:push --filter=@network-monitor/database -- --force-reset
 # Open Prisma Studio (Database GUI)
 cd packages/database
 bunx prisma studio
-```
+```text
 
 ### **Code Quality**
 
@@ -176,7 +180,7 @@ bun run type-check
 
 # Run tests
 bun run test
-```
+```text
 
 ---
 
@@ -184,17 +188,16 @@ bun run test
 
 Understanding where things are:
 
-```
+```text
 network-monitor/
 │
 ├── apps/
 │   ├── web/                    # 🌐 SolidStart frontend
 │   │   ├── src/
 │   │   │   ├── routes/         # Pages (file-based routing)
-│   │   │   ├── components/     # Reusable components
-│   │   │   ├── server/         # pRPC API functions
+│   │   │   ├── server/trpc/    # tRPC API routers
 │   │   │   └── lib/            # Frontend utilities
-│   │   └── app.config.ts       # SolidStart configuration
+│   │   └── tsconfig.json       # TypeScript configuration
 │   │
 │   └── api/                    # 🚀 Monolith entry point
 │       └── src/main.ts         # Initialize all services
@@ -238,7 +241,7 @@ network-monitor/
 ├── turbo.json                  # Turborepo configuration
 ├── package.json                # Root package.json
 └── service-config.json         # DI service configuration
-```
+```text
 
 ---
 
@@ -247,6 +250,7 @@ network-monitor/
 ### **Add a New Service**
 
 1. Create new package:
+
    ```bash
    mkdir -p packages/my-service/src
    cd packages/my-service
@@ -254,6 +258,7 @@ network-monitor/
    ```
 
 2. Update `package.json`:
+
    ```json
    {
      "name": "@network-monitor/my-service",
@@ -273,6 +278,7 @@ network-monitor/
 ### **Add a New Frontend Route**
 
 1. Create file in `apps/web/src/routes/`:
+
    ```typescript
    // apps/web/src/routes/my-page.tsx
    export default function MyPage() {
@@ -284,28 +290,34 @@ network-monitor/
 
 That's it! SolidStart uses file-based routing.
 
-### **Add a New pRPC Function**
+### **Add a New tRPC Procedure**
 
-1. Add function in `apps/web/src/server/prpc.ts`:
+1. Add procedure to appropriate router in `apps/web/src/server/trpc/routers/`:
+
    ```typescript
-   export const myFunction = async (data: { input: string }) => {
-     "use server";
-     // Server-side logic here
-     return { result: data.input.toUpperCase() };
-   };
+   // apps/web/src/server/trpc/routers/myDomain.ts
+   export const myDomainRouter = t.router({
+     myProcedure: t.procedure
+       .input(z.object({ input: z.string() }))
+       .query(({ input }) => {
+         return { result: input.toUpperCase() };
+       }),
+   });
    ```
 
-2. Call from frontend:
+2. Add to main router and call from frontend:
+
    ```typescript
-   import * as prpc from '~/server/prpc';
+   import { trpc } from '~/lib/trpc';
    
-   const result = await prpc.myFunction({ input: "hello" });
+   const result = await trpc.myDomain.myProcedure.query({ input: "hello" });
    console.log(result.result); // "HELLO"
    ```
 
 ### **Add a New Event**
 
 1. Define event in `packages/shared/src/types/events.ts`:
+
    ```typescript
    export interface FrontendEvents {
      // ... existing events
@@ -314,11 +326,13 @@ That's it! SolidStart uses file-based routing.
    ```
 
 2. Emit event:
+
    ```typescript
    eventBus.emitTyped('MY_EVENT', { data: 'hello' });
    ```
 
 3. Listen to event:
+
    ```typescript
    eventBus.onTyped('MY_EVENT', (data) => {
      console.log(data.data); // "hello"
@@ -332,15 +346,17 @@ That's it! SolidStart uses file-based routing.
 ### **Problem: `bun install` fails**
 
 **Solution:**
+
 ```bash
 # Clear bun cache
 rm -rf node_modules bun.lockb
 bun install
-```
+```text
 
 ### **Problem: Database errors**
 
 **Solution:**
+
 ```bash
 # Regenerate Prisma client
 bun run db:generate
@@ -348,33 +364,36 @@ bun run db:generate
 # Reset database
 cd packages/database
 bunx prisma db push --force-reset
-```
+```text
 
 ### **Problem: TypeScript errors in editor**
 
 **Solution:**
+
 ```bash
 # Rebuild all packages
 bun run build
 
 # Restart TypeScript server in VS Code
 # Cmd+Shift+P → "TypeScript: Restart TS Server"
-```
+```text
 
 ### **Problem: Port 3000 already in use**
 
 **Solution:**
+
 ```bash
 # Kill process on port 3000
 lsof -ti:3000 | xargs kill -9
 
 # Or use different port
 PORT=3001 bun run dev
-```
+```text
 
 ### **Problem: "Cannot find module" errors**
 
 **Solution:**
+
 ```bash
 # Install dependencies
 bun install
@@ -384,7 +403,7 @@ bun run build
 
 # Clear Turborepo cache
 bunx turbo run build --force
-```
+```text
 
 ---
 
@@ -409,7 +428,7 @@ Now that you're up and running, explore:
 | **SolidJS** | [solidjs.com](https://solidjs.com) | Reactive UI framework |
 | **SolidStart** | [start.solidjs.com](https://start.solidjs.com) | Full-stack meta-framework |
 | **Prisma** | [prisma.io](https://prisma.io) | Type-safe database ORM |
-| **pRPC** | [solid-mediakit.com](https://solid-mediakit.com/prpc) | Type-safe server functions |
+| **tRPC** | [trpc.io](https://trpc.io) | End-to-end type-safe API |
 | **Turborepo** | [turbo.build](https://turbo.build) | Monorepo build system |
 | **Tailwind CSS** | [tailwindcss.com](https://tailwindcss.com) | Utility-first CSS |
 
@@ -434,7 +453,7 @@ TSC_COMPILE_ON_ERROR=true bun run dev
 
 # Use Turborepo cache
 # (Turborepo automatically caches builds)
-```
+```text
 
 ### **Debugging**
 
@@ -444,17 +463,19 @@ DEBUG=* bun run dev
 
 # Enable Prisma query logging
 DATABASE_URL="file:./dev.db?connection_limit=1&socket_timeout=60&pool_timeout=60&prisma_query_log=true" bun run dev
-```
+```text
 
 ### **VS Code Setup**
 
 Install these extensions:
+
 - **Prisma** - Syntax highlighting for schema.prisma
 - **Tailwind CSS IntelliSense** - Autocomplete for Tailwind classes
 - **ESLint** - Linting in editor
 - **TypeScript Error Translator** - Better error messages
 
 Add to `.vscode/settings.json`:
+
 ```json
 {
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -462,7 +483,7 @@ Add to `.vscode/settings.json`:
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
-```
+```text
 
 ---
 
@@ -492,4 +513,3 @@ Before starting development, ensure:
 ---
 
 **You're all set!** 🎉 Happy coding!
-

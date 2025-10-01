@@ -2,747 +2,378 @@
 
 ## **Overview**
 
-Network Monitor uses **pRPC** (Prisma-like RPC) for type-safe server functions. All API calls are fully type-safe from frontend to backend with automatic TypeScript inference.
+Network Monitor uses **tRPC** for end-to-end type-safe API communication. All API calls are fully type-safe from frontend to backend with automatic TypeScript inference.
 
 ---
 
 ## 🏗️ **Architecture**
 
-### **pRPC Server Functions**
+### **tRPC with Containers & EventBus**
 
-All API functions are defined in `apps/web/src/server/prpc.ts` and automatically exposed as type-safe RPC endpoints.
+All API endpoints follow a loosely coupled architecture:
 
-```typescript
-// Server-side function (apps/web/src/server/prpc.ts)
-export const createTarget = async (data: { name: string; address: string }) => {
-  "use server";
-  // Server-side logic here
-  return target;
-};
+```text
+Frontend (SolidJS)
+    ↓
+tRPC Client (~/lib/trpc.ts)
+    ↓
+tRPC Router (router.ts)
+    ↓
+Service (MonitorService)
+    ↓
+Repository (TargetRepository)
+    ↓
+Prisma Client
+    ↓
+Database
+```text
 
-// Frontend usage (automatic type inference!)
-import * as prpc from '~/server/prpc';
+**Key Principles:**
 
-const target = await prpc.createTarget({ 
-  name: 'Google', 
-  address: 'https://google.com' 
-});
-// target is fully typed as Target!
-```
-
-### **Event-Driven Backend**
-
-pRPC functions communicate with backend services via **EventBus** for loose coupling:
-
-```
-Frontend → pRPC → EventRPC → EventBus → Services → Database
-```
-
-**Benefits:**
-- Type-safe end-to-end
-- Zero coupling between services
-- Easy to test and mock
-- Ready for microservices
+- Type-safe end-to-end with automatic inference
+- Services injected via DI Container
+- Services communicate via EventBus (loose coupling)
+- Repositories abstract all database operations
+- Input validation with Zod schemas
 
 ---
 
-## 📚 **API Reference**
+## 📚 **Complete API Reference**
 
-### **Target Management**
+For the complete, detailed API reference with all 34 endpoints, see:
 
-#### **createTarget**
-Create a new monitoring target.
+**[Complete tRPC API Reference](../apps/web/TRPC-API-REFERENCE.md)**
 
-```typescript
-function createTarget(data: {
-  name: string;
-  address: string;
-}): Promise<Target>
-```
+### Quick Index
 
-**Example:**
-```typescript
-const target = await prpc.createTarget({
-  name: 'Google DNS',
-  address: 'https://8.8.8.8'
-});
-```
-
-#### **getTargets**
-Get all monitoring targets for the current user.
-
-```typescript
-function getTargets(): Promise<Target[]>
-```
-
-**Example:**
-```typescript
-const targets = await prpc.getTargets();
-```
-
-#### **getTarget**
-Get a specific monitoring target by ID.
-
-```typescript
-function getTarget(data: { 
-  id: string 
-}): Promise<Target>
-```
-
-**Example:**
-```typescript
-const target = await prpc.getTarget({ 
-  id: 'cmfzxab7p0003rrntljv7rhka' 
-});
-```
-
-#### **updateTarget**
-Update a monitoring target.
-
-```typescript
-function updateTarget(data: {
-  id: string;
-  name?: string;
-  address?: string;
-}): Promise<Target>
-```
-
-**Example:**
-```typescript
-const target = await prpc.updateTarget({
-  id: 'cmfzxab7p0003rrntljv7rhka',
-  name: 'Updated Name'
-});
-```
-
-#### **deleteTarget**
-Delete a monitoring target.
-
-```typescript
-function deleteTarget(data: { 
-  id: string 
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.deleteTarget({ 
-  id: 'cmfzxab7p0003rrntljv7rhka' 
-});
-```
+- **Targets** - 8 endpoints for target CRUD & monitoring
+- **Speed Tests** - 3 endpoints for running tests
+- **Alert Rules** - 6 endpoints for alert management
+- **Incidents** - 5 endpoints for incident tracking
+- **Notifications** - 5 endpoints for notifications
+- **Push Subscriptions** - 4 endpoints for push setup
+- **Users** - 3 endpoints for user management
 
 ---
 
-### **Monitoring & Speed Tests**
+## 🚀 **Quick Examples**
 
-#### **runSpeedTest**
-Run a speed test for a target.
+### **Frontend Usage with SolidJS**
 
 ```typescript
-function runSpeedTest(data: {
-  targetId: string;
-  timeout?: number;
-}): Promise<SpeedTestResult>
-```
+import { createResource } from "solid-js";
+import { trpc } from "~/lib/trpc";
 
-**Example:**
+function TargetsPage() {
+  // Query with automatic refetch
+  const [targets, { refetch }] = createResource(() =>
+    trpc.targets.getAll.query()
+  );
+
+  // Mutation
+  const handleCreate = async () => {
+    await trpc.targets.create.mutate({
+      name: "Google DNS",
+      address: "https://8.8.8.8"
+    });
+    refetch();
+  };
+
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <For each={targets()}>
+        {target => <TargetCard target={target} />}
+      </For>
+    </Suspense>
+  );
+}
+```text
+
+### **Error Handling**
+
 ```typescript
-const result = await prpc.runSpeedTest({
-  targetId: 'cmfzxab7p0003rrntljv7rhka',
-  timeout: 30000 // 30 seconds
+import { useLogger } from "~/lib/frontend/container";
+
+function MyComponent() {
+  const logger = useLogger();
+
+  const handleAction = async () => {
+    try {
+      await trpc.targets.create.mutate({ 
+        name: "Test", 
+        address: "https://test.com" 
+      });
+      logger.info("Target created successfully");
+    } catch (error) {
+      logger.error("Failed to create target", { error });
+      // Handle error in UI
+    }
+  };
+}
+```text
+
+---
+
+## 📖 **Key API Endpoints**
+
+### **Targets**
+
+```typescript
+// Get all targets
+const targets = await trpc.targets.getAll.query();
+
+// Create target
+const target = await trpc.targets.create.mutate({
+  name: "Google",
+  address: "https://google.com"
 });
-```
 
-#### **getTargetResults**
-Get speed test results for a target.
+// Start monitoring
+await trpc.targets.startMonitoring.mutate({
+  targetId: target.id,
+  intervalMs: 30000  // 30 seconds
+});
+```text
+
+### **Speed Tests**
 
 ```typescript
-function getTargetResults(data: {
-  targetId: string;
-  limit?: number;
-}): Promise<SpeedTestResult[]>
-```
+// Run immediate test
+const result = await trpc.speedTests.runTest.mutate({
+  targetId: "target-123",
+  target: "https://google.com"
+});
 
-**Example:**
-```typescript
-const results = await prpc.getTargetResults({
-  targetId: 'cmfzxab7p0003rrntljv7rhka',
+// Get results
+const results = await trpc.speedTests.getByTargetId.query({
+  targetId: "target-123",
   limit: 50
 });
-```
-
-#### **startMonitoring**
-Start continuous monitoring for a target.
-
-```typescript
-function startMonitoring(data: {
-  targetId: string;
-  intervalMs: number;
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.startMonitoring({
-  targetId: 'cmfzxab7p0003rrntljv7rhka',
-  intervalMs: 30000 // Test every 30 seconds
-});
-```
-
-#### **stopMonitoring**
-Stop continuous monitoring for a target.
-
-```typescript
-function stopMonitoring(data: { 
-  targetId: string 
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.stopMonitoring({ 
-  targetId: 'cmfzxab7p0003rrntljv7rhka' 
-});
-```
-
-#### **getActiveTargets**
-Get list of actively monitored target IDs.
-
-```typescript
-function getActiveTargets(): Promise<string[]>
-```
-
-**Example:**
-```typescript
-const activeIds = await prpc.getActiveTargets();
-```
-
----
+```text
 
 ### **Alert Rules**
 
-#### **createAlertRule**
-Create a new alert rule.
-
 ```typescript
-function createAlertRule(data: {
-  targetId: string;
-  name: string;
-  metric: 'ping' | 'download';
-  condition: 'GREATER_THAN' | 'LESS_THAN';
-  threshold: number;
-  enabled?: boolean;
-}): Promise<AlertRule>
-```
-
-**Example:**
-```typescript
-const rule = await prpc.createAlertRule({
-  targetId: 'cmfzxab7p0003rrntljv7rhka',
-  name: 'High Ping Alert',
-  metric: 'ping',
-  condition: 'GREATER_THAN',
-  threshold: 100, // ms
-  enabled: true
+// Create alert rule
+const rule = await trpc.alertRules.create.mutate({
+  name: "High Latency Alert",
+  targetId: "target-123",
+  metric: "ping",
+  condition: "GREATER_THAN",
+  threshold: 100  // 100ms
 });
-```
 
-#### **getAlertRules**
-Get all alert rules for a target.
-
-```typescript
-function getAlertRules(data: { 
-  targetId: string 
-}): Promise<AlertRule[]>
-```
-
-**Example:**
-```typescript
-const rules = await prpc.getAlertRules({ 
-  targetId: 'cmfzxab7p0003rrntljv7rhka' 
-});
-```
-
-#### **updateAlertRule**
-Update an alert rule.
-
-```typescript
-function updateAlertRule(data: {
-  id: number;
-  name?: string;
-  threshold?: number;
-  enabled?: boolean;
-}): Promise<AlertRule>
-```
-
-**Example:**
-```typescript
-const rule = await prpc.updateAlertRule({
-  id: 1,
-  threshold: 150,
+// Toggle enabled
+await trpc.alertRules.toggleEnabled.mutate({
+  id: rule.id,
   enabled: false
 });
-```
-
-#### **deleteAlertRule**
-Delete an alert rule.
-
-```typescript
-function deleteAlertRule(data: { 
-  id: number 
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.deleteAlertRule({ id: 1 });
-```
-
----
-
-### **Incidents**
-
-#### **getIncidents**
-Get incidents for a target.
-
-```typescript
-function getIncidents(data: {
-  targetId: string;
-  resolved?: boolean;
-}): Promise<IncidentEvent[]>
-```
-
-**Example:**
-```typescript
-// Get unresolved incidents
-const incidents = await prpc.getIncidents({
-  targetId: 'cmfzxab7p0003rrntljv7rhka',
-  resolved: false
-});
-```
-
-#### **getAllIncidents**
-Get all incidents across all targets.
-
-```typescript
-function getAllIncidents(data: {
-  resolved?: boolean;
-  limit?: number;
-}): Promise<IncidentEvent[]>
-```
-
-**Example:**
-```typescript
-const allIncidents = await prpc.getAllIncidents({
-  resolved: false,
-  limit: 50
-});
-```
-
-#### **resolveIncident**
-Mark an incident as resolved.
-
-```typescript
-function resolveIncident(data: { 
-  id: number 
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.resolveIncident({ id: 1 });
-```
-
----
+```text
 
 ### **Notifications**
 
-#### **getNotifications**
-Get notifications for the current user.
-
-```typescript
-function getNotifications(data?: {
-  read?: boolean;
-  limit?: number;
-}): Promise<Notification[]>
-```
-
-**Example:**
 ```typescript
 // Get unread notifications
-const notifications = await prpc.getNotifications({
-  read: false,
-  limit: 20
-});
-```
+const unread = await trpc.notifications.getUnread.query();
 
-#### **markNotificationAsRead**
-Mark a notification as read.
+// Mark as read
+await trpc.notifications.markAsRead.mutate({ id: 1 });
 
-```typescript
-function markNotificationAsRead(data: { 
-  id: number 
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.markNotificationAsRead({ id: 1 });
-```
-
-#### **markAllNotificationsAsRead**
-Mark all notifications as read.
-
-```typescript
-function markAllNotificationsAsRead(): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.markAllNotificationsAsRead();
-```
+// Mark all as read
+await trpc.notifications.markAllAsRead.mutate();
+```text
 
 ---
 
-### **Push Notifications**
+## 🔐 **Authentication**
 
-#### **createPushSubscription**
-Subscribe to push notifications.
-
-```typescript
-function createPushSubscription(data: {
-  endpoint: string;
-  p256dh: string;
-  auth: string;
-}): Promise<PushSubscription>
-```
-
-**Example:**
-```typescript
-// Get subscription from service worker
-const subscription = await registration.pushManager.subscribe({
-  userVisibleOnly: true,
-  applicationServerKey: vapidPublicKey
-});
-
-const pushSub = await prpc.createPushSubscription({
-  endpoint: subscription.endpoint,
-  p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh')))),
-  auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))))
-});
-```
-
-#### **getPushSubscriptions**
-Get all push subscriptions for the current user.
+Authentication is currently mocked with a placeholder user ID. When implementing real auth:
 
 ```typescript
-function getPushSubscriptions(): Promise<PushSubscription[]>
-```
-
-**Example:**
-```typescript
-const subscriptions = await prpc.getPushSubscriptions();
-```
-
-#### **deletePushSubscription**
-Delete a push subscription.
-
-```typescript
-function deletePushSubscription(data: { 
-  id: string 
-}): Promise<void>
-```
-
-**Example:**
-```typescript
-await prpc.deletePushSubscription({ 
-  id: 'sub-123' 
-});
-```
+// Will be replaced with:
+// - Session-based auth via Auth.js
+// - JWT tokens
+// - OAuth providers
+```text
 
 ---
 
-### **Authentication**
+## 🧪 **Testing API Endpoints**
 
-#### **getCurrentUser**
-Get the currently authenticated user.
+### **Browser DevTools**
 
-```typescript
-function getCurrentUser(): Promise<User>
-```
-
-**Example:**
-```typescript
-const user = await prpc.getCurrentUser();
-```
-
-#### **getSession**
-Get the current session.
+Open browser console and test directly:
 
 ```typescript
-function getSession(): Promise<AuthSession>
-```
+// In browser console
+const { trpc } = await import('~/lib/trpc');
 
-**Example:**
+// Test endpoints
+const targets = await trpc.targets.getAll.query();
+console.log(targets);
+```text
+
+### **Automated Testing**
+
 ```typescript
-const session = await prpc.getSession();
-```
+import { appRouter } from "~/server/trpc/router";
 
-#### **isAuthenticated**
-Check if user is authenticated.
+// Create test context
+const ctx = {
+  services: { monitor: mockMonitorService },
+  repositories: { target: mockTargetRepository }
+};
 
-```typescript
-function isAuthenticated(): Promise<boolean>
-```
+// Create caller
+const caller = appRouter.createCaller(ctx);
 
-**Example:**
-```typescript
-const isAuth = await prpc.isAuthenticated();
-```
+// Test procedures
+const targets = await caller.targets.getAll();
+expect(targets).toHaveLength(2);
+```text
 
 ---
 
-## 📦 **Type Definitions**
+## 📊 **API Response Formats**
 
-### **Target**
+### **Success Response**
 
-```typescript
-interface Target {
-  id: string;
-  name: string;
-  address: string;
-  ownerId: string;
-  speedTestResults: SpeedTestResult[];
-  alertRules: AlertRule[];
-}
-```
-
-### **SpeedTestResult**
+tRPC returns the data directly:
 
 ```typescript
-interface SpeedTestResult {
-  id: string;                      // UUID
-  targetId: string;
-  ping: number | null;             // Latency in ms
-  download: number | null;         // Download speed in Mbps
-  upload: number | null;           // Upload speed in Mbps
-  status: 'SUCCESS' | 'FAILURE';
-  error?: string;                  // Error message if failed
-  timestamp: string;               // ISO timestamp
-  createdAt: string;               // ISO timestamp
-}
-```
-
-### **AlertRule**
-
-```typescript
-interface AlertRule {
-  id: number;
-  targetId: string;
-  name: string;
-  metric: 'ping' | 'download';
-  condition: 'GREATER_THAN' | 'LESS_THAN';
-  threshold: number;
-  enabled: boolean;
-  triggeredEvents: IncidentEvent[];
-}
-```
-
-### **IncidentEvent**
-
-```typescript
-interface IncidentEvent {
-  id: number;
-  timestamp: Date;
-  type: 'OUTAGE' | 'ALERT';
-  description: string;
-  resolved: boolean;
-  targetId: string;
-  ruleId: number | null;
-  triggeredByRule: AlertRule | null;
-}
-```
-
-### **Notification**
-
-```typescript
-interface Notification {
-  id: number;
-  message: string;
-  sentAt: Date;
-  read: boolean;
-  userId: string;
-}
-```
-
-### **PushSubscription**
-
-```typescript
-interface PushSubscription {
-  id: string;
-  endpoint: string;
-  p256dh: string;
-  auth: string;
-  userId: string;
-}
-```
-
-### **User**
-
-```typescript
-interface User {
-  id: string;
-  name?: string;
-  email?: string;
-  image?: string;
-}
-```
-
-### **AuthSession**
-
-```typescript
-interface AuthSession {
-  user: User;
-  expires: string;
-}
-```
-
----
-
-## 🔒 **Authentication & Authorization**
-
-### **Current Implementation**
-
-Currently using **mock authentication** for development:
-- All endpoints accessible without real authentication
-- Mock user ID: `"mock-user"`
-- Session persists across requests
-
-### **Production Implementation** (Future)
-
-Will use **Auth.js** (formerly NextAuth):
-- OAuth providers (Google, GitHub)
-- Email/password authentication
-- Secure session management
-- JWT tokens
-
----
-
-## ⚡ **Error Handling**
+const target = await trpc.targets.getById.query({ id: "123" });
+// target = { id: "123", name: "Google", address: "https://google.com", ... }
+```text
 
 ### **Error Response**
 
-All errors are thrown as Error objects with descriptive messages:
+Errors are thrown as TRPCError:
 
 ```typescript
 try {
-  const target = await prpc.createTarget({ name: '', address: '' });
+  await trpc.targets.getById.query({ id: "invalid" });
 } catch (error) {
-  console.error(error.message); // "Target name is required"
+  console.log(error.data.code);  // "NOT_FOUND"
+  console.log(error.message);    // "Target with ID 'invalid' not found"
 }
-```
-
-### **Common Error Types**
-
-| Error | Description |
-|-------|-------------|
-| `Target not found` | Target ID doesn't exist |
-| `User not authenticated` | No valid session |
-| `Invalid input` | Validation error |
-| `Database error` | Database operation failed |
-| `Test timeout` | Speed test exceeded timeout |
-
----
-
-## 🧪 **Testing the API**
-
-### **From Frontend**
-
-```typescript
-import * as prpc from '~/server/prpc';
-
-// Create target
-const target = await prpc.createTarget({
-  name: 'Test Target',
-  address: 'https://example.com'
-});
-
-// Run test
-const result = await prpc.runSpeedTest({
-  targetId: target.id
-});
-
-console.log('Ping:', result.ping, 'ms');
-console.log('Download:', result.download, 'Mbps');
-```
-
-### **Manual Testing**
-
-Since pRPC functions run server-side, you can't test them with curl directly. Instead:
-
-1. **Use the Frontend UI** - Easiest way to test
-2. **Write Unit Tests** - Test server functions directly
-3. **Use Browser DevTools** - Inspect network requests
-
----
-
-## 📊 **API Performance**
-
-### **Expected Response Times**
-
-| Endpoint | Typical | Maximum |
-|----------|---------|---------|
-| `getTargets` | < 100ms | 500ms |
-| `createTarget` | < 200ms | 1s |
-| `runSpeedTest` | 5-30s | 60s |
-| `getTargetResults` | < 200ms | 1s |
-| `createAlertRule` | < 100ms | 500ms |
-
-### **Rate Limiting** (Future)
-
-Will implement rate limiting:
-- **100 requests/minute** per user
-- **10 speed tests/minute** per target
-- **Burst allowance** of 20 requests
+```text
 
 ---
 
 ## 🔄 **Real-Time Updates**
 
-### **Event-Driven Frontend**
-
-Components automatically update when data changes via EventBus:
+The system uses **EventBus** for real-time communication between services:
 
 ```typescript
-// Component listens for events
-eventBus.onTyped('TARGET_CREATED', (target) => {
-  // Automatically update UI
-  setTargets(prev => [...prev, target]);
+import { useEventBus } from "~/lib/frontend/container";
+
+function MyComponent() {
+  const eventBus = useEventBus();
+
+  createEffect(() => {
+    // Listen for backend events
+    eventBus.on("TARGET_CREATED", (data) => {
+      console.log("New target created:", data.target);
+    });
+
+    eventBus.on("SPEED_TEST_COMPLETED", (data) => {
+      console.log("Speed test completed:", data.result);
+    });
+  });
+}
+```text
+
+---
+
+## 📝 **Input Validation**
+
+All inputs are validated with Zod schemas:
+
+```typescript
+// Automatic validation
+await trpc.targets.create.mutate({
+  name: "",  // ❌ Error: String must contain at least 1 character
+  address: "not-a-url"  // ❌ Error: Invalid url
 });
 
-// API call triggers event
-await prpc.createTarget({ name: 'New Target', address: 'https://example.com' });
-// EVENT: TARGET_CREATED is emitted
-// Component automatically updates!
-```
+await trpc.targets.create.mutate({
+  name: "Valid Name",  // ✅
+  address: "https://valid.com"  // ✅
+});
+```text
 
 ---
 
-## 📖 **Further Reading**
+## 🎯 **Best Practices**
 
-- **[Architecture Guide](ARCHITECTURE.md)** - Understand the system design
-- **[Quick Start](QUICK-START.md)** - Get started developing
-- **[pRPC Documentation](https://solid-mediakit.com/prpc)** - Learn about pRPC
+### **1. Use createResource for Queries**
+
+```typescript
+import { createResource, Suspense } from "solid-js";
+
+const [data, { refetch }] = createResource(() =>
+  trpc.targets.getAll.query()
+);
+```text
+
+### **2. Use Logger Instead of Console**
+
+```typescript
+import { useLogger } from "~/lib/frontend/container";
+
+const logger = useLogger();
+logger.error("API error", { error });  // ✅ Good
+console.error("API error", error);     // ❌ Avoid
+```text
+
+### **3. Handle Errors Gracefully**
+
+```typescript
+try {
+  await trpc.targets.create.mutate(data);
+} catch (error) {
+  if (error.data?.code === "BAD_REQUEST") {
+    // Show validation error to user
+  } else {
+    // Show generic error
+  }
+}
+```text
+
+### **4. Use Optimistic Updates**
+
+```typescript
+const handleDelete = async (id: string) => {
+  // Optimistically remove from UI
+  setTargets(prev => prev.filter(t => t.id !== id));
+  
+  try {
+    await trpc.targets.delete.mutate({ id });
+  } catch (error) {
+    // Rollback on error
+    refetch();
+  }
+};
+```text
 
 ---
 
-## 🆘 **Support**
+## 🔗 **Related Documentation**
 
-- **Issues**: GitHub Issues
-- **Questions**: Documentation or team chat
-- **Feature Requests**: GitHub Discussions
+- [tRPC API Reference](../apps/web/TRPC-API-REFERENCE.md) - Complete endpoint documentation
+- [tRPC Architecture](../apps/web/TRPC-ARCHITECTURE.md) - Architecture patterns
+- [tRPC Router README](../apps/web/src/server/trpc/README.md) - Router structure
+- [Official tRPC Docs](https://trpc.io/docs) - tRPC documentation
 
 ---
 
-Made with ❤️ using pRPC for type-safe, event-driven APIs
+## 💡 **Migration from pRPC**
 
+This project has been migrated from pRPC to tRPC. See:
+
+- [Migration Guide](../MIGRATION-PRPC-TO-TRPC.md)
+
+---
+
+**For complete API reference with all endpoints, input types, and examples, see:**  
+**→ [apps/web/TRPC-API-REFERENCE.md](../apps/web/TRPC-API-REFERENCE.md)**

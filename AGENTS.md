@@ -1,193 +1,59 @@
-# AI Agents for the PWA Connection Monitor Project
+# Gemini Project Guidelines: PWA Connection Monitor
 
-This document defines specific roles for AI agents to adopt when assisting with development, ensuring consistency with the project's architectural patterns and quality standards.
+This document contains the core architectural and development guidelines for this project. Adhering to these rules is mandatory for all code generation and modification tasks.
 
----
+## 1. Core Architecture & Technology
 
-## 🎯 **Agent System Overview**
+- **Vision**: An installable PWA for monitoring internet connections, built with an emphasis on **perfect loose coupling** for its backend services.
+- **Monorepo**: The project is a Turborepo monorepo with apps in `apps/*` and shared logic in `packages/*`.
+- **Runtime**: **Bun**. All commands must use `bun` (e.g., `bun install`, `bun run dev`, `bun test`).
+- **Frontend**: SolidStart with SolidJS, located in `apps/web`.
+- **Styling**: **Tailwind CSS** only.
+- **API**: **tRPC** for end-to-end type-safety.
+- **Database**: Prisma ORM. The schema at `packages/database/prisma/schema.prisma` is the single source of truth.
 
-The PWA Connection Monitor uses a **multi-agent approach** where each agent specializes in specific aspects of development while maintaining **perfect loose coupling** and **zero tolerance for quality issues**.
+## 2. Key Architectural Patterns
 
-### **Core Principles**
+### A. tRPC API Architecture
 
-- **Quality First**: All agents must ensure 100% code quality compliance
-- **Architecture Compliance**: Follow the service layer architecture and repository pattern
-- **Event-Driven Communication**: Use events for inter-service communication
-- **Configuration-Based**: Load service implementations from configuration files
-- **Type Safety**: Maintain full TypeScript support throughout
+The API layer is built with tRPC and served by the `apps/web` application.
 
----
+1.  **tRPC Router (`apps/web/src/server/trpc/router.ts`)**: This is the main router where all API procedures are defined. For now, it contains a simple `hello` procedure.
+2.  **API Handler (`apps/web/src/routes/api/trpc/[...trpc].ts`)**: This SolidStart API route exposes the `appRouter` to the network, making it accessible to the client.
+3.  **Layering**: While the tRPC router itself is simple, it should call **Services** which contain business logic. These services then call **Repositories** for data access. This `Router → Service → Repository` pattern is the goal for all complex backend logic.
 
-## 👤 **Agent: Frontend Specialist**
+### B. Dependency Injection (DI)
 
-**Role**: SolidJS/SolidStart frontend development and UI/UX implementation
+- For backend services, the goal is to use a DI container (`packages/infrastructure/src/container/`).
+- **Never manually instantiate service classes** in production logic; they should be resolved from the container.
+- Always program to interfaces (e.g., `ITargetRepository`), not concrete implementations.
 
-**Responsibilities:**
+### C. Event-Driven Communication (Backend Services)
 
-- Build reactive, performant user interfaces using SolidJS primitives
-- Implement PWA features (manifest, service worker, offline capabilities)
-- Create charts and data visualizations using Chart.js via solid-chartjs
-- Ensure responsive design with Tailwind CSS
-- Implement frontend dependency injection using SolidJS Context API
+- The backend services (`packages/monitor`, `packages/alerting`, etc.) are designed to be loosely coupled.
+- Services **should not** call other services directly. Communication should happen via an `IEventBus`.
 
-**Guiding Principles:**
+### D. Repository Pattern
 
-- Use `createSignal`, `createEffect`, and other SolidJS primitives for reactivity
-- All styling must use Tailwind CSS utility classes
-- Inject services through the frontend DI container (`src/lib/frontend/container.tsx`)
-- Use `IEventBus` for component communication instead of prop drilling
-- Implement Command/Query pattern with `ICommandQueryService`
+- The Prisma client **must never** leave the data access layer (e.g., `packages/database`).
+- Repositories are responsible for all database interactions.
+- Repository methods must return application-specific domain types, **not** raw Prisma models.
 
-**Quality Mandate:**
+## 3. Frontend Development (`apps/web`)
 
-- All code must be perfectly formatted with Prettier
-- Zero ESLint warnings or TypeScript errors
-- No `any` types without proper justification
-- All `eslint-disable` comments must have clear explanations
+- **Framework**: Use SolidJS primitives (`createSignal`, `createResource`, `<Suspense>`).
+- **tRPC Client (`apps/web/src/lib/trpc.ts`)**: A pre-configured, type-safe tRPC client is available for all frontend components.
+- **Data Fetching**: Use the `trpc` client to call API procedures. This is the primary method for frontend-backend communication.
 
-**File Scope:**
+    ```typescript
+    import { createResource } from "solid-js";
+    import { trpc } from "~/lib/trpc";
 
-- `src/components/**/*.tsx`
-- `src/routes/**/*.tsx`
-- `src/lib/frontend/**/*.ts`
+    const [greeting] = createResource(() => trpc.hello.query({ name: "tRPC" }));
+    ```
 
----
+## 4. Quality & Testing
 
-## ☁️ **Agent: Backend/API Developer**
-
-**Role**: PRPC API development and backend service integration
-
-**Responsibilities:**
-
-- Create and modify PRPC API endpoints in `src/server/prpc.ts`
-- Implement API endpoints that call services, not repositories directly
-- Ensure all sensitive procedures are protected using Auth.js sessions
-- Handle error propagation and logging through the service layer
-- Maintain proper layering: Router → Service → Repository → Database
-
-**Guiding Principles:**
-
-- **Never call repositories directly** - always go through services
-- Access all application logic through services injected into PRPC context
-- Use `protectedProcedure` helper for all sensitive operations
-- Emit events for inter-service communication instead of direct calls
-- Follow the service layer architecture pattern
-
-**Quality Mandate:**
-
-- All code must be perfectly formatted with Prettier
-- Zero ESLint warnings or TypeScript errors
-- Proper error handling and logging
-- Type-safe API responses
-
-**File Scope:**
-
-- `src/server/prpc.ts`
-- `src/server/api/**/*.ts`
-
----
-
-## 🧩 **Agent: System Architect**
-
-**Role**: Overall system architecture, dependency injection, and event bus management
-
-**Responsibilities:**
-
-- Design and maintain the flexible DI container system
-- Define service contracts as TypeScript interfaces
-- Create and modify concrete service implementations
-- Ensure perfect loose coupling (10/10 score) through event-driven communication
-- Manage service configuration and environment-specific implementations
-
-**Guiding Principles:**
-
-- **Only agent** who modifies the DI container at `src/lib/container/`
-- Define service interfaces before implementations
-- Ensure services communicate via events, not direct calls
-- Load service implementations from configuration files
-- Maintain type-safe service factories
-
-**Quality Mandate:**
-
-- All architectural patterns must adhere to quality standards
-- Zero direct dependencies between services
-- Event-driven communication only
-- Configuration-based service loading
-
-**File Scope:**
-
-- `src/lib/container/**/*.ts`
-- `src/lib/services/interfaces/**/*.ts`
-- `src/lib/services/concrete/**/*.ts`
-- `src/lib/services/mocks/**/*.ts`
-
----
-
-## 🐘 **Agent: Database Architect**
-
-**Role**: Database schema design, repository pattern implementation, and data access management
-
-**Responsibilities:**
-
-- Design and maintain the Prisma database schema
-- Implement repository interfaces and concrete implementations
-- Ensure Prisma client never leaves the repository layer
-- Create mock repositories with seeded test data
-- Handle data mapping between Prisma models and domain types
-
-**Guiding Principles:**
-
-- **Prisma Isolation**: Prisma client must never be used outside repositories
-- **Type Mapping**: All repository methods return domain types, not raw Prisma models
-- **Interface-First**: Define repository interfaces before implementations
-- **Mock Support**: Every repository must have a corresponding mock implementation
-- **Data Abstraction**: Hide database implementation details from business logic
-
-**Quality Mandate:**
-
-- All database operations must be logged
-- Proper error handling and type safety
-- Comprehensive test coverage with mock implementations
-- No direct Prisma usage in business logic
-
-**File Scope:**
-
-- `prisma/schema.prisma`
-- `src/lib/services/interfaces/I*Repository.ts`
-- `src/lib/services/concrete/*Repository.ts`
-- `src/lib/services/mocks/Mock*Repository.ts`
-
----
-
-## 💎 **Agent: Code Quality Guardian**
-
-**Role**: Code quality enforcement and architectural compliance review
-
-**Responsibilities:**
-
-- Review all code for quality issues and architectural violations
-- Enforce the zero tolerance policy for code quality
-- Ensure all ESLint disable comments are properly justified
-- Verify compliance with the service layer architecture
-- Maintain the perfect loose coupling (10/10 score)
-
-**Review Process:**
-
-1. Check for Prettier formatting violations
-2. Check for ESLint rule violations
-3. Check for TypeScript type errors
-4. Verify architectural compliance
-5. Suggest improvements for readability and maintainability
-
-**Quality Standards:**
-
-- **0** ESLint warnings or errors
-- **0** TypeScript errors
-- **100%** Prettier formatting compliance
-- **100%** justified `eslint-disable` comments
-- **10/10** loose coupling score
-
-**File Scope:**
-
-- **All files** in the project
-- **No exceptions** - quality is not negotiable
+- **Zero Tolerance**: There is a zero-tolerance policy for linting and type errors.
+- **Mandatory Checks**: Before committing, always run `bun run format`, `bun run lint:check`, and `bun run type-check`.
+- **No `any`**: Do not use the `any` type without a clear, justified comment explaining why it is necessary.

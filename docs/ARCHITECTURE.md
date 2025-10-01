@@ -36,7 +36,7 @@ Network Monitor is built with a **Turborepo monorepo** structure that enables:
 
 ## **Turborepo Structure**
 
-```
+```text
 network-monitor/
 ├── apps/                           # Application entry points
 │   ├── web/                        # 🌐 SolidStart frontend (PWA)
@@ -57,11 +57,11 @@ network-monitor/
 │
 ├── turbo.json                      # Turborepo configuration
 └── package.json                    # Root package configuration
-```
+```text
 
 ### **Package Dependencies**
 
-```
+```text
                           ┌──────────────────┐
                           │   shared         │
                           │  (interfaces)    │
@@ -88,7 +88,7 @@ network-monitor/
                           │   apps/web       │
                           │  (SolidStart)    │
                           └──────────────────┘
-```
+```text
 
 ---
 
@@ -104,9 +104,10 @@ eventBus.emit('TARGET_CREATE_REQUESTED', { name, address, ownerId });
 
 // ❌ Bad: Direct service calls
 await monitorService.createTarget({ name, address, ownerId });
-```
+```text
 
 **Benefits:**
+
 - Zero coupling between services
 - Easy to add new services that listen to existing events
 - Perfect for microservices deployment
@@ -121,9 +122,10 @@ const monitor = container.get<IMonitorService>(TYPES.IMonitorService);
 
 // Never directly instantiate
 // ❌ const monitor = new MonitorService(...);
-```
+```text
 
 **Benefits:**
+
 - Easy to mock for testing
 - Configuration-driven service implementations
 - Swap implementations without code changes
@@ -138,9 +140,10 @@ const target = await targetRepository.findById(id);
 
 // ❌ Bad: Direct Prisma access
 const target = await prisma.monitoringTarget.findUnique({ where: { id } });
-```
+```text
 
 **Benefits:**
+
 - Prisma client never leaves repository layer
 - Easy to swap database implementations
 - Mockable for testing
@@ -155,7 +158,7 @@ import type { IMonitorService, Target } from '@network-monitor/shared';
 
 // Full type safety from frontend to database
 const target: Target = await apiClient.createTarget({ name, address });
-```
+```text
 
 ---
 
@@ -165,18 +168,19 @@ const target: Target = await apiClient.createTarget({ name, address });
 
 ```typescript
 src/
-├── components/        # React-style SolidJS components
-├── routes/            # File-based routing
-├── server/            # Server-side API (pRPC)
+├── routes/            # File-based routing (pages)
+├── server/trpc/       # tRPC API routers
 └── lib/
-    └── frontend/      # Frontend DI container & services
-```
+    ├── frontend/      # Frontend DI container & services
+    └── trpc.ts        # tRPC client
+```text
 
 **Key Technologies:**
+
 - **SolidJS**: Reactive UI framework
 - **SolidStart**: Meta-framework for Solid
 - **Tailwind CSS**: Utility-first styling
-- **pRPC**: Type-safe server functions
+- **tRPC**: End-to-end type-safe API
 
 ### **📦 @network-monitor/shared**
 
@@ -192,7 +196,7 @@ export * from './interfaces/IAlertingService';
 export * from './types/Target';
 export * from './types/SpeedTestResult';
 // ... all domain types
-```
+```text
 
 ### **🏗️ @network-monitor/infrastructure**
 
@@ -229,13 +233,13 @@ export class Container {
   get<T>(key: symbol): T;
   // ...
 }
-```
+```text
 
 ### **🗄️ @network-monitor/database**
 
 Prisma ORM and repositories:
 
-```
+```text
 packages/database/
 ├── prisma/
 │   ├── schema.prisma       # Database schema
@@ -246,9 +250,10 @@ packages/database/
         ├── TargetRepository.ts
         ├── SpeedTestResultRepository.ts
         └── ...
-```
+```text
 
 **Key Responsibilities:**
+
 - Database connection management
 - Schema migrations
 - Data access abstraction
@@ -266,9 +271,10 @@ export class MonitorService implements IMonitorService {
   async runSpeedTest(config: SpeedTestConfig): Promise<SpeedTestResult>;
   // ...
 }
-```
+```text
 
 **Event Handlers:**
+
 - `TARGET_CREATE_REQUESTED` → `TARGET_CREATED`
 - `MONITORING_START_REQUESTED` → `MONITORING_STARTED`
 - `SPEED_TEST_REQUESTED` → `SPEED_TEST_COMPLETED`
@@ -284,9 +290,10 @@ export class AlertingService implements IAlertingService {
   async resolveIncident(id: number): Promise<void>;
   // ...
 }
-```
+```text
 
 **Event Handlers:**
+
 - `ALERT_RULE_CREATE_REQUESTED` → `ALERT_RULE_CREATED`
 - `SPEED_TEST_COMPLETED` → Auto-check rules → `ALERT_TRIGGERED`
 
@@ -300,9 +307,10 @@ export class NotificationService implements INotificationService {
   async subscribeToPush(data: CreatePushSubscriptionData): Promise<void>;
   // ...
 }
-```
+```text
 
 **Event Handlers:**
+
 - `ALERT_TRIGGERED` → Auto-send notification
 - `PUSH_SUBSCRIBE_REQUESTED` → `PUSH_SUBSCRIBED`
 
@@ -312,9 +320,9 @@ export class NotificationService implements INotificationService {
 
 ### **EventBus Flow**
 
-```
+```text
 ┌──────────────┐
-│   pRPC       │  HTTP Request
+│   tRPC       │  HTTP Request
 │  (Frontend)  │──────────────────┐
 └──────────────┘                  │
                                   ▼
@@ -351,20 +359,19 @@ export class NotificationService implements INotificationService {
                                   │
                                   ▼ Promise resolves
                          ┌──────────────────┐
-                         │   pRPC           │
+                         │   tRPC           │
                          │  (Response)      │
                          └──────────────────┘
-```
+```text
 
 ### **Example: Creating a Target**
 
 ```typescript
-// 1. Frontend calls pRPC
-const target = await prpc.createTarget({ name: 'Google', address: 'https://google.com' });
+// 1. Frontend calls tRPC
+const target = await trpc.targets.create.mutate({ name: 'Google', address: 'https://google.com' });
 
-// 2. pRPC uses EventRPC to emit event
-const eventRPC = new EventRPC(eventBus, logger);
-const target = await eventRPC.request(
+// 2. tRPC router calls service
+const target = await ctx.services.monitor?.createTarget(
   'TARGET_CREATE_REQUESTED',
   'TARGET_CREATED',
   'TARGET_CREATE_FAILED',
@@ -377,9 +384,9 @@ eventBus.on('TARGET_CREATE_REQUESTED', async (data) => {
   eventBus.emit('TARGET_CREATED', target);
 });
 
-// 4. EventRPC resolves promise with response
-// 5. pRPC returns to frontend
-```
+// 4. Service returns response
+// 5. tRPC returns to frontend with full type safety
+```text
 
 ---
 
@@ -406,7 +413,7 @@ Services are configured via `service-config.json`:
     }
   }
 }
-```
+```text
 
 ### **Service Registration**
 
@@ -427,7 +434,7 @@ container.register(TYPES.IMonitorService, {
   dependencies: [TYPES.ITargetRepository, TYPES.IEventBus, TYPES.ILogger],
   singleton: true
 });
-```
+```text
 
 ### **Service Resolution**
 
@@ -437,7 +444,7 @@ const monitor = container.get<IMonitorService>(TYPES.IMonitorService);
 
 // Container handles dependency resolution
 // All dependencies are injected automatically
-```
+```text
 
 ---
 
@@ -453,7 +460,7 @@ export interface ITargetRepository {
   update(id: string, data: UpdateTargetData): Promise<Target>;
   delete(id: string): Promise<void>;
 }
-```
+```text
 
 ### **Repository Implementation**
 
@@ -484,9 +491,10 @@ export class TargetRepository implements ITargetRepository {
     };
   }
 }
-```
+```text
 
 **Key Rules:**
+
 - Prisma client **never** leaves repository layer
 - All methods return **domain types**, not Prisma types
 - Repositories handle all type mapping
@@ -520,7 +528,7 @@ export function TargetList() {
 
   return <div>...</div>;
 }
-```
+```text
 
 ### **Frontend DI Container**
 
@@ -532,13 +540,13 @@ export function TargetList() {
 
 // Access services in components
 const { apiClient, commandQuery, eventBus, logger } = useFrontendServices();
-```
+```text
 
 ---
 
 ## **Backend Architecture**
 
-### **pRPC Server Functions**
+### **tRPC API Layer**
 
 ```typescript
 // Server-side type-safe functions
@@ -558,7 +566,7 @@ export const createTarget = async (data: { name: string; address: string }) => {
 
   return target;
 };
-```
+```text
 
 ### **Service Event Handlers**
 
@@ -584,7 +592,7 @@ export class MonitorService implements IMonitorService {
     }
   }
 }
-```
+```text
 
 ---
 
@@ -592,18 +600,18 @@ export class MonitorService implements IMonitorService {
 
 ### **Complete Request Flow**
 
-```
+```text
 1. User clicks "Create Target" button
    ↓
 2. Component calls: await commandQuery.createTarget({ name, address })
    ↓
 3. CommandQuery calls: await apiClient.createTarget({ name, address })
    ↓
-4. APIClient calls pRPC: await prpc.createTarget({ name, address })
+4. APIClient calls tRPC: await trpc.targets.create.mutate({ name, address })
    ↓
-5. pRPC server function emits event via EventRPC
+5. tRPC router calls service: ctx.services.monitor?.createTarget(...)
    ↓
-6. EventBus broadcasts: TARGET_CREATE_REQUESTED
+6. MonitorService calls repository: targetRepository.create(...)
    ↓
 7. MonitorService handles event
    ↓
@@ -617,12 +625,12 @@ export class MonitorService implements IMonitorService {
     ↓
 12. MonitorService emits: TARGET_CREATED
     ↓
-13. EventRPC resolves promise
+13. Repository returns domain type
     ↓
-14. pRPC returns to frontend
+14. tRPC returns to frontend with full type safety
     ↓
 15. Component updates UI
-```
+```text
 
 ---
 
@@ -645,9 +653,10 @@ async function startMonolith() {
   // Single shared EventBus
   const eventBus = container.get<IEventBus>(TYPES.IEventBus);
 }
-```
+```text
 
 **Benefits:**
+
 - Simple deployment
 - Lower hosting costs
 - Easy debugging
@@ -665,23 +674,25 @@ async function startMonitorService() {
   // Uses Redis EventBus for distributed communication
   const eventBus = new RedisEventBus(process.env.REDIS_URL);
 }
-```
+```text
 
 **Benefits:**
+
 - Independent scaling
 - Fault isolation
 - Team autonomy
 
 ### **Migration Path**
 
-```
+```text
 Monolith → Hybrid → Microservices
    ↓          ↓           ↓
 Single    Some services  All services
 container  extracted    independent
-```
+```text
 
 **Key Insight:** Because services only communicate via EventBus, they can be:
+
 1. Deployed together (monolith)
 2. Gradually extracted (hybrid)
 3. Fully separated (microservices)
@@ -720,4 +731,3 @@ container  extracted    independent
 - [Quick Start Guide](QUICK-START.md)
 - [Deployment Options](DEPLOYMENT.md)
 - [Scaling to Microservices](SCALING-TO-MICROSERVICES.md)
-

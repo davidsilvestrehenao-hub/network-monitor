@@ -1,13 +1,61 @@
 {
-  "name": "Console Logging Configuration",
-  "description": "Browser-compatible console logging for development and testing",
+  "name": "Default Monolith Configuration",
+  "description": "Loads all concrete implementations for a single-process deployment.",
   "environment": "development",
   "services": {
     "ILogger": {
-      "module": "../src/lib/services/concrete/LoggerService",
+      "module": "@network-monitor/infrastructure",
       "className": "LoggerService",
       "isMock": false,
-      "description": "Console logger service for development and testing"
+      "description": "Winston logger for production logging"
+    },
+    "IEventBus": {
+      "module": "@network-monitor/infrastructure",
+      "className": "EventBus",
+      "isMock": false,
+      "description": "In-memory event bus for single-process deployment"
+    },
+    "IDatabaseService": {
+      "module": "@network-monitor/database",
+      "className": "DatabaseService",
+      "isMock": false,
+      "description": "Prisma database service for PostgreSQL"
+    },
+    "IMonitorService": {
+      "module": "@network-monitor/monitor",
+      "className": "MonitorService",
+      "isMock": false,
+      "description": "Concrete monitoring service"
+    },
+    "ISpeedTestService": {
+      "module": "@network-monitor/speed-test",
+      "className": "SpeedTestService",
+      "isMock": false,
+      "description": "Concrete speed test service"
+    },
+    "ISpeedTestConfigService": {
+      "module": "@network-monitor/speed-test",
+      "className": "SpeedTestConfigService",
+      "isMock": false,
+      "description": "Concrete speed test configuration service"
+    },
+    "IAlertingService": {
+      "module": "@network-monitor/alerting",
+      "className": "AlertingService",
+      "isMock": false,
+      "description": "Concrete alerting service"
+    },
+    "INotificationService": {
+      "module": "@network-monitor/notification",
+      "className": "NotificationService",
+      "isMock": false,
+      "description": "Concrete notification service"
+    },
+    "IAuthService": {
+      "module": "@network-monitor/auth",
+      "className": "AuthService",
+      "isMock": false,
+      "description": "Concrete authentication service"
     }
   }
 }

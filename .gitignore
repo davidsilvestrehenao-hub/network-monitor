@@ -110,3 +110,7 @@ Thumbs.db
 
 # Vite
 .vite/
+.turbo/cookies
+
+.turbo/cache
+

@@ -1,73 +1,44 @@
 ---
 type: Auto Attached
-globs: "src/{routes,components}/**/*.tsx"
+globs: "apps/web/src/{routes,components}/**/*.tsx"
 description: Provides rules for building SolidStart frontend components.
 alwaysApply: true
 ---
 
 # Frontend Development Patterns
 
-## Core Principles
+## 1. Core Principles
 
-1. **Framework:** All components must be written in SolidJS and SolidStart. Prioritize reactivity using `createSignal`, `createEffect`, and other primitives. Avoid direct DOM manipulation.
+- **Framework:** All components must be written in SolidJS and SolidStart. Prioritize reactivity using `createSignal`, `createEffect`, and `<Suspense>`.
+- **Styling:** All styling must be done using **Tailwind CSS** utility classes. Do not write custom CSS files.
+- **DI & Services**: For complex client-side logic, use the frontend DI container (`packages/infrastructure/src/container/`) to access services. For simple cases, this is not necessary.
 
-2. **Styling:** All styling must be done using **Tailwind CSS** utility classes. Do not write custom CSS files unless absolutely necessary for a complex animation.
+## 2. Data Flow & State Management
 
-3. **Dependency Injection:** Use the frontend DI container (`src/lib/frontend/container.tsx`) to access services. Never directly instantiate services.
+- **Primary Data Source**: All data from the backend **must** be fetched via the tRPC client.
+- **tRPC Client**: A pre-configured, type-safe tRPC client is located at `apps/web/src/lib/trpc.ts`.
+- **Data Fetching**: Use SolidJS's `createResource` to wrap calls to the tRPC client. This provides a declarative and reactive way to handle loading, error, and ready states.
 
-4. **Event-Driven Communication:** Use the `IEventBus` for component communication instead of prop drilling or direct service calls.
+```typescript
+// ✅ Good: Using createResource with the tRPC client
+import { createResource, Suspense } from "solid-js";
+import { trpc } from "~/lib/trpc";
 
-## Data Flow Patterns
+const Greeting = () => {
+  const [greeting] = createResource(() => trpc.hello.query({ name: "tRPC" }));
 
-5. **Command/Query Pattern:** Use `ICommandQueryService` for all data operations:
-   - **Commands** (write operations): `createTarget()`, `updateTarget()`, `deleteTarget()`
-   - **Queries** (read operations): `getTargets()`, `getTarget()`, `getSpeedTestResults()`
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <p>{greeting()}</p>
+    </Suspense>
+  );
+};
+```
 
-6. **Event-Based Data Fetching:** Prefer event-driven data fetching over direct API calls:
+- **State Management**: For local component state, use `createSignal`. For complex global state, a dedicated state management library (like Zustand or Nano Stores) could be used, but is not yet implemented.
 
-   ```typescript
-   // ✅ Good: Event-driven
-   const commandQuery = useCommandQuery();
-   const targets = await commandQuery.getTargets({ limit: 10, offset: 0 });
+## 3. Component Architecture
 
-   // ❌ Bad: Direct API calls
-   const targets = await apiClient.getTargets({ limit: 10, offset: 0 });
-   ```
-
-7. **Service Hooks:** Use individual service hooks for specific functionality:
-   ```typescript
-   const logger = useLogger();
-   const eventBus = useEventBus();
-   const performanceMonitor = usePerformanceMonitor();
-   ```
-
-## Component Architecture
-
-8. **Service Injection:** Always inject services through the DI container:
-
-   ```typescript
-   export function MyComponent() {
-     const logger = useLogger();
-     const commandQuery = useCommandQuery();
-     const eventBus = useEventBus();
-     // ... component logic
-   }
-   ```
-
-9. **Event Handling:** Use type-safe event handling:
-
-   ```typescript
-   eventBus.onTyped("TARGET_CREATED", target => {
-     // Handle target creation
-   });
-   ```
-
-10. **Charts:** All data visualization and charts must be implemented using `Chart.js` via the `solid-chartjs` library.
-
-## Quality Standards
-
-11. **Type Safety:** Never use `any` types. Always provide proper TypeScript interfaces.
-
-12. **Error Handling:** Use the logger service for all error logging and user feedback.
-
-13. **Performance:** Use the performance monitor service for tracking component performance and Core Web Vitals.
+- **Charts**: All data visualization and charts must be implemented using `Chart.js` via the `solid-chartjs` library.
+- **Type Safety**: Never use `any` types. Always provide proper TypeScript interfaces for props and state.
+- **Error Handling**: Use Solid's `<ErrorBoundary>` component to catch errors within components. Use the logger service for logging errors to the console or a remote service.

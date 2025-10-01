@@ -3,13 +3,14 @@
 ## 🎯 The Scaling Problem
 
 **Today: Single Bun Process (Monolith)**
-```
+
+```text
 ┌─────────────────────────────────────────┐
 │         Single Bun Process              │
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │ pRPC Endpoints                  │   │
-│  │  ↓ (in-memory event bus)       │   │
+│  │ tRPC API Router                 │   │
+│  │  ↓ (calls services)            │   │
 │  │ MonitorService                  │   │
 │  │ AlertingService                 │   │
 │  │ NotificationService             │   │
@@ -19,15 +20,16 @@
 │  │ Database                        │   │
 │  └─────────────────────────────────┘   │
 └─────────────────────────────────────────┘
-```
+```text
 
 **Tomorrow: Distributed Microservices**
-```
+
+```text
 ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
 │   API Pod    │    │  Monitor Pod │    │ Alerting Pod │
 │              │    │              │    │              │
-│ pRPC         │    │ Monitor      │    │ Alerting     │
-│ Endpoints    │    │ Service      │    │ Service      │
+│ tRPC         │    │ Monitor      │    │ Alerting     │
+│ Router       │    │ Service      │    │ Service      │
 └──────┬───────┘    └──────┬───────┘    └──────┬───────┘
        │                   │                    │
        └───────────────────┼────────────────────┘
@@ -37,7 +39,7 @@
                   │   (RabbitMQ/      │
                   │    Kafka/Redis)   │
                   └──────────────────┘
-```
+```text
 
 ---
 
@@ -46,15 +48,18 @@
 ### Without Event-Driven (Direct Calls) ❌
 
 **Current Code:**
+
 ```typescript
-// pRPC endpoint with direct service call
-export const createTarget = async (data) => {
+// tRPC procedure with direct service call
+export const targetsRouter = t.router({
+  create: t.procedure.mutation(async ({ ctx, data }) => {
   const target = await monitorService.createTarget(data);  // In-process call
   return target;
 };
-```
+```text
 
 **Problem when scaling:**
+
 - ❌ Can't separate MonitorService to another container
 - ❌ Would need to rewrite entire communication layer
 - ❌ Would need to add HTTP/gRPC clients everywhere
@@ -65,9 +70,11 @@ export const createTarget = async (data) => {
 ### With Event-Driven (Event Bus) ✅
 
 **Current Code:**
+
 ```typescript
-// pRPC endpoint with event-driven call
-export const createTarget = async (data) => {
+// tRPC procedure with service layer (recommended)
+export const targetsRouter = t.router({
+  create: t.procedure.mutation(async ({ ctx, data }) => {
   const eventRPC = new EventRPC(eventBus, logger);
   const target = await eventRPC.request(
     "TARGET_CREATE_REQUESTED",
@@ -77,9 +84,10 @@ export const createTarget = async (data) => {
   );
   return target;
 };
-```
+```text
 
 **When scaling:**
+
 - ✅ Code stays **exactly the same**
 - ✅ Just swap `EventBus` implementation
 - ✅ Events automatically flow through message broker
@@ -92,12 +100,14 @@ export const createTarget = async (data) => {
 ## 🔧 The Migration Path
 
 ### Phase 1: Current State (Monolith)
+
 ```typescript
 // Uses in-memory event bus
 const eventBus = new EventBus(); // In-memory, same process
-```
+```text
 
 ### Phase 2: Add Message Broker (Still Monolith)
+
 ```typescript
 // Swap to distributed event bus - NO OTHER CODE CHANGES!
 const eventBus = new RabbitMQEventBus(config);
@@ -105,13 +115,14 @@ const eventBus = new RabbitMQEventBus(config);
 const eventBus = new KafkaEventBus(config);
 // or
 const eventBus = new RedisEventBus(config);
-```
+```text
 
 ### Phase 3: Split into Microservices
+
 ```typescript
 // Each service in its own container
 // All using the same event bus interface
-```
+```text
 
 ---
 
@@ -214,7 +225,7 @@ export class RabbitMQEventBus implements IEventBus {
     await this.connection?.close();
   }
 }
-```
+```text
 
 ### Step 2: Configuration-Based Switching
 
@@ -233,7 +244,7 @@ export class RabbitMQEventBus implements IEventBus {
     }
   }
 }
-```
+```text
 
 **Container registration:**
 
@@ -252,15 +263,16 @@ export const productionServiceConfig = {
   },
   // ... other services
 };
-```
+```text
 
 ### Step 3: Zero Code Changes in Business Logic
 
 **Your existing code works unchanged:**
 
 ```typescript
-// pRPC endpoints - NO CHANGES NEEDED
-export const createTarget = async (data) => {
+// tRPC procedures - NO CHANGES NEEDED
+export const targetsRouter = t.router({
+  create: t.procedure.mutation(async ({ ctx, data }) => {
   const ctx = await getContext();
   const eventRPC = new EventRPC(ctx.services.eventBus, ctx.services.logger);
   
@@ -284,7 +296,7 @@ private async handleTargetCreateRequested(data) {
   // Same code works with in-memory OR distributed event bus!
   this.eventBus.emit(`TARGET_CREATED_${data.requestId}`, target);
 }
-```
+```text
 
 ---
 
@@ -292,7 +304,7 @@ private async handleTargetCreateRequested(data) {
 
 ### Deployment Configuration
 
-**1. API Service (pRPC Endpoints)**
+**1. API Service (tRPC Router)**
 
 ```yaml
 # k8s/api-deployment.yaml
@@ -334,7 +346,7 @@ spec:
   - port: 80
     targetPort: 3000
   type: LoadBalancer
-```
+```text
 
 **2. Monitor Service (Background Jobs)**
 
@@ -368,7 +380,7 @@ spec:
           limits:
             cpu: "2"
             memory: "2Gi"
-```
+```text
 
 **3. Alerting Service**
 
@@ -398,7 +410,7 @@ spec:
           value: "amqp://rabbitmq:5672"
         - name: DATABASE_URL
           value: "postgresql://postgres:5432/network_monitor"
-```
+```text
 
 **4. RabbitMQ Message Broker**
 
@@ -437,7 +449,7 @@ spec:
     port: 5672
   - name: management
     port: 15672
-```
+```text
 
 ---
 
@@ -454,7 +466,7 @@ kubectl scale deployment network-monitor-worker --replicas=20
 
 # Scale alerting independently
 kubectl scale deployment network-monitor-alerting --replicas=5
-```
+```text
 
 ### 2. **Service Isolation**
 
@@ -473,7 +485,7 @@ kubectl scale deployment network-monitor-alerting --replicas=5
 // Notification Service - Python (for ML models)
 
 // All communicate via same event bus - language agnostic!
-```
+```text
 
 ### 4. **Database Sharding**
 
@@ -488,7 +500,7 @@ const monitorConfig = {
 };
 
 // Event bus coordinates across databases
-```
+```text
 
 ---
 
@@ -497,6 +509,7 @@ const monitorConfig = {
 ### Without Event-Driven (Direct Calls)
 
 **Monolith to Microservices:**
+
 - 🔴 Rewrite all service calls to HTTP/gRPC
 - 🔴 Add client libraries everywhere
 - 🔴 Handle network failures manually
@@ -507,6 +520,7 @@ const monitorConfig = {
 ### With Event-Driven (Event Bus)
 
 **Monolith to Microservices:**
+
 - ✅ Swap EventBus implementation (1 file)
 - ✅ Update configuration (1 JSON file)
 - ✅ Create Kubernetes manifests
@@ -524,9 +538,10 @@ const monitorConfig = {
 // Still one Bun process, but using RabbitMQ
 // Proves the concept works
 const eventBus = new RabbitMQEventBus(config);
-```
+```text
 
 **Benefits:**
+
 - Test distributed communication
 - No service separation yet (low risk)
 - Easy to rollback
@@ -535,17 +550,18 @@ const eventBus = new RabbitMQEventBus(config);
 
 ```typescript
 // Split into two containers:
-// 1. API (pRPC endpoints)
+// 1. API (tRPC router)
 // 2. Workers (Monitor + Alerting + Notification)
 
 // API Container
-const apiServices = ["pRPC", "Auth"];
+const apiServices = ["tRPC", "Auth"];
 
 // Worker Container
 const workerServices = ["Monitor", "Alerting", "Notification"];
-```
+```text
 
 **Benefits:**
+
 - API stays responsive under heavy worker load
 - Scale workers independently
 - Still relatively simple
@@ -560,9 +576,10 @@ const workerServices = ["Monitor", "Alerting", "Notification"];
 // 4. Notification Service
 
 // Each container only loads its services
-```
+```text
 
 **Benefits:**
+
 - Maximum scalability
 - Independent deployments
 - Service isolation
@@ -574,6 +591,7 @@ const workerServices = ["Monitor", "Alerting", "Notification"];
 ### 1. **Event-Driven = Future-Proof**
 
 Your code is already written in a way that **naturally scales**:
+
 - No assumptions about process boundaries
 - No assumptions about synchronous calls
 - No assumptions about same-memory access
@@ -593,7 +611,7 @@ export interface IEventBus {
   on(event: string, handler: (data?: unknown) => void): void;
   // ...
 }
-```
+```text
 
 ### 3. **Configuration-Based Deployment**
 
@@ -613,7 +631,7 @@ export interface IEventBus {
 }
 
 // Same code, different deployment!
-```
+```text
 
 ---
 
@@ -622,12 +640,14 @@ export interface IEventBus {
 ### Company Growth Scenario
 
 **Year 1: 100 users**
+
 - Single Bun process
 - In-memory EventBus
 - SQLite database
 - **Cost:** $20/month (single VPS)
 
 **Year 2: 10,000 users**
+
 - Single Bun process
 - RabbitMQ EventBus (test distributed)
 - PostgreSQL database
@@ -635,6 +655,7 @@ export interface IEventBus {
 - **Code changes:** Just config file
 
 **Year 3: 100,000 users**
+
 - 3 API containers
 - 5 Worker containers
 - 2 Alerting containers
@@ -644,6 +665,7 @@ export interface IEventBus {
 - **Code changes:** Just config file + K8s manifests
 
 **Year 4: 1,000,000 users**
+
 - 20 API containers (autoscaling)
 - 50 Worker containers (autoscaling)
 - 10 Alerting containers
@@ -660,14 +682,16 @@ export interface IEventBus {
 
 **Answer:** **ABSOLUTELY YES!**
 
-### With Event-Driven:
+### With Event-Driven
+
 - ✅ **Minimal rework** (weeks, not months)
 - ✅ **Gradual migration** (low risk)
 - ✅ **Configuration-based** (no code changes)
 - ✅ **Scale independently** (right-size each service)
 - ✅ **Technology flexibility** (polyglot microservices)
 
-### Without Event-Driven:
+### Without Event-Driven
+
 - ❌ **Massive refactoring** (months of work)
 - ❌ **Big bang migration** (high risk)
 - ❌ **Code rewrite** (hundreds of changes)
@@ -682,4 +706,3 @@ It's not just about loose coupling - it's about **being able to grow your applic
 
 *Scaling to Microservices*
 *Event-Driven Architecture Enables Growth*
-

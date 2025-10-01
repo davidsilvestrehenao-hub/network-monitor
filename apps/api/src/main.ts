@@ -13,22 +13,34 @@
 
 import { EventBus } from "@network-monitor/infrastructure";
 import { LoggerService } from "@network-monitor/infrastructure";
+// Justification: Service imports will be used when implementing full monolith initialization
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MonitorService } from "@network-monitor/monitor";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AlertingService } from "@network-monitor/alerting";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NotificationService } from "@network-monitor/notification";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { LogLevel } from "@network-monitor/shared";
 
 // For now, use INFO level directly since LogLevel enum needs to be exported properly
 const LOG_LEVEL = 2; // INFO level
 
 async function startMonolith() {
+  // Justification: Console statements for monolith startup info
+  // eslint-disable-next-line no-console
   console.log("🚀 Starting Network Monitor Monolith...");
+  // eslint-disable-next-line no-console
   console.log("📦 All services in one process");
+  // eslint-disable-next-line no-console
   console.log("💰 Cost: ~$20/month");
+  // eslint-disable-next-line no-console
   console.log("");
 
   // Initialize infrastructure
   const logger = new LoggerService(LOG_LEVEL);
+  // Justification: eventBus will be used when implementing full service initialization
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const eventBus = new EventBus();
 
   logger.info("Infrastructure initialized", {
@@ -75,6 +87,8 @@ async function startMonolith() {
 
 // Start the monolith
 startMonolith().catch(error => {
+  // Justification: Console error for critical startup failure
+  // eslint-disable-next-line no-console
   console.error("Failed to start monolith:", error);
   process.exit(1);
 });

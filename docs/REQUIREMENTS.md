@@ -19,12 +19,14 @@ Network Monitor is a Progressive Web Application (PWA) designed to continuously 
 ## 👥 **Target Users**
 
 ### **Primary Users:**
+
 - **Remote Workers**: Need reliable internet for video calls and work tasks
 - **Gamers**: Require low latency and stable connections
 - **Streamers**: Need consistent upload speeds
 - **IT Professionals**: Monitor multiple network endpoints
 
 ### **Use Cases:**
+
 1. Monitor home internet quality
 2. Track performance of critical servers
 3. Detect connectivity issues before meetings
@@ -38,6 +40,7 @@ Network Monitor is a Progressive Web Application (PWA) designed to continuously 
 ### **1. Target Management**
 
 #### **Create Monitoring Targets**
+
 - **Input**: Target name, URL/IP address
 - **Output**: New monitoring target added to dashboard
 - **Validation**:
@@ -46,6 +49,7 @@ Network Monitor is a Progressive Web Application (PWA) designed to continuously 
   - User can only create targets for their account
 
 #### **View Monitoring Targets**
+
 - **Display**: List of all user's monitoring targets
 - **Information Shown**:
   - Target name
@@ -55,6 +59,7 @@ Network Monitor is a Progressive Web Application (PWA) designed to continuously 
   - Quick actions (start/stop, delete, view details)
 
 #### **Edit/Delete Targets**
+
 - **Edit**: Update target name or address
 - **Delete**: Remove target and all associated data
 - **Confirmation**: Require confirmation before deletion
@@ -64,6 +69,7 @@ Network Monitor is a Progressive Web Application (PWA) designed to continuously 
 ### **2. Speed Testing**
 
 #### **Automated Testing**
+
 - **Test Frequency**: Configurable (default: every 30 seconds)
 - **Test Types**:
   - **Ping Test**: Measure latency (response time)
@@ -73,12 +79,15 @@ Network Monitor is a Progressive Web Application (PWA) designed to continuously 
 - **Concurrency**: Multiple targets tested in parallel
 
 #### **Manual Testing**
+
 - **Trigger**: User can manually trigger a test for any target
 - **Immediate Results**: Show results immediately after completion
 - **History**: Add to historical data
 
 #### **Test Results**
+
 Each test result includes:
+
 - **ID**: Unique identifier
 - **Timestamp**: When test was run
 - **Ping**: Latency in milliseconds (ms)
@@ -92,6 +101,7 @@ Each test result includes:
 ### **3. Real-Time Dashboard**
 
 #### **Overview Dashboard**
+
 - **Quick Stats**:
   - Total targets
   - Active monitoring sessions
@@ -104,6 +114,7 @@ Each test result includes:
   - Quick actions
 
 #### **Target Detail View**
+
 - **Live Metrics**:
   - Current ping, download, upload
   - Test status and progress
@@ -119,6 +130,7 @@ Each test result includes:
 #### **Chart Types**
 
 **A. Time Series Line Chart**
+
 - **X-Axis**: Time (last 1 hour, 6 hours, 24 hours, 7 days, 30 days)
 - **Y-Axis**: Metric value (ping in ms, speed in Mbps)
 - **Series**:
@@ -132,6 +144,7 @@ Each test result includes:
   - Toggle series visibility
 
 **B. Heatmap Calendar**
+
 - **View**: Monthly calendar showing connection quality
 - **Colors**:
   - Green: Good performance
@@ -141,6 +154,7 @@ Each test result includes:
 - **Click**: Show details for selected day
 
 **C. Performance Summary**
+
 - **Metrics**:
   - Average ping
   - Min/max ping
@@ -150,6 +164,7 @@ Each test result includes:
   - Total tests run
 
 #### **Export Data**
+
 - **Formats**: CSV, JSON
 - **Options**:
   - Date range selection
@@ -163,6 +178,7 @@ Each test result includes:
 #### **Alert Rules**
 
 **Create Alert Rule:**
+
 - **Target**: Which target to monitor
 - **Metric**: Ping, Download, or Upload
 - **Condition**: Greater Than or Less Than
@@ -170,13 +186,15 @@ Each test result includes:
 - **Enabled**: Toggle on/off
 
 **Example Alert Rules:**
-```
+
+```text
 IF Ping > 100ms THEN Alert
 IF Download < 10 Mbps THEN Alert
 IF Ping > 200ms FOR 5 consecutive tests THEN Alert
-```
+```text
 
 **Rule Management:**
+
 - Create, edit, delete rules
 - Enable/disable rules
 - View rule trigger history
@@ -184,6 +202,7 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 #### **Alert Notifications**
 
 **Push Notifications:**
+
 - **Trigger**: When alert rule threshold is breached
 - **Content**:
   - Target name
@@ -197,6 +216,7 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
   - Disable rule
 
 **In-App Notifications:**
+
 - **Badge**: Alert count indicator
 - **Notification List**:
   - Unread alerts highlighted
@@ -208,11 +228,13 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 #### **Incident Events**
 
 **Types:**
+
 - **ALERT**: Alert rule triggered
 - **OUTAGE**: Connection failure detected
 - **RECOVERY**: Connection restored
 
 **Incident Details:**
+
 - Timestamp
 - Type
 - Target
@@ -221,6 +243,7 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 - Resolved status
 
 **Incident Resolution:**
+
 - Manually mark as resolved
 - Auto-resolve when condition clears
 - View resolution timestamp
@@ -230,22 +253,26 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 ### **6. Progressive Web App (PWA) Features**
 
 #### **Installability**
+
 - **Prompt**: Automatic install prompt on supported browsers
 - **Install**: One-click install to home screen
 - **Standalone**: Runs in standalone window (no browser chrome)
 - **Icon**: Custom app icon on home screen
 
 #### **Offline Support**
+
 - **View Historical Data**: Access cached data when offline
 - **No Testing**: Speed tests disabled when offline (requires internet)
 - **Sync**: Sync data when connection restored
 
 #### **Background Sync**
+
 - **Service Worker**: Continue monitoring in background
 - **Notifications**: Receive alerts even when app is not active
 - **Battery Efficient**: Optimize for low battery usage
 
 #### **Responsive Design**
+
 - **Mobile**: Touch-friendly UI, swipe gestures
 - **Tablet**: Optimized layout for medium screens
 - **Desktop**: Full-featured dashboard with side panels
@@ -255,6 +282,7 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 ### **7. User Management**
 
 #### **Authentication**
+
 - **Sign Up**: Email + password
 - **Sign In**: Email + password
 - **OAuth**: Google, GitHub (future)
@@ -262,12 +290,14 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 - **Logout**: Clear session and local data
 
 #### **User Profile**
+
 - **View Profile**: Name, email, account creation date
 - **Edit Profile**: Update name, email
 - **Change Password**: Secure password change flow
 - **Delete Account**: Permanent account deletion with confirmation
 
 #### **Data Ownership**
+
 - **Privacy**: Each user sees only their own targets and data
 - **Isolation**: No data sharing between users
 - **Export**: Users can export all their data
@@ -361,13 +391,15 @@ IF Ping > 200ms FOR 5 consecutive tests THEN Alert
 ### **User Stories**
 
 #### **US-1: Monitor Internet Connection**
-```
+
+```text
 As a remote worker,
 I want to monitor my internet connection quality in real-time,
 So that I know if my connection is stable before important meetings.
-```
+```text
 
 **Acceptance Criteria:**
+
 - ✅ User can create a monitoring target with name and URL
 - ✅ System runs automated speed tests every 30 seconds
 - ✅ Dashboard shows current ping and download speed
@@ -375,13 +407,15 @@ So that I know if my connection is stable before important meetings.
 - ✅ User can manually trigger a test
 
 #### **US-2: Receive Alerts**
-```
+
+```text
 As a gamer,
 I want to receive alerts when my ping exceeds 100ms,
 So that I know when my connection quality is degraded.
-```
+```text
 
 **Acceptance Criteria:**
+
 - ✅ User can create alert rule: "Ping > 100ms"
 - ✅ System checks alert rules after each test
 - ✅ User receives browser push notification when alert triggers
@@ -389,13 +423,15 @@ So that I know when my connection quality is degraded.
 - ✅ User can disable/enable alert rules
 
 #### **US-3: View Historical Performance**
-```
+
+```text
 As an IT professional,
 I want to view historical connection performance charts,
 So that I can identify patterns and trends over time.
-```
+```text
 
 **Acceptance Criteria:**
+
 - ✅ User can view line chart of ping over last 24 hours
 - ✅ User can view line chart of download speed over last 24 hours
 - ✅ User can switch time ranges (1hr, 6hr, 24hr, 7d, 30d)
@@ -403,13 +439,15 @@ So that I can identify patterns and trends over time.
 - ✅ User can export chart data as CSV
 
 #### **US-4: Install as PWA**
-```
+
+```text
 As a user,
 I want to install the app on my phone's home screen,
 So that I can access it quickly like a native app.
-```
+```text
 
 **Acceptance Criteria:**
+
 - ✅ Browser shows "Add to Home Screen" prompt
 - ✅ User can install app with one click
 - ✅ App opens in standalone window (no browser UI)
@@ -421,17 +459,20 @@ So that I can access it quickly like a native app.
 ## 🎯 **Success Metrics**
 
 ### **User Engagement**
+
 - **Daily Active Users**: 70%+ of registered users
 - **Session Duration**: Average 5+ minutes per session
 - **Return Rate**: 80%+ return within 7 days
 
 ### **Feature Usage**
+
 - **Target Creation**: 100% of users create at least 1 target
 - **Alert Rules**: 70%+ of users create at least 1 alert rule
 - **Chart Views**: 50%+ of users view historical charts
 - **PWA Install**: 30%+ of mobile users install as PWA
 
 ### **Performance**
+
 - **Test Completion Rate**: 99%+ tests complete successfully
 - **Alert Delivery**: 100% of alerts delivered within 5 seconds
 - **Uptime**: 99.9%+ system uptime
@@ -441,11 +482,13 @@ So that I can access it quickly like a native app.
 ## 📞 **Support & Feedback**
 
 ### **Documentation**
+
 - User guide with screenshots
 - FAQ for common questions
 - Troubleshooting guide
 
 ### **Feedback Channels**
+
 - In-app feedback form
 - GitHub Issues for bug reports
 - Feature request voting system
@@ -455,6 +498,7 @@ So that I can access it quickly like a native app.
 ## 🔄 **Changelog**
 
 ### **v1.0.0 - Initial Release**
+
 - ✅ Target management (CRUD)
 - ✅ Automated speed testing
 - ✅ Real-time dashboard
@@ -466,4 +510,3 @@ So that I can access it quickly like a native app.
 ---
 
 Made with ❤️ for users who need reliable internet monitoring
-

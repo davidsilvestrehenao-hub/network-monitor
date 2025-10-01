@@ -11,14 +11,14 @@ This guide explains how to set up and manage the PWA Connection Monitor using PM
 npm install -g pm2
 # or
 bun add -g pm2
-```
+```text
 
 ### 2. Run the Setup Script
 
 ```bash
 # Run the automated setup script
 bun run pm2:setup
-```
+```text
 
 This script will:
 
@@ -37,19 +37,19 @@ If you prefer to set up PM2 manually:
 
 ```bash
 bun install
-```
+```text
 
 ### 2. Build the Application
 
 ```bash
 bun run build
-```
+```text
 
 ### 3. Set up Database
 
 ```bash
 bun run push
-```
+```text
 
 ### 4. Start with PM2
 
@@ -62,7 +62,7 @@ pm2 save
 
 # Set up auto-start on system reboot
 pm2 startup
-```
+```text
 
 ## 🔧 Configuration Files
 
@@ -111,7 +111,7 @@ bun run pm2:logs
 
 # Open monitoring dashboard
 bun run pm2:monit
-```
+```text
 
 ### Advanced Commands
 
@@ -127,7 +127,7 @@ bun run pm2:cleanup
 
 # Delete application from PM2
 bun run pm2:delete
-```
+```text
 
 ### Using the Management Script
 
@@ -138,7 +138,7 @@ bun run pm2:commands [COMMAND]
 # Available commands:
 # start, stop, restart, reload, status, logs, logs-follow
 # monit, build, deploy, deploy-staging, cleanup, health
-```
+```text
 
 ## 📈 Monitoring
 
@@ -153,7 +153,7 @@ bun run pm2:monitoring status
 
 # View monitoring logs
 bun run pm2:monitoring logs
-```
+```text
 
 ### Monitoring Features
 
@@ -170,14 +170,14 @@ bun run pm2:monitoring logs
 ```bash
 # Deploy to production
 bun run pm2:deploy:prod
-```
+```text
 
 ### Staging Deployment
 
 ```bash
 # Deploy to staging
 bun run pm2:deploy:staging
-```
+```text
 
 ### Manual Deployment
 
@@ -187,11 +187,11 @@ bun run pm2:build
 
 # Or use PM2 directly
 pm2 reload network-monitor
-```
+```text
 
 ## 📁 File Structure
 
-```
+```text
 network-monitor/
 ├── ecosystem.config.js          # PM2 configuration
 ├── pm2.config.json             # Alternative JSON config
@@ -204,7 +204,7 @@ network-monitor/
 │   ├── out.log
 │   └── error.log
 └── PM2-SETUP.md               # This guide
-```
+```text
 
 ## 🛠️ Troubleshooting
 
@@ -221,7 +221,7 @@ pm2 logs network-monitor
 
 # Restart application
 pm2 restart network-monitor
-```
+```text
 
 #### High Memory Usage
 
@@ -231,7 +231,7 @@ pm2 monit
 
 # Restart if needed
 pm2 restart network-monitor
-```
+```text
 
 #### Port Already in Use
 
@@ -243,7 +243,7 @@ lsof -i :3000
 kill -9 <PID>
 
 # Or change port in ecosystem.config.js
-```
+```text
 
 ### Log Management
 
@@ -256,7 +256,7 @@ pm2 logs network-monitor --follow
 
 # Clear logs
 pm2 flush
-```
+```text
 
 ### System Reboot Issues
 
@@ -270,7 +270,7 @@ pm2 save
 # Check if startup is configured
 pm2 unstartup
 pm2 startup
-```
+```text
 
 ## 🔒 Security Considerations
 
@@ -323,7 +323,7 @@ cp ~/.pm2/dump.pm2 ./backup/
 
 # Restore configuration
 pm2 resurrect
-```
+```text
 
 ### Application Backup
 
@@ -334,22 +334,22 @@ tar -czf network-monitor-backup-$(date +%Y%m%d).tar.gz \
   --exclude=logs \
   --exclude=.git \
   .
-```
+```text
 
 ## 📞 Support
 
 ### Getting Help
 
-- Check PM2 documentation: https://pm2.keymetrics.io/docs/
+- Check PM2 documentation: <https://pm2.keymetrics.io/docs/>
 - Review application logs for errors
 - Use monitoring tools to identify issues
 - Check system resources and performance
 
 ### Useful Resources
 
-- PM2 GitHub: https://github.com/Unitech/pm2
-- PM2 Documentation: https://pm2.keymetrics.io/docs/
-- Bun Documentation: https://bun.sh/docs
+- PM2 GitHub: <https://github.com/Unitech/pm2>
+- PM2 Documentation: <https://pm2.keymetrics.io/docs/>
+- Bun Documentation: <https://bun.sh/docs>
 
 ## ✅ Checklist
 

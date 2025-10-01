@@ -1,108 +1,88 @@
-openapi: 3.0.3
+openapi: 3.1.3
 info:
   title: Network Monitor API
-  description: |
-    PWA Connection Monitor API - Real-time internet connection monitoring with charts and alerts.
-    
-    This API provides endpoints for managing monitoring targets, running speed tests, configuring alerts, and handling notifications.
-    
-    ## Features
-    - **Target Management**: Create, read, update, and delete monitoring targets
-    - **Speed Testing**: Run ping and download speed tests
-    - **Real-time Monitoring**: Start/stop continuous monitoring with configurable intervals
-    - **Alert System**: Configure alert rules based on performance thresholds
-    - **Incident Management**: Track and resolve performance incidents
-    - **Push Notifications**: Send real-time alerts via web push notifications
-    - **Authentication**: User authentication and session management
-    
-    ## Base URL
-    The API is available at `http://localhost:3000/api/prpc/`
-    
-    ## Authentication
-    Currently using mock authentication. All endpoints are accessible without authentication.
+  description: tRPC-based API for monitoring internet connections
   version: 1.0.0
   contact:
-    name: Network Monitor API Support
-    url: https://github.com/davidsilvestrehenao-hub/network-monitor
-  license:
-    name: MIT
-    url: https://opensource.org/licenses/MIT
+    name: Network Monitor
+    url: https://github.com/your-org/network-monitor
 
 servers:
-  - url: http://localhost:3000/api/prpc
+  - url: http://localhost:3000/api/trpc
     description: Development server
-  - url: https://your-domain.com/api/prpc
+  - url: https://api.network-monitor.com/api/trpc
     description: Production server
 
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Targets
+    description: Monitoring target management
+  - name: Speed Tests
+    description: Speed test operations
+  - name: Alert Rules
+    description: Alert rule management
+  - name: Incidents
+    description: Incident event management
+  - name: Notifications
+    description: Notification operations
+  - name: Push Subscriptions
+    description: Push notification subscriptions
+  - name: Users
+    description: User profile operations
+
 paths:
-  /getTargets:
-    get:
-      tags:
-        - Targets
-      summary: Get all monitoring targets
-      description: Retrieve all monitoring targets for the current user
-      operationId: getTargets
+  /hello:
+    post:
+      tags: [Health]
+      summary: Health check
+      operationId: hello
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
       responses:
         '200':
-          description: List of monitoring targets
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /targets.getAll:
+    post:
+      tags: [Targets]
+      summary: Get all targets
+      operationId: targets.getAll
+      responses:
+        '200':
+          description: List of targets
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Target'
-              example:
-                - id: "cmfzxab7p0003rrntljv7rhka"
-                  name: "Google DNS"
-                  address: "https://8.8.8.8"
-                  speedTestResults: []
-                  alertRules: []
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /createTarget:
+  /targets.getById:
     post:
-      tags:
-        - Targets
-      summary: Create a new monitoring target
-      description: Create a new target for monitoring internet connection quality
-      operationId: createTarget
+      tags: [Targets]
+      summary: Get target by ID
+      operationId: targets.getById
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTargetRequest'
-            example:
-              name: "Google DNS"
-              address: "https://8.8.8.8"
-      responses:
-        '200':
-          description: Target created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Target'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getTarget:
-    get:
-      tags:
-        - Targets
-      summary: Get a specific target
-      description: Retrieve a specific monitoring target by ID
-      operationId: getTarget
-      parameters:
-        - name: id
-          in: query
-          required: true
-          description: Target ID
-          schema:
-            type: string
-            example: "cmfzxab7p0003rrntljv7rhka"
+              type: object
+              required: [id]
+              properties:
+                id:
+                  type: string
       responses:
         '200':
           description: Target found
@@ -111,64 +91,105 @@ paths:
               schema:
                 $ref: '#/components/schemas/Target'
         '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+          description: Target not found
 
-  /updateTarget:
+  /targets.create:
     post:
-      tags:
-        - Targets
-      summary: Update a target
-      description: Update an existing monitoring target
-      operationId: updateTarget
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateTargetRequest'
-            example:
-              id: "cmfzxab7p0003rrntljv7rhka"
-              name: "Updated Target Name"
-              address: "https://1.1.1.1"
-      responses:
-        '200':
-          description: Target updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Target'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /deleteTarget:
-    post:
-      tags:
-        - Targets
-      summary: Delete a target
-      description: Delete a monitoring target
-      operationId: deleteTarget
+      tags: [Targets]
+      summary: Create new target
+      operationId: targets.create
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - id
+              required: [name, address]
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                address:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: Target created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Target'
+
+  /targets.update:
+    post:
+      tags: [Targets]
+      summary: Update target
+      operationId: targets.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
               properties:
                 id:
                   type: string
-                  description: Target ID
-                  example: "cmfzxab7p0003rrntljv7rhka"
+                name:
+                  type: string
+                  minLength: 1
+                address:
+                  type: string
+                  format: uri
       responses:
         '200':
-          description: Target deleted successfully
+          description: Target updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Target'
+
+  /targets.delete:
+    post:
+      tags: [Targets]
+      summary: Delete target
+      operationId: targets.delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Target deleted
+
+  /targets.startMonitoring:
+    post:
+      tags: [Targets]
+      summary: Start monitoring a target
+      operationId: targets.startMonitoring
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetId, intervalMs]
+              properties:
+                targetId:
+                  type: string
+                intervalMs:
+                  type: number
+                  minimum: 1000
+                  maximum: 300000
+      responses:
+        '200':
+          description: Monitoring started
           content:
             application/json:
               schema:
@@ -176,38 +197,58 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /getTargetResults:
-    get:
-      tags:
-        - Monitoring
-      summary: Get target speed test results
-      description: Retrieve speed test results for a specific target
-      operationId: getTargetResults
-      parameters:
-        - name: targetId
-          in: query
-          required: true
-          description: Target ID
-          schema:
-            type: string
-            example: "cmfzxab7p0003rrntljv7rhka"
-        - name: limit
-          in: query
-          required: false
-          description: Number of results to return
-          schema:
-            type: integer
-            minimum: 1
-            default: 10
-            example: 10
+  /targets.stopMonitoring:
+    post:
+      tags: [Targets]
+      summary: Stop monitoring a target
+      operationId: targets.stopMonitoring
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetId]
+              properties:
+                targetId:
+                  type: string
+      responses:
+        '200':
+          description: Monitoring stopped
+
+  /targets.getActiveTargets:
+    post:
+      tags: [Targets]
+      summary: Get list of actively monitored targets
+      operationId: targets.getActiveTargets
+      responses:
+        '200':
+          description: List of target IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /speedTests.getByTargetId:
+    post:
+      tags: [Speed Tests]
+      summary: Get speed test results for target
+      operationId: speedTests.getByTargetId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetId]
+              properties:
+                targetId:
+                  type: string
+                limit:
+                  type: number
       responses:
         '200':
           description: Speed test results
@@ -217,47 +258,50 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpeedTestResult'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /getActiveTargets:
-    get:
-      tags:
-        - Monitoring
-      summary: Get active monitoring targets
-      description: Retrieve currently active monitoring targets
-      operationId: getActiveTargets
-      responses:
-        '200':
-          description: List of active target IDs
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-                example: ["cmfzxab7p0003rrntljv7rhka", "cmfzxab7p0004rrntljv7rhkb"]
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /runSpeedTest:
+  /speedTests.getLatest:
     post:
-      tags:
-        - Monitoring
-      summary: Run a speed test
-      description: Run a speed test for a specific target
-      operationId: runSpeedTest
+      tags: [Speed Tests]
+      summary: Get latest speed test result
+      operationId: speedTests.getLatest
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RunSpeedTestRequest'
-            example:
-              targetId: "cmfzxab7p0003rrntljv7rhka"
-              timeout: 30000
+              type: object
+              required: [targetId]
+              properties:
+                targetId:
+                  type: string
+      responses:
+        '200':
+          description: Latest result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeedTestResult'
+
+  /speedTests.runTest:
+    post:
+      tags: [Speed Tests]
+      summary: Run speed test immediately
+      operationId: speedTests.runTest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetId, target]
+              properties:
+                targetId:
+                  type: string
+                target:
+                  type: string
+                  format: uri
+                timeout:
+                  type: number
       responses:
         '200':
           description: Speed test completed
@@ -265,652 +309,102 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpeedTestResult'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /startMonitoring:
+  /alertRules.getByTargetId:
     post:
-      tags:
-        - Monitoring
-      summary: Start monitoring a target
-      description: Start continuous monitoring for a target with specified interval
-      operationId: startMonitoring
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StartMonitoringRequest'
-            example:
-              targetId: "cmfzxab7p0003rrntljv7rhka"
-              intervalMs: 30000
-      responses:
-        '200':
-          description: Monitoring started successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /stopMonitoring:
-    post:
-      tags:
-        - Monitoring
-      summary: Stop monitoring a target
-      description: Stop continuous monitoring for a target
-      operationId: stopMonitoring
+      tags: [Alert Rules]
+      summary: Get alert rules for target
+      operationId: alertRules.getByTargetId
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - targetId
+              required: [targetId]
               properties:
                 targetId:
                   type: string
-                  description: Target ID
-                  example: "cmfzxab7p0003rrntljv7rhka"
       responses:
         '200':
-          description: Monitoring stopped successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /createAlertRule:
-    post:
-      tags:
-        - Alerts
-      summary: Create an alert rule
-      description: Create a new alert rule for a target
-      operationId: createAlertRule
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateAlertRuleRequest'
-            example:
-              targetId: "cmfzxab7p0003rrntljv7rhka"
-              name: "High Ping Alert"
-              metric: "ping"
-              condition: "GREATER_THAN"
-              threshold: 100
-      responses:
-        '200':
-          description: Alert rule created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AlertRule'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getAlertRules:
-    get:
-      tags:
-        - Alerts
-      summary: Get alert rules for a target
-      description: Retrieve all alert rules for a specific target
-      operationId: getAlertRules
-      parameters:
-        - name: targetId
-          in: query
-          required: true
-          description: Target ID
-          schema:
-            type: string
-            example: "cmfzxab7p0003rrntljv7rhka"
-      responses:
-        '200':
-          description: List of alert rules
+          description: Alert rules
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/AlertRule'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /updateAlertRule:
+  /alertRules.create:
     post:
-      tags:
-        - Alerts
-      summary: Update an alert rule
-      description: Update an existing alert rule
-      operationId: updateAlertRule
+      tags: [Alert Rules]
+      summary: Create alert rule
+      operationId: alertRules.create
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateAlertRuleRequest'
-            example:
-              id: 1
-              name: "Updated Alert Rule"
-              threshold: 150
+              type: object
+              required: [name, targetId, metric, condition, threshold]
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                targetId:
+                  type: string
+                metric:
+                  type: string
+                  enum: [ping, download]
+                condition:
+                  type: string
+                  enum: [GREATER_THAN, LESS_THAN]
+                threshold:
+                  type: number
+                  minimum: 0
+                enabled:
+                  type: boolean
       responses:
         '200':
-          description: Alert rule updated successfully
+          description: Alert rule created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlertRule'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /deleteAlertRule:
+  /notifications.getUnread:
     post:
-      tags:
-        - Alerts
-      summary: Delete an alert rule
-      description: Delete an alert rule
-      operationId: deleteAlertRule
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - id
-              properties:
-                id:
-                  type: integer
-                  description: Alert rule ID
-                  example: 1
+      tags: [Notifications]
+      summary: Get unread notifications
+      operationId: notifications.getUnread
       responses:
         '200':
-          description: Alert rule deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getIncidents:
-    get:
-      tags:
-        - Alerts
-      summary: Get incidents for a target
-      description: Retrieve all incidents for a specific target
-      operationId: getIncidents
-      parameters:
-        - name: targetId
-          in: query
-          required: true
-          description: Target ID
-          schema:
-            type: string
-            example: "cmfzxab7p0003rrntljv7rhka"
-      responses:
-        '200':
-          description: List of incidents
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Incident'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /resolveIncident:
-    post:
-      tags:
-        - Alerts
-      summary: Resolve an incident
-      description: Mark an incident as resolved
-      operationId: resolveIncident
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - id
-              properties:
-                id:
-                  type: integer
-                  description: Incident ID
-                  example: 1
-      responses:
-        '200':
-          description: Incident resolved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getNotifications:
-    get:
-      tags:
-        - Notifications
-      summary: Get notifications for a user
-      description: Retrieve all notifications for a specific user
-      operationId: getNotifications
-      parameters:
-        - name: userId
-          in: query
-          required: true
-          description: User ID
-          schema:
-            type: string
-            example: "user-123"
-      responses:
-        '200':
-          description: List of notifications
+          description: Unread notifications
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Notification'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
-  /markNotificationAsRead:
+  /notifications.markAsRead:
     post:
-      tags:
-        - Notifications
+      tags: [Notifications]
       summary: Mark notification as read
-      description: Mark a specific notification as read
-      operationId: markNotificationAsRead
+      operationId: notifications.markAsRead
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - id
+              required: [id]
               properties:
                 id:
-                  type: integer
-                  description: Notification ID
-                  example: 1
+                  type: number
       responses:
         '200':
           description: Notification marked as read
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /markAllNotificationsAsRead:
-    post:
-      tags:
-        - Notifications
-      summary: Mark all notifications as read
-      description: Mark all notifications as read for a user
-      operationId: markAllNotificationsAsRead
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - userId
-              properties:
-                userId:
-                  type: string
-                  description: User ID
-                  example: "user-123"
-      responses:
-        '200':
-          description: All notifications marked as read
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /createPushSubscription:
-    post:
-      tags:
-        - Notifications
-      summary: Create push subscription
-      description: Create a push notification subscription for a user
-      operationId: createPushSubscription
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreatePushSubscriptionRequest'
-            example:
-              userId: "user-123"
-              endpoint: "https://fcm.googleapis.com/fcm/send/..."
-              p256dh: "BEl62iUYgUivxIkv69gVi0uiUV3Nh1NeAx5f-VPFqiVxldX2ZbHjv1sSN3Q8vT81u2L5WksV52ZUn1AnDQACYaT8"
-              auth: "tBH1JIzpjpVEuYLz81StHw=="
-      responses:
-        '200':
-          description: Push subscription created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PushSubscription'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getPushSubscriptions:
-    get:
-      tags:
-        - Notifications
-      summary: Get push subscriptions for a user
-      description: Retrieve all push subscriptions for a specific user
-      operationId: getPushSubscriptions
-      parameters:
-        - name: userId
-          in: query
-          required: true
-          description: User ID
-          schema:
-            type: string
-            example: "user-123"
-      responses:
-        '200':
-          description: List of push subscriptions
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PushSubscription'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /deletePushSubscription:
-    post:
-      tags:
-        - Notifications
-      summary: Delete push subscription
-      description: Delete a push notification subscription
-      operationId: deletePushSubscription
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - id
-              properties:
-                id:
-                  type: string
-                  description: Subscription ID
-                  example: "sub-123"
-      responses:
-        '200':
-          description: Push subscription deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /sendPushNotification:
-    post:
-      tags:
-        - Notifications
-      summary: Send push notification
-      description: Send a test push notification to a user
-      operationId: sendPushNotification
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendPushNotificationRequest'
-            example:
-              userId: "user-123"
-              message: "Test notification message"
-      responses:
-        '200':
-          description: Push notification sent successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /signIn:
-    post:
-      tags:
-        - Authentication
-      summary: Sign in user
-      description: Authenticate user with email and password
-      operationId: signIn
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SignInRequest'
-            example:
-              email: "user@example.com"
-              password: "password123"
-      responses:
-        '200':
-          description: User signed in successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /signUp:
-    post:
-      tags:
-        - Authentication
-      summary: Sign up user
-      description: Create a new user account
-      operationId: signUp
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SignUpRequest'
-            example:
-              email: "user@example.com"
-              password: "password123"
-              name: "John Doe"
-      responses:
-        '200':
-          description: User created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /signOut:
-    post:
-      tags:
-        - Authentication
-      summary: Sign out user
-      description: Sign out the current user
-      operationId: signOut
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              example: {}
-      responses:
-        '200':
-          description: User signed out successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getCurrentUser:
-    get:
-      tags:
-        - Authentication
-      summary: Get current user
-      description: Get the current authenticated user
-      operationId: getCurrentUser
-      responses:
-        '200':
-          description: Current user information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /getSession:
-    get:
-      tags:
-        - Authentication
-      summary: Get current session
-      description: Get the current user session
-      operationId: getSession
-      responses:
-        '200':
-          description: Current session information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthSession'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /isAuthenticated:
-    get:
-      tags:
-        - Authentication
-      summary: Check authentication status
-      description: Check if the user is currently authenticated
-      operationId: isAuthenticated
-      responses:
-        '200':
-          description: Authentication status
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  authenticated:
-                    type: boolean
-                    example: true
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
 components:
   schemas:
@@ -919,501 +413,83 @@ components:
       properties:
         id:
           type: string
-          description: Unique target identifier
-          example: "cmfzxab7p0003rrntljv7rhka"
         name:
           type: string
-          description: Human-readable target name
-          example: "Google DNS"
         address:
           type: string
-          description: Target URL or IP address
-          example: "https://8.8.8.8"
-        speedTestResults:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpeedTestResult'
-          description: Speed test results for this target
-        alertRules:
-          type: array
-          items:
-            $ref: '#/components/schemas/AlertRule'
-          description: Alert rules for this target
-      required:
-        - id
-        - name
-        - address
-
-    CreateTargetRequest:
-      type: object
-      properties:
-        name:
+          format: uri
+        ownerId:
           type: string
-          description: Target name
-          example: "Google DNS"
-        address:
-          type: string
-          description: Target URL or IP address
-          example: "https://8.8.8.8"
-      required:
-        - name
-        - address
-
-    UpdateTargetRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Target ID
-          example: "cmfzxab7p0003rrntljv7rhka"
-        name:
-          type: string
-          description: Updated target name
-          example: "Updated Target Name"
-        address:
-          type: string
-          description: Updated target address
-          example: "https://1.1.1.1"
-      required:
-        - id
 
     SpeedTestResult:
       type: object
       properties:
         id:
-          type: integer
-          description: Result ID
-          example: 1
+          type: string
+        targetId:
+          type: string
         ping:
           type: number
-          description: Ping latency in milliseconds
-          example: 15.5
+          nullable: true
         download:
           type: number
-          description: Download speed in Mbps
-          example: 95.2
+          nullable: true
+        upload:
+          type: number
+          nullable: true
         status:
           type: string
           enum: [SUCCESS, FAILURE]
-          description: Test status
-          example: "SUCCESS"
         error:
           type: string
-          description: Error message if test failed
-          example: null
+        timestamp:
+          type: string
+          format: date-time
         createdAt:
           type: string
           format: date-time
-          description: Test timestamp
-          example: "2024-01-15T10:30:00Z"
-      required:
-        - id
-        - status
-        - createdAt
-
-    RunSpeedTestRequest:
-      type: object
-      properties:
-        targetId:
-          type: string
-          description: Target ID
-          example: "cmfzxab7p0003rrntljv7rhka"
-        timeout:
-          type: integer
-          description: Test timeout in milliseconds
-          example: 30000
-      required:
-        - targetId
-
-    StartMonitoringRequest:
-      type: object
-      properties:
-        targetId:
-          type: string
-          description: Target ID
-          example: "cmfzxab7p0003rrntljv7rhka"
-        intervalMs:
-          type: integer
-          description: Monitoring interval in milliseconds
-          example: 30000
-      required:
-        - targetId
-        - intervalMs
 
     AlertRule:
       type: object
       properties:
         id:
-          type: integer
-          description: Alert rule ID
-          example: 1
+          type: number
         name:
           type: string
-          description: Rule name
-          example: "High Ping Alert"
-        metric:
-          type: string
-          enum: [ping, download]
-          description: Metric to monitor
-          example: "ping"
-        condition:
-          type: string
-          enum: [GREATER_THAN, LESS_THAN]
-          description: Comparison condition
-          example: "GREATER_THAN"
-        threshold:
-          type: number
-          description: Alert threshold value
-          example: 100
-        enabled:
-          type: boolean
-          description: Whether the rule is enabled
-          example: true
-      required:
-        - id
-        - name
-        - metric
-        - condition
-        - threshold
-        - enabled
-
-    CreateAlertRuleRequest:
-      type: object
-      properties:
         targetId:
           type: string
-          description: Target ID
-          example: "cmfzxab7p0003rrntljv7rhka"
-        name:
-          type: string
-          description: Rule name
-          example: "High Ping Alert"
         metric:
           type: string
           enum: [ping, download]
-          description: Metric to monitor
-          example: "ping"
         condition:
           type: string
           enum: [GREATER_THAN, LESS_THAN]
-          description: Comparison condition
-          example: "GREATER_THAN"
         threshold:
           type: number
-          description: Alert threshold value
-          example: 100
-      required:
-        - targetId
-        - name
-        - metric
-        - condition
-        - threshold
-
-    UpdateAlertRuleRequest:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Alert rule ID
-          example: 1
-        name:
-          type: string
-          description: Updated rule name
-          example: "Updated Alert Rule"
-        metric:
-          type: string
-          enum: [ping, download]
-          description: Updated metric
-          example: "ping"
-        condition:
-          type: string
-          enum: [GREATER_THAN, LESS_THAN]
-          description: Updated condition
-          example: "GREATER_THAN"
-        threshold:
-          type: number
-          description: Updated threshold
-          example: 150
-      required:
-        - id
-
-    Incident:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Incident ID
-          example: 1
-        timestamp:
-          type: string
-          format: date-time
-          description: Incident timestamp
-          example: "2024-01-15T10:30:00Z"
-        type:
-          type: string
-          enum: [OUTAGE, ALERT]
-          description: Incident type
-          example: "ALERT"
-        description:
-          type: string
-          description: Incident description
-          example: "Ping exceeded threshold of 100ms"
-        resolved:
+        enabled:
           type: boolean
-          description: Whether incident is resolved
-          example: false
-      required:
-        - id
-        - timestamp
-        - type
-        - description
-        - resolved
 
     Notification:
       type: object
       properties:
         id:
-          type: integer
-          description: Notification ID
-          example: 1
+          type: number
         message:
           type: string
-          description: Notification message
-          example: "High ping detected on Google DNS"
         sentAt:
           type: string
           format: date-time
-          description: Notification timestamp
-          example: "2024-01-15T10:30:00Z"
         read:
           type: boolean
-          description: Whether notification has been read
-          example: false
-      required:
-        - id
-        - message
-        - sentAt
-        - read
-
-    PushSubscription:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Subscription ID
-          example: "sub-123"
-        endpoint:
-          type: string
-          description: Push service endpoint
-          example: "https://fcm.googleapis.com/fcm/send/..."
-        p256dh:
-          type: string
-          description: P256DH public key
-          example: "BEl62iUYgUivxIkv69gVi0uiUV3Nh1NeAx5f-VPFqiVxldX2ZbHjv1sSN3Q8vT81u2L5WksV52ZUn1AnDQACYaT8"
-        auth:
-          type: string
-          description: Auth secret
-          example: "tBH1JIzpjpVEuYLz81StHw=="
-      required:
-        - id
-        - endpoint
-        - p256dh
-        - auth
-
-    CreatePushSubscriptionRequest:
-      type: object
-      properties:
         userId:
           type: string
-          description: User ID
-          example: "user-123"
-        endpoint:
-          type: string
-          description: Push service endpoint
-          example: "https://fcm.googleapis.com/fcm/send/..."
-        p256dh:
-          type: string
-          description: P256DH public key
-          example: "BEl62iUYgUivxIkv69gVi0uiUV3Nh1NeAx5f-VPFqiVxldX2ZbHjv1sSN3Q8vT81u2L5WksV52ZUn1AnDQACYaT8"
-        auth:
-          type: string
-          description: Auth secret
-          example: "tBH1JIzpjpVEuYLz81StHw=="
-      required:
-        - userId
-        - endpoint
-        - p256dh
-        - auth
 
-    SendPushNotificationRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          description: User ID
-          example: "user-123"
-        message:
-          type: string
-          description: Notification message
-          example: "Test notification message"
-      required:
-        - userId
-        - message
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
 
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          description: User ID
-          example: "user-123"
-        email:
-          type: string
-          format: email
-          description: User email
-          example: "user@example.com"
-        name:
-          type: string
-          description: User name
-          example: "John Doe"
-      required:
-        - id
-        - email
+security:
+  - cookieAuth: []
 
-    AuthSession:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Session ID
-          example: "session-123"
-        userId:
-          type: string
-          description: User ID
-          example: "user-123"
-        expiresAt:
-          type: string
-          format: date-time
-          description: Session expiration time
-          example: "2024-01-16T10:30:00Z"
-      required:
-        - id
-        - userId
-        - expiresAt
-
-    SignInRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: User email
-          example: "user@example.com"
-        password:
-          type: string
-          description: User password
-          example: "password123"
-      required:
-        - email
-        - password
-
-    SignUpRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: User email
-          example: "user@example.com"
-        password:
-          type: string
-          description: User password
-          example: "password123"
-        name:
-          type: string
-          description: User name
-          example: "John Doe"
-      required:
-        - email
-        - password
-
-    AuthResponse:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/User'
-        session:
-          $ref: '#/components/schemas/AuthSession'
-      required:
-        - user
-        - session
-
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error message
-          example: "Target not found"
-        code:
-          type: string
-          description: Error code
-          example: "TARGET_NOT_FOUND"
-        details:
-          type: object
-          description: Additional error details
-      required:
-        - error
-
-  responses:
-    BadRequest:
-      description: Bad request - invalid input data
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "Invalid input data"
-            code: "VALIDATION_ERROR"
-
-    Unauthorized:
-      description: Unauthorized - authentication required
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "Authentication required"
-            code: "UNAUTHORIZED"
-
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "Target not found"
-            code: "NOT_FOUND"
-
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "Internal server error"
-            code: "INTERNAL_ERROR"
-
-tags:
-  - name: Targets
-    description: Target management operations
-  - name: Monitoring
-    description: Speed testing and monitoring operations
-  - name: Alerts
-    description: Alert rule and incident management
-  - name: Notifications
-    description: Push notification management
-  - name: Authentication
-    description: User authentication and session management

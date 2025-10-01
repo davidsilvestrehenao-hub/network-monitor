@@ -10,7 +10,7 @@ This project now supports **dynamic service configuration** through JSON files, 
 bun run config:list
 # or
 bun run scripts/switch-config.ts list
-```
+```text
 
 ### Switch Configuration
 
@@ -18,7 +18,7 @@ bun run scripts/switch-config.ts list
 bun run config:switch all-concrete.json
 # or
 bun run scripts/switch-config.ts switch all-concrete.json
-```
+```text
 
 ### Show Current Configuration
 
@@ -26,7 +26,7 @@ bun run scripts/switch-config.ts switch all-concrete.json
 bun run config:current
 # or
 bun run scripts/switch-config.ts current
-```
+```text
 
 ### Run Configuration Demo
 
@@ -34,7 +34,7 @@ bun run scripts/switch-config.ts current
 bun run config:demo
 # or
 bun run scripts/config-demo.ts
-```
+```text
 
 ## 📁 Configuration Library
 
@@ -75,7 +75,7 @@ bun run config:switch database-testing.json
 
 # Or manually copy configurations
 cp configs/auth-mock-only.json service-config.json
-```
+```text
 
 ### Testing Workflow
 
@@ -87,7 +87,7 @@ bun run test
 # Run integration tests with specific services
 bun run config:switch database-testing.json
 bun run test
-```
+```text
 
 ### Production Workflow
 
@@ -95,7 +95,7 @@ bun run test
 # Deploy with all concrete services
 bun run config:switch all-concrete.json
 bun run build:prod
-```
+```text
 
 ## 🛠️ Creating Custom Configurations
 
@@ -124,6 +124,7 @@ bun run build:prod
    ```
 
 3. **Switch to your configuration**:
+
    ```bash
    bun run config:switch my-custom.json
    ```
@@ -156,7 +157,7 @@ bun run build:prod
     }
   }
 }
-```
+```text
 
 ## 🎯 Benefits
 
@@ -188,7 +189,7 @@ bun run dev
 # Load active configuration (default behavior)
 export NODE_ENV=active
 bun run dev
-```
+```text
 
 ### Programmatic Loading
 
@@ -204,6 +205,6 @@ const container = await createContainerWithEnvironment("active");
 // Load custom file
 process.env.SERVICE_CONFIG = "configs/my-custom.json";
 const container = await createContainerWithEnvironment("active");
-```
+```text
 
 This system makes it incredibly easy to switch between different service implementations for development, testing, and production scenarios!

@@ -1,55 +1,81 @@
 {
   "info": {
-    "name": "Network Monitor API",
-    "description": "PWA Connection Monitor API - Real-time internet connection monitoring with charts and alerts",
+    "name": "Network Monitor API (tRPC)",
+    "description": "tRPC-based API for monitoring internet connections",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "1.0.0"
+    "_exporter_id": "network-monitor"
   },
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:3000",
-      "type": "string"
-    },
-    {
-      "key": "target_id",
-      "value": "cmfzxab7p0003rrntljv7rhka",
-      "type": "string"
-    },
-    {
-      "key": "user_id",
-      "value": "user-123",
-      "type": "string"
-    },
-    {
-      "key": "subscription_id",
-      "value": "sub-123",
-      "type": "string"
-    }
-  ],
   "item": [
     {
-      "name": "Targets",
-      "description": "Target management endpoints",
+      "name": "Health",
       "item": [
         {
-          "name": "Get Targets",
+          "name": "Hello",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getTargets",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getTargets"]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"World\"\n}"
             },
-            "description": "Get all monitoring targets"
-          },
-          "response": []
+            "url": {
+              "raw": "{{baseUrl}}/hello",
+              "host": ["{{baseUrl}}"],
+              "path": ["hello"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Targets",
+      "item": [
+        {
+          "name": "Get All Targets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/targets.getAll",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.getAll"]
+            }
+          }
+        },
+        {
+          "name": "Get Target By ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"target-123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/targets.getById",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.getById"]
+            }
+          }
         },
         {
           "name": "Create Target",
@@ -66,39 +92,11 @@
               "raw": "{\n  \"name\": \"Google DNS\",\n  \"address\": \"https://8.8.8.8\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/prpc/createTarget",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "createTarget"]
-            },
-            "description": "Create a new monitoring target"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Target",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getTarget?id={{target_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getTarget"],
-              "query": [
-                {
-                  "key": "id",
-                  "value": "{{target_id}}",
-                  "description": "Target ID"
-                }
-              ]
-            },
-            "description": "Get a specific target by ID"
-          },
-          "response": []
+              "raw": "{{baseUrl}}/targets.create",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.create"]
+            }
+          }
         },
         {
           "name": "Update Target",
@@ -112,16 +110,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"{{target_id}}\",\n  \"name\": \"Updated Target Name\",\n  \"address\": \"https://1.1.1.1\"\n}"
+              "raw": "{\n  \"id\": \"target-123\",\n  \"name\": \"Updated Name\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/prpc/updateTarget",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "updateTarget"]
-            },
-            "description": "Update an existing target"
-          },
-          "response": []
+              "raw": "{{baseUrl}}/targets.update",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.update"]
+            }
+          }
         },
         {
           "name": "Delete Target",
@@ -135,95 +131,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"{{target_id}}\"\n}"
+              "raw": "{\n  \"id\": \"target-123\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/prpc/deleteTarget",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "deleteTarget"]
-            },
-            "description": "Delete a target"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Monitoring",
-      "description": "Monitoring and speed test endpoints",
-      "item": [
-        {
-          "name": "Get Target Results",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getTargetResults?targetId={{target_id}}&limit=10",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getTargetResults"],
-              "query": [
-                {
-                  "key": "targetId",
-                  "value": "{{target_id}}",
-                  "description": "Target ID"
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "description": "Number of results to return (optional)"
-                }
-              ]
-            },
-            "description": "Get speed test results for a target"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Active Targets",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getActiveTargets",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getActiveTargets"]
-            },
-            "description": "Get currently active monitoring targets"
-          },
-          "response": []
-        },
-        {
-          "name": "Run Speed Test",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"targetId\": \"{{target_id}}\",\n  \"timeout\": 30000\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/runSpeedTest",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "runSpeedTest"]
-            },
-            "description": "Run a speed test for a target"
-          },
-          "response": []
+              "raw": "{{baseUrl}}/targets.delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.delete"]
+            }
+          }
         },
         {
           "name": "Start Monitoring",
@@ -237,16 +152,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"targetId\": \"{{target_id}}\",\n  \"intervalMs\": 30000\n}"
+              "raw": "{\n  \"targetId\": \"target-123\",\n  \"intervalMs\": 30000\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/prpc/startMonitoring",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "startMonitoring"]
-            },
-            "description": "Start monitoring a target"
-          },
-          "response": []
+              "raw": "{{baseUrl}}/targets.startMonitoring",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.startMonitoring"]
+            }
+          }
         },
         {
           "name": "Stop Monitoring",
@@ -260,394 +173,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"targetId\": \"{{target_id}}\"\n}"
+              "raw": "{\n  \"targetId\": \"target-123\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/prpc/stopMonitoring",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "stopMonitoring"]
-            },
-            "description": "Stop monitoring a target"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Alerts",
-      "description": "Alert management endpoints",
-      "item": [
-        {
-          "name": "Create Alert Rule",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"targetId\": \"{{target_id}}\",\n  \"name\": \"High Ping Alert\",\n  \"metric\": \"ping\",\n  \"condition\": \"GREATER_THAN\",\n  \"threshold\": 100\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/createAlertRule",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "createAlertRule"]
-            },
-            "description": "Create a new alert rule"
-          },
-          "response": []
+              "raw": "{{baseUrl}}/targets.stopMonitoring",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.stopMonitoring"]
+            }
+          }
         },
         {
-          "name": "Get Alert Rules",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getAlertRules?targetId={{target_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getAlertRules"],
-              "query": [
-                {
-                  "key": "targetId",
-                  "value": "{{target_id}}",
-                  "description": "Target ID"
-                }
-              ]
-            },
-            "description": "Get alert rules for a target"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Alert Rule",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 1,\n  \"name\": \"Updated Alert Rule\",\n  \"threshold\": 150\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/updateAlertRule",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "updateAlertRule"]
-            },
-            "description": "Update an alert rule"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Alert Rule",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 1\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/deleteAlertRule",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "deleteAlertRule"]
-            },
-            "description": "Delete an alert rule"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Incidents",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getIncidents?targetId={{target_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getIncidents"],
-              "query": [
-                {
-                  "key": "targetId",
-                  "value": "{{target_id}}",
-                  "description": "Target ID"
-                }
-              ]
-            },
-            "description": "Get incidents for a target"
-          },
-          "response": []
-        },
-        {
-          "name": "Resolve Incident",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 1\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/resolveIncident",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "resolveIncident"]
-            },
-            "description": "Resolve an incident"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Notifications",
-      "description": "Notification management endpoints",
-      "item": [
-        {
-          "name": "Get Notifications",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getNotifications?userId={{user_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getNotifications"],
-              "query": [
-                {
-                  "key": "userId",
-                  "value": "{{user_id}}",
-                  "description": "User ID"
-                }
-              ]
-            },
-            "description": "Get notifications for a user"
-          },
-          "response": []
-        },
-        {
-          "name": "Mark Notification as Read",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 1\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/markNotificationAsRead",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "markNotificationAsRead"]
-            },
-            "description": "Mark a notification as read"
-          },
-          "response": []
-        },
-        {
-          "name": "Mark All Notifications as Read",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{user_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/markAllNotificationsAsRead",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "markAllNotificationsAsRead"]
-            },
-            "description": "Mark all notifications as read for a user"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Push Subscription",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{user_id}}\",\n  \"endpoint\": \"https://fcm.googleapis.com/fcm/send/...\",\n  \"p256dh\": \"BEl62iUYgUivxIkv69gVi0uiUV3Nh1NeAx5f-VPFqiVxldX2ZbHjv1sSN3Q8vT81u2L5WksV52ZUn1AnDQACYaT8\",\n  \"auth\": \"tBH1JIzpjpVEuYLz81StHw==\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/createPushSubscription",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "createPushSubscription"]
-            },
-            "description": "Create a push notification subscription"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Push Subscriptions",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getPushSubscriptions?userId={{user_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getPushSubscriptions"],
-              "query": [
-                {
-                  "key": "userId",
-                  "value": "{{user_id}}",
-                  "description": "User ID"
-                }
-              ]
-            },
-            "description": "Get push subscriptions for a user"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Push Subscription",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": \"{{subscription_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/deletePushSubscription",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "deletePushSubscription"]
-            },
-            "description": "Delete a push subscription"
-          },
-          "response": []
-        },
-        {
-          "name": "Send Push Notification",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{user_id}}\",\n  \"message\": \"Test notification message\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/sendPushNotification",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "sendPushNotification"]
-            },
-            "description": "Send a test push notification"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Authentication",
-      "description": "Authentication endpoints",
-      "item": [
-        {
-          "name": "Sign In",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/signIn",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "signIn"]
-            },
-            "description": "Sign in with email and password"
-          },
-          "response": []
-        },
-        {
-          "name": "Sign Up",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"John Doe\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/prpc/signUp",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "signUp"]
-            },
-            "description": "Create a new user account"
-          },
-          "response": []
-        },
-        {
-          "name": "Sign Out",
+          "name": "Get Active Targets",
           "request": {
             "method": "POST",
             "header": [
@@ -661,72 +197,225 @@
               "raw": "{}"
             },
             "url": {
-              "raw": "{{base_url}}/api/prpc/signOut",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "signOut"]
-            },
-            "description": "Sign out the current user"
-          },
-          "response": []
-        },
+              "raw": "{{baseUrl}}/targets.getActiveTargets",
+              "host": ["{{baseUrl}}"],
+              "path": ["targets.getActiveTargets"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Speed Tests",
+      "item": [
         {
-          "name": "Get Current User",
+          "name": "Get Results By Target ID",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getCurrentUser",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getCurrentUser"]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetId\": \"target-123\",\n  \"limit\": 50\n}"
             },
-            "description": "Get the current authenticated user"
-          },
-          "response": []
+            "url": {
+              "raw": "{{baseUrl}}/speedTests.getByTargetId",
+              "host": ["{{baseUrl}}"],
+              "path": ["speedTests.getByTargetId"]
+            }
+          }
         },
         {
-          "name": "Get Session",
+          "name": "Get Latest Result",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/getSession",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "getSession"]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetId\": \"target-123\"\n}"
             },
-            "description": "Get the current session"
-          },
-          "response": []
+            "url": {
+              "raw": "{{baseUrl}}/speedTests.getLatest",
+              "host": ["{{baseUrl}}"],
+              "path": ["speedTests.getLatest"]
+            }
+          }
         },
         {
-          "name": "Is Authenticated",
+          "name": "Run Speed Test",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{base_url}}/api/prpc/isAuthenticated",
-              "host": ["{{base_url}}"],
-              "path": ["api", "prpc", "isAuthenticated"]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetId\": \"target-123\",\n  \"target\": \"https://google.com\"\n}"
             },
-            "description": "Check if user is authenticated"
-          },
-          "response": []
+            "url": {
+              "raw": "{{baseUrl}}/speedTests.runTest",
+              "host": ["{{baseUrl}}"],
+              "path": ["speedTests.runTest"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alert Rules",
+      "item": [
+        {
+          "name": "Get Rules By Target ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetId\": \"target-123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alertRules.getByTargetId",
+              "host": ["{{baseUrl}}"],
+              "path": ["alertRules.getByTargetId"]
+            }
+          }
+        },
+        {
+          "name": "Create Alert Rule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"High Latency Alert\",\n  \"targetId\": \"target-123\",\n  \"metric\": \"ping\",\n  \"condition\": \"GREATER_THAN\",\n  \"threshold\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alertRules.create",
+              "host": ["{{baseUrl}}"],
+              "path": ["alertRules.create"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Alert Rule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"enabled\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alertRules.toggleEnabled",
+              "host": ["{{baseUrl}}"],
+              "path": ["alertRules.toggleEnabled"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Unread Notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications.getUnread",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications.getUnread"]
+            }
+          }
+        },
+        {
+          "name": "Mark As Read",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications.markAsRead",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications.markAsRead"]
+            }
+          }
+        },
+        {
+          "name": "Mark All As Read",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications.markAllAsRead",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications.markAllAsRead"]
+            }
+          }
         }
       ]
     }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/trpc",
+      "type": "string"
+    }
   ]
 }
+
