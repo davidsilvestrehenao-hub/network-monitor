@@ -32,7 +32,7 @@ export interface SpeedTestResultQuery {
 // Repository interface
 export interface ISpeedTestResultRepository {
   // Query methods
-  findById(id: number): Promise<SpeedTestResult | null>;
+  findById(id: string): Promise<SpeedTestResult | null>;
   findByTargetId(targetId: string, limit?: number): Promise<SpeedTestResult[]>;
   findLatestByTargetId(targetId: string): Promise<SpeedTestResult | null>;
   findByQuery(query: SpeedTestResultQuery): Promise<SpeedTestResult[]>;
@@ -42,10 +42,10 @@ export interface ISpeedTestResultRepository {
   // Command methods
   create(data: CreateSpeedTestResultData): Promise<SpeedTestResult>;
   update(
-    id: number,
+    id: string,
     data: Partial<CreateSpeedTestResultData>
   ): Promise<SpeedTestResult>;
-  delete(id: number): Promise<void>;
+  delete(id: string): Promise<void>;
   deleteByTargetId(targetId: string): Promise<void>;
   deleteOldResults(olderThan: Date): Promise<number>;
 }

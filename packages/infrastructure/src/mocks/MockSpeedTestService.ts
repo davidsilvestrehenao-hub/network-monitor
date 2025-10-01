@@ -59,7 +59,7 @@ export class MockSpeedTestService implements ISpeedTestService {
 
   async runSpeedTest(
     targetAddress: string,
-    config: SpeedTestConfig = {}
+    config?: { timeout?: number }
   ): Promise<SpeedResult> {
     this.logger?.debug("MockSpeedTestService: Running mock speed test", {
       targetAddress,
@@ -143,7 +143,7 @@ export class MockSpeedTestService implements ISpeedTestService {
       targetId: config.targetId,
       ping: pingResult.ping,
       download: speedResult.download,
-      upload: speedResult.upload ?? undefined,
+      upload: speedResult.upload ?? null,
       status:
         pingResult.status === "SUCCESS" && speedResult.status === "SUCCESS"
           ? "SUCCESS"
@@ -255,7 +255,11 @@ export class MockSpeedTestService implements ISpeedTestService {
     // Run tests sequentially for mock (in real implementation, you'd run in parallel)
     for (const targetId of targetIds) {
       try {
-        const result = await this.runComprehensiveTest({ ...config, targetId });
+        const result = await this.runComprehensiveTest({
+          targetId,
+          target: `target-${targetId}`,
+          timeout: config?.timeout,
+        });
         results.push(result);
       } catch (error) {
         this.logger?.error("MockSpeedTestService: Batch test failed", {

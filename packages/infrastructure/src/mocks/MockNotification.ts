@@ -6,7 +6,7 @@ import type {
   MockPushSubscription,
   AlertTriggeredEventData,
   NotificationEventData,
-} from "~/lib/types/mock-types";
+} from "@network-monitor/shared";
 import type {
   Notification,
   CreateNotificationData,

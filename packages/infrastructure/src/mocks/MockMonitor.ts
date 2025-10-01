@@ -58,14 +58,17 @@ export class MockMonitor implements IMonitorService {
     this.logger?.debug("MockMonitor: Running speed test", { config });
 
     // Mock speed test result
+    const now = new Date();
     const result: SpeedTestResult = {
-      id: Date.now(),
+      id: crypto.randomUUID(),
       targetId: config.targetId,
       ping: Math.random() * 100,
       download: Math.random() * 1000,
+      upload: Math.random() * 500,
       status: "SUCCESS",
-      error: null,
-      createdAt: new Date(),
+      error: undefined,
+      createdAt: now.toISOString(),
+      timestamp: now.toISOString(),
     };
 
     await this.speedTestRepository.create({
@@ -89,7 +92,7 @@ export class MockMonitor implements IMonitorService {
 
     const interval = setInterval(async () => {
       try {
-        await this.runSpeedTest({ targetId });
+        await this.runSpeedTest({ targetId, target: `target-${targetId}` });
       } catch (error) {
         this.logger?.error("MockMonitor: Speed test failed", {
           targetId,

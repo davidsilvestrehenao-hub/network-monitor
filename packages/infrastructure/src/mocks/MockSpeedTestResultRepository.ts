@@ -10,7 +10,6 @@ export class MockSpeedTestResultRepository
   implements ISpeedTestResultRepository
 {
   private results: SpeedTestResult[] = [];
-  private nextId = 1;
 
   constructor(private logger?: ILogger) {
     this.seedResults();
@@ -25,19 +24,22 @@ export class MockSpeedTestResultRepository
       const targetId = targets[i % targets.length];
       const isSuccess = Math.random() > 0.1; // 90% success rate
 
+      const timestamp = new Date(now.getTime() - i * 60000);
       this.results.push({
-        id: this.nextId++,
+        id: crypto.randomUUID(),
         ping: isSuccess ? Math.floor(Math.random() * 50) + 10 : null,
         download: isSuccess ? Math.floor(Math.random() * 100) + 50 : null,
+        upload: isSuccess ? Math.floor(Math.random() * 50) + 10 : null,
         status: isSuccess ? "SUCCESS" : "FAILURE",
-        error: isSuccess ? null : "Simulated network error",
-        createdAt: new Date(now.getTime() - i * 60000), // 1 minute intervals
+        error: isSuccess ? undefined : "Simulated network error",
+        createdAt: timestamp.toISOString(),
+        timestamp: timestamp.toISOString(),
         targetId,
       });
     }
   }
 
-  async findById(id: number): Promise<SpeedTestResult | null> {
+  async findById(id: string): Promise<SpeedTestResult | null> {
     this.logger?.debug("MockSpeedTestResultRepository: Finding result by ID", {
       id,
     });
@@ -54,7 +56,7 @@ export class MockSpeedTestResultRepository
     );
     return this.results
       .filter(result => result.targetId === targetId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, limit);
   }
 
@@ -67,7 +69,7 @@ export class MockSpeedTestResultRepository
     );
     const results = this.results
       .filter(result => result.targetId === targetId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return results.length > 0 ? results[0] : null;
   }
@@ -105,7 +107,7 @@ export class MockSpeedTestResultRepository
     }
 
     return filteredResults
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(query.offset || 0, (query.offset || 0) + (query.limit || 100));
   }
 
@@ -115,7 +117,7 @@ export class MockSpeedTestResultRepository
       offset,
     });
     return this.results
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(offset, offset + limit);
   }
 
@@ -129,13 +131,16 @@ export class MockSpeedTestResultRepository
       data,
     });
 
+    const now = new Date();
     const result: SpeedTestResult = {
-      id: this.nextId++,
-      ping: data.ping || null,
-      download: data.download || null,
+      id: crypto.randomUUID(),
+      ping: data.ping ?? null,
+      download: data.download ?? null,
+      upload: data.upload ?? null,
       status: data.status,
-      error: data.error || null,
-      createdAt: new Date(),
+      error: data.error,
+      createdAt: now.toISOString(),
+      timestamp: now.toISOString(),
       targetId: data.targetId,
     };
 
@@ -144,7 +149,7 @@ export class MockSpeedTestResultRepository
   }
 
   async update(
-    id: number,
+    id: string,
     data: Partial<CreateSpeedTestResultData>
   ): Promise<SpeedTestResult> {
     this.logger?.debug("MockSpeedTestResultRepository: Updating result", {
@@ -166,7 +171,7 @@ export class MockSpeedTestResultRepository
     return this.results[resultIndex];
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     this.logger?.debug("MockSpeedTestResultRepository: Deleting result", {
       id,
     });
@@ -193,7 +198,11 @@ export class MockSpeedTestResultRepository
     });
 
     const initialCount = this.results.length;
-    this.results = this.results.filter(result => result.createdAt >= olderThan);
+    const olderThanTime = olderThan.getTime();
+    this.results = this.results.filter(result => {
+      const resultTime = new Date(result.createdAt).getTime();
+      return resultTime >= olderThanTime;
+    });
 
     return initialCount - this.results.length;
   }
@@ -201,7 +210,6 @@ export class MockSpeedTestResultRepository
   // Helper method for testing
   setSeedData(results: SpeedTestResult[]): void {
     this.results = results;
-    this.nextId = Math.max(...results.map(r => r.id), 0) + 1;
   }
 
   // Helper method to get all results for testing
