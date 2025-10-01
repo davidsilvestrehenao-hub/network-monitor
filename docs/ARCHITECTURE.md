@@ -394,7 +394,7 @@ eventBus.on('TARGET_CREATE_REQUESTED', async (data) => {
 
 ### **Container Configuration**
 
-Services are configured via `service-config.json`:
+Services are configured via `service-wiring/` directory:
 
 ```json
 {

@@ -65,7 +65,7 @@ export function registerRESTRoutes(
 
   /**
    * GET /api/targets
-   * Get all targets for the current user
+   * Get all targets (no user filtering)
    */
   app.get("/api/targets", async (c: Context) => {
     if (!monitorService) {
@@ -73,8 +73,8 @@ export function registerRESTRoutes(
     }
 
     try {
-      const userId = getUserId(c.req.header("Authorization"));
-      const targets = await monitorService.getTargets(userId);
+      // Get all targets without user filtering
+      const targets = await monitorService.getAllTargets();
       return c.json(targets);
     } catch (err) {
       context.logger.error("REST: Get targets failed", { error: err });

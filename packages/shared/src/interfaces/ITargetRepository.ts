@@ -1,6 +1,7 @@
 // Import from canonical sources to avoid duplication
 import type { SpeedTestResult } from "./ISpeedTestResultRepository";
 import type { AlertRule } from "./IAlertRuleRepository";
+import type { IUserOwnedRepository } from "./base/IRepository";
 
 // Re-export for convenience
 export type { SpeedTestResult, AlertRule };
@@ -15,6 +16,14 @@ export interface Target {
   alertRules: AlertRule[];
 }
 
+// Basic target data without relations (for repository layer)
+export interface TargetData {
+  id: string;
+  name: string;
+  address: string;
+  ownerId: string;
+}
+
 export interface CreateTargetData {
   name: string;
   address: string;
@@ -26,12 +35,10 @@ export interface UpdateTargetData {
   address?: string;
 }
 
-export interface ITargetRepository {
-  findById(id: string): Promise<Target | null>;
-  findByUserId(userId: string): Promise<Target[]>;
-  create(data: CreateTargetData): Promise<Target>;
-  update(id: string, data: UpdateTargetData): Promise<Target>;
-  delete(id: string): Promise<void>;
-  count(): Promise<number>;
-  getAll(limit?: number, offset?: number): Promise<Target[]>;
+export interface ITargetRepository
+  extends IUserOwnedRepository<TargetData, CreateTargetData, UpdateTargetData> {
+  // Aggregate methods (with relations) - specific to targets
+  findByIdWithRelations(id: string): Promise<Target | null>;
+  findByUserIdWithRelations(userId: string): Promise<Target[]>;
+  getAllWithRelations(limit?: number, offset?: number): Promise<Target[]>;
 }

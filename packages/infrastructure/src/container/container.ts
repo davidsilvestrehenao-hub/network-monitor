@@ -46,7 +46,7 @@ export async function initializeContainer(): Promise<void> {
     // Justification: Dynamic import of path module to avoid browser compatibility issues
     const { join } = await import("path");
     const cwd = process.cwd();
-    const jsonConfigPath = join(cwd, "service-config.json");
+    const jsonConfigPath = join(cwd, "service-wiring/development.json");
     const { existsSync } = await import("fs");
     if (existsSync(jsonConfigPath)) {
       try {
@@ -70,7 +70,7 @@ export async function initializeContainer(): Promise<void> {
   // eslint-disable-next-line no-console
   console.error("❌ No service configuration found! JSON config is required.");
   throw new Error(
-    "Service configuration not found. Please ensure service-config.json exists in the project root."
+    "Service configuration not found. Please ensure service-wiring/development.json exists in the project root."
   );
 }
 
@@ -110,7 +110,7 @@ export async function getAppContext(): Promise<AppContext> {
     // Justification: Dynamic import of path module to avoid browser compatibility issues
     const { join } = await import("path");
     const cwd = process.cwd();
-    const jsonConfigPath = join(cwd, "service-config.json");
+    const jsonConfigPath = join(cwd, "service-wiring/development.json");
     const { existsSync } = await import("fs");
     if (existsSync(jsonConfigPath)) {
       try {

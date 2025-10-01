@@ -212,7 +212,7 @@ You don't need to configure anything!
 
 ## 🚫 What You DON'T Need to Do
 
-- ❌ Don't create `service-config.json` (deprecated)
+- ✅ Use `service-wiring/` directory for all configurations
 - ❌ Don't manually configure services
 - ❌ Don't worry about container initialization
 - ❌ Don't manage database connections manually

@@ -1,34 +1,36 @@
-import type { ILogger, LogContext } from "@network-monitor/shared";
-import { LogLevel } from "@network-monitor/shared";
-
-export { LogLevel };
+import type { ILogger, LogContext, LogLevel } from "@network-monitor/shared";
 
 export class MockLogger implements ILogger {
-  private level: LogLevel = LogLevel.INFO;
+  private level: LogLevel = "info";
+  private context: LogContext = {};
   private logs: Array<{
     level: LogLevel;
     message: string;
     context?: LogContext;
   }> = [];
 
-  constructor(initialLevel: LogLevel = LogLevel.INFO) {
+  constructor(initialLevel: LogLevel = "info") {
     this.level = initialLevel;
   }
 
   debug(message: string, context?: LogContext): void {
-    this.log(LogLevel.DEBUG, message, context);
+    this.log("debug", message, context);
   }
 
   info(message: string, context?: LogContext): void {
-    this.log(LogLevel.INFO, message, context);
+    this.log("info", message, context);
   }
 
   warn(message: string, context?: LogContext): void {
-    this.log(LogLevel.WARN, message, context);
+    this.log("warn", message, context);
   }
 
   error(message: string, context?: LogContext): void {
-    this.log(LogLevel.ERROR, message, context);
+    this.log("error", message, context);
+  }
+
+  fatal(message: string, context?: LogContext): void {
+    this.log("fatal", message, context);
   }
 
   setLevel(level: LogLevel): void {
@@ -39,12 +41,31 @@ export class MockLogger implements ILogger {
     return this.level;
   }
 
+  isLevelEnabled(level: LogLevel): boolean {
+    const levels = { debug: 0, info: 1, warn: 2, error: 3, fatal: 4 };
+    return levels[level] >= levels[this.level];
+  }
+
+  setContext(context: LogContext): void {
+    this.context = { ...this.context, ...context };
+  }
+
+  getContext(): LogContext {
+    return { ...this.context };
+  }
+
+  child(context: LogContext): ILogger {
+    const childLogger = new MockLogger(this.level);
+    childLogger.setContext({ ...this.context, ...context });
+    return childLogger;
+  }
+
   private log(level: LogLevel, message: string, context?: LogContext): void {
-    if (level >= this.level) {
+    if (this.isLevelEnabled(level)) {
       this.logs.push({ level, message, context });
       // Justification: MockLogger implementation - console usage for testing and development
       // eslint-disable-next-line no-console
-      console.log(`[${LogLevel[level]}] ${message}`, context || "");
+      console.log(`[${level.toUpperCase()}] ${message}`, context || "");
     }
   }
 

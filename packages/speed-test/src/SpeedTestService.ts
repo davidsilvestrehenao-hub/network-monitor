@@ -214,7 +214,7 @@ export class SpeedTestService implements ISpeedTestService {
         },
       };
 
-      this.eventBus.emitTyped("COMPREHENSIVE_SPEED_TEST_COMPLETED", {
+      this.eventBus.emit("COMPREHENSIVE_SPEED_TEST_COMPLETED", {
         targetId: config.targetId,
         result: comprehensiveResult,
       });
@@ -226,7 +226,7 @@ export class SpeedTestService implements ISpeedTestService {
         error,
       });
 
-      this.eventBus.emitTyped("COMPREHENSIVE_SPEED_TEST_FAILED", {
+      this.eventBus.emit("COMPREHENSIVE_SPEED_TEST_FAILED", {
         targetId: config.targetId,
         error: error instanceof Error ? error.message : "Unknown error",
       });
@@ -279,7 +279,7 @@ export class SpeedTestService implements ISpeedTestService {
       nextRun: new Date(Date.now() + intervalMs),
     });
 
-    this.eventBus.emitTyped("CONTINUOUS_MONITORING_STARTED", {
+    this.eventBus.emit("CONTINUOUS_MONITORING_STARTED", {
       targetId,
       intervalMs,
     });
@@ -295,7 +295,7 @@ export class SpeedTestService implements ISpeedTestService {
       clearInterval(target.interval);
       this.monitoringTargets.delete(targetId);
 
-      this.eventBus.emitTyped("CONTINUOUS_MONITORING_STOPPED", { targetId });
+      this.eventBus.emit("CONTINUOUS_MONITORING_STOPPED", { targetId });
     }
   }
 
@@ -309,7 +309,7 @@ export class SpeedTestService implements ISpeedTestService {
       target.isPaused = true;
       clearInterval(target.interval);
 
-      this.eventBus.emitTyped("CONTINUOUS_MONITORING_PAUSED", { targetId });
+      this.eventBus.emit("CONTINUOUS_MONITORING_PAUSED", { targetId });
     }
   }
 
@@ -348,7 +348,7 @@ export class SpeedTestService implements ISpeedTestService {
       monitoringTarget.interval = interval;
       monitoringTarget.nextRun = new Date(Date.now() + this.defaultInterval);
 
-      this.eventBus.emitTyped("CONTINUOUS_MONITORING_RESUMED", { targetId });
+      this.eventBus.emit("CONTINUOUS_MONITORING_RESUMED", { targetId });
     }
   }
 
@@ -414,7 +414,7 @@ export class SpeedTestService implements ISpeedTestService {
       results.push(...batchResults);
     }
 
-    this.eventBus.emitTyped("BATCH_SPEED_TESTS_COMPLETED", {
+    this.eventBus.emit("BATCH_SPEED_TESTS_COMPLETED", {
       targetIds,
       results,
     });
@@ -426,7 +426,7 @@ export class SpeedTestService implements ISpeedTestService {
     this.logger.info("SpeedTestService: Starting service");
     this.isServiceRunning = true;
 
-    this.eventBus.emitTyped("SPEED_TEST_SERVICE_STARTED", {});
+    this.eventBus.emit("SPEED_TEST_SERVICE_STARTED", {});
   }
 
   async stop(): Promise<void> {
@@ -440,7 +440,7 @@ export class SpeedTestService implements ISpeedTestService {
 
     this.isServiceRunning = false;
 
-    this.eventBus.emitTyped("SPEED_TEST_SERVICE_STOPPED", {});
+    this.eventBus.emit("SPEED_TEST_SERVICE_STOPPED", {});
   }
 
   isRunning(): boolean {

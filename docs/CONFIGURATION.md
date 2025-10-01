@@ -54,7 +54,7 @@ The `configs/` directory contains various pre-configured scenarios:
 
 ## 🔄 How It Works
 
-1. **Active Configuration**: The system loads from `service-config.json` in the root directory by default
+1. **Active Configuration**: The system loads from `service-wiring/development.json` in the root directory by default
 2. **Easy Switching**: Use `cp` or the switch script to change configurations
 3. **Environment Variables**: Set `SERVICE_CONFIG` to load a specific file
 4. **Automatic Loading**: The container automatically loads the active configuration
@@ -74,7 +74,7 @@ bun run config:switch offline-development.json
 bun run config:switch database-testing.json
 
 # Or manually copy configurations
-cp configs/auth-mock-only.json service-config.json
+cp service-wiring/development.json service-wiring/active.json
 ```text
 
 ### Testing Workflow

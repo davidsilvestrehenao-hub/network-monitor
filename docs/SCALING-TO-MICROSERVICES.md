@@ -229,7 +229,7 @@ export class RabbitMQEventBus implements IEventBus {
 
 ### Step 2: Configuration-Based Switching
 
-**Update `service-config.json`:**
+**Update `service-wiring/production.json`:**
 
 ```json
 {
@@ -249,7 +249,7 @@ export class RabbitMQEventBus implements IEventBus {
 **Container registration:**
 
 ```typescript
-// src/lib/container/service-config.ts
+// src/lib/container/service-wiring.ts
 import { RabbitMQEventBus } from "../services/concrete/RabbitMQEventBus";
 
 export const productionServiceConfig = {

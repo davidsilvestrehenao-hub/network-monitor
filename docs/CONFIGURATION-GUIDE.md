@@ -191,7 +191,7 @@ All microservices currently use automatic environment-based selection:
 
 ### Web App
 
-The web app doesn't use this system because it initializes the container from `service-config.json` (which is a symlink or should be updated to point to the right config).
+The web app uses the standard `service-wiring/` system like all other services.
 
 ## Recommended Patterns
 

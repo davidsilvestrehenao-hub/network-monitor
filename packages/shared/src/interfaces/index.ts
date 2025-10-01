@@ -1,12 +1,13 @@
-// Export all service interfaces
+// Export base interfaces first (for consistency and polymorphism)
+export * from "./base/index.js";
+
+// Export all service interfaces (excluding duplicates from base)
 export * from "./IAlertingService.js";
 export * from "./IAlertRepository.js";
 export * from "./IAlertRuleRepository.js";
 export * from "./IAuthService.js";
 export * from "./IDatabaseService.js";
-export * from "./IEventBus.js";
 export * from "./IIncidentEventRepository.js";
-export * from "./ILogger.js";
 export * from "./IMonitoringScheduler.js";
 export * from "./IMonitoringTargetRepository.js";
 export * from "./IMonitorService.js";

@@ -33,26 +33,93 @@ export class MockMonitor implements IMonitorService {
     this.logger?.debug("MockMonitor: Initialized");
   }
 
+  // Base interface methods
+  async getById(id: string): Promise<Target | null> {
+    return this.getTarget(id);
+  }
+
+  async getAll(): Promise<Target[]> {
+    return this.getAllTargets();
+  }
+
+  async create(data: CreateTargetData): Promise<Target> {
+    return this.createTarget(data);
+  }
+
+  async update(id: string, data: UpdateTargetData): Promise<Target> {
+    return this.updateTarget(id, data);
+  }
+
+  async delete(id: string): Promise<void> {
+    return this.deleteTarget(id);
+  }
+
+  async getByUserId(userId: string): Promise<Target[]> {
+    return this.getTargets(userId);
+  }
+
+  // Observable service methods
+  on<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.on(event, handler);
+  }
+
+  off<T = unknown>(event: string, handler: (data?: T) => void): void {
+    this.eventBus.off(event, handler);
+  }
+
+  emit<T = unknown>(event: string, data?: T): void {
+    this.eventBus.emit(event, data);
+  }
+
+  // Background service methods
+  async start(): Promise<void> {
+    this.logger?.info("MockMonitor: Starting background monitoring");
+  }
+
+  async stop(): Promise<void> {
+    this.logger?.info("MockMonitor: Stopping background monitoring");
+    this.activeTargets.forEach(targetId => {
+      this.stopMonitoring(targetId);
+    });
+  }
+
   async createTarget(data: CreateTargetData): Promise<Target> {
     this.logger?.debug("MockMonitor: Creating target", { data });
-    const target = await this.targetRepository.create(data);
+    const targetData = await this.targetRepository.create(data);
+    // Convert TargetData to Target for service layer
+    const target: Target = {
+      ...targetData,
+      speedTestResults: [],
+      alertRules: [],
+    };
     this.eventBus.emit("TARGET_CREATED", target);
     return target;
   }
 
   async getTarget(id: string): Promise<Target | null> {
     this.logger?.debug("MockMonitor: Getting target", { id });
-    return await this.targetRepository.findById(id);
+    return await this.targetRepository.findByIdWithRelations(id);
   }
 
   async getTargets(userId: string): Promise<Target[]> {
     this.logger?.debug("MockMonitor: Getting targets for user", { userId });
-    return await this.targetRepository.findByUserId(userId);
+    return await this.targetRepository.findByUserIdWithRelations(userId);
+  }
+
+  async getAllTargets(): Promise<Target[]> {
+    this.logger?.debug("MockMonitor: Getting all targets");
+    return await this.targetRepository.getAllWithRelations();
   }
 
   async updateTarget(id: string, data: UpdateTargetData): Promise<Target> {
     this.logger?.debug("MockMonitor: Updating target", { id, data });
-    const target = await this.targetRepository.update(id, data);
+    const targetData = await this.targetRepository.update(id, data);
+    // Convert TargetData to Target for service layer
+    const target: Target = {
+      ...targetData,
+      speedTestResults: [],
+      alertRules: [],
+    };
     this.eventBus.emit("TARGET_UPDATED", target);
     return target;
   }

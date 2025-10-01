@@ -1,7 +1,7 @@
 import type { IAlertingService } from "@network-monitor/shared";
 import type { IAlertRuleRepository } from "@network-monitor/shared";
 import type { IIncidentEventRepository } from "@network-monitor/shared";
-import type { IEventBus, BackendEvents } from "@network-monitor/shared";
+import type { IEventBus } from "@network-monitor/shared";
 import type { ILogger } from "@network-monitor/shared";
 import type {
   AlertRule,
@@ -54,7 +54,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       const rule = await this.alertRuleRepository.create(data);
-      this.eventBus.emitTyped("ALERT_RULE_CREATED", {
+      this.eventBus.emit("ALERT_RULE_CREATED", {
         id: rule.id,
         targetId: rule.targetId,
         rule: rule,
@@ -89,7 +89,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       const rule = await this.alertRuleRepository.update(id, data);
-      this.eventBus.emitTyped("ALERT_RULE_UPDATED", {
+      this.eventBus.emit("ALERT_RULE_UPDATED", {
         id: rule.id,
         rule: rule,
       });
@@ -109,7 +109,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       await this.alertRuleRepository.delete(id);
-      this.eventBus.emitTyped("ALERT_RULE_DELETED", { id });
+      this.eventBus.emit("ALERT_RULE_DELETED", { id });
     } catch (error) {
       this.logger.error("AlertingService: Alert rule deletion failed", {
         error,
@@ -124,7 +124,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       const rule = await this.alertRuleRepository.toggleEnabled(id, enabled);
-      this.eventBus.emitTyped("ALERT_RULE_UPDATED", {
+      this.eventBus.emit("ALERT_RULE_UPDATED", {
         id: rule.id,
         rule: rule,
       });
@@ -151,7 +151,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       await this.incidentEventRepository.resolve(id);
-      this.eventBus.emitTyped("INCIDENT_RESOLVED", {
+      this.eventBus.emit("INCIDENT_RESOLVED", {
         id,
       });
     } catch (error) {
@@ -194,7 +194,7 @@ export class AlertingService implements IAlertingService {
 
     try {
       const incident = await this.incidentEventRepository.create(data);
-      this.eventBus.emitTyped("INCIDENT_CREATED", {
+      this.eventBus.emit("INCIDENT_CREATED", {
         id: incident.id,
         targetId: incident.targetId,
         type: incident.type,
@@ -305,14 +305,14 @@ export class AlertingService implements IAlertingService {
         ruleId: rule.id,
       });
 
-      this.eventBus.emitTyped("ALERT_TRIGGERED", {
+      this.eventBus.emit("ALERT_TRIGGERED", {
         targetId: result.targetId,
         ruleId: rule.id,
         value,
         threshold: rule.threshold,
       });
 
-      this.eventBus.emitTyped("INCIDENT_CREATED", {
+      this.eventBus.emit("INCIDENT_CREATED", {
         id: incident.id,
         targetId: incident.targetId,
         type: incident.type,
@@ -327,27 +327,30 @@ export class AlertingService implements IAlertingService {
     }
   }
 
-  private async handleAlertRuleCreateRequested(
-    data: BackendEvents["ALERT_RULE_CREATE_REQUESTED"]
-  ): Promise<void> {
+  private async handleAlertRuleCreateRequested(data: {
+    targetId: string;
+    rule: unknown;
+  }): Promise<void> {
     await this.createAlertRule(data.rule as CreateAlertRuleData);
   }
 
-  private async handleAlertRuleUpdateRequested(
-    data: BackendEvents["ALERT_RULE_UPDATE_REQUESTED"]
-  ): Promise<void> {
+  private async handleAlertRuleUpdateRequested(data: {
+    id: number;
+    rule: unknown;
+  }): Promise<void> {
     await this.updateAlertRule(data.id, data.rule as UpdateAlertRuleData);
   }
 
-  private async handleAlertRuleDeleteRequested(
-    data: BackendEvents["ALERT_RULE_DELETE_REQUESTED"]
-  ): Promise<void> {
+  private async handleAlertRuleDeleteRequested(data: {
+    id: number;
+  }): Promise<void> {
     await this.deleteAlertRule(data.id);
   }
 
-  private async handleSpeedTestCompleted(
-    data: BackendEvents["SPEED_TEST_COMPLETED"]
-  ): Promise<void> {
+  private async handleSpeedTestCompleted(data: {
+    targetId: string;
+    result: unknown;
+  }): Promise<void> {
     await this.evaluateSpeedTestResult(data.result as SpeedTestResult);
   }
 }

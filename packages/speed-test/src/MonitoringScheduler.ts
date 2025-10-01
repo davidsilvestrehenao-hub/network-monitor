@@ -80,7 +80,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
       this.startTargetMonitoring(config.targetId);
     }
 
-    this.eventBus.emitTyped("MONITORING_TARGET_ADDED", {
+    this.eventBus.emit("MONITORING_TARGET_ADDED", {
       targetId: config.targetId,
       config,
     });
@@ -98,7 +98,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
 
       this.targets.delete(targetId);
 
-      this.eventBus.emitTyped("MONITORING_TARGET_REMOVED", { targetId });
+      this.eventBus.emit("MONITORING_TARGET_REMOVED", { targetId });
     }
   }
 
@@ -124,7 +124,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
         }
       }
 
-      this.eventBus.emitTyped("MONITORING_TARGET_UPDATED", {
+      this.eventBus.emit("MONITORING_TARGET_UPDATED", {
         targetId,
         config: target.config,
       });
@@ -158,7 +158,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
       }
     }
 
-    this.eventBus.emitTyped("MONITORING_SCHEDULER_STARTED", {});
+    this.eventBus.emit("MONITORING_SCHEDULER_STARTED", {});
   }
 
   async stop(): Promise<void> {
@@ -180,7 +180,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
     this.running = false;
     this.paused = false;
 
-    this.eventBus.emitTyped("MONITORING_SCHEDULER_STOPPED", {});
+    this.eventBus.emit("MONITORING_SCHEDULER_STOPPED", {});
   }
 
   pause(): void {
@@ -201,7 +201,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
       }
     }
 
-    this.eventBus.emitTyped("MONITORING_SCHEDULER_PAUSED", {});
+    this.eventBus.emit("MONITORING_SCHEDULER_PAUSED", {});
   }
 
   resume(): void {
@@ -221,7 +221,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
       }
     }
 
-    this.eventBus.emitTyped("MONITORING_SCHEDULER_RESUMED", {});
+    this.eventBus.emit("MONITORING_SCHEDULER_RESUMED", {});
   }
 
   isRunning(): boolean {
@@ -243,7 +243,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
         this.startTargetMonitoring(targetId);
       }
 
-      this.eventBus.emitTyped("MONITORING_TARGET_ENABLED", { targetId });
+      this.eventBus.emit("MONITORING_TARGET_ENABLED", { targetId });
     }
   }
 
@@ -259,7 +259,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
         target.interval = undefined;
       }
 
-      this.eventBus.emitTyped("MONITORING_TARGET_DISABLED", { targetId });
+      this.eventBus.emit("MONITORING_TARGET_DISABLED", { targetId });
     }
   }
 
@@ -275,7 +275,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
         target.interval = undefined;
       }
 
-      this.eventBus.emitTyped("MONITORING_TARGET_PAUSED", { targetId });
+      this.eventBus.emit("MONITORING_TARGET_PAUSED", { targetId });
     }
   }
 
@@ -290,7 +290,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
         this.startTargetMonitoring(targetId);
       }
 
-      this.eventBus.emitTyped("MONITORING_TARGET_RESUMED", { targetId });
+      this.eventBus.emit("MONITORING_TARGET_RESUMED", { targetId });
     }
   }
 
@@ -462,7 +462,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
       this.successfulRuns++;
       this.totalRunTime += Date.now() - startTime;
 
-      this.eventBus.emitTyped("MONITORING_TEST_SUCCESS", {
+      this.eventBus.emit("MONITORING_TEST_SUCCESS", {
         targetId,
         duration: Date.now() - startTime,
       });
@@ -500,7 +500,7 @@ export class MonitoringScheduler implements IMonitoringScheduler {
         }
       }
 
-      this.eventBus.emitTyped("MONITORING_TEST_FAILURE", {
+      this.eventBus.emit("MONITORING_TEST_FAILURE", {
         targetId,
         error: error instanceof Error ? error.message : "Unknown error",
         failureCount: target.failureCount,

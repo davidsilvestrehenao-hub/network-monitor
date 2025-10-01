@@ -1,4 +1,4 @@
-import { LogLevel } from "@network-monitor/shared";
+import type { LogLevel } from "@network-monitor/shared";
 
 /**
  * Frontend-specific configuration
@@ -43,7 +43,7 @@ export interface FrontendConfig {
 // Default configuration
 export const defaultFrontendConfig: FrontendConfig = {
   logging: {
-    level: LogLevel.INFO,
+    level: "info",
     enableConsole: true,
     enablePerformanceLogging: false,
   },
@@ -71,7 +71,7 @@ export const defaultFrontendConfig: FrontendConfig = {
 export const developmentFrontendConfig: FrontendConfig = {
   ...defaultFrontendConfig,
   logging: {
-    level: LogLevel.DEBUG,
+    level: "debug",
     enableConsole: true,
     enablePerformanceLogging: true,
   },
@@ -90,7 +90,7 @@ export const developmentFrontendConfig: FrontendConfig = {
 export const productionFrontendConfig: FrontendConfig = {
   ...defaultFrontendConfig,
   logging: {
-    level: LogLevel.WARN,
+    level: "warn",
     enableConsole: false,
     enablePerformanceLogging: false,
   },

@@ -158,7 +158,7 @@ Created `scripts/test-logging.ts` to verify the logging implementation:
 
 ### Configuration
 
-- `src/lib/container/service-config.ts` - Updated to use Winston
+- `src/lib/container/service-wiring.ts` - Updated to use Winston
 - `configs/logging-winston.json` - Winston configuration
 - `configs/logging-console.json` - Console configuration
 

@@ -1,1 +1,1 @@
-export { LoggerService, LogLevel } from "./LoggerService.js";
+export { LoggerService } from "./LoggerService.js";

@@ -1,11 +1,6 @@
 import type {
   IAPIClient,
-  AlertRuleData,
-  Incident,
-  Notification,
-  PushSubscription,
   TestNotificationData,
-  User,
   AuthSession,
 } from "../interfaces/IAPIClient";
 import type {
@@ -14,6 +9,12 @@ import type {
   UpdateTargetData,
   SpeedTestResult,
   AlertRule,
+  CreateAlertRuleData,
+  UpdateAlertRuleData,
+  IncidentEvent,
+  Notification,
+  PushSubscription,
+  User,
 } from "@network-monitor/shared";
 import { trpc } from "~/lib/trpc";
 
@@ -102,7 +103,7 @@ export class APIClient implements IAPIClient {
   }
 
   // Alert operations
-  async createAlertRule(data: AlertRuleData): Promise<AlertRule> {
+  async createAlertRule(data: CreateAlertRuleData): Promise<AlertRule> {
     const result = await trpc.alertRules.create.mutate(data);
     if (!result) throw new Error("Failed to create alert rule");
     return result as unknown as AlertRule;
@@ -115,7 +116,7 @@ export class APIClient implements IAPIClient {
 
   async updateAlertRule(
     id: number,
-    data: Partial<AlertRuleData>
+    data: UpdateAlertRuleData
   ): Promise<AlertRule> {
     const result = await trpc.alertRules.update.mutate({ id, ...data });
     if (!result) throw new Error("Failed to update alert rule");
@@ -126,7 +127,7 @@ export class APIClient implements IAPIClient {
     await trpc.alertRules.delete.mutate({ id });
   }
 
-  async getIncidents(targetId: string): Promise<Incident[]> {
+  async getIncidents(targetId: string): Promise<IncidentEvent[]> {
     const result = await trpc.incidents.getByTargetId.query({ targetId });
     return (result || []).map(
       (incident: {
@@ -138,11 +139,17 @@ export class APIClient implements IAPIClient {
         targetId: string;
         ruleId?: number;
       }) => ({
-        ...incident,
+        id: incident.id,
         timestamp:
-          typeof incident.timestamp === "string"
+          incident.timestamp instanceof Date
             ? incident.timestamp
-            : incident.timestamp.toISOString(),
+            : new Date(incident.timestamp),
+        type: incident.type,
+        description: incident.description,
+        resolved: incident.resolved,
+        targetId: incident.targetId,
+        ruleId: incident.ruleId,
+        triggeredByRule: null, // Will be populated by the backend
       })
     );
   }
@@ -162,11 +169,14 @@ export class APIClient implements IAPIClient {
         read: boolean;
         userId: string;
       }) => ({
-        ...notification,
+        id: notification.id,
+        message: notification.message,
         sentAt:
-          typeof notification.sentAt === "string"
+          notification.sentAt instanceof Date
             ? notification.sentAt
-            : notification.sentAt.toISOString(),
+            : new Date(notification.sentAt),
+        read: notification.read,
+        userId: notification.userId,
       })
     );
   }
@@ -215,9 +225,13 @@ export class APIClient implements IAPIClient {
   }): User {
     return {
       id: backendUser.id,
-      name: backendUser.name ?? undefined,
-      email: backendUser.email ?? undefined,
-      image: backendUser.image ?? undefined,
+      name: backendUser.name,
+      email: backendUser.email,
+      emailVerified: backendUser.emailVerified ?? null,
+      image: backendUser.image,
+      monitoringTargets: [],
+      pushSubscriptions: [],
+      notifications: [],
     };
   }
 

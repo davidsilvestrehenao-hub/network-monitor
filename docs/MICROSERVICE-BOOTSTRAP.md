@@ -281,10 +281,10 @@ startMonolith();
 
 ```bash
 # Use specific configuration
-cp configs/monitor-service.json service-config.json
+cp service-wiring/production.json service-wiring/active.json
 
 # Or symlink for easier switching
-ln -sf configs/monitor-service.json service-config.json
+ln -sf service-wiring/production.json service-wiring/active.json
 ```
 
 ## Advanced Usage
@@ -482,7 +482,7 @@ WORKDIR /app
 COPY package.json bun.lockb turbo.json ./
 COPY packages/ ./packages/
 COPY apps/my-service/ ./apps/my-service/
-COPY configs/my-service.json ./service-config.json
+COPY service-wiring/production.json ./service-wiring/active.json
 
 # Install and build
 RUN bun install --frozen-lockfile
@@ -493,7 +493,7 @@ FROM oven/bun:1.0-alpine AS production
 WORKDIR /app
 
 COPY --from=base /app/apps/my-service/dist ./
-COPY --from=base /app/service-config.json ./
+COPY --from=base /app/service-wiring/ ./
 COPY --from=base /app/node_modules ./node_modules
 
 CMD ["bun", "run", "main.js"]
@@ -513,7 +513,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
     volumes:
-      - ./configs/monitor-service.json:/app/service-config.json
+      - ./service-wiring/production.json:/app/service-wiring/active.json
     restart: unless-stopped
 
   alerting-service:
@@ -524,7 +524,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
     volumes:
-      - ./configs/alerting-service.json:/app/service-config.json
+      - ./service-wiring/production.json:/app/service-wiring/active.json
     restart: unless-stopped
 
   notification-service:
@@ -535,7 +535,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
     volumes:
-      - ./configs/notification-service.json:/app/service-config.json
+      - ./service-wiring/production.json:/app/service-wiring/active.json
     restart: unless-stopped
 ```
 
@@ -567,11 +567,11 @@ Use specific testing configurations:
 
 ```bash
 # Test with real database
-cp configs/database-testing.json service-config.json
+cp service-wiring/test.json service-wiring/active.json
 bun test
 
 # Test with real monitoring
-cp configs/monitoring-testing.json service-config.json
+cp service-wiring/test.json service-wiring/active.json
 bun test
 ```
 
@@ -583,7 +583,7 @@ bun test
 # Database connection
 DATABASE_URL="postgresql://user:password@localhost:5432/network_monitor"
 
-# Service configuration (optional, defaults to service-config.json)
+# Service configuration (optional, defaults to service-wiring/development.json)
 SERVICE_CONFIG_PATH="configs/my-service.json"
 
 # Environment
