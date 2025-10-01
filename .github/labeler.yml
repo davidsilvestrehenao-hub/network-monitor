@@ -1,0 +1,54 @@
+# Auto-label PRs based on changed files
+
+'area: frontend':
+  - 'apps/web/**/*'
+
+'area: api':
+  - 'apps/api/**/*'
+
+'area: services':
+  - 'apps/*-service/**/*'
+
+'area: database':
+  - 'packages/database/**/*'
+  - '**/*.prisma'
+
+'area: infrastructure':
+  - 'packages/infrastructure/**/*'
+
+'area: monitoring':
+  - 'packages/monitor/**/*'
+
+'area: alerting':
+  - 'packages/alerting/**/*'
+
+'area: notifications':
+  - 'packages/notification/**/*'
+
+'area: auth':
+  - 'packages/auth/**/*'
+
+'type: documentation':
+  - 'docs/**/*'
+  - '**/*.md'
+
+'type: tests':
+  - '**/*.test.ts'
+  - '**/*.spec.ts'
+  - '**/__tests__/**/*'
+
+'type: configuration':
+  - '*.json'
+  - '*.yml'
+  - '*.yaml'
+  - '*.config.*'
+  - '.github/**/*'
+
+'type: dependencies':
+  - 'package.json'
+  - 'bun.lock'
+
+'type: ci/cd':
+  - '.github/workflows/**/*'
+  - 'scripts/**/*'
+

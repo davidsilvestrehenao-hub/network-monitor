@@ -1,0 +1,79 @@
+# Gemini Code Assist Configuration
+# For network-monitor project
+
+# General settings
+enabled: true
+auto_review: true
+review_delay_minutes: 1
+
+# Code review focus areas
+review_focus:
+  - architecture
+  - security
+  - performance
+  - type_safety
+  - code_quality
+  - best_practices
+  - testing
+
+# Project-specific guidelines
+guidelines:
+  # Architecture patterns
+  - "Enforce Router → Service → Repository pattern"
+  - "Services must communicate via events, not direct calls"
+  - "Repository pattern must be used for all database access"
+  - "Prisma client must never leave repository layer"
+  - "All services must use dependency injection"
+  
+  # TypeScript standards
+  - "No 'any' types without justification"
+  - "All interfaces must be fully implemented"
+  - "Prefer interfaces over concrete types"
+  
+  # Code quality
+  - "All code must pass ESLint with zero warnings"
+  - "All code must be Prettier formatted"
+  - "All code must pass TypeScript type checking"
+  
+  # Testing
+  - "All new services must have unit tests"
+  - "Complex logic requires integration tests"
+  
+  # 12-Factor App compliance
+  - "Configuration must use environment variables only"
+  - "No secrets in code"
+  - "Logs must go to stdout/stderr only"
+  - "Services must be stateless"
+
+# Languages and frameworks
+languages:
+  - typescript
+  - javascript
+  - prisma
+  
+frameworks:
+  - solidjs
+  - solidstart
+  - hono
+  - trpc
+  - prisma
+
+# Exclude patterns
+exclude:
+  - "node_modules/**"
+  - "dist/**"
+  - "build/**"
+  - "*.lock"
+  - "*.log"
+  - ".git/**"
+
+# Review comments
+comment_style: inline
+provide_suggestions: true
+severity_levels:
+  - critical
+  - high
+  - medium
+  - low
+  - info
+

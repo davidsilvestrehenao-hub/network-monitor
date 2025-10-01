@@ -20,6 +20,7 @@ Welcome to the Network Monitor documentation! This directory contains all docume
 
 - **[Deployment Guide](DEPLOYMENT.md)** - Production deployment strategies
 - **[Scaling to Microservices](SCALING-TO-MICROSERVICES.md)** - Kubernetes deployment
+- **[PLG Stack Implementation](PLG-STACK-IMPLEMENTATION.md)** - Prometheus, Loki, Grafana observability stack
 
 ### **For Configuration**
 

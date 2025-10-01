@@ -88,6 +88,12 @@ temp/
 *.swo
 *~
 
+# Cursor IDE - Keep rules tracked in git
+# .cursor/ - TRACKED (contains project rules)
+# .cursorrules - TRACKED (main rules file)
+# BUT ignore MCP config with secrets
+.cursor/mcp-config.json
+
 # OS generated files
 .DS_Store
 .DS_Store?
