@@ -19,7 +19,7 @@ import {
   createTestSpeedTestResult,
   createTestAlertRule,
 } from "../setup-simple";
-import { TYPES } from "@network-monitor/infrastructure/container/types";
+import { TYPES } from "@network-monitor/infrastructure/container";
 
 describe("Service Integration Tests", () => {
   let container: ReturnType<typeof createTestContainer>;

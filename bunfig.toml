@@ -1,0 +1,11 @@
+[test]
+# Exclude E2E tests from Bun test runner
+# E2E tests should be run with Playwright
+# Also exclude disabled integration tests
+exclude = [
+  "src/test/e2e/**/*",
+  "src/test/integration/**/*.disabled",
+  "**/*.e2e.spec.ts",
+  "**/*.e2e.test.ts",
+  "**/*.disabled"
+]
