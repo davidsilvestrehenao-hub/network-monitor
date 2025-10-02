@@ -164,7 +164,6 @@ describe("MonitorService", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    vi.useRealTimers();
   });
 
   describe("Base Interface Methods", () => {
@@ -538,16 +537,16 @@ describe("MonitorService", () => {
                   read: () => Promise.resolve({ done: true, value: undefined }),
                 }),
               },
-            // Justification: Using any type for mock fetch response to avoid complex Response type definitions
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // Justification: Using any type for mock fetch response to avoid complex Response type definitions
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
           }
           return Promise.resolve({
             ok: true,
             status: 200,
             arrayBuffer: () => Promise.resolve(new ArrayBuffer(1024)),
-          // Justification: Using any type for mock fetch response to avoid complex Response type definitions
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // Justification: Using any type for mock fetch response to avoid complex Response type definitions
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any);
         });
       });

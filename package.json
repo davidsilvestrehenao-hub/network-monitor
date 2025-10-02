@@ -73,5 +73,17 @@
   },
   "engines": {
     "node": ">=24"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "bunx prettier --write --cache",
+      "bunx eslint --fix"
+    ],
+    "*.{json,md}": [
+      "bunx prettier --write --cache"
+    ],
+    "*.md": [
+      "bunx markdownlint-cli --fix"
+    ]
   }
 }

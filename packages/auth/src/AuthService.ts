@@ -390,14 +390,19 @@ export class AuthService implements IAuthService {
 
   async signIn(email: string, password: string): Promise<AuthSession | null> {
     this.logger.debug("AuthService: Signing in user", { email });
-    const result = await this.login({ email, password });
-    if (result) {
-      return {
-        user: result.user,
-        expires: result.expiresAt,
-      };
+    try {
+      const result = await this.login({ email, password });
+      if (result) {
+        return {
+          user: result.user,
+          expires: result.expiresAt,
+        };
+      }
+      return null;
+    } catch (error) {
+      this.logger.debug("AuthService: Sign in failed", { email, error });
+      return null;
     }
-    return null;
   }
 
   async signUp(
@@ -406,14 +411,19 @@ export class AuthService implements IAuthService {
     name?: string
   ): Promise<AuthSession | null> {
     this.logger.debug("AuthService: Signing up user", { email, name });
-    const result = await this.register({ email, password, name });
-    if (result) {
-      return {
-        user: result.user,
-        expires: result.expiresAt,
-      };
+    try {
+      const result = await this.register({ email, password, name });
+      if (result) {
+        return {
+          user: result.user,
+          expires: result.expiresAt,
+        };
+      }
+      return null;
+    } catch (error) {
+      this.logger.debug("AuthService: Sign up failed", { email, name, error });
+      return null;
     }
-    return null;
   }
 
   async signOut(): Promise<void> {

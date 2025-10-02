@@ -24,18 +24,21 @@ This document provides a comprehensive guide to the Network Monitor's compliance
 ## 🚀 Quick Reference
 
 ### Before Writing Code
+
 - [ ] Configuration from environment variables (never hardcode)
 - [ ] Services are stateless (no in-memory state)
 - [ ] Logs stream to stdout/stderr (never to files)
 - [ ] Backing services from environment (database, event bus)
 
 ### Before Committing
+
 - [ ] No secrets in code or config files
 - [ ] No hardcoded URLs or connection strings
 - [ ] All logs use structured format (JSON)
 - [ ] Tests pass with environment variables
 
 ### Before Deploying
+
 - [ ] Environment variables documented
 - [ ] Health check endpoint works
 - [ ] Graceful shutdown tested
@@ -60,6 +63,7 @@ deploy to production
 ```
 
 **Current State:**
+
 - ✅ Single Git repository with monorepo structure
 - ✅ Turborepo for managing multiple apps and packages
 - ✅ Clear separation of concerns (apps/, packages/)
@@ -88,6 +92,7 @@ npm install -g some-package
 ```
 
 **Current State:**
+
 - ✅ Using Bun package manager with `package.json`
 - ✅ Lock file (`bun.lock`) ensures consistent dependencies
 - ✅ Workspace dependencies properly declared
@@ -109,6 +114,7 @@ const config = require("./config/production.json");
 ```
 
 **Current State (Issues):**
+
 - ❌ Configuration stored in JSON files (`configs/*.json`)
 - ❌ Hard to override configs per deployment
 - ⚠️ Some environment variables used, but not consistently
@@ -167,6 +173,7 @@ const prisma = new PrismaClient({
 ```
 
 **Current State:**
+
 - ✅ Database abstracted through Prisma ORM
 - ✅ Repository pattern isolates data access
 - ✅ Event bus abstracted through interfaces
@@ -187,6 +194,7 @@ bun run build && bun run start
 ```
 
 **Current State:**
+
 - ✅ Separate build and run stages
 - ✅ Docker support for containerized deployments
 - ✅ TypeScript compilation produces artifacts
@@ -211,6 +219,7 @@ class MonitorService {
 ```
 
 **Current State:**
+
 - ✅ Services designed to be stateless
 - ✅ State stored in database, not in-memory
 - ✅ Event-driven architecture prevents tight coupling
@@ -230,6 +239,7 @@ Bun.serve({ port: 3000 });
 ```
 
 **Current State:**
+
 - ✅ Services bind to ports specified in environment
 - ✅ Self-contained HTTP servers (Bun)
 - ✅ No external web server required
@@ -248,6 +258,7 @@ node --max-old-space-size=8192 app.js
 ```
 
 **Current State:**
+
 - ✅ Multiple service types for different workloads
 - ✅ Can scale each service independently
 - ✅ Event-driven decoupling enables scaling
@@ -270,6 +281,7 @@ process.on("SIGTERM", async () => {
 ```
 
 **Current State (Issues):**
+
 - ⚠️ Startup time is reasonable but not optimized
 - ⚠️ Graceful shutdown implemented but needs improvement
 - ❌ No explicit signal handling for all edge cases
@@ -325,6 +337,7 @@ DATABASE_URL=postgresql://prod-host:5432/network_monitor
 ```
 
 **Current State (Issues):**
+
 - ❌ SQLite for development, PostgreSQL for production
 - ⚠️ In-memory event bus for dev, RabbitMQ for prod
 - ⚠️ Mock services in dev, real services in prod
@@ -382,6 +395,7 @@ winston.transports.File({ filename: "error.log" });
 ```
 
 **Current State (Issues):**
+
 - ⚠️ Some logging to console (good)
 - ❌ Some logging to files (violates 12-factor)
 - ⚠️ Not all logs structured
@@ -442,6 +456,7 @@ app.get("/admin/reset-database", async (req, res) => {
 ```
 
 **Current State:**
+
 - ✅ Database migrations run as separate processes
 - ✅ Seed scripts are one-off processes
 - ✅ Admin tasks use same codebase and config
@@ -498,6 +513,7 @@ app.get("/admin/reset-database", async (req, res) => {
 ## 🚨 Anti-Patterns to Avoid
 
 ### ❌ Hardcoded Configuration
+
 ```typescript
 // ❌ NEVER DO THIS
 const config = {
@@ -508,6 +524,7 @@ const config = {
 ```
 
 ### ❌ File-Based Logging
+
 ```typescript
 // ❌ NEVER DO THIS
 fs.appendFile("app.log", message);
@@ -515,6 +532,7 @@ winston.transports.File({ filename: "error.log" });
 ```
 
 ### ❌ Stateful Services
+
 ```typescript
 // ❌ NEVER DO THIS
 class Service {
@@ -523,6 +541,7 @@ class Service {
 ```
 
 ### ❌ Mixed Environments
+
 ```bash
 # ❌ NEVER DO THIS
 # Development: SQLite
@@ -537,6 +556,7 @@ DATABASE_URL=postgresql://...
 ## ✅ Best Practices
 
 ### 1. Environment First
+
 ```bash
 # Always use .env for local development
 cp .env.example .env
@@ -544,18 +564,21 @@ nano .env
 ```
 
 ### 2. Docker for Backing Services
+
 ```bash
 # Start PostgreSQL, RabbitMQ, etc.
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
 ### 3. Structured Logging
+
 ```typescript
 // Use JSON for structured logs
 logger.info("Event", { key: "value" });
 ```
 
 ### 4. Health Checks
+
 ```typescript
 // Always provide health check endpoint
 app.get("/health", (req, res) => {
@@ -564,6 +587,7 @@ app.get("/health", (req, res) => {
 ```
 
 ### 5. Graceful Shutdown
+
 ```typescript
 // Always handle SIGTERM and SIGINT
 process.on("SIGTERM", shutdown);
