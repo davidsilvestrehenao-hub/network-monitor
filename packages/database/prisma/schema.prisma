@@ -12,10 +12,18 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+// Entity Status Enum - aligned with IBaseEntity.EntityStatus
+enum EntityStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+    DELETED
+}
+
 // --- AUTH.JS MODELS (FROM STARTER) ---
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid()) @db.Uuid
   userId            String
   type              String
   provider          String
@@ -34,7 +42,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid()) @db.Uuid
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -52,105 +60,425 @@ model VerificationToken {
 // --- MERGED USER & APPLICATION MODELS ---
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid()) @db.Uuid
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
   
+  // Standardized audit fields (IBaseEntity)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  createdBy     String?
+  updatedBy     String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt     DateTime?
+  isActive      Boolean   @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata      Json?
+  description   String?
+  
+  // Versioning (IVersionedEntity)
+  version       Int       @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags          String[]  @default([])
+  
+  // Status tracking (IStatusEntity)
+  status        EntityStatus @default(ACTIVE)
+  
   // Relations from starter
   accounts      Account[]
   sessions      Session[]
 
-  // Relations for our application
+  // Relations for our application (using consistent ownerId naming)
   monitoringTargets  MonitoringTarget[]
   pushSubscriptions  PushSubscription[]
   notifications      Notification[]
   speedTestPreference UserSpeedTestPreference?
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 model MonitoringTarget {
-  id               String            @id @default(cuid())
+  id               String            @id @default(uuid()) @db.Uuid
   name             String
   address          String
   
-  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  // Standardized audit fields (IBaseEntity)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  createdBy        String?
+  updatedBy        String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt        DateTime?
+  isActive         Boolean           @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata         Json?
+  description      String?
+  
+  // Versioning (IVersionedEntity)
+  version          Int               @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags             String[]          @default([])
+  
+  // Status tracking (IStatusEntity)
+  status           EntityStatus      @default(ACTIVE)
+  
+  // User ownership (IUserOwnedEntity)
   ownerId          String
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Monitoring-specific fields
+  monitoringEnabled Boolean          @default(true)
+  monitoringInterval Int             @default(30) // seconds
+  lastMonitoredAt  DateTime?
   
   speedTestResults SpeedTestResult[]
   incidentEvents   IncidentEvent[]
   alertRules       AlertRule[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([monitoringEnabled])
 }
 
 model SpeedTestResult {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   ping      Float?
   download  Float?
   upload    Float?
-  status    String   // 'SUCCESS' or 'FAILURE'
+  testStatus String  // 'SUCCESS' or 'FAILURE' - renamed to avoid confusion with entity status
   error     String?
+  
+  // Standardized audit fields (IBaseEntity)
   createdAt DateTime @default(now())
-  timestamp DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata  Json?
+  description String?
+  
+  // Versioning (IVersionedEntity)
+  version   Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags      String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status    EntityStatus @default(ACTIVE)
+  
+  // Test metadata
+  testDuration Int?   // milliseconds
+  testServer   String?
+  testMethod   String?
+  timestamp    DateTime @default(now()) // Legacy field for backward compatibility
   
   target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
   targetId  String
+
+  @@index([targetId])
+  @@index([createdAt])
+  @@index([testStatus])
+  @@index([status])
 }
 
 model AlertRule {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid()) @db.Uuid
   name      String
-  metric    String   // 'ping' or 'download'
-  condition String   // 'GREATER_THAN' or 'LESS_THAN'
+  metric    String   // 'ping', 'download', 'upload', 'status'
+  condition String   // 'GREATER_THAN', 'LESS_THAN', 'EQUALS', 'NOT_EQUALS'
   threshold Float
   enabled   Boolean  @default(true)
+  
+  // Standardized audit fields (IBaseEntity)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata  Json?
+  description String?
+  
+  // Versioning (IVersionedEntity)
+  version   Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags      String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status    EntityStatus @default(ACTIVE)
+  
+  // Alert configuration
+  severity       String @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  cooldownPeriod Int    @default(300)      // seconds
+  maxAlerts      Int    @default(10)       // per day
   
   target    MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
   targetId  String
   
   triggeredEvents IncidentEvent[]
+
+  @@index([targetId])
+  @@index([enabled])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model IncidentEvent {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid()) @db.Uuid
   timestamp   DateTime @default(now())
-  type        String   // 'OUTAGE' or 'ALERT'
-  description String
+  type        String   // 'OUTAGE', 'ALERT', 'RECOVERY', 'MAINTENANCE'
   resolved    Boolean  @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  
+  // Standardized audit fields (IBaseEntity)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt   DateTime?
+  isActive    Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata    Json?
+  description String?  // Main incident description moved to standard field
+  
+  // Versioning (IVersionedEntity)
+  version     Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags        String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status      EntityStatus @default(ACTIVE)
+  
+  // Incident metadata
+  severity       String @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  duration       Int?   // milliseconds (calculated when resolved)
+  affectedUsers  Int?
+  rootCause      String?
+  resolution     String?
   
   target      MonitoringTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
   targetId    String
   
   triggeredByRule AlertRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
-  ruleId          Int?
+  ruleId          String?
+
+  @@index([targetId])
+  @@index([type])
+  @@index([resolved])
+  @@index([timestamp])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model SpeedTestUrl {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  url         String
+  sizeBytes   Int
+  provider    String
+  region      String?
+  enabled     Boolean  @default(true)
+  priority    Int      @default(0)
+  
+  // Standardized audit fields (IBaseEntity)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt   DateTime?
+  isActive    Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata    Json?
+  description String?
+  
+  // Versioning (IVersionedEntity)
+  version     Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags        String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status      EntityStatus @default(ACTIVE)
+  
+  // Performance metadata
+  averageSpeed  Float?
+  reliability   Float?   // percentage
+  lastTestedAt  DateTime?
+
+  @@unique([provider, name])
+  @@index([provider])
+  @@index([enabled])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model PushSubscription {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid()) @db.Uuid
   endpoint  String   @unique
   p256dh    String
   auth      String
   
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  // Standardized audit fields (IBaseEntity)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata  Json?
+  description String?
+  
+  // Versioning (IVersionedEntity)
+  version   Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags      String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status    EntityStatus @default(ACTIVE)
+  
+  // User ownership (IUserOwnedEntity)
+  ownerId   String   // Renamed from userId for consistency
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Subscription metadata
+  userAgent    String?
+  deviceType   String? // desktop, mobile, tablet
+  enabled      Boolean @default(true)
+  lastUsedAt   DateTime?
+
+  @@index([ownerId])
+  @@index([endpoint])
+  @@index([enabled])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid()) @db.Uuid
   message   String
+  title     String?
+  type      String   @default("INFO") // INFO, WARNING, ERROR, SUCCESS
+  priority  String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
   sentAt    DateTime @default(now())
   read      Boolean  @default(false)
+  readAt    DateTime?
+  
+  // Standardized audit fields (IBaseEntity)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt DateTime?
+  isActive  Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata  Json?
+  description String?
+  
+  // Versioning (IVersionedEntity)
+  version   Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags      String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status    EntityStatus @default(ACTIVE)
+  
+  // User ownership (IUserOwnedEntity)
+  ownerId   String   // Renamed from userId for consistency
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Notification metadata
+  source     String?   // Which service/component sent it
+  actionUrl  String?   // URL to navigate to when clicked
+  expiresAt  DateTime? // When notification should be auto-deleted
 
-  recipient User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  @@index([ownerId])
+  @@index([read])
+  @@index([type])
+  @@index([priority])
+  @@index([sentAt])
+  @@index([status])
+  @@index([createdAt])
 }
 
 // --- USER PREFERENCES ---
 
 model UserSpeedTestPreference {
-  id              String   @id @default(cuid())
-  userId          String   @unique
+  id              String   @id @default(uuid()) @db.Uuid
   speedTestUrlId  String
+  
+  // Standardized audit fields (IBaseEntity)
+  createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+  
+  // Soft delete fields (ISoftDeletableEntity)
+  deletedAt       DateTime?
+  isActive        Boolean  @default(true)
+  
+  // Standardized metadata fields (IExtendedEntity)
+  metadata        Json?
+  description     String?
+  
+  // Versioning (IVersionedEntity)
+  version         Int      @default(1)
+  
+  // Tagging (ITaggableEntity)
+  tags            String[] @default([])
+  
+  // Status tracking (IStatusEntity)
+  status          EntityStatus @default(ACTIVE)
+  
+  // User ownership (IUserOwnedEntity)
+  ownerId         String   @unique // Renamed from userId for consistency
+  owner           User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Preference settings
+  autoSelect         Boolean @default(true)
+  preferredRegion    String?
+  maxTestDuration    Int?    // seconds
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([ownerId])
+  @@index([status])
+  @@index([createdAt])
 }

@@ -65,7 +65,7 @@ export class EventRPC {
       }, timeout);
 
       // Listen for success response
-      this.eventBus.once<TResponse>(
+      this.eventBus.onceDynamic<TResponse>(
         `${successEvent}_${requestId}`,
         response => {
           clearTimeout(timer);
@@ -79,7 +79,7 @@ export class EventRPC {
       );
 
       // Listen for failure response
-      this.eventBus.once<{ error: string }>(
+      this.eventBus.onceDynamic<{ error: string }>(
         `${failureEvent}_${requestId}`,
         error => {
           clearTimeout(timer);
@@ -94,7 +94,7 @@ export class EventRPC {
       );
 
       // Emit the request with requestId
-      this.eventBus.emit(requestEvent, {
+      this.eventBus.emitDynamic(requestEvent, {
         ...(data as object),
         requestId,
       });

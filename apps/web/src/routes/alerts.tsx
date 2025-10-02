@@ -1,6 +1,6 @@
 import { createSignal, createResource, For, Show } from "solid-js";
 import { trpc } from "~/lib/trpc";
-import { useLogger } from "~/lib/frontend/container";
+import { logger } from "~/lib/logger";
 import {
   AppLayout,
   AlertRuleCard,
@@ -12,7 +12,6 @@ import {
 import type { AlertRule, IncidentEvent, Target } from "@network-monitor/shared";
 
 export default function AlertsPage() {
-  const logger = useLogger();
   const [targets] = createResource(() => trpc.targets.getAll.query());
   const [alertRules, { refetch: refetchRules }] = createResource(() =>
     trpc.alertRules.getAll.query()
@@ -39,7 +38,7 @@ export default function AlertsPage() {
     }
   };
 
-  const handleUpdateRule = async (id: number, data: AlertRuleFormData) => {
+  const handleUpdateRule = async (id: string, data: AlertRuleFormData) => {
     try {
       await trpc.alertRules.update.mutate({ id, ...data });
       logger.info("Alert rule updated successfully", { id });
@@ -51,7 +50,7 @@ export default function AlertsPage() {
     }
   };
 
-  const handleDeleteRule = async (id: number) => {
+  const handleDeleteRule = async (id: string) => {
     if (!confirm("Are you sure you want to delete this alert rule?")) return;
 
     try {
@@ -64,7 +63,7 @@ export default function AlertsPage() {
     }
   };
 
-  const handleToggleRule = async (id: number, enabled: boolean) => {
+  const handleToggleRule = async (id: string, enabled: boolean) => {
     try {
       await trpc.alertRules.update.mutate({ id, enabled });
       logger.info("Alert rule toggled", { id, enabled });
@@ -75,7 +74,7 @@ export default function AlertsPage() {
     }
   };
 
-  const handleResolveIncident = async (id: number) => {
+  const handleResolveIncident = async (id: string) => {
     try {
       await trpc.incidents.resolve.mutate({ id });
       logger.info("Incident resolved", { id });
@@ -175,8 +174,10 @@ export default function AlertsPage() {
                       onEdit={() =>
                         setEditingRule(rule as unknown as AlertRule)
                       }
-                      onDelete={() => handleDeleteRule(rule.id)}
-                      onToggle={enabled => handleToggleRule(rule.id, enabled)}
+                      onDelete={() => handleDeleteRule(rule.id.toString())}
+                      onToggle={enabled =>
+                        handleToggleRule(rule.id.toString(), enabled)
+                      }
                     />
                   )}
                 </For>

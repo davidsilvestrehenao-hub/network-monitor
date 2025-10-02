@@ -1,7 +1,7 @@
 {
   "name": "CI/CD Service Wiring",
   "description": "Optimized for CI/CD pipelines - fast, reliable, fully mocked",
-  "WARNING": "⚠️  This is SERVICE WIRING, NOT runtime configuration!",
+  "WARNING": "\u26a0\ufe0f  This is SERVICE WIRING, NOT runtime configuration!",
   "runtimeConfig": "All runtime configuration (database URLs, ports, keys) must be in environment variables (.env file)",
   "purpose": "This file defines WHICH classes to use for each interface, not configuration VALUES",
   "environment": "ci",
@@ -15,66 +15,66 @@
     },
     "IEventBus": {
       "module": "@network-monitor/infrastructure",
-      "className": "MockEventBus",
-      "isMock": true,
-      "description": "Mock event bus - instant, no side effects"
+      "className": "EventBus",
+      "isMock": false,
+      "description": "Real event bus for proper service communication"
     },
     "IDatabaseService": {
-      "module": "@network-monitor/infrastructure",
-      "className": "MockDatabase",
+      "module": "@network-monitor/mock-database",
+      "className": "MockPrisma",
       "isMock": true,
       "description": "Mock database - no setup needed"
     },
     "IMonitoringTargetRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockMonitoringTargetRepository",
       "isMock": true,
       "description": "Mock repository with minimal test data"
     },
     "ISpeedTestResultRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockSpeedTestResultRepository",
       "isMock": true,
       "description": "Mock repository"
     },
     "IAlertRuleRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockAlertRuleRepository",
       "isMock": true,
       "description": "Mock repository"
     },
     "IIncidentEventRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockIncidentEventRepository",
       "isMock": true,
       "description": "Mock repository"
     },
     "INotificationRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockNotificationRepository",
       "isMock": true,
       "description": "Mock repository"
     },
     "IPushSubscriptionRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockPushSubscriptionRepository",
       "isMock": true,
       "description": "Mock repository"
     },
     "IUserRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockUserRepository",
       "isMock": true,
       "description": "Mock repository"
     },
     "ITargetRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockMonitoringTargetRepository",
       "isMock": true,
       "description": "Mock legacy repository"
     },
     "ISpeedTestRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockSpeedTestResultRepository",
       "isMock": true,
       "description": "Mock legacy repository"

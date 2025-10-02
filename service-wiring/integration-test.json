@@ -1,7 +1,7 @@
 {
   "name": "Integration Test Service Wiring",
   "description": "Mix of real and mock for integration testing - tests service interactions",
-  "WARNING": "⚠️  This is SERVICE WIRING, NOT runtime configuration!",
+  "WARNING": "\u26a0\ufe0f  This is SERVICE WIRING, NOT runtime configuration!",
   "runtimeConfig": "All runtime configuration (database URLs, ports, keys) must be in environment variables (.env file)",
   "purpose": "This file defines WHICH classes to use for each interface, not configuration VALUES",
   "environment": "integration-test",
@@ -26,55 +26,55 @@
       "description": "Mock database for fast, isolated tests"
     },
     "IMonitoringTargetRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockMonitoringTargetRepository",
       "isMock": true,
       "description": "Mock repository with controlled test data"
     },
     "ISpeedTestResultRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockSpeedTestResultRepository",
       "isMock": true,
       "description": "Mock repository with test results"
     },
     "IAlertRuleRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockAlertRuleRepository",
       "isMock": true,
       "description": "Mock repository for alert rules"
     },
     "IIncidentEventRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockIncidentEventRepository",
       "isMock": true,
       "description": "Mock repository for incidents"
     },
     "INotificationRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockNotificationRepository",
       "isMock": true,
       "description": "Mock repository for notifications"
     },
     "IPushSubscriptionRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockPushSubscriptionRepository",
       "isMock": true,
       "description": "Mock repository for push subscriptions"
     },
     "IUserRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockUserRepository",
       "isMock": true,
       "description": "Mock repository with test users"
     },
     "ITargetRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockMonitoringTargetRepository",
       "isMock": true,
       "description": "Mock legacy repository"
     },
     "ISpeedTestRepository": {
-      "module": "@network-monitor/infrastructure",
+      "module": "@network-monitor/mock-database",
       "className": "MockSpeedTestResultRepository",
       "isMock": true,
       "description": "Mock legacy repository"

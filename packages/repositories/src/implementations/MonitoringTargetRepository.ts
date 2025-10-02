@@ -1,0 +1,319 @@
+import type {
+  IMonitoringTargetRepository,
+  MonitoringTarget,
+  CreateMonitoringTargetData,
+  UpdateMonitoringTargetData,
+} from "@network-monitor/shared";
+import type { IPrisma } from "@network-monitor/shared";
+import type { ILogger } from "@network-monitor/shared";
+
+export class MonitoringTargetRepository implements IMonitoringTargetRepository {
+  private databaseService: IPrisma;
+  private logger: ILogger;
+
+  constructor(databaseService: IPrisma, logger: ILogger) {
+    this.databaseService = databaseService;
+    this.logger = logger;
+  }
+
+  async findById(id: string): Promise<MonitoringTarget | null> {
+    this.logger.debug("MonitoringTargetRepository: Finding target by ID", {
+      id,
+    });
+
+    const prismaTarget = await this.databaseService
+      .getClient()
+      .monitoringTarget.findUnique({
+        where: { id },
+        include: {
+          speedTestResults: {
+            orderBy: { createdAt: "desc" },
+          },
+          incidentEvents: {
+            orderBy: { timestamp: "desc" },
+          },
+          alertRules: true,
+        },
+      });
+
+    return prismaTarget ? this.mapToMonitoringTarget(prismaTarget) : null;
+  }
+
+  async findByOwnerId(ownerId: string): Promise<MonitoringTarget[]> {
+    this.logger.debug(
+      "MonitoringTargetRepository: Finding targets by owner ID",
+      { ownerId }
+    );
+
+    const prismaTargets = await this.databaseService
+      .getClient()
+      .monitoringTarget.findMany({
+        where: { ownerId },
+        include: {
+          speedTestResults: {
+            orderBy: { createdAt: "desc" },
+          },
+          incidentEvents: {
+            orderBy: { timestamp: "desc" },
+          },
+          alertRules: true,
+        },
+        orderBy: { id: "desc" },
+      });
+
+    return prismaTargets.map(target => this.mapToMonitoringTarget(target));
+  }
+
+  async getAll(limit = 100, offset = 0): Promise<MonitoringTarget[]> {
+    this.logger.debug("MonitoringTargetRepository: Getting all targets", {
+      limit,
+      offset,
+    });
+
+    const prismaTargets = await this.databaseService
+      .getClient()
+      .monitoringTarget.findMany({
+        take: limit,
+        skip: offset,
+        include: {
+          speedTestResults: {
+            orderBy: { createdAt: "desc" },
+          },
+          incidentEvents: {
+            orderBy: { timestamp: "desc" },
+          },
+          alertRules: true,
+        },
+        orderBy: { id: "desc" },
+      });
+
+    return prismaTargets.map(target => this.mapToMonitoringTarget(target));
+  }
+
+  async count(): Promise<number> {
+    this.logger.debug("MonitoringTargetRepository: Counting targets");
+    return await this.databaseService.getClient().monitoringTarget.count();
+  }
+
+  async create(data: CreateMonitoringTargetData): Promise<MonitoringTarget> {
+    this.logger.debug("MonitoringTargetRepository: Creating target", { data });
+
+    const prismaTarget = await this.databaseService
+      .getClient()
+      .monitoringTarget.create({
+        data,
+        include: {
+          speedTestResults: true,
+          incidentEvents: true,
+          alertRules: true,
+        },
+      });
+
+    return this.mapToMonitoringTarget(prismaTarget);
+  }
+
+  async update(
+    id: string,
+    data: UpdateMonitoringTargetData
+  ): Promise<MonitoringTarget> {
+    this.logger.debug("MonitoringTargetRepository: Updating target", {
+      id,
+      data,
+    });
+
+    const prismaTarget = await this.databaseService
+      .getClient()
+      .monitoringTarget.update({
+        where: { id },
+        data,
+        include: {
+          speedTestResults: {
+            orderBy: { id: "desc" },
+          },
+          incidentEvents: {
+            orderBy: { timestamp: "desc" },
+          },
+          alertRules: true,
+        },
+      });
+
+    return this.mapToMonitoringTarget(prismaTarget);
+  }
+
+  async delete(id: string): Promise<void> {
+    this.logger.debug("MonitoringTargetRepository: Deleting target", { id });
+    await this.databaseService.getClient().monitoringTarget.delete({
+      where: { id },
+    });
+  }
+
+  async findByUserId(userId: string): Promise<MonitoringTarget[]> {
+    this.logger.debug(
+      "MonitoringTargetRepository: Finding targets by user ID",
+      { userId }
+    );
+
+    const prismaTargets = await this.databaseService
+      .getClient()
+      .monitoringTarget.findMany({
+        where: { ownerId: userId },
+        include: {
+          speedTestResults: {
+            orderBy: { createdAt: "desc" },
+          },
+          incidentEvents: {
+            orderBy: { timestamp: "desc" },
+          },
+          alertRules: true,
+        },
+        orderBy: { id: "desc" },
+      });
+
+    return prismaTargets.map(target => this.mapToMonitoringTarget(target));
+  }
+
+  async findByUserIdWithPagination(
+    userId: string,
+    limit = 100,
+    offset = 0
+  ): Promise<MonitoringTarget[]> {
+    this.logger.debug(
+      "MonitoringTargetRepository: Finding targets by user ID with pagination",
+      { userId, limit, offset }
+    );
+
+    const prismaTargets = await this.databaseService
+      .getClient()
+      .monitoringTarget.findMany({
+        where: { ownerId: userId },
+        include: {
+          speedTestResults: {
+            orderBy: { createdAt: "desc" },
+          },
+          incidentEvents: {
+            orderBy: { timestamp: "desc" },
+          },
+          alertRules: true,
+        },
+        orderBy: { id: "desc" },
+        take: limit,
+        skip: offset,
+      });
+
+    return prismaTargets.map(target => this.mapToMonitoringTarget(target));
+  }
+
+  async countByUserId(userId: string): Promise<number> {
+    this.logger.debug(
+      "MonitoringTargetRepository: Counting targets by user ID",
+      { userId }
+    );
+    return await this.databaseService.getClient().monitoringTarget.count({
+      where: { ownerId: userId },
+    });
+  }
+
+  async deleteByUserId(userId: string): Promise<void> {
+    this.logger.debug(
+      "MonitoringTargetRepository: Deleting targets by user ID",
+      { userId }
+    );
+    await this.databaseService.getClient().monitoringTarget.deleteMany({
+      where: { ownerId: userId },
+    });
+  }
+
+  private mapToMonitoringTarget(prismaTarget: unknown): MonitoringTarget {
+    const target = prismaTarget as {
+      id: string;
+      name: string;
+      address: string;
+      ownerId: string;
+      createdAt: Date;
+      updatedAt: Date;
+      speedTestResults?: Array<{
+        id: string;
+        ping: number | null;
+        download: number | null;
+        upload: number | null;
+        status: string;
+        error: string | null;
+        createdAt: Date;
+        timestamp: Date;
+        targetId: string;
+      }>;
+      incidentEvents?: Array<{
+        id: number;
+        timestamp: Date;
+        type: string;
+        description: string;
+        resolved: boolean;
+        targetId: string;
+        ruleId: number | null;
+        triggeredByRule?: {
+          id: number;
+          name: string;
+          metric: string;
+          condition: string;
+          threshold: number;
+          enabled: boolean;
+          targetId: string;
+        } | null;
+      }>;
+      alertRules?: Array<{
+        id: number;
+        name: string;
+        metric: string;
+        condition: string;
+        threshold: number;
+        enabled: boolean;
+        targetId: string;
+      }>;
+    };
+
+    return {
+      id: target.id,
+      name: target.name,
+      address: target.address,
+      ownerId: target.ownerId,
+      createdAt: target.createdAt.toISOString(),
+      updatedAt: target.updatedAt.toISOString(),
+      speedTestResults:
+        target.speedTestResults?.map(result => ({
+          id: result.id,
+          ping: result.ping ?? undefined,
+          download: result.download ?? undefined,
+          upload: result.upload ?? undefined,
+          status: result.status as "SUCCESS" | "FAILURE",
+          error: result.error ?? undefined,
+          createdAt: result.createdAt.toISOString(),
+          timestamp: result.timestamp.toISOString(),
+          targetId: result.targetId,
+        })) || [],
+      incidentEvents:
+        target.incidentEvents?.map(event => ({
+          id: event.id.toString(),
+          timestamp: event.timestamp.toISOString(),
+          type: event.type as "OUTAGE" | "ALERT",
+          description: event.description,
+          resolved: event.resolved,
+          targetId: event.targetId,
+          ruleId: event.ruleId?.toString(),
+          createdAt: event.timestamp.toISOString(),
+          updatedAt: event.timestamp.toISOString(),
+        })) || [],
+      alertRules:
+        target.alertRules?.map(rule => ({
+          id: rule.id.toString(),
+          name: rule.name,
+          metric: rule.metric as "ping" | "download",
+          condition: rule.condition as "GREATER_THAN" | "LESS_THAN",
+          threshold: rule.threshold,
+          enabled: rule.enabled,
+          targetId: rule.targetId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })) || [],
+    };
+  }
+}

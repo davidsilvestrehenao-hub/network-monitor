@@ -249,14 +249,67 @@ export class MonitorService implements IMonitorService {
 }
 ```
 
-## 4. Key Rules
+## 4. Interface Placement Patterns
 
+### **CRITICAL: Service Interfaces Are Contracts, Not Implementation Details**
+
+Service interfaces like `IAlertingService`, `IMonitorService`, `IAuthService` are **contracts** that define public APIs. They **MUST remain in the shared package** because they are used by:
+
+1. **DI Container** - for service registration and resolution
+2. **Applications** (web, API, microservices) - for type-safe service access  
+3. **Infrastructure** - for service management and mocking
+4. **Other packages** - for cross-package communication
+
+### **Interface Placement Rules**
+
+**✅ KEEP in Shared Package:**
+- **Service interfaces** (`IAlertingService`, `IMonitorService`, etc.) - These are contracts
+- **Repository interfaces** - Used by database implementations and service consumers
+- **Domain entities** (`User`, `Target`, `SpeedTestResult`) - Used across multiple domains
+- **Base interfaces** (`IRepository`, `IService`, `IEventBus`, `ILogger`) - Foundation contracts
+- **Configuration interfaces** (`ISpeedTestConfigService`, `IMonitoringScheduler`) - Cross-package usage
+
+**✅ MOVE to Individual Packages (rare):**
+- Implementation-specific helper types that don't cross boundaries
+- Internal configuration types used only within one package
+- Package-specific enums or constants that aren't shared
+
+### **How to Identify Interface Placement**
+
+```bash
+# Check if interface is used outside its domain package
+grep -r "IServiceName" packages/ apps/ 
+
+# If found in multiple packages → KEEP in shared
+# If found only in one package → CONSIDER moving (but verify carefully)
+```
+
+**Example Analysis:**
+```bash
+$ grep -r "IAlertingService" packages/ apps/
+# Results show usage in:
+# - packages/infrastructure/ (DI container)
+# - apps/web/ (tRPC context)  
+# - apps/api/ (service resolution)
+# → MUST stay in shared package
+```
+
+### **Common Mistake to Avoid**
+
+❌ **Wrong thinking:** "This service is only implemented in the alerting package, so its interface should be there too."
+
+✅ **Correct thinking:** "This service interface is used by the DI container, applications, and other packages for type-safe access, so it must remain shared."
+
+## 5. Key Rules
+
+- **Type Safety Hierarchy**: **Prefer proper interfaces, use generics when necessary, and only use `any` or `unknown` when absolutely required with clear justification**
 - **Interface Polymorphism**: All interfaces MUST extend their appropriate base interfaces
 - **Method Delegation**: Domain-specific methods should delegate to base methods when possible
-- **Type Safety**: Use generic type parameters for compile-time safety
+- **Generic Type Parameters**: Use generics for compile-time safety and flexibility
 - **Authentication**: Protect tRPC procedures by default using middleware
 - **Dependency Injection**: Services and repositories must receive their dependencies via DI container
 - **Interface-First Design**: Define interfaces before implementations to ensure loose coupling
+- **Interface Placement**: Analyze usage patterns, not naming conventions, to determine placement
 - **Prisma Isolation**: The Prisma client must only be used inside the repository layer
 - **Event Emission**: Services should emit events for domain-specific operations
 - **Error Handling**: All methods should include proper error handling and logging

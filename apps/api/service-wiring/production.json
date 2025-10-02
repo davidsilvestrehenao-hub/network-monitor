@@ -20,87 +20,87 @@
     },
     "IDatabaseService": {
       "module": "@network-monitor/database",
-      "className": "DatabaseService",
+      "className": "Prisma",
       "isMock": false,
       "description": "Database service for persistence"
     },
     "IMonitoringTargetRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "MonitoringTargetRepository",
       "isMock": false,
       "description": "Repository for monitoring targets"
     },
     "ISpeedTestResultRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "SpeedTestResultRepository",
       "isMock": false,
       "description": "Repository for speed test results"
     },
     "IAlertRuleRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "AlertRuleRepository",
       "isMock": false,
       "description": "Repository for alert rules"
     },
     "IIncidentEventRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "IncidentEventRepository",
       "isMock": false,
       "description": "Repository for incident events"
     },
     "INotificationRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "NotificationRepository",
       "isMock": false,
       "description": "Repository for notifications"
     },
     "IPushSubscriptionRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "PushSubscriptionRepository",
       "isMock": false,
       "description": "Repository for push subscriptions"
     },
     "ITargetRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "TargetRepository",
       "isMock": false,
       "description": "Legacy target repository"
     },
     "ISpeedTestRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "SpeedTestRepository",
       "isMock": false,
       "description": "Legacy speed test repository"
     },
     "IUserRepository": {
-      "module": "@network-monitor/database",
+      "module": "@network-monitor/repositories",
       "className": "UserRepository",
       "isMock": false,
       "description": "Repository for users"
     },
     "IMonitorService": {
-      "module": "@network-monitor/monitor",
+      "module": "@network-monitor/services",
       "className": "MonitorService",
       "isMock": false,
       "description": "Monitor service implementation"
     },
     "IAlertingService": {
-      "module": "@network-monitor/alerting",
+      "module": "@network-monitor/services",
       "className": "AlertingService",
       "isMock": false,
       "description": "Alerting service implementation"
     },
     "INotificationService": {
-      "module": "@network-monitor/notification",
+      "module": "@network-monitor/services",
       "className": "NotificationService",
       "isMock": false,
       "description": "Notification service implementation"
     },
     "IAuthService": {
-      "module": "@network-monitor/auth",
-      "className": "MockAuth",
-      "isMock": true,
-      "description": "Mock authentication service (replace with real auth)"
+      "module": "@network-monitor/services",
+      "className": "AuthService",
+      "isMock": false,
+      "description": "Authentication service implementation"
     }
   }
 }

@@ -11,7 +11,8 @@ Before you begin, ensure you have:
 - **Git** (for cloning the repository)
 - A modern web browser (Chrome, Firefox, Safari, or Edge)
 
-### Optional for Production:
+### Optional for Production
+
 - **PostgreSQL** 15+ (for production database)
 - **Redis** 7+ (for distributed EventBus in microservices)
 
@@ -54,6 +55,7 @@ bun run dev
 ```
 
 This starts:
+
 - **Frontend** at `http://localhost:3000`
 - **API server** with hot reload
 - **All Turborepo packages** in watch mode
@@ -61,7 +63,8 @@ This starts:
 ### Step 5: Open in Browser
 
 Navigate to:
-```
+
+```text
 http://localhost:3000
 ```
 
@@ -76,7 +79,7 @@ You should see the Network Monitor dashboard! 🎉
 1. Click **"Add Target"** button
 2. Enter:
    - **Name**: "Google"
-   - **Address**: "https://google.com"
+   - **Address**: "<https://google.com>"
 3. Click **"Save"**
 
 ### 2. Run a Speed Test
@@ -163,7 +166,7 @@ bun run test
 
 Understanding where things are:
 
-```
+```text
 network-monitor/
 │
 ├── apps/
@@ -219,6 +222,7 @@ network-monitor/
 ### Add a New Service
 
 1. Create new package:
+
    ```bash
    mkdir -p packages/my-service/src
    cd packages/my-service
@@ -226,6 +230,7 @@ network-monitor/
    ```
 
 2. Update `package.json`:
+
    ```json
    {
      "name": "@network-monitor/my-service",
@@ -243,6 +248,7 @@ network-monitor/
 ### Add a New Frontend Route
 
 1. Create file in `apps/web/src/routes/`:
+
    ```typescript
    // apps/web/src/routes/my-page.tsx
    export default function MyPage() {
@@ -257,6 +263,7 @@ That's it! SolidStart uses file-based routing.
 ### Add a New tRPC Procedure
 
 1. Add procedure to appropriate router in `apps/web/src/server/trpc/routers/`:
+
    ```typescript
    // apps/web/src/server/trpc/routers/myDomain.ts
    export const myDomainRouter = t.router({
@@ -269,6 +276,7 @@ That's it! SolidStart uses file-based routing.
    ```
 
 2. Add to main router and call from frontend:
+
    ```typescript
    import { trpc } from '~/lib/trpc';
    
@@ -279,6 +287,7 @@ That's it! SolidStart uses file-based routing.
 ### Add a New Event
 
 1. Define event in `packages/shared/src/types/events.ts`:
+
    ```typescript
    export interface FrontendEvents {
      // ... existing events
@@ -287,11 +296,13 @@ That's it! SolidStart uses file-based routing.
    ```
 
 2. Emit event:
+
    ```typescript
    eventBus.emitTyped('MY_EVENT', { data: 'hello' });
    ```
 
 3. Listen to event:
+
    ```typescript
    eventBus.onTyped('MY_EVENT', (data) => {
      console.log(data.data); // "hello"
@@ -351,6 +362,7 @@ docker run -p 3000:3000 \
 ### Problem: `bun install` fails
 
 **Solution:**
+
 ```bash
 # Clear bun cache
 rm -rf node_modules bun.lockb
@@ -360,6 +372,7 @@ bun install
 ### Problem: Database errors
 
 **Solution:**
+
 ```bash
 # Regenerate Prisma client
 bun run db:generate
@@ -372,6 +385,7 @@ bunx prisma db push --force-reset
 ### Problem: TypeScript errors in editor
 
 **Solution:**
+
 ```bash
 # Rebuild all packages
 bun run build
@@ -383,6 +397,7 @@ bun run build
 ### Problem: Port 3000 already in use
 
 **Solution:**
+
 ```bash
 # Kill process on port 3000
 lsof -ti:3000 | xargs kill -9
@@ -394,6 +409,7 @@ PORT=3001 bun run dev
 ### Problem: "Cannot find module" errors
 
 **Solution:**
+
 ```bash
 # Install dependencies
 bun install
@@ -468,12 +484,14 @@ DATABASE_URL="file:./dev.db?connection_limit=1&socket_timeout=60&pool_timeout=60
 ### VS Code Setup
 
 Install these extensions:
+
 - **Prisma** - Syntax highlighting for schema.prisma
 - **Tailwind CSS IntelliSense** - Autocomplete for Tailwind classes
 - **ESLint** - Linting in editor
 - **TypeScript Error Translator** - Better error messages
 
 Add to `.vscode/settings.json`:
+
 ```json
 {
   "typescript.tsdk": "node_modules/typescript/lib",

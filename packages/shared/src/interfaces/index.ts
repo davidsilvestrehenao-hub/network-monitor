@@ -1,42 +1,45 @@
 // Export base interfaces first (for consistency and polymorphism)
 export * from "./base/index";
 
-// Export specific types that are commonly used
+// Export specific event types that are commonly used
 export type { EventHandler } from "./base/IEventBus";
+
+// Export event types from event-map-types
+export type {
+  EventName,
+  EventData,
+  TypedEvent,
+} from "../types/event-map-types";
+
+// Export organized interface categories
+export * from "./services";
+export * from "./repositories";
+export * from "./workers";
+
+// Export infrastructure interfaces with specific naming to avoid conflicts
+export type {
+  MonitoringTargetConfig,
+  SchedulerStats,
+  IMonitoringScheduler,
+  NotificationData,
+  IPrisma,
+  IPrismaService,
+  IDatabaseService,
+} from "./infrastructure";
+export {
+  IEventBus as IInfrastructureEventBus,
+  BackendEvents,
+  FrontendEvents,
+} from "./infrastructure/IEventBus";
+
+// Export logger interfaces with specific naming to avoid conflicts
+export { ILogger as ILoggerInterface } from "./loggers/ILogger";
+export type { LogLevel, LogContext } from "./loggers/ILogger";
+
+// Export specific types that are commonly used
+// Note: EventHandler is exported from base/index.ts to avoid conflicts
 export type {
   TargetData,
   CreateTargetData,
   UpdateTargetData,
-} from "./ITargetRepository";
-
-// Export domain-specific event and logger interfaces (with explicit naming to avoid conflicts)
-export {
-  IEventBus as IDomainEventBus,
-  BackendEvents,
-  FrontendEvents,
-} from "./IEventBus";
-export {
-  ILogger as IDomainLogger,
-  LogLevel as DomainLogLevel,
-  LogContext as DomainLogContext,
-} from "./ILogger";
-
-// Export all service interfaces (excluding duplicates from base)
-export * from "./IAlertingService";
-export * from "./IAlertRepository";
-export * from "./IAlertRuleRepository";
-export * from "./IAuthService";
-export * from "./IDatabaseService";
-export * from "./IIncidentEventRepository";
-export * from "./IMonitoringScheduler";
-export * from "./IMonitoringTargetRepository";
-export * from "./IMonitorService";
-export * from "./INotificationRepository";
-export * from "./INotificationService";
-export * from "./IPushSubscriptionRepository";
-export * from "./ISpeedTestConfig";
-export * from "./ISpeedTestRepository";
-export * from "./ISpeedTestResultRepository";
-export * from "./ISpeedTestService";
-export * from "./ITargetRepository";
-export * from "./IUserRepository";
+} from "./repositories/ITargetRepository";

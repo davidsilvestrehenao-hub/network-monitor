@@ -11,11 +11,8 @@ This package provides the **foundational infrastructure** for the Network Monito
 ```typescript
 // DI Container
 import { 
-  initializeContainer,
-  getAppContext,
-  initializeJsonContainer,
-  getJsonAppContext,
   getContainer,
+  JsonConfigLoader,
   TYPES 
 } from "@network-monitor/infrastructure";
 
@@ -54,15 +51,15 @@ import {
 **JSON-Configurable Dependency Injection** - Configure service implementations via JSON files.
 
 ```typescript
-// Initialize container with JSON config
-await initializeJsonContainer("configs/my-service.json");
-
-// Get application context with all services
-const context = await getJsonAppContext();
+// Use microservice bootstrap (recommended)
+const context = await bootstrapMicroservice({
+  serviceName: "My Service",
+  configPath: "configs/my-service.json"
+});
 
 // Access services
-const logger = context.services.logger;
-const eventBus = context.services.eventBus;
+const logger = context.logger;
+const eventBus = context.eventBus;
 const monitorService = context.services.monitor;
 ```
 
@@ -187,13 +184,11 @@ All mocks include:
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── container/              # DI container implementation
-│   ├── container.ts       # Main container
-│   ├── json-container.ts  # JSON-configurable container
+│   ├── flexible-container.ts # Core DI container
 │   ├── json-config-loader.ts # JSON config parser
-│   ├── flexible-container.ts # Flexible container impl
 │   └── types.ts           # Container types
 ├── event-bus/             # Event bus implementations
 │   ├── EventBus.ts        # Production event bus

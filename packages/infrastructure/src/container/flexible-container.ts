@@ -10,7 +10,7 @@ export class FlexibleContainer implements Container {
   private instances: Map<symbol, unknown> = new Map();
   private initialized = false;
 
-  register(key: symbol, config: ServiceConfig): void {
+  register<T>(key: symbol, config: ServiceConfig<T>): void {
     this.services.set(key, config);
   }
 

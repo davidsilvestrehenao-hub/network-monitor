@@ -19,13 +19,13 @@ export interface JsonConfiguration {
 
 // Service type mapping for JSON configuration
 const SERVICE_TYPE_MAP: Record<string, symbol> = {
-  ILogger: TYPES.ILogger,
-  IEventBus: TYPES.IEventBus,
+  // Database
   IDatabaseService: TYPES.IDatabaseService,
-  IMonitorService: TYPES.IMonitorService,
-  IAlertingService: TYPES.IAlertingService,
-  INotificationService: TYPES.INotificationService,
-  IAuthService: TYPES.IAuthService,
+
+  // Loggers
+  ILogger: TYPES.ILogger,
+
+  // Repositories
   IUserRepository: TYPES.IUserRepository,
   IMonitoringTargetRepository: TYPES.IMonitoringTargetRepository,
   ISpeedTestResultRepository: TYPES.ISpeedTestResultRepository,
@@ -33,10 +33,19 @@ const SERVICE_TYPE_MAP: Record<string, symbol> = {
   IIncidentEventRepository: TYPES.IIncidentEventRepository,
   IPushSubscriptionRepository: TYPES.IPushSubscriptionRepository,
   INotificationRepository: TYPES.INotificationRepository,
+  IUserSpeedTestPreferenceRepository: TYPES.IUserSpeedTestPreferenceRepository,
+  ISpeedTestUrlRepository: TYPES.ISpeedTestUrlRepository,
   ITargetRepository: TYPES.ITargetRepository,
   ISpeedTestRepository: TYPES.ISpeedTestRepository,
-  ISpeedTestConfigService: TYPES.ISpeedTestConfigService,
-  IUserSpeedTestPreferenceRepository: TYPES.IUserSpeedTestPreferenceRepository,
+
+  // Services
+  IMonitorService: TYPES.IMonitorService,
+  IAlertingService: TYPES.IAlertingService,
+  INotificationService: TYPES.INotificationService,
+  IAuthService: TYPES.IAuthService,
+
+  // Infrastructure
+  IEventBus: TYPES.IEventBus,
 };
 
 export class JsonConfigLoader {
@@ -131,38 +140,55 @@ export class JsonConfigLoader {
       }
 
       try {
-        // Dynamically import the service module
-        const serviceModule = await this.loadServiceModule(
-          jsonServiceConfig.module
+        const config = await this.createServiceConfigFromJson(
+          serviceType,
+          jsonServiceConfig,
+          serviceName
         );
-        const ServiceClass = serviceModule[jsonServiceConfig.className] as new (
-          ...args: unknown[]
-        ) => unknown;
-
-        if (!ServiceClass) {
-          throw new Error(
-            `Class ${jsonServiceConfig.className} not found in module ${jsonServiceConfig.module}`
-          );
-        }
-
-        // Create service factory based on service type
-        const factory = this.createServiceFactory(serviceType, ServiceClass);
-
-        // Determine dependencies based on service type
-        const dependencies = this.getServiceDependencies(serviceType);
-
-        serviceConfig[serviceType] = {
-          factory,
-          dependencies,
-          singleton: true,
-          description: jsonServiceConfig.description,
-        };
+        Object.assign(serviceConfig, { [serviceType]: config });
       } catch (error) {
         throw new Error(`Failed to load service ${serviceName}: ${error}`);
       }
     }
 
     return serviceConfig;
+  }
+
+  /**
+   * Create service configuration from JSON service config
+   */
+  private async createServiceConfigFromJson(
+    serviceType: symbol,
+    jsonServiceConfig: JsonServiceConfig,
+    _serviceName: string
+  ) {
+    // Dynamically import the service module
+    const serviceModule = await this.loadServiceModule(
+      jsonServiceConfig.module
+    );
+    // Justification: Dynamic service loading requires unknown types for flexible class instantiation
+    const ServiceClass = serviceModule[jsonServiceConfig.className] as new (
+      ...args: unknown[]
+    ) => unknown;
+
+    if (!ServiceClass) {
+      throw new Error(
+        `Class ${jsonServiceConfig.className} not found in module ${jsonServiceConfig.module}`
+      );
+    }
+
+    // Create service factory based on service type
+    const factory = this.createServiceFactory(serviceType, ServiceClass);
+
+    // Determine dependencies based on service type
+    const dependencies = this.getServiceDependencies(serviceType);
+
+    return {
+      factory,
+      dependencies,
+      singleton: true,
+      description: jsonServiceConfig.description,
+    };
   }
 
   /**
@@ -227,6 +253,7 @@ export class JsonConfigLoader {
    */
   private createServiceFactory(
     serviceType: symbol,
+    // Justification: Service factory must handle any service class type for flexible DI
     ServiceClass: new (...args: unknown[]) => unknown
   ): unknown {
     return createServiceFactory(container => {
@@ -244,9 +271,16 @@ export class JsonConfigLoader {
    */
   private getServiceDependencies(serviceType: symbol): symbol[] {
     const dependencyMap: Record<symbol, symbol[]> = {
+      // Loggers
       [TYPES.ILogger]: [],
+
+      // Infrastructure
       [TYPES.IEventBus]: [],
+
+      // Database
       [TYPES.IDatabaseService]: [TYPES.ILogger],
+
+      // Repositories
       [TYPES.IUserRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
       [TYPES.IMonitoringTargetRepository]: [
         TYPES.IDatabaseService,
@@ -267,8 +301,11 @@ export class JsonConfigLoader {
         TYPES.IDatabaseService,
         TYPES.ILogger,
       ],
+      [TYPES.ISpeedTestUrlRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
       [TYPES.ITargetRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
       [TYPES.ISpeedTestRepository]: [TYPES.IDatabaseService, TYPES.ILogger],
+
+      // Services
       [TYPES.IMonitorService]: [
         TYPES.ITargetRepository,
         TYPES.ISpeedTestRepository,
@@ -290,6 +327,9 @@ export class JsonConfigLoader {
         TYPES.ILogger,
       ],
       [TYPES.IAuthService]: [TYPES.ILogger],
+
+      // Infrastructure services
+      [TYPES.IEventBus]: [],
     };
 
     return dependencyMap[serviceType] || [];

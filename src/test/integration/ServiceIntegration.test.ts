@@ -18,7 +18,7 @@ import {
   createTestTarget,
   createTestSpeedTestResult,
   createTestAlertRule,
-} from "../setup-simple";
+} from "@network-monitor/shared/test-utils";
 import { TYPES } from "@network-monitor/infrastructure/container";
 
 describe("Service Integration Tests", () => {
@@ -366,27 +366,27 @@ describe("Service Integration Tests", () => {
       await alertingService.evaluateSpeedTestResult(result);
 
       // Verify that events were emitted
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         "TARGET_CREATED",
         expect.any(Object)
       );
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         "ALERT_RULE_CREATED",
         expect.any(Object)
       );
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         "PUSH_SUBSCRIPTION_CREATED",
         expect.any(Object)
       );
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         "SPEED_TEST_COMPLETED",
         expect.any(Object)
       );
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         "ALERT_TRIGGERED",
         expect.any(Object)
       );
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         "INCIDENT_CREATED",
         expect.any(Object)
       );
@@ -433,18 +433,24 @@ describe("Service Integration Tests", () => {
       });
 
       // Verify events were emitted
-      expect(mockEventBus.emit).toHaveBeenCalledWith("ALERT_TRIGGERED", {
-        targetId: speedTestResult.targetId,
-        ruleId: alertRule.id,
-        value: 150,
-        threshold: 100,
-      });
-      expect(mockEventBus.emit).toHaveBeenCalledWith("INCIDENT_CREATED", {
-        id: incident.id,
-        targetId: incident.targetId,
-        type: incident.type,
-        description: incident.description,
-      });
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
+        "ALERT_TRIGGERED",
+        expect.objectContaining({
+          targetId: speedTestResult.targetId,
+          ruleId: alertRule.id,
+          value: 150,
+          threshold: 100,
+        })
+      );
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
+        "INCIDENT_CREATED",
+        expect.objectContaining({
+          id: incident.id,
+          targetId: incident.targetId,
+          type: incident.type,
+          description: incident.description,
+        })
+      );
     });
 
     it("should handle notification sending when alert is triggered", async () => {
@@ -485,7 +491,7 @@ describe("Service Integration Tests", () => {
       mockNotificationRepository.create.mockResolvedValue(notification);
 
       // Emit alert triggered event
-      mockEventBus.emit("ALERT_TRIGGERED", alertData);
+      mockEventBus.emitDynamic("ALERT_TRIGGERED", alertData);
 
       // Wait for async processing
       await new Promise(resolve => setTimeout(resolve, 200));
@@ -516,7 +522,7 @@ describe("Service Integration Tests", () => {
       mockTargetRepository.create.mockResolvedValue(target);
 
       // Emit the event
-      mockEventBus.emit("TARGET_CREATE_REQUESTED", eventData);
+      mockEventBus.emitDynamic("TARGET_CREATE_REQUESTED", eventData);
 
       // Wait for async processing
       await new Promise(resolve => setTimeout(resolve, 0));
@@ -529,7 +535,7 @@ describe("Service Integration Tests", () => {
       });
 
       // Verify success event was emitted
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         `TARGET_CREATED_${eventData.requestId}`,
         {
           ...target,
@@ -547,21 +553,24 @@ describe("Service Integration Tests", () => {
       };
 
       // Emit the event
-      mockEventBus.emit("MONITORING_START_REQUESTED", eventData);
+      mockEventBus.emitDynamic("MONITORING_START_REQUESTED", eventData);
 
       // Wait for async processing
       await new Promise(resolve => setTimeout(resolve, 0));
 
       // Verify success event was emitted
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         `MONITORING_STARTED_${eventData.requestId}`,
         {
           success: true,
         }
       );
-      expect(mockEventBus.emit).toHaveBeenCalledWith("MONITORING_STARTED", {
-        targetId: eventData.targetId,
-      });
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
+        "MONITORING_STARTED",
+        expect.objectContaining({
+          targetId: eventData.targetId,
+        })
+      );
     });
   });
 
@@ -580,13 +589,13 @@ describe("Service Integration Tests", () => {
       mockTargetRepository.create.mockRejectedValue(error);
 
       // Emit the event
-      mockEventBus.emit("TARGET_CREATE_REQUESTED", eventData);
+      mockEventBus.emitDynamic("TARGET_CREATE_REQUESTED", eventData);
 
       // Wait for async processing
       await new Promise(resolve => setTimeout(resolve, 0));
 
       // Verify error event was emitted
-      expect(mockEventBus.emit).toHaveBeenCalledWith(
+      expect(mockEventBus.emitDynamic).toHaveBeenCalledWith(
         `TARGET_CREATE_FAILED_${eventData.requestId}`,
         {
           error: "Database error",

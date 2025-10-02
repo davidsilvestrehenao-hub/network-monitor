@@ -1,0 +1,33 @@
+{
+  "name": "@network-monitor/repositories",
+  "version": "0.1.0",
+  "description": "Repository interfaces and concrete implementations",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@network-monitor/shared": "workspace:*",
+    "@network-monitor/database": "workspace:*",
+    "@prisma/client": "^6.16.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

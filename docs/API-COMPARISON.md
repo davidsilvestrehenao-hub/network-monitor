@@ -22,7 +22,7 @@ This document compares the three API protocols supported by the Network Monitor 
 
 ### All Three Share the Same Core
 
-```
+```text
 apps/api/                     # REST + GraphQL
    └── src/
        ├── rest/routes.ts     ──┐
@@ -501,7 +501,7 @@ Based on typical usage:
 
 ### Payload Size
 
-```
+```text
 REST GET /api/targets/abc123:
   Request: 150 bytes
   Response: 2.5 KB (all fields)
@@ -519,7 +519,7 @@ tRPC targets.getById({ id: "abc123" }):
 
 ### Request Count
 
-```
+```text
 Scenario: Get target + rules + results
 
 REST:
@@ -539,7 +539,7 @@ tRPC:
 
 ### Development Speed
 
-```
+```text
 Adding new endpoint:
 
 REST:
@@ -607,7 +607,7 @@ tRPC:
 
 ### Deployment Decision Tree
 
-```
+```text
 ┌─ What clients do you have?
 │
 ├─ TypeScript web app only?
@@ -649,7 +649,7 @@ docker run network-monitor-web  # tRPC + Frontend
 
 ### Path 1: Start Simple → Scale
 
-```
+```text
 Week 1: Deploy apps/web/ (tRPC only)
 Week 4: Mobile app needed → Add apps/api/ (REST)
 Week 8: Complex queries → Enable GraphQL on apps/api/
@@ -657,7 +657,7 @@ Week 8: Complex queries → Enable GraphQL on apps/api/
 
 ### Path 2: API-First
 
-```
+```text
 Week 1: Deploy apps/api/ (REST + GraphQL)
 Week 2: Build mobile app (consume REST)
 Week 4: Add web frontend → Add apps/web/ (tRPC)
@@ -665,7 +665,7 @@ Week 4: Add web frontend → Add apps/web/ (tRPC)
 
 ### Path 3: All-In
 
-```
+```text
 Week 1: Deploy both apps/api/ and apps/web/
         - Use apps/api/ for mobile
         - Use apps/web/ for browser

@@ -50,3 +50,12 @@ This is the **most critical pattern** for backend logic. The layers must not be 
 - The Prisma client **must never** leave the data access layer.
 - Repositories are responsible for all database interactions.
 - Repository methods must return application-specific domain types, **not** raw Prisma models.
+
+### F. Type Safety Hierarchy
+
+**Prefer proper interfaces, use generics when necessary, and only use `any` or `unknown` when absolutely required with clear justification.**
+
+- **Best**: Proper interfaces with explicit contracts
+- **Good**: Generics for type flexibility with constraints
+- **Acceptable**: `unknown` with type guards for runtime safety
+- **Last Resort**: `any` only when absolutely necessary with clear justification

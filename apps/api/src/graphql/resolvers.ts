@@ -431,7 +431,6 @@ export function createResolvers(context: MicroserviceContext) {
           // Emit event to request speed test
           ctx.eventBus.emit("SPEED_TEST_REQUESTED", {
             targetId: args.targetId,
-            target: target.address,
           });
 
           return {
@@ -576,7 +575,7 @@ export function createResolvers(context: MicroserviceContext) {
           }
 
           return await ctx.services.alerting.updateAlertRule(
-            args.id,
+            args.id.toString(),
             updateData
           );
         } catch (err) {
@@ -601,7 +600,7 @@ export function createResolvers(context: MicroserviceContext) {
         }
 
         try {
-          await ctx.services.alerting.deleteAlertRule(args.id);
+          await ctx.services.alerting.deleteAlertRule(args.id.toString());
           return true;
         } catch (err) {
           ctx.logger.error("GraphQL: Delete alert rule failed", {
@@ -625,7 +624,9 @@ export function createResolvers(context: MicroserviceContext) {
         }
 
         try {
-          return await ctx.services.alerting.resolveIncident(args.id);
+          return await ctx.services.alerting.resolveIncident(
+            args.id.toString()
+          );
         } catch (err) {
           ctx.logger.error("GraphQL: Resolve incident failed", {
             error: err,
@@ -685,7 +686,7 @@ export function createResolvers(context: MicroserviceContext) {
 
         try {
           return await ctx.services.notification.markNotificationAsRead(
-            args.id
+            args.id.toString()
           );
         } catch (err) {
           ctx.logger.error("GraphQL: Mark notification as read failed", {

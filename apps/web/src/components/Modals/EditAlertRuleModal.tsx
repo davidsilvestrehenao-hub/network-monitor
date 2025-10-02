@@ -12,7 +12,7 @@ interface EditAlertRuleModalProps {
   rule: AlertRule;
   targets: Target[];
   onClose: () => void;
-  onSubmit: (id: number, data: AlertRuleFormData) => void | Promise<void>;
+  onSubmit: (id: string, data: AlertRuleFormData) => void | Promise<void>;
 }
 
 export const EditAlertRuleModal: Component<EditAlertRuleModalProps> = props => {
@@ -31,8 +31,8 @@ export const EditAlertRuleModal: Component<EditAlertRuleModalProps> = props => {
   createEffect(() => {
     setName(props.rule.name);
     setTargetId(props.rule.targetId);
-    setMetric(props.rule.metric);
-    setCondition(props.rule.condition);
+    setMetric(props.rule.metric as "ping" | "download");
+    setCondition(props.rule.condition as "GREATER_THAN" | "LESS_THAN");
     setThreshold(props.rule.threshold.toString());
     setEnabled(props.rule.enabled);
   });

@@ -5,10 +5,12 @@
 export interface MockNotification {
   id: string;
   message: string;
-  timestamp: Date;
+  timestamp: string; // Changed from Date to string to match domain type
   data: {
     userId?: string;
     read?: boolean;
+    // Justification: Mock notifications can have arbitrary additional data for testing
+    // Using unknown allows flexible test scenarios while maintaining type safety
     [key: string]: unknown;
   };
 }
@@ -19,7 +21,8 @@ export interface MockPushSubscription {
   p256dh: string;
   auth: string;
   userId: string;
-  createdAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Mock alert types
@@ -41,27 +44,14 @@ export interface MockTriggeredAlert {
     metric: string;
     value: number;
     threshold: number;
+    // Justification: Mock alerts can have additional metadata for testing scenarios
+    // Using unknown allows flexible test data while maintaining type safety
     [key: string]: unknown;
   };
 }
 
-// Mock target types
-export interface MockTarget {
-  id: string;
-  name: string;
-  address: string;
-  ownerId: string;
-}
-
-export interface MockSpeedTestResult {
-  id: string;
-  ping?: number;
-  download?: number;
-  status: string;
-  error?: string;
-  createdAt: Date;
-  targetId: string;
-}
+// Note: MockTarget and MockSpeedTestResult removed to avoid duplicates
+// Use MonitoringTarget and SpeedTestResult from domain-types.ts instead
 
 // Event data types for mock services
 export interface AlertTriggeredEventData {
@@ -73,9 +63,13 @@ export interface AlertTriggeredEventData {
   message: string;
 }
 
-export interface SpeedTestCompletedEventData {
+// SpeedTestCompletedEventData is now defined in event-handler-types.ts
+// Note: Using SpeedTestResult from domain-types instead of MockSpeedTestResult
+import type { SpeedTestResult } from "./domain-types.js";
+
+export interface MockSpeedTestCompletedEventData {
   targetId: string;
-  result: MockSpeedTestResult;
+  result: SpeedTestResult;
   success: boolean;
   error?: string;
 }

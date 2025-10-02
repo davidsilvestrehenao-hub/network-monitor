@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { t } from "../trpc";
+import { UUIDSchema } from "@network-monitor/shared";
 
 export const notificationsRouter = t.router({
   getByUserId: t.procedure
@@ -20,7 +21,7 @@ export const notificationsRouter = t.router({
   }),
 
   markAsRead: t.procedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: UUIDSchema }))
     .mutation(({ ctx, input }) => {
       return ctx.repositories.notification?.markAsRead(input.id);
     }),
@@ -31,7 +32,7 @@ export const notificationsRouter = t.router({
   }),
 
   delete: t.procedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: UUIDSchema }))
     .mutation(({ ctx, input }) => {
       return ctx.repositories.notification?.delete(input.id);
     }),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { t } from "../trpc";
+import { UUIDSchema } from "@network-monitor/shared";
 
 export const alertRulesRouter = t.router({
   getAll: t.procedure.query(({ ctx }) => {
@@ -13,7 +14,7 @@ export const alertRulesRouter = t.router({
     }),
 
   getById: t.procedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: UUIDSchema }))
     .query(({ ctx, input }) => {
       return ctx.repositories.alertRule?.findById(input.id);
     }),
@@ -36,7 +37,7 @@ export const alertRulesRouter = t.router({
   update: t.procedure
     .input(
       z.object({
-        id: z.number(),
+        id: UUIDSchema,
         name: z.string().min(1).optional(),
         metric: z.enum(["ping", "download"]).optional(),
         condition: z.enum(["GREATER_THAN", "LESS_THAN"]).optional(),
@@ -50,7 +51,7 @@ export const alertRulesRouter = t.router({
     }),
 
   delete: t.procedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: UUIDSchema }))
     .mutation(({ ctx, input }) => {
       return ctx.repositories.alertRule?.delete(input.id);
     }),
@@ -58,7 +59,7 @@ export const alertRulesRouter = t.router({
   toggleEnabled: t.procedure
     .input(
       z.object({
-        id: z.number(),
+        id: UUIDSchema,
         enabled: z.boolean(),
       })
     )

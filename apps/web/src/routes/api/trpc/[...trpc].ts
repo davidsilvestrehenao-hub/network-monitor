@@ -14,9 +14,9 @@ import type {
   INotificationRepository,
   INotificationService,
   IPushSubscriptionRepository,
-  ISpeedTestConfigService,
   ISpeedTestRepository,
   ISpeedTestResultRepository,
+  ISpeedTestUrlRepository,
   ITargetRepository,
   IUserRepository,
   IUserSpeedTestPreferenceRepository,
@@ -46,7 +46,7 @@ async function getWiredContext(): Promise<AppContext> {
 
     try {
       bootstrapPromise = bootstrapMicroservice({
-        serviceName: "Web App (tRPC)",
+        applicationName: "Web App (tRPC)",
         configPath,
         showBanner: false,
       });
@@ -74,7 +74,7 @@ async function getWiredContext(): Promise<AppContext> {
       speedTestConfigService:
         (ctx.services[
           "speedTestConfigService"
-        ] as ISpeedTestConfigService | null) ?? null,
+        ] as ISpeedTestUrlRepository | null) ?? null,
     },
     repositories: {
       user: (ctx.repositories["user"] as IUserRepository | null) ?? null,
@@ -123,3 +123,4 @@ const handler = (event: APIEvent) =>
 
 export const GET = handler;
 export const POST = handler;
+export { getWiredContext };

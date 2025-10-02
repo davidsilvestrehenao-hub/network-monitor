@@ -1,6 +1,6 @@
 # @network-monitor/database
 
-Database package containing Prisma schema, client, and repository implementations.
+Database package containing Prisma schema and client. Repository implementations have been moved to @network-monitor/repositories.
 
 ## 📁 Structure
 
@@ -10,8 +10,7 @@ packages/database/
 │   ├── schema.prisma    # Database schema
 │   └── seed.ts          # Seed data script
 ├── src/
-│   ├── repositories/    # Repository implementations (TODO)
-│   └── index.ts         # Package exports
+│   └── index.ts         # Package exports (Prisma client only)
 └── package.json
 ```
 
@@ -71,12 +70,12 @@ When you modify the schema:
 
 ## 🏗️ Repository Pattern
 
-This package will contain repository implementations that abstract Prisma:
+Repository implementations have been moved to the `@network-monitor/repositories` package:
 
 ```typescript
-// Coming soon: Repository implementations
-import { UserRepository } from '@network-monitor/database';
-import { MonitoringTargetRepository } from '@network-monitor/database';
+// Import repository implementations from repositories package
+import { UserRepository } from '@network-monitor/repositories';
+import { MonitoringTargetRepository } from '@network-monitor/repositories';
 ```
 
-For now, Prisma Client is generated to `node_modules/@prisma/client` and can be imported directly.
+This package now only provides the Prisma client and database service.

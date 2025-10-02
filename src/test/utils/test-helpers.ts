@@ -258,50 +258,75 @@ export function expectServiceToHaveBeenCalledTimes(
   expect(service[method]).toHaveBeenCalledTimes(times);
 }
 
-export function expectServiceToHaveBeenCalled(service: any, method: string) {
+export function expectServiceToHaveBeenCalled<
+  T extends Record<string, unknown>,
+>(service: T, method: keyof T) {
   expect(service[method]).toHaveBeenCalled();
 }
 
-export function expectServiceNotToHaveBeenCalled(service: any, method: string) {
+export function expectServiceNotToHaveBeenCalled<
+  T extends Record<string, unknown>,
+>(service: T, method: keyof T) {
   expect(service[method]).not.toHaveBeenCalled();
 }
 
 // Event bus testing helpers
-export function expectEventToBeEmitted(
-  eventBus: any,
+export function expectEventToBeEmitted<T = unknown>(
+  eventBus: { emit: (...args: unknown[]) => unknown },
   event: string,
-  data?: any
+  data?: T
 ) {
   expect(eventBus.emit).toHaveBeenCalledWith(event, data);
 }
 
 export function expectEventListenerToBeRegistered(
-  eventBus: any,
+  eventBus: { on: (...args: unknown[]) => unknown },
   event: string
 ) {
   expect(eventBus.on).toHaveBeenCalledWith(event, expect.any(Function));
 }
 
-export function expectEventListenerToBeRemoved(eventBus: any, event: string) {
+export function expectEventListenerToBeRemoved(
+  eventBus: { off: (...args: unknown[]) => unknown },
+  event: string
+) {
   expect(eventBus.off).toHaveBeenCalledWith(event, expect.any(Function));
 }
 
 // Database testing helpers
-export function mockDatabaseQuery(
-  databaseService: any,
+export function mockDatabaseQuery<T = unknown>(
+  databaseService: {
+    getClient: () => Record<
+      string,
+      Record<string, { mockResolvedValue: (value: T) => void }>
+    >;
+  },
   table: string,
   method: string,
-  result: any
+  result: T
 ) {
   const client = databaseService.getClient();
   client[table][method].mockResolvedValue(result);
 }
 
-export function mockDatabaseTransaction(databaseService: any, result: any) {
+export function mockDatabaseTransaction<T = unknown>(
+  databaseService: {
+    getClient: () => {
+      $transaction: {
+        mockImplementation: (
+          fn: (callback: (client: unknown) => Promise<T>) => Promise<T>
+        ) => void;
+      };
+    };
+  },
+  result: T
+) {
   const client = databaseService.getClient();
-  client.$transaction.mockImplementation(async (callback: Function) => {
-    return await callback(client);
-  });
+  client.$transaction.mockImplementation(
+    async (callback: (client: unknown) => Promise<T>) => {
+      return await callback(client);
+    }
+  );
   return result;
 }
 

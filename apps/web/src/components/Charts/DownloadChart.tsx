@@ -25,7 +25,7 @@ export function DownloadChart(props: DownloadChartProps) {
     // Collect all download results from the selected time range
     const allResults = props.targets
       .flatMap(target =>
-        target.speedTestResults
+        (target.speedTestResults || [])
           .filter(
             result =>
               new Date(result.createdAt) >= cutoffTime &&

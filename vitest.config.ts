@@ -63,10 +63,6 @@ export default defineConfig({
         "./packages/notification/src"
       ),
       "@network-monitor/auth": resolve(__dirname, "./packages/auth/src"),
-      "@network-monitor/speed-test": resolve(
-        __dirname,
-        "./packages/speed-test/src"
-      ),
     },
   },
   define: {

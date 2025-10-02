@@ -1,29 +1,68 @@
 // Base event bus interface that all event buses should extend
 // This ensures consistency and polymorphism across all event-driven communication
 
-export interface IEventBus {
-  // Event subscription
-  on<T = unknown>(event: string, handler: EventHandler<T>): void;
-  once<T = unknown>(event: string, handler: EventHandler<T>): void;
-  off<T = unknown>(event: string, handler: EventHandler<T>): void;
+import type {
+  EventMap,
+  EventName,
+  EventData,
+  TypedEvent,
+} from "../../types/event-map-types";
 
-  // Event emission
-  emit<T = unknown>(event: string, data: T): void | Promise<void>;
-  emitAsync<T = unknown>(event: string, data: T): Promise<void>;
+export interface IEventBus {
+  // Strongly-typed event methods (preferred)
+  on<T extends EventName>(
+    event: T,
+    handler: (data: EventData<T>) => void
+  ): void;
+  once<T extends EventName>(
+    event: T,
+    handler: (data: EventData<T>) => void
+  ): void;
+  off<T extends EventName>(
+    event: T,
+    handler: (data: EventData<T>) => void
+  ): void;
+  emit<T extends EventName>(event: T, data: EventData<T>): void | Promise<void>;
+  emitAsync<T extends EventName>(event: T, data: EventData<T>): Promise<void>;
+
+  // Dynamic event methods (for events not in EventMap)
+  onDynamic<T = unknown>(event: string, handler: EventHandler<T>): void;
+  onceDynamic<T = unknown>(event: string, handler: EventHandler<T>): void;
+  offDynamic<T = unknown>(event: string, handler: EventHandler<T>): void;
+  emitDynamic<T = unknown>(event: string, data: T): void | Promise<void>;
+  emitAsyncDynamic<T = unknown>(event: string, data: T): Promise<void>;
+
+  // Typed event object methods
+  publishEvent<T extends EventName>(event: TypedEvent<T>): void | Promise<void>;
+  subscribeToEvent<T extends EventName>(
+    eventType: T,
+    handler: (event: TypedEvent<T>) => void
+  ): void;
 
   // Event management
   removeAllListeners(event?: string): void;
   listenerCount(event: string): number;
   eventNames(): string[];
+  getTypedEventNames(): EventName[];
 
   // Lifecycle
   connect(): Promise<void>;
   disconnect(): Promise<void>;
   isConnected(): boolean;
+
+  // Event validation
+  isValidEventType(eventType: string): eventType is EventName;
+  validateEventData<T extends EventName>(
+    eventType: T,
+    data: unknown
+  ): data is EventData<T>;
 }
 
-// Event handler type
+// Event handler type for dynamic events
 export type EventHandler<T = unknown> = (data?: T) => void | Promise<void>;
+
+// Event types are imported above and used in the interface
+// No need to re-export since they're already available through the import
 
 // Event metadata interface
 export interface EventMetadata {

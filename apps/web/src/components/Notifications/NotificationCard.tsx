@@ -3,8 +3,8 @@ import type { Notification } from "@network-monitor/shared";
 
 interface NotificationCardProps {
   notification: Notification;
-  onMarkAsRead: (id: number) => void | Promise<void>;
-  onViewDetails?: (id: number) => void;
+  onMarkAsRead: (id: string) => void | Promise<void>;
+  onViewDetails?: (id: string) => void;
 }
 
 export const NotificationCard: Component<NotificationCardProps> = props => {
@@ -52,7 +52,7 @@ export const NotificationCard: Component<NotificationCardProps> = props => {
 
     setIsMarking(true);
     try {
-      await props.onMarkAsRead(props.notification.id);
+      await props.onMarkAsRead(props.notification.id.toString());
     } finally {
       setIsMarking(false);
     }

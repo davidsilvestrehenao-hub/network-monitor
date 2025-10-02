@@ -3,11 +3,11 @@
 
 export interface IService<T, CreateDto, UpdateDto> {
   // Basic CRUD operations
-  getById(id: string | number): Promise<T | null>;
+  getById(id: string): Promise<T | null>;
   getAll(limit?: number, offset?: number): Promise<T[]>;
   create(data: CreateDto): Promise<T>;
-  update(id: string | number, data: UpdateDto): Promise<T>;
-  delete(id: string | number): Promise<void>;
+  update(id: string, data: UpdateDto): Promise<T>;
+  delete(id: string): Promise<void>;
 }
 
 export interface IUserOwnedService<T, CreateDto, UpdateDto>

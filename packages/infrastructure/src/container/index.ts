@@ -1,6 +1,4 @@
-// Export only the base container functionality
-// Service configurations belong in the apps that use them
+// Export only the essential container functionality
 export * from "./flexible-container.js";
+export * from "./json-config-loader.js";
 export * from "./types.js";
-export * from "./container.js";
-export * from "./container.browser.js";

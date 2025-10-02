@@ -1,6 +1,6 @@
 import { createResource, For, Show, createSignal } from "solid-js";
 import { trpc } from "~/lib/trpc";
-import { useLogger } from "~/lib/frontend/container";
+import { logger } from "~/lib/logger";
 import type { Notification as NotificationType } from "@network-monitor/shared";
 import {
   AppLayout,
@@ -11,7 +11,6 @@ import {
 } from "~/components";
 
 export default function NotificationsPage() {
-  const logger = useLogger();
   const [notifications, { refetch: refetchNotifications }] = createResource(
     () => trpc.notifications.getByUserId.query({ userId: "mock-user" })
   );
@@ -24,7 +23,7 @@ export default function NotificationsPage() {
     "notifications" | "subscriptions"
   >("notifications");
 
-  const handleMarkAsRead = async (id: number) => {
+  const handleMarkAsRead = async (id: string) => {
     try {
       await trpc.notifications.markAsRead.mutate({ id });
       logger.info("Notification marked as read", { id });

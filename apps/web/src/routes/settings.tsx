@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { useLogger } from "~/lib/frontend/container";
+import { logger } from "~/lib/logger";
 import {
   AppLayout,
   SettingsSection,
@@ -13,8 +13,6 @@ import {
 } from "~/components";
 
 export default function SettingsPage() {
-  const logger = useLogger();
-
   // Mock settings - in real app, fetch from API
   const [monitoringSettings] = createSignal<MonitoringSettingsData>({
     monitoringInterval: 30,

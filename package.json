@@ -22,8 +22,8 @@
     "type-check": "turbo run type-check",
     "markdownlint": "bunx markdownlint-cli **/*.md",
     "markdownlint:fix": "bunx markdownlint-cli --fix **/*.md",
-    "quality": "bun run format:check && bun run type-check && bun run lint:check && bun run markdownlint",
-    "quality:fix": "bun run format && bun run lint:fix && bun run markdownlint:fix",
+    "quality": "bun run format:check; bun run type-check; bun run lint:check; bun run markdownlint",
+    "quality:fix": "bun run format; bun run type-check; bun run lint:fix",
     "pre-commit": "./scripts/ci-check.sh",
     "pre-push": "./scripts/ci-check.sh",
     "db:generate": "turbo run db:generate --filter=@network-monitor/database",
@@ -47,7 +47,7 @@
     "markdownlint": "^0.38.0",
     "markdownlint-cli": "^0.45.0",
     "turbo": "^2.5.8",
-    "typescript": "^5.6.2",
+    "typescript": "^5.5.4",
     "vite": "^6.2.2"
   },
   "dependencies": {

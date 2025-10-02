@@ -37,9 +37,10 @@ export function SuccessRateChart(props: SuccessRateChartProps) {
     >();
 
     for (const target of props.targets) {
-      const results = target.speedTestResults.filter(
-        result => new Date(result.createdAt) >= cutoffTime
-      );
+      const results =
+        target.speedTestResults?.filter(
+          result => new Date(result.createdAt) >= cutoffTime
+        ) || [];
 
       const buckets = new Map<number, { success: number; total: number }>();
 

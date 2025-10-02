@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { t } from "../trpc";
+import { UUIDSchema } from "@network-monitor/shared";
 
 export const incidentsRouter = t.router({
   getAll: t.procedure.query(({ ctx }) => {
@@ -33,7 +34,7 @@ export const incidentsRouter = t.router({
     }),
 
   resolve: t.procedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: UUIDSchema }))
     .mutation(({ ctx, input }) => {
       return ctx.repositories.incidentEvent?.resolve(input.id);
     }),

@@ -125,4 +125,7 @@ Thumbs.db
 
 .turbo/cache
 
+# Temporary error analysis
+error-groups/
+
 # Trigger CI run

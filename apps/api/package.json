@@ -17,11 +17,7 @@
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.2",
-    "@network-monitor/alerting": "workspace:*",
-    "@network-monitor/database": "workspace:*",
     "@network-monitor/infrastructure": "workspace:*",
-    "@network-monitor/monitor": "workspace:*",
-    "@network-monitor/notification": "workspace:*",
     "@network-monitor/shared": "workspace:*",
     "graphql": "^16.8.1",
     "graphql-yoga": "^5.1.1",

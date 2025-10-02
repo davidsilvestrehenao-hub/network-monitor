@@ -1,12 +1,11 @@
 import { type Component, For, Show, createResource } from "solid-js";
 import { trpc } from "~/lib/trpc";
-import { useLogger } from "~/lib/frontend/container";
+import { logger } from "~/lib/logger";
 import { StatsCard } from "./StatsCard";
 import { TargetCard, type Target } from "./TargetCard";
 import { type TargetStatus } from "./StatusIndicator";
 
 export const Dashboard: Component = () => {
-  const logger = useLogger();
   const [targets] = createResource(() => trpc.targets.getAll.query());
 
   // Mock stats - in real implementation, fetch from API

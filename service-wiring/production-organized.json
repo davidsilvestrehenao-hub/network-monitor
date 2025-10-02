@@ -1,0 +1,140 @@
+{
+  "name": "Production Service Wiring (Organized)",
+  "description": "Organized dependency injection configuration for production - defines which service implementations to use by category",
+  "WARNING": "⚠️  This is SERVICE WIRING, NOT runtime configuration!",
+  "runtimeConfig": "All runtime configuration (database URLs, ports, keys) must be in environment variables",
+  "purpose": "This file defines WHICH classes to use for each interface, organized by service category",
+  "environment": "production",
+  "services": {
+    "database": {
+      "IDatabaseService": {
+        "module": "@network-monitor/database",
+        "className": "PrismaService",
+        "isMock": false,
+        "description": "Production Prisma database service"
+      }
+    },
+    "loggers": {
+      "ILogger": {
+        "module": "@network-monitor/loggers",
+        "className": "WinstonLogger",
+        "isMock": false,
+        "description": "Production Winston logger"
+      }
+    },
+    "repositories": {
+      "IUserRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "UserRepository",
+        "isMock": false,
+        "description": "Production user repository"
+      },
+      "IMonitoringTargetRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "MonitoringTargetRepository",
+        "isMock": false,
+        "description": "Production monitoring target repository"
+      },
+      "ISpeedTestResultRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "SpeedTestResultRepository",
+        "isMock": false,
+        "description": "Production speed test result repository"
+      },
+      "IAlertRuleRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "AlertRuleRepository",
+        "isMock": false,
+        "description": "Production alert rule repository"
+      },
+      "IIncidentEventRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "IncidentEventRepository",
+        "isMock": false,
+        "description": "Production incident event repository"
+      },
+      "IPushSubscriptionRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "PushSubscriptionRepository",
+        "isMock": false,
+        "description": "Production push subscription repository"
+      },
+      "INotificationRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "NotificationRepository",
+        "isMock": false,
+        "description": "Production notification repository"
+      },
+      "IUserSpeedTestPreferenceRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "UserSpeedTestPreferenceRepository",
+        "isMock": false,
+        "description": "Production user speed test preference repository"
+      },
+      "ISpeedTestUrlRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "SpeedTestUrlRepository",
+        "isMock": false,
+        "description": "Production speed test URL repository"
+      },
+      "ITargetRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "TargetRepository",
+        "isMock": false,
+        "description": "Production target repository (legacy)"
+      },
+      "ISpeedTestRepository": {
+        "module": "@network-monitor/repositories",
+        "className": "SpeedTestRepository",
+        "isMock": false,
+        "description": "Production speed test repository (legacy)"
+      }
+    },
+    "services": {
+      "IMonitorService": {
+        "module": "@network-monitor/services",
+        "className": "MonitorService",
+        "isMock": false,
+        "description": "Production monitoring service"
+      },
+      "ISpeedTestService": {
+        "module": "@network-monitor/services",
+        "className": "SpeedTestService",
+        "isMock": false,
+        "description": "Production speed test service"
+      },
+      "IAlertingService": {
+        "module": "@network-monitor/services",
+        "className": "AlertingService",
+        "isMock": false,
+        "description": "Production alerting service"
+      },
+      "INotificationService": {
+        "module": "@network-monitor/services",
+        "className": "NotificationService",
+        "isMock": false,
+        "description": "Production notification service"
+      },
+      "IAuthService": {
+        "module": "@network-monitor/services",
+        "className": "AuthService",
+        "isMock": false,
+        "description": "Production authentication service"
+      }
+    },
+    "infrastructure": {
+      "IEventBus": {
+        "module": "@network-monitor/infrastructure",
+        "className": "EventBus",
+        "isMock": false,
+        "description": "Production event bus"
+      },
+      "IAPIClient": {
+        "module": "@network-monitor/infrastructure",
+        "className": "HTTPAPIClient",
+        "isMock": false,
+        "description": "Production HTTP API client"
+      }
+    }
+  }
+}

@@ -30,7 +30,47 @@ bun run cache:clear
 
 ## 🔍 **Common Issues & Solutions**
 
-### **1. Development Server Issues**
+### **1. Interface Placement Errors**
+
+#### **Service Interface Moved to Wrong Package**
+
+```bash
+# Error: Cannot find module '@network-monitor/shared'
+# Error: Service interfaces not accessible to DI container
+```
+
+**Problem:** Service interfaces like `IAlertingService`, `IMonitorService` were moved to individual packages, breaking dependency injection and type-safe service access.
+
+**Root Cause:** Confusing implementation location with interface placement. Service interfaces are **contracts** used by multiple packages, not implementation details.
+
+**Solutions:**
+
+```bash
+# 1. Analyze interface usage before moving
+grep -r "IServiceName" packages/ apps/
+
+# 2. If used in multiple packages, keep in shared
+# Example output showing cross-package usage:
+# packages/infrastructure/src/container/container.ts
+# apps/web/src/routes/api/trpc/[...trpc].ts  
+# apps/api/src/main.ts
+# → MUST stay in shared package
+
+# 3. Restore interface to shared package
+# Move interface back to packages/shared/src/interfaces/
+
+# 4. Update all imports to reference shared package
+sed -i '' 's|from "\./interfaces/|from "@network-monitor/shared"|g' packages/*/src/*.ts
+```
+
+**Prevention:**
+- Service interfaces are **contracts**, not implementation details
+- Always check usage with `grep -r "InterfaceName" packages/ apps/` before moving
+- Only move interfaces that are truly internal to one package (very rare)
+
+**Key Insight:** Interface placement depends on **usage patterns**, not **implementation location**.
+
+### **2. Development Server Issues**
 
 #### **Server Won't Start**
 

@@ -9,13 +9,15 @@ This directory contains essential utility scripts for the Network Monitor projec
 Runs local CI checks (formatting, linting, type checking, build) before pushing code.
 
 **Usage:**
+
 ```bash
 ./scripts/ci-check.sh
 ```
 
 **What it checks:**
+
 - Code formatting (Prettier)
-- Linting (ESLint) 
+- Linting (ESLint)
 - Type checking (TypeScript)
 - Build verification
 - Tests (if available)
@@ -29,6 +31,7 @@ Runs local CI checks (formatting, linting, type checking, build) before pushing 
 Creates a new feature branch for development following Git Flow conventions.
 
 **Usage:**
+
 ```bash
 ./scripts/new-feature.sh <feature-name>
 
@@ -38,6 +41,7 @@ Creates a new feature branch for development following Git Flow conventions.
 ```
 
 **What it does:**
+
 - Fetches latest changes from origin
 - Switches to main branch
 - Pulls latest changes
@@ -52,6 +56,7 @@ Creates a new feature branch for development following Git Flow conventions.
 Manages the PostgreSQL development database using Docker Compose.
 
 **Usage:**
+
 ```bash
 # Start the database
 ./scripts/start-dev-db.sh
@@ -78,6 +83,7 @@ bun run db:status
 ```
 
 **Database Connection Details:**
+
 - Host: `localhost:5432`
 - User: `dev`
 - Password: `dev`
@@ -93,11 +99,13 @@ bun run db:status
 Resets the database with fresh seed data.
 
 **Usage:**
+
 ```bash
 bun run scripts/reset-database.ts
 ```
 
 **What it does:**
+
 - Resets the database using `bun run push`
 - Seeds with fresh data using `bun run seed`
 - Provides confirmation and next steps
@@ -111,6 +119,7 @@ bun run scripts/reset-database.ts
 Deployment script for production environments supporting both PM2 and systemd.
 
 **Usage:**
+
 ```bash
 # Deploy with PM2
 ./scripts/deploy.sh deploy-pm2
@@ -144,6 +153,7 @@ Deployment script for production environments supporting both PM2 and systemd.
 ```
 
 **Options:**
+
 - `--env=ENV` - Set environment (production, staging, development)
 - `--port=PORT` - Set port number
 - `--user=USER` - Set service user
@@ -156,6 +166,7 @@ Deployment script for production environments supporting both PM2 and systemd.
 Systemd service file for production deployment.
 
 **Features:**
+
 - Automatic startup and restart
 - Security hardening
 - Resource limits
@@ -173,6 +184,7 @@ Systemd service file for production deployment.
 Extracts this project as a template for creating new projects.
 
 **Usage:**
+
 ```bash
 ./scripts/extract-template.sh <new-project-name>
 
@@ -181,6 +193,7 @@ Extracts this project as a template for creating new projects.
 ```
 
 **What it does:**
+
 - Creates a copy of the project in `../<new-project-name>`
 - Removes template-specific files
 - Initializes new git repository

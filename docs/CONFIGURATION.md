@@ -26,6 +26,7 @@ bun run start
 ## 📦 What Each App Does
 
 ### API Monolith (`apps/api`)
+
 **All services in one process** - Best for development and small deployments
 
 ```bash
@@ -38,6 +39,7 @@ bun run start            # Production
 ```
 
 ### Monitor Service (`apps/monitor-service`)
+
 **Target management and speed tests** - Can run independently
 
 ```bash
@@ -49,6 +51,7 @@ bun run start            # Production
 ```
 
 ### Alerting Service (`apps/alerting-service`)
+
 **Alert rules and incidents** - Can run independently
 
 ```bash
@@ -60,6 +63,7 @@ bun run start            # Production
 ```
 
 ### Notification Service (`apps/notification-service`)
+
 **Push notifications** - Can run independently
 
 ```bash
@@ -71,6 +75,7 @@ bun run start            # Production
 ```
 
 ### Web App (`apps/web`)
+
 **PWA Frontend** - SolidStart application
 
 ```bash
@@ -123,7 +128,7 @@ CONFIG_PATH=/path/to/my-config.json \
 
 ## 📁 Configuration Structure
 
-```
+```text
 configs/
 ├── apps/                           # Per-app configs (use these!)
 │   ├── monitor-service/
@@ -141,24 +146,28 @@ configs/
 ## 💡 Common Scenarios
 
 ### First Time Running
+
 ```bash
 # Just run it - works out of the box!
 bun run apps/api/src/main.ts
 ```
 
 ### Working Offline (Airplane, Train)
+
 ```bash
 cd apps/api
 bun run dev:offline
 ```
 
 ### Testing in Isolation
+
 ```bash
 cd apps/api
 bun run dev:mock
 ```
 
 ### Production Deployment
+
 ```bash
 # Build first
 bun run build
@@ -169,6 +178,7 @@ bun run start
 ```
 
 ### Want Real Database in Development
+
 ```bash
 cd apps/api
 bun run dev:concrete
@@ -239,11 +249,13 @@ The system uses JSON files to configure which service implementations to use:
 ## 🔧 Creating Custom Configurations
 
 1. **Copy an existing configuration**:
+
    ```bash
    cp configs/auth-mock-only.json configs/my-custom.json
    ```
 
 2. **Edit the configuration**:
+
    ```json
    {
      "name": "My Custom Config",
@@ -260,6 +272,7 @@ The system uses JSON files to configure which service implementations to use:
    ```
 
 3. **Use your configuration**:
+
    ```bash
    CONFIG_PATH=configs/my-custom.json bun run apps/api/src/main.ts
    ```
@@ -267,6 +280,7 @@ The system uses JSON files to configure which service implementations to use:
 ## 🚨 Troubleshooting
 
 ### Config file not found
+
 ```bash
 # Check if the file exists
 ls configs/apps/monitor-service/development.json
@@ -279,6 +293,7 @@ CONFIG_PATH=configs/apps/monitor-service/development.json bun run apps/monitor-s
 ```
 
 ### Wrong config being used
+
 ```bash
 # Check what config is loaded (look at startup logs)
 bun run apps/monitor-service/src/main.ts
@@ -289,6 +304,7 @@ bun run apps/monitor-service/src/main.ts
 ```
 
 ### Need to verify config
+
 ```bash
 # Validate JSON syntax
 cat configs/apps/monitor-service/production.json | jq .
@@ -335,6 +351,7 @@ You don't need to configure anything!
 ---
 
 **Ready to start developing? Just run:**
+
 ```bash
 bun run apps/api/src/main.ts
 ```

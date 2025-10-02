@@ -3,17 +3,17 @@
 
 export type LogLevel = "debug" | "info" | "warn" | "error" | "fatal";
 
-export interface LogContext {
-  [key: string]: unknown;
+export interface LogContext<T = unknown> {
+  [key: string]: T;
 }
 
 export interface ILogger {
   // Standard logging methods
-  debug(message: string, context?: LogContext): void;
-  info(message: string, context?: LogContext): void;
-  warn(message: string, context?: LogContext): void;
-  error(message: string, context?: LogContext): void;
-  fatal(message: string, context?: LogContext): void;
+  debug<T = unknown>(message: string, context?: LogContext<T>): void;
+  info<T = unknown>(message: string, context?: LogContext<T>): void;
+  warn<T = unknown>(message: string, context?: LogContext<T>): void;
+  error<T = unknown>(message: string, context?: LogContext<T>): void;
+  fatal<T = unknown>(message: string, context?: LogContext<T>): void;
 
   // Level management
   setLevel(level: LogLevel): void;
@@ -21,7 +21,7 @@ export interface ILogger {
   isLevelEnabled(level: LogLevel): boolean;
 
   // Context management
-  setContext(context: LogContext): void;
-  getContext(): LogContext;
-  child(context: LogContext): ILogger;
+  setContext<T = unknown>(context: LogContext<T>): void;
+  getContext<T = unknown>(): LogContext<T>;
+  child<T = unknown>(context: LogContext<T>): ILogger;
 }

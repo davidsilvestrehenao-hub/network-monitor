@@ -1,6 +1,6 @@
 import { For, createResource, createSignal, Suspense, Show } from "solid-js";
 import { trpc } from "~/lib/trpc";
-import { useLogger } from "~/lib/frontend/container";
+import { logger } from "~/lib/logger";
 import {
   AppLayout,
   TargetCard,
@@ -10,7 +10,6 @@ import {
 } from "~/components";
 
 export default function TargetsPage() {
-  const logger = useLogger();
   const [targets, { refetch }] = createResource(() =>
     trpc.targets.getAll.query()
   );

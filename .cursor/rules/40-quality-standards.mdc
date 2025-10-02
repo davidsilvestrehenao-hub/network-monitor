@@ -42,18 +42,50 @@ bun run type-check
 
 ### **TypeScript Standards**
 
-- **Minimal `any` types**: Use proper TypeScript interfaces whenever possible
-- **Justified `any` usage**: When `any` is necessary (e.g., dynamic service loading), provide clear justification
+- **Type Safety Hierarchy**: **Prefer proper interfaces, use generics when necessary, and only use `any` or `unknown` when absolutely required with clear justification**
+- **Interface-First**: Define interfaces before implementations for maximum type safety
+- **Generics for Flexibility**: Use generics when you need type flexibility while maintaining safety
+- **`unknown` over `any`**: When dynamic typing is unavoidable, prefer `unknown` with type guards over `any`
+- **Justified `any`/`unknown` usage**: When `any` or `unknown` is necessary, provide clear justification explaining why safer alternatives aren't possible
 - **ESLint Disable Justification**: Every `eslint-disable` comment must have a clear explanation
 - **Strict Type Checking**: Enable all strict TypeScript options
-- **Interface-First**: Define interfaces before implementations
+
+### **Type Safety Hierarchy Examples**
+
+```typescript
+// ✅ BEST: Proper interfaces
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+}
+
+// ✅ GOOD: Generics for flexibility
+function processData<T extends { id: string }>(data: T): T {
+  return { ...data, processed: true };
+}
+
+// ⚠️ ACCEPTABLE: unknown with type guards
+function handleRuntimeData(data: unknown): UserData | null {
+  if (typeof data === 'object' && data !== null && 'id' in data) {
+    return data as UserData; // Safe after type guard
+  }
+  return null;
+}
+
+// ❌ LAST RESORT: any (must be justified)
+// Justification: Testing private method access
+const result = (service as any).privateMethod();
+```
 
 ### **ESLint Disable Justification Standards**
 
 - **Mandatory Justification**: Every `eslint-disable` comment must be preceded by a clear explanation
 - **Justification Format**: Use `// Justification: [Clear explanation of why the disable is necessary]`
 - **Common Justified Cases**:
-  - Dynamic service loading requiring `any` types
+  - Runtime type checking for dynamic properties (prefer `unknown` with type guards)
+  - Testing private methods or properties (use `any` for test-only access)
+  - External library compatibility issues (document the specific limitation)
   - SolidJS reactivity false positives in JSX context
   - Console usage in logger services and CLI tools
   - Async createEffect for DI container initialization

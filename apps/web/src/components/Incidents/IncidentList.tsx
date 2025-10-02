@@ -3,8 +3,8 @@ import type { IncidentEvent } from "@network-monitor/shared";
 
 interface IncidentListProps {
   incidents: IncidentEvent[];
-  onResolve?: (id: number) => void;
-  onViewDetails?: (id: number) => void;
+  onResolve?: (id: string) => void;
+  onViewDetails?: (id: string) => void;
 }
 
 export const IncidentList: Component<IncidentListProps> = props => {

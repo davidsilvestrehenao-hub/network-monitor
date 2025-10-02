@@ -1,17 +1,41 @@
-// Service type identifiers
+// Import all interface types from shared package
+import type {
+  // Database interfaces
+  IDatabaseService,
+
+  // Logger interfaces
+  ILogger,
+
+  // Repository interfaces
+  IUserRepository,
+  IMonitoringTargetRepository,
+  ISpeedTestResultRepository,
+  IAlertRuleRepository,
+  IIncidentEventRepository,
+  IPushSubscriptionRepository,
+  INotificationRepository,
+  IUserSpeedTestPreferenceRepository,
+  ISpeedTestUrlRepository,
+  ITargetRepository,
+  ISpeedTestRepository,
+
+  // Service interfaces
+  IMonitorService,
+  IAlertingService,
+  INotificationService,
+  IAuthService,
+
+  // Infrastructure interfaces
+  IEventBus,
+} from "@network-monitor/shared";
+
+// Service type identifiers (simplified flat structure)
 export const TYPES = {
-  // Core services
-  ILogger: Symbol("ILogger"),
-  IEventBus: Symbol("IEventBus"),
+  // Database
   IDatabaseService: Symbol("IDatabaseService"),
 
-  // Business services
-  IMonitorService: Symbol("IMonitorService"),
-  ISpeedTestService: Symbol("ISpeedTestService"),
-  ISpeedTestConfigService: Symbol("ISpeedTestConfigService"),
-  IAlertingService: Symbol("IAlertingService"),
-  INotificationService: Symbol("INotificationService"),
-  IAuthService: Symbol("IAuthService"),
+  // Loggers
+  ILogger: Symbol("ILogger"),
 
   // Repositories
   IUserRepository: Symbol("IUserRepository"),
@@ -24,38 +48,65 @@ export const TYPES = {
   IUserSpeedTestPreferenceRepository: Symbol(
     "IUserSpeedTestPreferenceRepository"
   ),
-
-  // Legacy repository (for backward compatibility)
+  ISpeedTestUrlRepository: Symbol("ISpeedTestUrlRepository"),
   ITargetRepository: Symbol("ITargetRepository"),
   ISpeedTestRepository: Symbol("ISpeedTestRepository"),
 
-  // Frontend services
-  IAPIClient: Symbol("IAPIClient"),
-  ICommandQueryService: Symbol("ICommandQueryService"),
-  IPerformanceMonitor: Symbol("IPerformanceMonitor"),
-  ICacheManager: Symbol("ICacheManager"),
-  IPWAService: Symbol("IPWAService"),
+  // Services
+  IMonitorService: Symbol("IMonitorService"),
+  IAlertingService: Symbol("IAlertingService"),
+  INotificationService: Symbol("INotificationService"),
+  IAuthService: Symbol("IAuthService"),
+
+  // Infrastructure
+  IEventBus: Symbol("IEventBus"),
 } as const;
 
-// Service factory type
+// Strongly typed service factory
 export type ServiceFactory<T> = (container: Container) => T;
 
-// Service configuration
-export interface ServiceConfig {
-  factory: ServiceFactory<unknown>;
+// Strongly typed service configuration
+export interface ServiceConfig<T = unknown> {
+  factory: ServiceFactory<T>;
   dependencies: symbol[];
   singleton: boolean;
   description: string;
 }
 
-// Container interface
+// Strongly typed container interface
 export interface Container {
-  register(key: symbol, config: ServiceConfig): void;
+  register<T>(key: symbol, config: ServiceConfig<T>): void;
   get<T>(key: symbol): T;
   has(key: symbol): boolean;
   getRegisteredTypes(): symbol[];
   initialize(): Promise<void>;
 }
 
-// Service registry type
 export type ServiceRegistry = Map<symbol, ServiceConfig>;
+
+// AppContext type for tRPC and API usage
+export interface AppContext {
+  userId: string | null;
+  services: {
+    logger: ILogger | null;
+    eventBus: IEventBus | null;
+    database: IDatabaseService | null;
+    monitor: IMonitorService | null;
+    alerting: IAlertingService | null;
+    notification: INotificationService | null;
+    auth: IAuthService | null;
+    speedTestConfigService: ISpeedTestUrlRepository | null;
+  };
+  repositories: {
+    user: IUserRepository | null;
+    monitoringTarget: IMonitoringTargetRepository | null;
+    speedTestResult: ISpeedTestResultRepository | null;
+    alertRule: IAlertRuleRepository | null;
+    incidentEvent: IIncidentEventRepository | null;
+    pushSubscription: IPushSubscriptionRepository | null;
+    notification: INotificationRepository | null;
+    target: ITargetRepository | null;
+    speedTest: ISpeedTestRepository | null;
+    userSpeedTestPreference: IUserSpeedTestPreferenceRepository | null;
+  };
+}

@@ -27,13 +27,16 @@ import {
   type MicroserviceContext,
   validateEnvironment,
   getEnvironment,
-  setupGracefulShutdown,
+  createGracefulShutdown,
+  type IGracefulShutdown,
 } from "@network-monitor/infrastructure";
 import type {
   IMonitorService,
   IAlertingService,
   INotificationService,
+  GraphQLContextRequest,
 } from "@network-monitor/shared";
+import { getBunGlobal } from "@network-monitor/shared";
 import { Hono } from "hono";
 import { logger as honoLogger } from "hono/logger";
 import { cors } from "hono/cors";
@@ -48,6 +51,64 @@ import {
   handleDocsRequest,
   autoLaunchBrowser,
 } from "./openapi/swagger-ui";
+
+/**
+ * Create API Application graceful shutdown handler
+ */
+function createAPIGracefulShutdown(
+  context: MicroserviceContext,
+  server: unknown // Bun server instance
+): IGracefulShutdown {
+  async function performAppShutdown(): Promise<void> {
+    context.logger.info("Stopping API server...");
+
+    // Stop accepting new requests
+    await stopHttpServer();
+
+    // Complete in-flight requests
+    await completeInFlightRequests();
+
+    // Close any remaining connections
+    await closeConnections();
+
+    context.logger.info("API server shutdown complete");
+  }
+
+  async function stopHttpServer(): Promise<void> {
+    if (
+      server &&
+      typeof server === "object" &&
+      server !== null &&
+      "stop" in server &&
+      typeof (server as { stop: unknown }).stop === "function"
+    ) {
+      context.logger.info("Stopping HTTP server...");
+      (server as { stop: () => void }).stop();
+    } else {
+      context.logger.debug("Server does not support graceful stop");
+    }
+  }
+
+  async function completeInFlightRequests(): Promise<void> {
+    // TODO: Wait for in-flight requests to complete
+    context.logger.debug("Waiting for in-flight requests to complete...");
+    // Give requests a moment to complete
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
+  async function closeConnections(): Promise<void> {
+    // TODO: Close any remaining connections
+    context.logger.debug("Closing remaining connections...");
+  }
+
+  return createGracefulShutdown(
+    context.logger,
+    performAppShutdown,
+    context.database ?? undefined,
+    context.eventBus,
+    30000 // 30 second timeout
+  );
+}
 
 async function startMonolith() {
   // 12-Factor Factor III: Validate environment configuration at startup
@@ -81,7 +142,7 @@ async function startMonolith() {
   console.log(`⚙️  Runtime config: from environment variables`);
 
   const context = await bootstrapMicroservice({
-    serviceName: "Network Monitor Monolith",
+    applicationName: "Network Monitor Monolith",
     configPath,
     enableDatabase: true,
     showBanner: false, // Custom banner above
@@ -129,21 +190,8 @@ async function startMonolith() {
       ctx.logger.info("  3. Zero code changes needed!");
       ctx.logger.info("");
 
-      // 12-Factor Factor IX: Setup graceful shutdown
-      setupGracefulShutdown({
-        logger: ctx.logger,
-        database: ctx.database ?? undefined,
-        eventBus: ctx.eventBus,
-        shutdownTimeout: 30000,
-        onShutdown: async () => {
-          ctx.logger.info("Running custom monolith cleanup...");
-          // Custom cleanup if needed
-        },
-      });
-
-      ctx.logger.info(
-        "Graceful shutdown handlers registered (SIGTERM, SIGINT)"
-      );
+      // Note: Graceful shutdown will be set up after server creation
+      ctx.logger.info("Infrastructure initialized, server will start next");
     },
 
     // Custom shutdown - cleanup all services
@@ -164,7 +212,7 @@ async function startMonolith() {
 
   const yoga = createYoga({
     schema: executableSchema,
-    context: (req: { request: Request }) =>
+    context: (req: GraphQLContextRequest) =>
       createGraphQLContext(req.request, context),
     graphqlEndpoint: "/graphql",
     landingPage: true, // GraphQL Playground
@@ -285,9 +333,10 @@ async function startMonolith() {
   context.logger.info(`✅ Found available port: ${availablePort}`);
 
   // Start HTTP server using Bun with Hono with retry logic
-  // Justification: Bun global is provided by Bun runtime, not in standard TypeScript types
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const BunGlobal = globalThis as any;
+  const bunRuntime = getBunGlobal();
+  if (!bunRuntime) {
+    throw new Error("This application requires Bun runtime");
+  }
 
   let server;
   let retryCount = 0;
@@ -295,7 +344,7 @@ async function startMonolith() {
 
   while (retryCount < maxRetries) {
     try {
-      server = BunGlobal.Bun.serve({
+      server = bunRuntime.serve({
         port: availablePort,
         hostname: config.host,
         fetch: app.fetch, // Hono handles all routing
@@ -321,6 +370,14 @@ async function startMonolith() {
       }
     }
   }
+
+  // 12-Factor Factor IX: Setup graceful shutdown using new interface
+  const gracefulShutdown = createAPIGracefulShutdown(context, server);
+  gracefulShutdown.setupGracefulShutdown();
+
+  context.logger.info(
+    "Graceful shutdown handlers registered (SIGTERM, SIGINT)"
+  );
 
   context.logger.info("🚀 API Server is now running", {
     port: availablePort,

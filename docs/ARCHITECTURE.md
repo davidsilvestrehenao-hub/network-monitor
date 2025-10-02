@@ -95,7 +95,28 @@ network-monitor/
 
 ## **Core Architectural Principles**
 
-### **1. Event-Driven Architecture**
+### **1. Type Safety Hierarchy**
+
+**Prefer proper interfaces, use generics when necessary, and only use `any` or `unknown` when absolutely required with clear justification.**
+
+This principle ensures maximum type safety across the entire architecture:
+
+- **✅ Best**: Proper interfaces with explicit contracts
+- **✅ Good**: Generics for type flexibility with constraints  
+- **⚠️ Acceptable**: `unknown` with type guards for runtime safety
+- **❌ Last Resort**: `any` only when absolutely necessary with clear justification
+
+### **2. Interface Placement Strategy**
+
+**CRITICAL:** Service interfaces are **contracts**, not implementation details. They must remain in the shared package because they define public APIs used by:
+- Dependency Injection Container (service registration/resolution)
+- Applications (type-safe service access)
+- Infrastructure (mocking and testing)
+- Other packages (cross-package communication)
+
+**Key Rule:** Analyze **usage patterns**, not **implementation location**, when determining interface placement.
+
+### **2. Event-Driven Architecture**
 
 All inter-service communication happens via the **EventBus**:
 

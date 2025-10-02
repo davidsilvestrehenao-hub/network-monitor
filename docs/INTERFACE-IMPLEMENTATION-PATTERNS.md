@@ -6,17 +6,97 @@ This document outlines the mandatory interface implementation patterns that ensu
 
 ## Core Principles
 
-### 1. **Interface Polymorphism**
+### 1. **Type Safety Hierarchy**
+
+**Prefer proper interfaces, use generics when necessary, and only use `any` or `unknown` when absolutely required with clear justification.**
+
+This hierarchy ensures maximum type safety while maintaining necessary flexibility:
+
+- **Best**: Proper interfaces with explicit contracts
+- **Good**: Generics for type flexibility with constraints
+- **Acceptable**: `unknown` with type guards for runtime safety
+- **Last Resort**: `any` only when absolutely necessary with clear justification
+
+### 2. **Interface Polymorphism**
 
 All interfaces must extend their appropriate base interfaces to ensure consistent contracts and enable polymorphism.
 
-### 2. **Type Safety**
+### 3. **Generic Type Parameters**
 
-Use generic type parameters to ensure compile-time safety and prevent runtime errors.
+Use generics to ensure compile-time safety and prevent runtime errors while maintaining flexibility.
 
-### 3. **Consistency**
+### 4. **Consistency**
 
 Standard CRUD operations are guaranteed across all implementations through base interfaces.
+
+### 5. **Interface Placement Strategy**
+
+Interfaces must be placed based on **usage patterns**, not implementation location. Service interfaces are **contracts** that define public APIs and must remain accessible to all consumers.
+
+## Type Safety Hierarchy Examples
+
+### ✅ **Best: Proper Interfaces**
+
+```typescript
+// Define explicit contracts
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface UserRepository {
+  findById(id: string): Promise<UserData | null>;
+  create(data: Omit<UserData, 'id'>): Promise<UserData>;
+}
+```
+
+### ✅ **Good: Generics with Constraints**
+
+```typescript
+// Flexible but type-safe
+interface Repository<T extends { id: string }, CreateDto> {
+  findById(id: string): Promise<T | null>;
+  create(data: CreateDto): Promise<T>;
+}
+
+// Usage with constraints
+function processEntity<T extends { id: string; name: string }>(entity: T): T {
+  return { ...entity, processed: true };
+}
+```
+
+### ⚠️ **Acceptable: unknown with Type Guards**
+
+```typescript
+// Runtime type checking with safety
+function handleApiResponse(response: unknown): UserData | null {
+  // Justification: Using unknown for external API response, then type guarding
+  if (
+    typeof response === 'object' &&
+    response !== null &&
+    'id' in response &&
+    'name' in response &&
+    typeof (response as { id: unknown }).id === 'string'
+  ) {
+    return response as UserData;
+  }
+  return null;
+}
+```
+
+### ❌ **Last Resort: any (Must Be Justified)**
+
+```typescript
+// Only when absolutely necessary
+class TestHelper {
+  // Justification: Using any type to access private methods for testing purposes
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  accessPrivateMethod(service: any, methodName: string): any {
+    return service[methodName];
+  }
+}
+```
 
 ## Base Interface Hierarchy
 
@@ -326,6 +406,94 @@ When updating existing interfaces to follow these patterns:
 5. **Test Changes**: Ensure all TypeScript checks pass
 6. **Update Tests**: Modify tests to work with new interface structure
 
+## Interface Placement Guidelines
+
+### **CRITICAL: Service Interfaces Are Contracts**
+
+One of the most common mistakes is moving service interfaces to individual packages based on where they're implemented. **This is incorrect.**
+
+Service interfaces like `IAlertingService`, `IMonitorService`, `IAuthService` are **contracts** that define public APIs. They must remain in the shared package because they are used by:
+
+1. **Dependency Injection Container** - for service registration and resolution
+2. **Applications** (web, API, microservices) - for type-safe service access
+3. **Infrastructure Package** - for service management and mocking
+4. **Other Packages** - for cross-package communication
+
+### **Interface Placement Decision Matrix**
+
+| Interface Type | Location | Reasoning |
+|---|---|---|
+| **Service Interfaces** (`IAlertingService`) | `@network-monitor/shared` | Used by DI container, apps, infrastructure |
+| **Repository Interfaces** (`ITargetRepository`) | `@network-monitor/shared` | Used by database, services, apps |
+| **Domain Entities** (`User`, `Target`) | `@network-monitor/shared` | Used across multiple domains |
+| **Base Interfaces** (`IRepository`, `IService`) | `@network-monitor/shared` | Foundation contracts for all implementations |
+| **Configuration Interfaces** (`ISpeedTestConfigService`) | `@network-monitor/shared` | Used by multiple packages |
+| **Implementation Helpers** (rare) | Individual packages | Only if truly internal and never cross boundaries |
+
+### **How to Verify Interface Placement**
+
+Before moving any interface, run this analysis:
+
+```bash
+# Check usage across the codebase
+grep -r "IInterfaceName" packages/ apps/
+
+# If found in multiple packages → MUST stay in shared
+# If found only in one package → Verify it's truly internal
+```
+
+**Example Analysis:**
+
+```bash
+$ grep -r "IAlertingService" packages/ apps/
+packages/infrastructure/src/container/container.ts
+packages/infrastructure/src/container/types.ts
+apps/web/src/routes/api/trpc/[...trpc].ts
+apps/api/src/main.ts
+apps/alerting-service/src/main.ts
+# → Used in 5+ locations across packages → MUST stay shared
+```
+
+### **Common Anti-Patterns to Avoid**
+
+❌ **Wrong Logic:**
+
+- "AlertingService is implemented in the alerting package"
+- "Therefore IAlertingService should be in the alerting package"
+
+✅ **Correct Logic:**
+
+- "IAlertingService is used by the DI container for service resolution"
+- "It's used by applications for type-safe service access"
+- "It's used by infrastructure for mocking and testing"
+- "Therefore IAlertingService must remain in the shared package"
+
+### **The Contract vs Implementation Distinction**
+
+```typescript
+// ✅ SHARED: Contract - defines what the service does
+interface IAlertingService {
+  createAlert(data: AlertData): Promise<Alert>;
+  processSpeedTestResult(result: SpeedTestResult): Promise<void>;
+}
+
+// ✅ PACKAGE-SPECIFIC: Implementation - defines how it's done
+class AlertingService implements IAlertingService {
+  // Implementation details specific to this package
+}
+```
+
+### **Refactoring Checklist**
+
+When considering interface placement changes:
+
+1. **Analyze Usage**: Run `grep -r "InterfaceName" packages/ apps/`
+2. **Identify Consumers**: List all packages that import the interface
+3. **Verify Necessity**: Ensure the interface truly needs to move
+4. **Update Imports**: Change all import statements if moving
+5. **Test Thoroughly**: Ensure TypeScript compilation and tests pass
+6. **Document Decision**: Record the reasoning for future reference
+
 ## Examples
 
 See the following files for complete implementation examples:
@@ -336,3 +504,5 @@ See the following files for complete implementation examples:
 - `packages/infrastructure/src/mocks/MockAlerting.ts`
 
 Remember: **Interface polymorphism is mandatory**. All interfaces must extend their appropriate base interfaces to ensure consistency and maintainability across the application.
+
+**Critical Lesson**: Always analyze **usage patterns**, not **naming conventions** or **implementation location**, when determining interface placement.

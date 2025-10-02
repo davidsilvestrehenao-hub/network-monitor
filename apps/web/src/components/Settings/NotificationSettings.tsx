@@ -1,5 +1,5 @@
 import { type Component, createSignal, createEffect, Show } from "solid-js";
-import { useLogger } from "~/lib/frontend/container";
+import { logger } from "~/lib/logger";
 
 export interface NotificationSettingsData {
   enableNotifications: boolean;
@@ -14,7 +14,6 @@ interface NotificationSettingsProps {
 export const NotificationSettings: Component<
   NotificationSettingsProps
 > = props => {
-  const logger = useLogger();
   const [enableNotifications, setEnableNotifications] = createSignal(false);
   const [enablePushNotifications, setEnablePushNotifications] =
     createSignal(false);
