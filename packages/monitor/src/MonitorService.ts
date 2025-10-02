@@ -315,6 +315,10 @@ export class MonitorService implements IMonitorService {
       alertRules: [],
     };
     this.logger.info("MonitorService: Target created", { id: target.id });
+
+    // Emit event for subscribers
+    this.eventBus.emit("TARGET_CREATED", { target });
+
     return target;
   }
 
@@ -395,6 +399,9 @@ export class MonitorService implements IMonitorService {
         result,
       });
 
+      // Emit event for subscribers
+      this.eventBus.emit("SPEED_TEST_COMPLETED", { result });
+
       return result;
     } catch (error) {
       this.logger.error("MonitorService: Speed test failed", {
@@ -423,6 +430,9 @@ export class MonitorService implements IMonitorService {
         status: "FAILURE",
         error: error instanceof Error ? error.message : "Unknown error",
       });
+
+      // Emit event for subscribers (even for failed tests)
+      this.eventBus.emit("SPEED_TEST_COMPLETED", { result: failedResult });
 
       return failedResult;
     }

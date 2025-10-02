@@ -218,7 +218,9 @@ export class NotificationService implements INotificationService {
         userId,
       }
     );
-    return await this.pushSubscriptionRepository.findByUserId(userId);
+    const subscriptions =
+      await this.pushSubscriptionRepository.findByUserId(userId);
+    return subscriptions || [];
   }
 
   async deletePushSubscription(id: string): Promise<void> {

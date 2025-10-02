@@ -309,15 +309,19 @@ describe("Service Integration Tests", () => {
         sentAt: new Date(),
       });
 
-      // Mock fetch for speed test
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        body: {
-          getReader: () => ({
-            read: () => Promise.resolve({ done: true, value: undefined }),
-          }),
-        },
+      // Mock fetch for speed test with delay to simulate 150ms ping
+      global.fetch = vi.fn().mockImplementation(async () => {
+        // Simulate 150ms delay for ping measurement
+        await new Promise(resolve => setTimeout(resolve, 150));
+        return {
+          ok: true,
+          status: 200,
+          body: {
+            getReader: () => ({
+              read: () => Promise.resolve({ done: true, value: undefined }),
+            }),
+          },
+        };
       });
 
       // 1. User logs in
