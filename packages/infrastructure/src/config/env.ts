@@ -368,7 +368,7 @@ export function validateEnvironment(): void {
       // eslint-disable-next-line no-console
       console.error("\nPlease check your environment configuration:");
       // eslint-disable-next-line no-console
-      console.error("1. Copy env.template to .env");
+      console.error("1. Copy .env.example to .env");
       // eslint-disable-next-line no-console
       console.error("2. Fill in all required values");
       // eslint-disable-next-line no-console

@@ -1,0 +1,42 @@
+---
+description: Domain-Specific Requirements - Network Monitor
+globs: "**/*.{ts,tsx,js,jsx,md}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Domain-Specific Requirements - Network Monitor
+
+This file contains the domain-specific requirements for the Network Monitor application. For the complete requirements, see the detailed domain requirements file.
+
+## 🎯 **Quick Reference**
+
+- **Application**: PWA Connection Monitor
+- **Domain**: Internet connection monitoring and performance tracking
+- **Key Entities**: MonitoringTarget, SpeedTestResult, AlertRule, IncidentEvent
+- **Core Features**: Real-time monitoring, historical analysis, push notifications
+
+## 📁 **Detailed Requirements**
+
+For complete domain requirements, see:
+- **Business Requirements**: `.cursor/rules/network-monitor/05-requirements.mdc`
+- **Database Schema**: `.cursor/rules/network-monitor/70-database-schema.mdc`
+
+## 🔄 **Template Extraction**
+
+When extracting this project as a template:
+1. Replace this file with `.cursor/rules/template/05-domain-requirements.mdc`
+2. Update the domain-specific files in `network-monitor/` directory
+3. Follow the template migration guide in `docs/TEMPLATE-MIGRATION-GUIDE.md`
+
+## 🎯 **Current Domain Context**
+
+This project is specifically designed for **internet connection monitoring** with the following characteristics:
+
+- **Monitoring Targets**: Websites, APIs, custom URLs
+- **Performance Metrics**: Ping, download speed, upload speed
+- **Alerting**: Threshold-based alerts with push notifications
+- **User Experience**: Real-time dashboard with historical charts
+- **PWA Features**: Offline capability, installable, background sync
+
+Remember: **This is the current domain implementation. For template extraction, see the template files.**

@@ -1,0 +1,152 @@
+---
+description: Domain-Specific Requirements and Business Logic (Template)
+globs: "**/*.{ts,tsx,js,jsx,md}"
+alwaysApply: true
+type: Auto Attached
+---
+
+# [PROJECT_NAME] - Domain Requirements & Business Logic
+
+## 🎯 **Application Overview**
+
+[DESCRIBE_YOUR_APPLICATION] - [BRIEF_DESCRIPTION_OF_WHAT_IT_DOES]
+
+### **Core Value Proposition**
+
+- **[VALUE_1]**: [DESCRIPTION]
+- **[VALUE_2]**: [DESCRIPTION]
+- **[VALUE_3]**: [DESCRIPTION]
+- **[VALUE_4]**: [DESCRIPTION]
+- **[VALUE_5]**: [DESCRIPTION]
+
+## 🏗️ **Core Domain Entities**
+
+### **[ENTITY_1]**
+
+[DESCRIPTION_OF_ENTITY_1]
+
+**Key Properties:**
+- **Property 1**: [DESCRIPTION]
+- **Property 2**: [DESCRIPTION]
+- **Property 3**: [DESCRIPTION]
+
+**Business Rules:**
+- [RULE_1]
+- [RULE_2]
+- [RULE_3]
+
+### **[ENTITY_2]**
+
+[DESCRIPTION_OF_ENTITY_2]
+
+**Key Properties:**
+- **Property 1**: [DESCRIPTION]
+- **Property 2**: [DESCRIPTION]
+- **Property 3**: [DESCRIPTION]
+
+**Business Rules:**
+- [RULE_1]
+- [RULE_2]
+- [RULE_3]
+
+## 📊 **Core Features**
+
+### **[FEATURE_1]**
+
+[DESCRIPTION_OF_FEATURE_1]
+
+- **Sub-feature 1**: [DESCRIPTION]
+- **Sub-feature 2**: [DESCRIPTION]
+- **Sub-feature 3**: [DESCRIPTION]
+
+### **[FEATURE_2]**
+
+[DESCRIPTION_OF_FEATURE_2]
+
+- **Sub-feature 1**: [DESCRIPTION]
+- **Sub-feature 2**: [DESCRIPTION]
+- **Sub-feature 3**: [DESCRIPTION]
+
+## 🚨 **Business Rules & Constraints**
+
+### **Validation Rules**
+
+- [VALIDATION_RULE_1]
+- [VALIDATION_RULE_2]
+- [VALIDATION_RULE_3]
+
+### **Business Logic**
+
+- [BUSINESS_LOGIC_1]
+- [BUSINESS_LOGIC_2]
+- [BUSINESS_LOGIC_3]
+
+### **Data Relationships**
+
+- [ENTITY_1] has many [ENTITY_2]
+- [ENTITY_2] belongs to [ENTITY_1]
+- [ENTITY_3] has many [ENTITY_4]
+
+## 📈 **Success Metrics**
+
+### **User Experience**
+
+- **[METRIC_1]**: [TARGET_VALUE]
+- **[METRIC_2]**: [TARGET_VALUE]
+- **[METRIC_3]**: [TARGET_VALUE]
+
+### **System Performance**
+
+- **[METRIC_1]**: [TARGET_VALUE]
+- **[METRIC_2]**: [TARGET_VALUE]
+- **[METRIC_3]**: [TARGET_VALUE]
+
+## 🎨 **UI/UX Requirements**
+
+### **Design Principles**
+
+- **Clean Interface**: [DESCRIPTION]
+- **Information Hierarchy**: [DESCRIPTION]
+- **Consistent Styling**: [DESCRIPTION]
+- **Responsive Layout**: [DESCRIPTION]
+
+### **Color Coding**
+
+- **Green**: [MEANING]
+- **Yellow**: [MEANING]
+- **Red**: [MEANING]
+- **Blue**: [MEANING]
+- **Gray**: [MEANING]
+
+## 🔮 **Future Enhancements**
+
+### **Phase 2 Features**
+
+- **[FEATURE_1]**: [DESCRIPTION]
+- **[FEATURE_2]**: [DESCRIPTION]
+- **[FEATURE_3]**: [DESCRIPTION]
+
+### **Phase 3 Features**
+
+- **[FEATURE_1]**: [DESCRIPTION]
+- **[FEATURE_2]**: [DESCRIPTION]
+- **[FEATURE_3]**: [DESCRIPTION]
+
+## 📋 **Acceptance Criteria**
+
+### **Core Functionality**
+
+- ✅ [CRITERIA_1]
+- ✅ [CRITERIA_2]
+- ✅ [CRITERIA_3]
+- ✅ [CRITERIA_4]
+- ✅ [CRITERIA_5]
+
+### **Quality Standards**
+
+- ✅ [STANDARD_1]
+- ✅ [STANDARD_2]
+- ✅ [STANDARD_3]
+- ✅ [STANDARD_4]
+
+Remember: **Every feature must serve the core purpose of [YOUR_APPLICATION_PURPOSE] with excellent user experience.**

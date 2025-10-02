@@ -1,5 +1,5 @@
 # Gemini Code Assist Configuration
-# For network-monitor project
+# For network-monitor project - PWA Connection Monitor
 
 # General settings
 enabled: true
@@ -15,48 +15,129 @@ review_focus:
   - code_quality
   - best_practices
   - testing
+  - ci_cd_compliance
+  - pwa_standards
+  - database_patterns
 
 # Project-specific guidelines
 guidelines:
-  # Architecture patterns
-  - "Enforce Router → Service → Repository pattern"
+  # Core Architecture - CRITICAL
+  - "Enforce Router → Service → Repository pattern - layers must not be skipped"
   - "Services must communicate via events, not direct calls"
   - "Repository pattern must be used for all database access"
   - "Prisma client must never leave repository layer"
-  - "All services must use dependency injection"
+  - "All services must use dependency injection via DI container"
+  - "Event-driven communication between backend services only"
+  - "Repository methods must return domain types, not raw Prisma models"
   
-  # TypeScript standards
-  - "No 'any' types without justification"
+  # tRPC API Architecture
+  - "All API procedures defined in apps/web/src/server/trpc/router.ts"
+  - "tRPC procedures must only call Services, never repositories directly"
+  - "Input validation with Zod schemas required for all procedures"
+  - "Use TRPCError for structured error responses"
+  - "Frontend must use tRPC client from apps/web/src/lib/trpc.ts"
+  
+  # TypeScript Standards - ZERO TOLERANCE
+  - "No 'any' types without proper justification and clear comments"
   - "All interfaces must be fully implemented"
   - "Prefer interfaces over concrete types"
+  - "All repository interfaces must extend base IRepository interface"
+  - "All service interfaces must extend base IService interface"
+  - "Interface polymorphism required - no interfaces without base extensions"
   
-  # Code quality
-  - "All code must pass ESLint with zero warnings"
+  # Code Quality - MANDATORY
+  - "All code must pass ESLint with ZERO warnings or errors"
   - "All code must be Prettier formatted"
   - "All code must pass TypeScript type checking"
+  - "ESLint disable comments must have clear justifications"
+  - "No eslint-disable-next-line without explanation"
+  - "All suppressions must be justified and positioned correctly"
   
-  # Testing
-  - "All new services must have unit tests"
+  # Testing Requirements
+  - "All new services must have comprehensive unit tests"
   - "Complex logic requires integration tests"
+  - "All repositories must have mock implementations"
+  - "Test data seeding with realistic patterns required"
+  - "Edge cases and error scenarios must be tested"
+  - "Repository tests must verify domain type mapping"
   
-  # 12-Factor App compliance
-  - "Configuration must use environment variables only"
-  - "No secrets in code"
-  - "Logs must go to stdout/stderr only"
-  - "Services must be stateless"
+  # 12-Factor App Compliance - CRITICAL
+  - "Configuration must use environment variables only - NO JSON config files"
+  - "No secrets in code or version control"
+  - "Logs must go to stdout/stderr only - NO file logging"
+  - "Services must be stateless - no in-memory state"
+  - "Use PostgreSQL in all environments for dev/prod parity"
+  - "Graceful shutdown handlers required"
+  - "Port binding from environment variables"
+  - "Admin processes as one-off scripts"
+  
+  # CI/CD Workflow - MANDATORY
+  - "All changes must go through Pull Requests - no direct commits to main"
+  - "Use ./scripts/new-feature.sh for feature branches"
+  - "Run ./scripts/ci-check.sh before suggesting commit and push"
+  - "PR titles must follow semantic commit format: <type>: <Description>"
+  - "Never suggest bypassing CI checks or branch protection"
+  - "Never use --no-verify or --force flags"
+  
+  # Database Schema & Entities
+  - "Schema defined exclusively in packages/database/prisma/schema.prisma"
+  - "User owns MonitoringTarget, SpeedTestResult, AlertRule, IncidentEvent"
+  - "Cascade deletes properly configured for data cleanup"
+  - "All entities must have proper indexes for performance"
+  - "Domain mapping required in all repository methods"
+  - "Transaction handling for multi-entity operations"
+  
+  # Network Monitor Domain
+  - "Monitor internet connection endpoints (websites, APIs, custom URLs)"
+  - "Track ping/latency, download speed, upload speed metrics"
+  - "Alert rules for threshold-based notifications"
+  - "Incident tracking for outages and alert breaches"
+  - "Push notifications for real-time alerts"
+  - "Historical data visualization with charts"
+  - "PWA features: installable, offline capable, background sync"
+  
+  # Frontend Development
+  - "SolidJS with SolidStart framework only"
+  - "Tailwind CSS for all styling - no custom CSS files"
+  - "Charts using Chart.js via solid-chartjs library"
+  - "Data fetching via tRPC client with createResource"
+  - "Component state with createSignal, global state with events"
+  - "Error boundaries with ErrorBoundary component"
+  - "Responsive design for desktop, tablet, mobile"
+  
+  # Performance & Reliability
+  - "API responses under 1 second"
+  - "Dashboard load time under 2 seconds"
+  - "Chart rendering under 1 second"
+  - "Alert delivery under 5 seconds"
+  - "99.9% monitoring accuracy target"
+  - "Zero data corruption tolerance"
+  - "Graceful error handling and recovery"
+  
+  # Security & Privacy
+  - "User-specific data isolation - no sharing between users"
+  - "Input validation and sanitization required"
+  - "Rate limiting for API protection"
+  - "Secure authentication with Auth.js"
+  - "Data encryption in transit and at rest"
+  - "No secrets in logs or error messages"
 
 # Languages and frameworks
 languages:
   - typescript
   - javascript
   - prisma
+  - sql
   
 frameworks:
   - solidjs
   - solidstart
-  - hono
   - trpc
   - prisma
+  - bun
+  - turborepo
+  - tailwindcss
+  - chartjs
 
 # Exclude patterns
 exclude:
@@ -64,16 +145,78 @@ exclude:
   - "dist/**"
   - "build/**"
   - "*.lock"
+  - "*.lockb"
   - "*.log"
   - ".git/**"
+  - "coverage/**"
+  - ".turbo/**"
+  - "*.tsbuildinfo"
+  - "*.sqlite"
+  - "*.db"
 
-# Review comments
+# Review settings
 comment_style: inline
 provide_suggestions: true
+auto_fix_suggestions: false
+review_threshold: medium
+
+# Severity levels for different types of issues
 severity_levels:
-  - critical
-  - high
-  - medium
-  - low
-  - info
+  - critical    # Architecture violations, security issues, 12-factor violations
+  - high        # Code quality issues, type safety problems, CI/CD violations
+  - medium      # Best practices, performance concerns, testing gaps
+  - low         # Style issues, documentation improvements
+  - info        # Suggestions, optimizations, educational notes
+
+# Critical violations that must be addressed
+critical_violations:
+  - "Direct commits to main branch"
+  - "Bypassing CI/CD checks"
+  - "Using 'any' types without justification"
+  - "Direct Prisma usage outside repositories"
+  - "Services calling other services directly"
+  - "Configuration in JSON files instead of environment variables"
+  - "File-based logging instead of stdout/stderr"
+  - "Secrets in code or version control"
+  - "Missing interface base extensions"
+  - "ESLint disable comments without justification"
+
+# High priority issues
+high_priority_issues:
+  - "ESLint warnings or errors"
+  - "TypeScript compilation errors"
+  - "Missing type definitions"
+  - "Incomplete interface implementations"
+  - "Missing error handling"
+  - "Inadequate test coverage"
+  - "Performance bottlenecks"
+  - "Security vulnerabilities"
+  - "Missing input validation"
+  - "Inconsistent code formatting"
+
+# Domain-specific checks
+domain_checks:
+  monitoring:
+    - "Speed test results properly stored and retrieved"
+    - "Alert rules correctly evaluated"
+    - "Incident events properly tracked"
+    - "Push notifications correctly configured"
+  
+  database:
+    - "Repository pattern correctly implemented"
+    - "Domain type mapping verified"
+    - "Transaction handling appropriate"
+    - "Cascade deletes properly configured"
+  
+  frontend:
+    - "SolidJS patterns correctly used"
+    - "tRPC client properly utilized"
+    - "Charts rendering correctly"
+    - "Responsive design implemented"
+  
+  pwa:
+    - "Service worker properly configured"
+    - "Offline functionality working"
+    - "Push notifications enabled"
+    - "App manifest correct"
 

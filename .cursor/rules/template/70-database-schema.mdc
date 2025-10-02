@@ -1,0 +1,471 @@
+---
+description: Database Schema and Entity Documentation (Template)
+globs: "prisma/**/*.prisma, src/**/*.ts, src/**/*.tsx"
+alwaysApply: true
+type: Auto Attached
+---
+
+# Database Schema & Entity Documentation
+
+## 🗄️ **Database Overview**
+
+The [PROJECT_NAME] uses **Prisma ORM** with **SQLite** for development and **PostgreSQL** for production. The database schema is defined exclusively in `prisma/schema.prisma` and serves as the **single source of truth** for all data structures.
+
+### **Database Configuration**
+
+```prisma
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"  // Development
+    url      = env("DATABASE_URL")
+    // provider = "postgresql"  // Production
+}
+```
+
+## 📊 **Entity Relationships**
+
+### **Core Entity Hierarchy**
+
+```text
+User (1) ──→ (N) [ENTITY_1]
+    │              │
+    │              ├── (N) [ENTITY_2]
+    │              ├── (N) [ENTITY_3]
+    │              └── (N) [ENTITY_4]
+    │
+    ├── (N) [ENTITY_5]
+    └── (N) [ENTITY_6]
+```
+
+## 👤 **Authentication Entities**
+
+### **User Model**
+
+The central user entity that connects authentication with application data.
+
+```prisma
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Auth.js relations
+  accounts      Account[]
+  sessions      Session[]
+
+  // Application relations
+  [ENTITY_1]    [Entity1][]
+  [ENTITY_5]    [Entity5][]
+  [ENTITY_6]    [Entity6][]
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (CUID)
+- **Authentication**: Integrates with Auth.js for OAuth providers
+- **Data Ownership**: All user data is owned by this entity
+- **Cascade Delete**: All related data is deleted when user is removed
+
+### **Account Model**
+
+OAuth provider account information.
+
+```prisma
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+```
+
+### **Session Model**
+
+User session management.
+
+```prisma
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+```
+
+## 🎯 **Core Application Entities**
+
+### **[ENTITY_1] Model**
+
+[DESCRIPTION_OF_ENTITY_1]
+
+```prisma
+model [Entity1] {
+  id               String            @id @default(cuid())
+  [property1]      String
+  [property2]      String
+
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId          String
+
+  [entity2]        [Entity2][]
+  [entity3]        [Entity3][]
+  [entity4]        [Entity4][]
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (CUID)
+- **Owner**: Each [entity1] belongs to a user
+- **[Property1]**: [DESCRIPTION]
+- **Relations**: Contains all [entity1] data and rules
+
+**Business Rules:**
+
+- [ENTITY_1] are user-specific (no sharing between users)
+- Cascade delete removes all related data
+- [PROPERTY_1] must be [VALIDATION_RULE]
+
+### **[ENTITY_2] Model**
+
+[DESCRIPTION_OF_ENTITY_2]
+
+```prisma
+model [Entity2] {
+  id        Int      @id @default(autoincrement())
+  [property1] Float?
+  [property2] Float?
+  status    String   // 'SUCCESS' or 'FAILURE'
+  error     String?
+  createdAt DateTime @default(now())
+
+  [entity1]    [Entity1] @relation(fields: [[entity1]Id], references: [id], onDelete: Cascade)
+  [entity1]Id  String
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **[Property1]**: [DESCRIPTION]
+- **[Property2]**: [DESCRIPTION]
+- **Status**: Success/failure indicator
+- **Timestamp**: When the [action] was performed
+- **Error Handling**: Optional error message for failures
+
+**Business Rules:**
+
+- [ENTITY_2] are immutable once created
+- Failed [actions] may have null [properties] but must have error message
+- [ENTITY_2] are automatically cleaned up when [entity1] is deleted
+
+### **[ENTITY_3] Model**
+
+[DESCRIPTION_OF_ENTITY_3]
+
+```prisma
+model [Entity3] {
+  id        Int      @id @default(autoincrement())
+  name      String
+  [property1] String   // '[VALUE_1]' or '[VALUE_2]'
+  [property2] String   // '[CONDITION_1]' or '[CONDITION_2]'
+  [property3] Float
+  enabled   Boolean  @default(true)
+
+  [entity1]    [Entity1] @relation(fields: [[entity1]Id], references: [id], onDelete: Cascade)
+  [entity1]Id  String
+
+  [entity4] [Entity4][]
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **[Property1] Types**: Only '[VALUE_1]' or '[VALUE_2]' allowed
+- **[Property2]**: '[CONDITION_1]' or '[CONDITION_2]' comparisons
+- **[Property3]**: Numeric value for comparison
+- **Enabled State**: Can be toggled on/off
+
+**Business Rules:**
+
+- Each [entity1] can have multiple [entity3]
+- [ENTITY_3] are evaluated on every [action]
+- Disabled [entity3] don't trigger [events]
+- [Property3] must be positive numbers
+
+### **[ENTITY_4] Model**
+
+[DESCRIPTION_OF_ENTITY_4]
+
+```prisma
+model [Entity4] {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @default(now())
+  type        String   // '[TYPE_1]' or '[TYPE_2]'
+  description String
+  resolved    Boolean  @default(false)
+
+  [entity1]      [Entity1] @relation(fields: [[entity1]Id], references: [id], onDelete: Cascade)
+  [entity1]Id    String
+
+  triggeredBy[Entity3] [Entity3]? @relation(fields: [[entity3]Id], references: [id], onDelete: SetNull)
+  [entity3]Id          Int?
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **Event Types**: '[TYPE_1]' ([description]) or '[TYPE_2]' ([description])
+- **Resolution**: Tracks whether [event] is resolved
+- **[Entity3] Association**: Optional link to triggering [entity3]
+
+**Business Rules:**
+
+- [ENTITY_4] are created when [events] trigger or [conditions] occur
+- Resolution status can be updated manually
+- [Entity3] deletion doesn't delete [entity4] (SetNull)
+
+## 🔔 **Notification Entities**
+
+### **[ENTITY_5] Model**
+
+[DESCRIPTION_OF_ENTITY_5]
+
+```prisma
+model [Entity5] {
+  id        String   @id @default(cuid())
+  [property1] String   @unique
+  [property2] String
+  [property3] String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (CUID)
+- **[Property1]**: Unique [description]
+- **Security**: [property2] and [property3] for [purpose]
+- **User Association**: Each [entity5] belongs to a user
+
+**Business Rules:**
+
+- [Property1] must be unique across all users
+- [ENTITY_5] are cleaned up when user is deleted
+- Used for [purpose]
+
+### **[ENTITY_6] Model**
+
+[DESCRIPTION_OF_ENTITY_6]
+
+```prisma
+model [Entity6] {
+  id        Int      @id @default(autoincrement())
+  message   String
+  sentAt    DateTime @default(now())
+  read      Boolean  @default(false)
+
+  recipient User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}
+```
+
+**Key Properties:**
+
+- **Primary Key**: `id` (Auto-increment integer)
+- **Message**: [Entity6] content
+- **Read Status**: Tracks whether user has seen [entity6]
+- **Timestamp**: When [entity6] was sent
+
+**Business Rules:**
+
+- [ENTITY_6] are user-specific
+- Read status can be updated
+- Messages are immutable once sent
+
+## 🔧 **Repository Pattern Implementation**
+
+### **Entity Mapping Rules**
+
+All repository implementations must map Prisma models to domain types:
+
+```typescript
+// ✅ Good: Repository with proper mapping
+async findById(id: string): Promise<[Entity1] | null> {
+  const prisma[Entity1] = await this.databaseService
+    .getClient()
+    .[entity1].findUnique({
+      where: { id },
+      include: { [entity2]: true, [entity3]: true },
+    });
+
+  return prisma[Entity1] ? this.mapTo[Entity1](prisma[Entity1]) : null;
+}
+
+private mapTo[Entity1](prisma[Entity1]: Prisma[Entity1]): [Entity1] {
+  return {
+    id: prisma[Entity1].id,
+    [property1]: prisma[Entity1].[property1],
+    [property2]: prisma[Entity1].[property2],
+    [entity2]: prisma[Entity1].[entity2]?.map(this.mapTo[Entity2]) || [],
+    [entity3]: prisma[Entity1].[entity3]?.map(this.mapTo[Entity3]) || [],
+  };
+}
+```
+
+### **Type Safety Requirements**
+
+- **Domain Types**: All repository methods return domain types, not Prisma models
+- **Null Handling**: Proper handling of optional fields and relations
+- **Data Transformation**: Convert between Prisma and domain representations
+- **Error Mapping**: Convert database errors to domain errors
+
+## 📋 **Database Operations Guidelines**
+
+### **Query Patterns**
+
+```typescript
+// ✅ Good: Using repository pattern
+const [entity1] = await this.[entity1]Repository.findById(id);
+
+// ❌ Bad: Direct Prisma usage
+const [entity1] = await prisma.[entity1].findUnique({ where: { id } });
+```
+
+### **Transaction Handling**
+
+```typescript
+// ✅ Good: Repository handles transactions
+async create[Entity1]With[Entity3](data: Create[Entity1]Data, [entity3]: [Entity3]Data[]): Promise<[Entity1]> {
+  return await this.databaseService.getClient().$transaction(async (tx) => {
+    const [entity1] = await tx.[entity1].create({ data });
+    await tx.[entity3].createMany({
+      data: [entity3].map([entity3] => ({ ...entity3], [entity1]Id: [entity1].id }))
+    });
+    return this.mapTo[Entity1]([entity1]);
+  });
+}
+```
+
+### **Data Validation**
+
+- **Input Validation**: All data must be validated before database operations
+- **Constraint Enforcement**: Database constraints are the final validation layer
+- **Type Safety**: TypeScript interfaces ensure compile-time safety
+- **Business Rules**: Repository methods enforce business logic
+
+## 🧪 **Testing Database Operations**
+
+### **Mock Repository Pattern**
+
+```typescript
+// ✅ Good: Mock repository with seeded data
+export class Mock[Entity1]Repository implements I[Entity1]Repository {
+  private [entity1]: [Entity1][] = [];
+
+  constructor(private logger?: ILogger) {
+    this.seed[Entity1](TestDataSeeder.generate[Entity1]());
+  }
+
+  async findById(id: string): Promise<[Entity1] | null> {
+    return this.[entity1].find(t => t.id === id) || null;
+  }
+
+  // Seeding method for test data
+  seed[Entity1]([entity1]: [Entity1][]): void {
+    this.[entity1] = [entity1];
+  }
+}
+```
+
+### **Test Data Seeding**
+
+- **Realistic Data**: Use realistic test data that matches production patterns
+- **Edge Cases**: Include boundary conditions and error scenarios
+- **Relationships**: Properly seed related entities
+- **Cleanup**: Tests should clean up after themselves
+
+## 🚫 **Anti-Patterns to Avoid**
+
+### **Direct Prisma Usage**
+
+```typescript
+// ❌ Bad: Direct Prisma usage in business logic
+class [Domain]Service {
+  async get[Entity1](id: string) {
+    return await prisma.[entity1].findUnique({ where: { id } });
+  }
+}
+
+// ✅ Good: Using repository pattern
+class [Domain]Service {
+  constructor(private [entity1]Repository: I[Entity1]Repository) {}
+
+  async get[Entity1](id: string) {
+    return await this.[entity1]Repository.findById(id);
+  }
+}
+```
+
+### **Raw Prisma Models**
+
+```typescript
+// ❌ Bad: Returning raw Prisma models
+async findById(id: string): Promise<Prisma[Entity1] | null> {
+  return await this.databaseService.getClient().[entity1].findUnique({...});
+}
+
+// ✅ Good: Returning domain types
+async findById(id: string): Promise<[Entity1] | null> {
+  const prisma[Entity1] = await this.databaseService.getClient().[entity1].findUnique({...});
+  return prisma[Entity1] ? this.mapTo[Entity1](prisma[Entity1]) : null;
+}
+```
+
+## ✅ **Best Practices**
+
+### **Schema Design**
+
+- **Single Source of Truth**: All schema changes in `prisma/schema.prisma`
+- **Migration Safety**: Always use Prisma migrations for schema changes
+- **Indexing**: Add appropriate indexes for query performance
+- **Constraints**: Use database constraints for data integrity
+
+### **Repository Implementation**
+
+- **Interface-First**: Define repository interfaces before implementations
+- **Data Mapping**: Always map between Prisma and domain types
+- **Error Handling**: Proper error handling and logging
+- **Testing**: Comprehensive test coverage with mock implementations
+
+### **Performance Considerations**
+
+- **Query Optimization**: Use appropriate includes and selects
+- **Pagination**: Implement pagination for large result sets
+- **Caching**: Consider caching for frequently accessed data
+- **Indexing**: Monitor and optimize database indexes
+
+Remember: **The database schema is the foundation of the application. All data access must go through repositories, and the Prisma client should never leave the repository layer.**
