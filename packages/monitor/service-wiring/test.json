@@ -1,0 +1,32 @@
+{
+  "services": {
+    "ILogger": {
+      "implementation": "MockLogger",
+      "singleton": true
+    },
+    "IEventBus": {
+      "implementation": "MockEventBus",
+      "singleton": true
+    },
+    "IDatabaseService": {
+      "implementation": "MockDatabaseService",
+      "singleton": true
+    },
+    "ITargetRepository": {
+      "implementation": "MockTargetRepository",
+      "singleton": true
+    },
+    "ISpeedTestResultRepository": {
+      "implementation": "MockSpeedTestResultRepository",
+      "singleton": true
+    },
+    "ISpeedTestRepository": {
+      "implementation": "MockSpeedTestRepository",
+      "singleton": true
+    },
+    "IMonitoringTargetRepository": {
+      "implementation": "MockMonitoringTargetRepository",
+      "singleton": true
+    }
+  }
+}

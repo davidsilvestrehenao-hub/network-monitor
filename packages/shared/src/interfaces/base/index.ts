@@ -1,6 +1,6 @@
 // Export all base interfaces for consistency and polymorphism
-export * from "./IRepository.js";
-export * from "./IService.js";
-export * from "./IAPIClient.js";
-export * from "./IEventBus.js";
-export * from "./ILogger.js";
+export * from "./IRepository";
+export * from "./IService";
+export * from "./IAPIClient";
+export * from "./IEventBus";
+export * from "./ILogger";

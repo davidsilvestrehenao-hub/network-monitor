@@ -1,30 +1,42 @@
 // Export base interfaces first (for consistency and polymorphism)
-export * from "./base/index.js";
+export * from "./base/index";
 
 // Export specific types that are commonly used
-export type { EventHandler } from "./base/IEventBus.js";
+export type { EventHandler } from "./base/IEventBus";
 export type {
   TargetData,
   CreateTargetData,
   UpdateTargetData,
-} from "./ITargetRepository.js";
+} from "./ITargetRepository";
+
+// Export domain-specific event and logger interfaces (with explicit naming to avoid conflicts)
+export {
+  IEventBus as IDomainEventBus,
+  BackendEvents,
+  FrontendEvents,
+} from "./IEventBus";
+export {
+  ILogger as IDomainLogger,
+  LogLevel as DomainLogLevel,
+  LogContext as DomainLogContext,
+} from "./ILogger";
 
 // Export all service interfaces (excluding duplicates from base)
-export * from "./IAlertingService.js";
-export * from "./IAlertRepository.js";
-export * from "./IAlertRuleRepository.js";
-export * from "./IAuthService.js";
-export * from "./IDatabaseService.js";
-export * from "./IIncidentEventRepository.js";
-export * from "./IMonitoringScheduler.js";
-export * from "./IMonitoringTargetRepository.js";
-export * from "./IMonitorService.js";
-export * from "./INotificationRepository.js";
-export * from "./INotificationService.js";
-export * from "./IPushSubscriptionRepository.js";
-export * from "./ISpeedTestConfig.js";
-export * from "./ISpeedTestRepository.js";
-export * from "./ISpeedTestResultRepository.js";
-export * from "./ISpeedTestService.js";
-export * from "./ITargetRepository.js";
-export * from "./IUserRepository.js";
+export * from "./IAlertingService";
+export * from "./IAlertRepository";
+export * from "./IAlertRuleRepository";
+export * from "./IAuthService";
+export * from "./IDatabaseService";
+export * from "./IIncidentEventRepository";
+export * from "./IMonitoringScheduler";
+export * from "./IMonitoringTargetRepository";
+export * from "./IMonitorService";
+export * from "./INotificationRepository";
+export * from "./INotificationService";
+export * from "./IPushSubscriptionRepository";
+export * from "./ISpeedTestConfig";
+export * from "./ISpeedTestRepository";
+export * from "./ISpeedTestResultRepository";
+export * from "./ISpeedTestService";
+export * from "./ITargetRepository";
+export * from "./IUserRepository";
