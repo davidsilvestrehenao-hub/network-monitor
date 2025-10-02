@@ -1,124 +1,122 @@
-# 12-Factor App Compliance
+# 12-Factor App Compliance Guide
 
-This document assesses and documents the PWA Connection Monitor's compliance with the [12-Factor App methodology](https://12factor.net/), which defines best practices for building modern, scalable, cloud-native applications.
+This document provides a comprehensive guide to the Network Monitor's compliance with the [12-Factor App methodology](https://12factor.net/), which defines best practices for building modern, scalable, cloud-native applications.
 
-## 📊 Compliance Overview
+## 📊 Current Status: 8/12 ✅
 
 | Factor | Status | Compliance |
 |--------|--------|------------|
 | I. Codebase | ✅ | 100% Compliant |
 | II. Dependencies | ✅ | 100% Compliant |
 | III. Config | ⚠️ | **Needs Improvement** |
-| IV. Backing services | ✅ | 100% Compliant |
-| V. Build, release, run | ✅ | 100% Compliant |
+| IV. Backing Services | ✅ | 100% Compliant |
+| V. Build, Release, Run | ✅ | 100% Compliant |
 | VI. Processes | ✅ | 100% Compliant |
-| VII. Port binding | ✅ | 100% Compliant |
+| VII. Port Binding | ✅ | 100% Compliant |
 | VIII. Concurrency | ✅ | 100% Compliant |
 | IX. Disposability | ⚠️ | **Needs Improvement** |
-| X. Dev/prod parity | ⚠️ | **Needs Improvement** |
+| X. Dev/Prod Parity | ⚠️ | **Needs Improvement** |
 | XI. Logs | ⚠️ | **Needs Improvement** |
-| XII. Admin processes | ✅ | 100% Compliant |
+| XII. Admin Processes | ✅ | 100% Compliant |
 
 **Overall Score: 8/12 Fully Compliant, 4/12 Need Improvement**
 
+## 🚀 Quick Reference
+
+### Before Writing Code
+- [ ] Configuration from environment variables (never hardcode)
+- [ ] Services are stateless (no in-memory state)
+- [ ] Logs stream to stdout/stderr (never to files)
+- [ ] Backing services from environment (database, event bus)
+
+### Before Committing
+- [ ] No secrets in code or config files
+- [ ] No hardcoded URLs or connection strings
+- [ ] All logs use structured format (JSON)
+- [ ] Tests pass with environment variables
+
+### Before Deploying
+- [ ] Environment variables documented
+- [ ] Health check endpoint works
+- [ ] Graceful shutdown tested
+- [ ] Logs aggregation configured
+
 ---
 
-## I. Codebase ✅
+## 📋 The 12 Factors
 
-> **One codebase tracked in revision control, many deploys**
+### I. Codebase ✅
 
-### Current State
+**One codebase tracked in revision control, many deploys**
 
+```bash
+# ✅ Single repository, multiple deployments
+git clone https://github.com/your-org/network-monitor.git
+
+# Deploy to different environments
+deploy to development
+deploy to staging
+deploy to production
+```
+
+**Current State:**
 - ✅ Single Git repository with monorepo structure
 - ✅ Turborepo for managing multiple apps and packages
 - ✅ Clear separation of concerns (apps/, packages/)
 - ✅ Same codebase deployed to development, staging, and production
 
-### Implementation
+### II. Dependencies ✅
 
-```bash
-# Single repository structure
-network-monitor/
-├── apps/              # Deployable applications
-│   ├── api/          # Monolith deployment
-│   ├── web/          # Frontend PWA
-│   ├── monitor-service/
-│   ├── alerting-service/
-│   └── notification-service/
-└── packages/         # Shared libraries
-    ├── database/
-    ├── infrastructure/
-    └── shared/
+**Explicitly declare and isolate dependencies**
+
+```json
+// ✅ GOOD - package.json
+{
+  "dependencies": {
+    "solid-js": "^1.9.3",
+    "@prisma/client": "^5.22.0"
+  }
+}
 ```
 
-### Best Practices
+```bash
+# ✅ Lock file committed
+bun.lock
 
-- ✅ One codebase for monolith and microservices
-- ✅ Shared packages for common functionality
-- ✅ Consistent versioning across all deployments
+# ❌ BAD - Relying on system-wide packages
+npm install -g some-package
+```
 
----
-
-## II. Dependencies ✅
-
-> **Explicitly declare and isolate dependencies**
-
-### Current State
-
+**Current State:**
 - ✅ Using Bun package manager with `package.json`
 - ✅ Lock file (`bun.lock`) ensures consistent dependencies
 - ✅ Workspace dependencies properly declared
 - ✅ No system-level dependencies assumed
 
-### Implementation
+### III. Config ⚠️
 
-```json
-// package.json with explicit dependencies
-{
-  "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "solid-js": "^1.9.3",
-    "trpc": "^10.x.x"
-  },
-  "devDependencies": {
-    "typescript": "^5.6.3",
-    "bun": "^1.2.22"
-  }
-}
+**Store config in the environment**
+
+```typescript
+// ✅ GOOD - Environment variables
+import { getEnvironment } from "@network-monitor/infrastructure";
+const config = getEnvironment();
+const dbUrl = config.databaseUrl;
+
+// ❌ BAD - Hardcoded or JSON config
+const dbUrl = "postgresql://localhost:5432/db";
+const config = require("./config/production.json");
 ```
 
-### Best Practices
-
-- ✅ All dependencies declared in `package.json`
-- ✅ Lock file committed to version control
-- ✅ No implicit system dependencies
-- ✅ Dependency isolation through workspaces
-
----
-
-## III. Config ⚠️
-
-> **Store config in the environment**
-
-### Current State (Issues)
-
+**Current State (Issues):**
 - ❌ Configuration stored in JSON files (`configs/*.json`)
 - ❌ Hard to override configs per deployment
 - ⚠️ Some environment variables used, but not consistently
 - ❌ JSON config files contain environment-specific settings
 
-### Required Changes
+**Required Changes:**
 
 **CRITICAL: Move from JSON configuration to environment variables**
-
-#### Migration Plan
-
-1. **Create `.env.example` file**
-2. **Update all services to read from environment variables**
-3. **Remove JSON config files** or use them only for service discovery
-4. **Update documentation** to reflect environment-based config
-
-#### Implementation
 
 ```bash
 # .env.example (to create)
@@ -150,249 +148,134 @@ AUTH_PROVIDERS=mock,github,google
 # Monitoring
 SPEED_TEST_INTERVAL=30000
 ALERT_CHECK_INTERVAL=5000
-# Optional override for download speed test URL
-# Defaults: 10MB file in non-production, 100MB file in production
-SPEED_TEST_URL=
 ```
 
-### Best Practices
+### IV. Backing Services ✅
 
-- Use environment variables for ALL configuration
-- Never commit secrets to version control
-- Provide `.env.example` with all required variables
-- Use consistent naming conventions (UPPERCASE_WITH_UNDERSCORES)
-- Group related variables with prefixes (DB_, AUTH_, etc.)
+**Treat backing services as attached resources**
 
----
+```typescript
+// ✅ GOOD - Service from environment
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env.DATABASE_URL } },
+});
 
-## IV. Backing Services ✅
+// ❌ BAD - Hardcoded backing service
+const prisma = new PrismaClient({
+  datasources: { db: { url: "postgresql://prod-server/db" } },
+});
+```
 
-> **Treat backing services as attached resources**
-
-### Current State
-
+**Current State:**
 - ✅ Database abstracted through Prisma ORM
 - ✅ Repository pattern isolates data access
 - ✅ Event bus abstracted through interfaces
 - ✅ Services can switch between implementations via DI
 
-### Implementation
+### V. Build, Release, Run ✅
 
-```typescript
-// Backing services are abstracted
-interface IDatabaseService {
-  getClient(): PrismaClient;
-  connect(): Promise<void>;
-  disconnect(): Promise<void>;
-}
+**Strictly separate build and run stages**
 
-interface IEventBus {
-  emit(event: string, data: unknown): void;
-  on(event: string, handler: Function): void;
-}
+```bash
+# ✅ GOOD - Separate stages
+bun run build              # Build stage
+docker build -t app:v1     # Release stage
+docker run app:v1          # Run stage
 
-// Can switch between implementations without code changes
-// - In-memory event bus for monolith
-// - RabbitMQ event bus for microservices
-// - SQLite for development
-// - PostgreSQL for production
+# ❌ BAD - Mixed stages
+bun run build && bun run start
 ```
 
-### Best Practices
-
-- ✅ Database URL comes from environment variables
-- ✅ Services don't care about backing service location
-- ✅ Can swap implementations (mock, in-memory, remote)
-- ✅ No code changes needed to switch backing services
-
----
-
-## V. Build, Release, Run ✅
-
-> **Strictly separate build and run stages**
-
-### Current State
-
+**Current State:**
 - ✅ Separate build and run stages
 - ✅ Docker support for containerized deployments
 - ✅ TypeScript compilation produces artifacts
 - ✅ No runtime compilation in production
 
-### Implementation
+### VI. Processes ✅
 
-```bash
-# Build stage
-bun run build          # Compiles TypeScript to JavaScript
-
-# Release stage
-docker build -t app:v1.0.0  # Creates immutable release artifact
-
-# Run stage
-docker run app:v1.0.0       # Runs the built artifact
-```
-
-### Build Process
+**Execute the app as one or more stateless processes**
 
 ```typescript
-// package.json scripts
-{
-  "scripts": {
-    "build": "turbo run build",      // Build all packages
-    "start": "turbo run start",       // Run pre-built artifacts
-    "dev": "turbo run dev"            // Development only
+// ✅ GOOD - Stateless
+class MonitorService {
+  async getTarget(id: string) {
+    return this.repository.findById(id); // From database
   }
+}
+
+// ❌ BAD - Stateful
+class MonitorService {
+  private targets = new Map(); // ❌ In-memory state
 }
 ```
 
-### Best Practices
-
-- ✅ Build produces immutable artifacts
-- ✅ No source code in production containers
-- ✅ Separate dev and production workflows
-- ✅ Version tagging for releases
-
----
-
-## VI. Processes ✅
-
-> **Execute the app as one or more stateless processes**
-
-### Current State
-
+**Current State:**
 - ✅ Services designed to be stateless
 - ✅ State stored in database, not in-memory
 - ✅ Event-driven architecture prevents tight coupling
 - ✅ Can scale horizontally
 
-### Implementation
+### VII. Port Binding ✅
+
+**Export services via port binding**
 
 ```typescript
-// Services are stateless
-class MonitorService {
-  // No instance state, all data from database
-  async getTarget(id: string): Promise<Target> {
-    return this.targetRepository.findById(id);
-  }
+// ✅ GOOD - Port from environment
+const PORT = process.env.PORT || 3000;
+Bun.serve({ port: PORT });
 
-  async createTarget(data: CreateTargetData): Promise<Target> {
-    const target = await this.targetRepository.create(data);
-    this.eventBus.emit("TARGET_CREATED", target);
-    return target;
-  }
-}
+// ❌ BAD - Hardcoded port
+Bun.serve({ port: 3000 });
 ```
 
-### Best Practices
-
-- ✅ No sticky sessions required
-- ✅ Request state not stored in memory
-- ✅ Can kill and restart processes without data loss
-- ✅ Horizontal scaling supported
-
----
-
-## VII. Port Binding ✅
-
-> **Export services via port binding**
-
-### Current State
-
+**Current State:**
 - ✅ Services bind to ports specified in environment
 - ✅ Self-contained HTTP servers (Bun)
 - ✅ No external web server required
 - ✅ Port configuration via environment variables
 
-### Implementation
+### VIII. Concurrency ✅
 
-```typescript
-// Services bind to ports
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || "0.0.0.0";
+**Scale out via the process model**
 
-Bun.serve({
-  port: PORT,
-  hostname: HOST,
-  fetch: handler,
-});
+```bash
+# ✅ GOOD - Scale with multiple processes
+docker-compose up -d --scale monitor-service=3
 
-console.log(`Server listening on ${HOST}:${PORT}`);
+# ❌ BAD - Single process with threads
+node --max-old-space-size=8192 app.js
 ```
 
-### Best Practices
-
-- ✅ Self-contained HTTP server
-- ✅ Port configured via environment
-- ✅ No external web server dependency
-- ✅ Services can run standalone
-
----
-
-## VIII. Concurrency ✅
-
-> **Scale out via the process model**
-
-### Current State
-
+**Current State:**
 - ✅ Multiple service types for different workloads
 - ✅ Can scale each service independently
 - ✅ Event-driven decoupling enables scaling
 - ✅ Stateless design supports horizontal scaling
 
-### Implementation
+### IX. Disposability ⚠️
 
-```yaml
-# Docker Compose - Scale independently
-services:
-  monitor-service:
-    deploy:
-      replicas: 3  # Scale to 3 instances
+**Maximize robustness with fast startup and graceful shutdown**
 
-  alerting-service:
-    deploy:
-      replicas: 2  # Scale to 2 instances
+```typescript
+// ✅ GOOD - Graceful shutdown
+process.on("SIGTERM", async () => {
+  await server.close();
+  await database.disconnect();
+  process.exit(0);
+});
 
-  notification-service:
-    deploy:
-      replicas: 1  # Single instance
+// ❌ BAD - Abrupt shutdown
+// No signal handlers
 ```
 
-### Scaling Strategy
-
-```bash
-# Start as monolith (1-10k users)
-docker-compose up monolith
-
-# Scale to microservices (10k+ users)
-docker-compose up -d --scale monitor-service=3 \
-                     --scale alerting-service=2 \
-                     --scale notification-service=1
-```
-
-### Best Practices
-
-- ✅ Process-based concurrency model
-- ✅ Different process types for different workloads
-- ✅ Can scale each service type independently
-- ✅ Load balancing across instances
-
----
-
-## IX. Disposability ⚠️
-
-> **Maximize robustness with fast startup and graceful shutdown**
-
-### Current State (Issues)
-
+**Current State (Issues):**
 - ⚠️ Startup time is reasonable but not optimized
 - ⚠️ Graceful shutdown implemented but needs improvement
 - ❌ No explicit signal handling for all edge cases
 - ⚠️ Database connections may not close gracefully
 
-### Required Changes
-
-**Implement comprehensive graceful shutdown**
-
-#### Implementation Needed
+**Required Changes:**
 
 ```typescript
 // Graceful shutdown handler
@@ -422,57 +305,34 @@ async function gracefulShutdown(signal: string) {
 // Register signal handlers
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-
-// Fast startup
-async function startup() {
-  const startTime = Date.now();
-
-  // Parallel initialization where possible
-  await Promise.all([
-    database.connect(),
-    eventBus.connect(),
-    loadConfiguration(),
-  ]);
-
-  console.log(`Startup completed in ${Date.now() - startTime}ms`);
-}
 ```
 
-### Best Practices
+### X. Dev/prod Parity ⚠️
 
-- Startup time < 3 seconds
-- Graceful shutdown < 30 seconds
-- Handle SIGTERM and SIGINT
-- Close all connections cleanly
-- Fail fast on startup errors
+**Keep development, staging, and production as similar as possible**
 
----
+```bash
+# ✅ GOOD - Same database in all environments
+# Development
+DATABASE_URL=postgresql://localhost:5432/network_monitor_dev
 
-## X. Dev/prod Parity ⚠️
+# Production
+DATABASE_URL=postgresql://prod-host:5432/network_monitor
 
-> **Keep development, staging, and production as similar as possible**
+# ❌ BAD - Different databases
+# Development: SQLite
+# Production: PostgreSQL
+```
 
-### Current State (Issues)
-
+**Current State (Issues):**
 - ❌ SQLite for development, PostgreSQL for production
 - ⚠️ In-memory event bus for dev, RabbitMQ for prod
 - ⚠️ Mock services in dev, real services in prod
 - ❌ Significant differences in database behavior
 
-### Required Changes
+**Required Changes:**
 
 **CRITICAL: Improve dev/prod parity**
-
-#### Gap Analysis
-
-| Component | Development | Production | Gap |
-|-----------|------------|------------|-----|
-| Database | SQLite | PostgreSQL | **HIGH** |
-| Event Bus | In-memory | RabbitMQ | Medium |
-| Services | Mocked | Real | Medium |
-| Logging | Console | Structured | Low |
-
-#### Implementation Needed
 
 1. **Use PostgreSQL in development** (via Docker Compose)
 2. **Optional RabbitMQ for development**
@@ -508,38 +368,28 @@ volumes:
   postgres_dev_data:
 ```
 
-```bash
-# .env.development
-DATABASE_URL=postgresql://dev:dev@localhost:5432/network_monitor_dev
-RABBITMQ_URL=amqp://dev:dev@localhost:5672
+### XI. Logs ⚠️
+
+**Treat logs as event streams**
+
+```typescript
+// ✅ GOOD - Stream to stdout
+logger.info("Event occurred", { userId, action });
+
+// ❌ BAD - Write to files
+fs.appendFile("app.log", message);
+winston.transports.File({ filename: "error.log" });
 ```
 
-### Best Practices
-
-- Use same database type in all environments
-- Use Docker Compose for backing services in dev
-- Minimize time gap between deploys
-- Same people write and deploy code
-- Keep environments as similar as possible
-
----
-
-## XI. Logs ⚠️
-
-> **Treat logs as event streams**
-
-### Current State (Issues)
-
+**Current State (Issues):**
 - ⚠️ Some logging to console (good)
 - ❌ Some logging to files (violates 12-factor)
 - ⚠️ Not all logs structured
 - ❌ Log aggregation not standardized
 
-### Required Changes
+**Required Changes:**
 
 **CRITICAL: Stream all logs to stdout/stderr**
-
-#### Implementation Needed
 
 ```typescript
 // Remove file-based logging
@@ -560,7 +410,7 @@ winston.createLogger({
 });
 ```
 
-#### Structured Logging
+**Structured Logging:**
 
 ```typescript
 // All logs should be structured JSON
@@ -575,86 +425,31 @@ logger.info("Target created", {
 // {"level":"info","message":"Target created","targetId":"target-123","userId":"user-456","timestamp":"2025-10-01T12:00:00Z","environment":"production"}
 ```
 
-#### Log Aggregation
+### XII. Admin Processes ✅
+
+**Run admin/management tasks as one-off processes**
 
 ```bash
-# Development: View in terminal
-bun run dev
+# ✅ GOOD - One-off admin processes
+bun run db:migrate
+bun run db:seed
+bun run db:reset
 
-# Production: Collect with log aggregation service
-# - Docker logs → Logstash → Elasticsearch
-# - Systemd journal → journalctl
-# - Cloud platform → CloudWatch/Stackdriver
+# ❌ BAD - Admin UI in main app
+app.get("/admin/reset-database", async (req, res) => {
+  await database.reset(); // ❌ Don't do this
+});
 ```
 
-### Best Practices
-
-- ✅ Write all logs to stdout/stderr
-- ❌ Never write to log files
-- ✅ Use structured JSON format
-- ✅ Include context (request ID, user ID, etc.)
-- ✅ Let infrastructure handle log routing and storage
-
----
-
-## XII. Admin Processes ✅
-
-> **Run admin/management tasks as one-off processes**
-
-### Current State
-
+**Current State:**
 - ✅ Database migrations run as separate processes
 - ✅ Seed scripts are one-off processes
 - ✅ Admin tasks use same codebase and config
 - ✅ Scripts properly use environment variables
 
-### Implementation
-
-```bash
-# Admin processes as one-off tasks
-bun run db:migrate      # Run migrations
-bun run db:seed         # Seed database
-bun run db:reset        # Reset database
-
-# Scripts use same environment
-DATABASE_URL=postgresql://... bun run db:migrate
-```
-
-### Admin Scripts
-
-```typescript
-// scripts/reset-database.ts
-// Uses same codebase and configuration
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL, // Same config as app
-    },
-  },
-});
-
-async function resetDatabase() {
-  console.log("Resetting database...");
-  await prisma.$executeRaw`DROP SCHEMA public CASCADE;`;
-  await prisma.$executeRaw`CREATE SCHEMA public;`;
-  console.log("Database reset complete");
-}
-
-resetDatabase();
-```
-
-### Best Practices
-
-- ✅ One-off processes use same codebase
-- ✅ Same configuration mechanism
-- ✅ Same dependency management
-- ✅ Can run in any environment
-
 ---
 
-## 🎯 Compliance Roadmap
+## 🎯 Implementation Roadmap
 
 ### Phase 1: Critical Fixes (Week 1-2)
 
@@ -700,22 +495,106 @@ resetDatabase();
 
 ---
 
-## 📚 Resources
+## 🚨 Anti-Patterns to Avoid
 
-- [The Twelve-Factor App](https://12factor.net/)
-- [Heroku Dev Center](https://devcenter.heroku.com/articles/architecting-apps)
-- [Cloud Native Computing Foundation](https://www.cncf.io/)
+### ❌ Hardcoded Configuration
+```typescript
+// ❌ NEVER DO THIS
+const config = {
+  database: "postgresql://prod-server/db",
+  port: 3000,
+  apiKey: "EXAMPLE_FAKE_API_KEY_DO_NOT_USE",
+};
+```
+
+### ❌ File-Based Logging
+```typescript
+// ❌ NEVER DO THIS
+fs.appendFile("app.log", message);
+winston.transports.File({ filename: "error.log" });
+```
+
+### ❌ Stateful Services
+```typescript
+// ❌ NEVER DO THIS
+class Service {
+  private cache = new Map(); // Won't work with multiple instances
+}
+```
+
+### ❌ Mixed Environments
+```bash
+# ❌ NEVER DO THIS
+# Development: SQLite
+DATABASE_URL=file:./dev.db
+
+# Production: PostgreSQL
+DATABASE_URL=postgresql://...
+```
 
 ---
 
-## ✅ Success Criteria
+## ✅ Best Practices
 
-- ✅ All 12 factors fully implemented
-- ✅ No configuration in code or JSON files
-- ✅ Same database type in dev and prod
-- ✅ All logs stream to stdout/stderr
-- ✅ Graceful shutdown < 30 seconds
-- ✅ Startup time < 3 seconds
-- ✅ Can deploy with zero code changes
+### 1. Environment First
+```bash
+# Always use .env for local development
+cp .env.example .env
+nano .env
+```
+
+### 2. Docker for Backing Services
+```bash
+# Start PostgreSQL, RabbitMQ, etc.
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+### 3. Structured Logging
+```typescript
+// Use JSON for structured logs
+logger.info("Event", { key: "value" });
+```
+
+### 4. Health Checks
+```typescript
+// Always provide health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ status: "healthy", timestamp: new Date() });
+});
+```
+
+### 5. Graceful Shutdown
+```typescript
+// Always handle SIGTERM and SIGINT
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
+```
+
+---
+
+## 🎯 Success Criteria
+
+✅ **12 out of 12 factors fully compliant**
+
+- All configuration from environment variables
+- PostgreSQL in all environments
+- Logs stream to stdout/stderr
+- Graceful shutdown < 30 seconds
+- Startup time < 3 seconds
+- Zero secrets in version control
+- Can deploy to any cloud platform
 
 **Target: 12/12 Factors Fully Compliant**
+
+---
+
+## 📚 Resources
+
+- [The Twelve-Factor App](https://12factor.net/) - Official methodology
+- [Environment Variables Best Practices](https://12factor.net/config)
+- [Graceful Shutdown in Node.js](https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html)
+- [PostgreSQL in Docker](https://hub.docker.com/_/postgres)
+
+---
+
+**Remember: Follow these principles religiously. They make your app portable, scalable, and cloud-native!** 🚀

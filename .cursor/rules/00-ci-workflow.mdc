@@ -1,12 +1,17 @@
-# Network Monitor - AI Agent Rules
+---
+description: CI/CD Workflow & Pull Request Process
+globs: "**/*"
+alwaysApply: true
+type: Auto Attached
+---
 
-## CI/CD Workflow & Pull Request Process
+# CI/CD Workflow & Pull Request Process
 
 **CRITICAL:** This project requires all changes to go through Pull Requests. Direct commits to main are blocked.
 
 For complete CI/CD workflow guidelines, see: `.cursor/ci-workflow.md`
 
-### Quick Summary for AI Agents
+## Quick Summary for AI Agents
 
 When helping with code changes:
 
@@ -121,4 +126,3 @@ git commit -m "fix: Resolve type errors"
 ---
 
 **Key Principle:** All AI agents must guide users through the proper PR workflow and never suggest bypassing CI/CD checks or branch protection rules.
-

@@ -1,147 +1,210 @@
-# 🔧 Dynamic Service Configuration System
+# Configuration Guide
 
-This project now supports **dynamic service configuration** through JSON files, allowing you to easily switch between different service implementations without changing any code.
+Complete guide to configuring and running the Network Monitor application.
 
 ## 🚀 Quick Start
 
-### List Available Configurations
+### Most Common Commands
 
 ```bash
-bun run config:list
-# or
-bun run scripts/switch-config.ts list
-```text
+# Development (default) - Run from project root
+bun run apps/api/src/main.ts
 
-### Switch Configuration
+# Development - Run from app directory  
+cd apps/monitor-service
+bun run dev
 
-```bash
-bun run config:switch all-concrete.json
-# or
-bun run scripts/switch-config.ts switch all-concrete.json
-```text
+# Offline development (no DB needed)
+cd apps/api
+bun run dev:offline
 
-### Show Current Configuration
+# Production
+cd apps/monitor-service
+bun run start
+```
 
-```bash
-bun run config:current
-# or
-bun run scripts/switch-config.ts current
-```text
+## 📦 What Each App Does
 
-### Run Configuration Demo
+### API Monolith (`apps/api`)
+**All services in one process** - Best for development and small deployments
 
 ```bash
-bun run config:demo
-# or
-bun run scripts/config-demo.ts
-```text
+cd apps/api
+bun run dev              # Development with mocked DB
+bun run dev:offline      # Offline mode
+bun run dev:mock         # Everything mocked
+bun run dev:concrete     # All real (needs DB)
+bun run start            # Production
+```
 
-## 📁 Configuration Library
-
-The `configs/` directory contains various pre-configured scenarios:
-
-| Configuration               | Use Case           | Services                                              |
-| --------------------------- | ------------------ | ----------------------------------------------------- |
-| `all-concrete.json`         | Production         | All concrete implementations                          |
-| `auth-mock-only.json`       | Development        | Auth mocked, rest concrete                            |
-| `all-mock.json`             | Testing            | All mock implementations                              |
-| `offline-development.json`  | Offline Dev        | Logger + EventBus concrete, rest mocked               |
-| `performance-testing.json`  | Performance Tests  | EventBus + Monitor + Alerting concrete                |
-| `database-testing.json`     | Database Tests     | Only database concrete                                |
-| `notification-testing.json` | Notification Tests | EventBus + Alerting + Notifications concrete          |
-| `monitoring-testing.json`   | Monitoring Tests   | Logger + EventBus + Monitor + Alerting concrete       |
-| `alerting-testing.json`     | Alerting Tests     | Logger + EventBus + Alerting + Notifications concrete |
-
-## 🔄 How It Works
-
-1. **Active Configuration**: The system loads from `service-wiring/development.json` in the root directory by default
-2. **Easy Switching**: Use `cp` or the switch script to change configurations
-3. **Environment Variables**: Set `SERVICE_CONFIG` to load a specific file
-4. **Automatic Loading**: The container automatically loads the active configuration
-
-## 💡 Common Workflows
-
-### Development Workflow
+### Monitor Service (`apps/monitor-service`)
+**Target management and speed tests** - Can run independently
 
 ```bash
-# Start with auth mock only (default)
-bun run config:switch auth-mock-only.json
+cd apps/monitor-service
+bun run dev              # Development
+bun run dev:offline      # Offline mode
+bun run dev:mock         # Complete mocking
+bun run start            # Production
+```
 
-# When you need to test without external dependencies
-bun run config:switch offline-development.json
-
-# When you need to test database operations
-bun run config:switch database-testing.json
-
-# Or manually copy configurations
-cp service-wiring/development.json service-wiring/active.json
-```text
-
-### Testing Workflow
+### Alerting Service (`apps/alerting-service`)
+**Alert rules and incidents** - Can run independently
 
 ```bash
-# Run unit tests with all mocks
-bun run config:switch all-mock.json
-bun run test
+cd apps/alerting-service
+bun run dev              # Development
+bun run dev:offline      # Offline mode
+bun run dev:mock         # Complete mocking
+bun run start            # Production
+```
 
-# Run integration tests with specific services
-bun run config:switch database-testing.json
-bun run test
-```text
-
-### Production Workflow
+### Notification Service (`apps/notification-service`)
+**Push notifications** - Can run independently
 
 ```bash
-# Deploy with all concrete services
-bun run config:switch all-concrete.json
-bun run build:prod
-```text
+cd apps/notification-service
+bun run dev              # Development
+bun run dev:offline      # Offline mode
+bun run dev:mock         # Complete mocking
+bun run start            # Production
+```
 
-## 🛠️ Creating Custom Configurations
+### Web App (`apps/web`)
+**PWA Frontend** - SolidStart application
 
-1. **Copy an existing configuration**:
+```bash
+cd apps/web
+bun run dev              # Development server
+bun run build            # Build for production
+bun run start            # Start production server
+```
 
-   ```bash
-   cp configs/auth-mock-only.json configs/my-custom.json
-   ```
+## 🎮 Three Ways to Control Configuration
 
-2. **Edit the configuration**:
+### 1. Package Scripts (Easiest)
 
-   ```json
-   {
-     "name": "My Custom Config",
-     "description": "Custom configuration for my specific needs",
-     "environment": "development",
-     "services": {
-       "ILogger": {
-         "module": "../src/lib/services/concrete/LoggerService",
-         "className": "LoggerService",
-         "description": "Real logger"
-       }
-       // ... other services
-     }
-   }
-   ```
+Just `cd` into an app directory and run:
 
-3. **Switch to your configuration**:
+```bash
+cd apps/monitor-service
 
-   ```bash
-   bun run config:switch my-custom.json
-   ```
+bun run dev              # Normal development
+bun run dev:offline      # Offline mode (no DB needed)
+bun run dev:mock         # Complete mocking
+bun run start            # Production
+bun run start:staging    # Staging environment
+```
 
-## 🔍 Service Types
+### 2. NODE_ENV Variable
 
-| Service                | Interface              | Purpose                    |
-| ---------------------- | ---------------------- | -------------------------- |
-| `ILogger`              | `ILogger`              | Logging and debugging      |
-| `IEventBus`            | `IEventBus`            | Event-driven communication |
-| `IDatabaseService`     | `IDatabaseService`     | Database operations        |
-| `IMonitorService`      | `IMonitorService`      | Network monitoring         |
-| `IAlertingService`     | `IAlertingService`     | Alert management           |
-| `INotificationService` | `INotificationService` | Push notifications         |
-| `IAuthService`         | `IAuthService`         | Authentication             |
+```bash
+# Development
+NODE_ENV=development bun run apps/monitor-service/src/main.ts
 
-## 📝 Configuration File Structure
+# Production
+NODE_ENV=production bun run apps/monitor-service/dist/main.js
+
+# Staging (create staging.json first)
+NODE_ENV=staging bun run apps/monitor-service/dist/main.js
+```
+
+### 3. CONFIG_PATH Variable (Full Control)
+
+```bash
+# Use specific config file
+CONFIG_PATH=configs/shared/offline-development.json \
+  bun run apps/api/src/main.ts
+
+# Use custom config
+CONFIG_PATH=/path/to/my-config.json \
+  bun run apps/monitor-service/src/main.ts
+```
+
+## 📁 Configuration Structure
+
+```
+configs/
+├── apps/                           # Per-app configs (use these!)
+│   ├── monitor-service/
+│   │   ├── development.json       # Auto-selected by NODE_ENV
+│   │   └── production.json        # Auto-selected by NODE_ENV
+│   ├── alerting-service/
+│   ├── notification-service/
+│   └── api/
+└── shared/                         # Special scenarios
+    ├── all-mock.json              # Everything mocked
+    ├── all-concrete.json          # Everything real
+    └── offline-development.json   # Offline work
+```
+
+## 💡 Common Scenarios
+
+### First Time Running
+```bash
+# Just run it - works out of the box!
+bun run apps/api/src/main.ts
+```
+
+### Working Offline (Airplane, Train)
+```bash
+cd apps/api
+bun run dev:offline
+```
+
+### Testing in Isolation
+```bash
+cd apps/api
+bun run dev:mock
+```
+
+### Production Deployment
+```bash
+# Build first
+bun run build
+
+# Run in production
+cd apps/api
+bun run start
+```
+
+### Want Real Database in Development
+```bash
+cd apps/api
+bun run dev:concrete
+```
+
+## 🔍 How to Know Which Config is Being Used
+
+When you start an app, it logs the config path:
+
+```bash
+$ bun run apps/monitor-service/src/main.ts
+
+🚀 Starting Monitor Service ...
+📋 Loading configuration: Monitor Service Development (development)
+[INFO] Monitor Service: Initializing...
+  configPath: configs/apps/monitor-service/development.json  ← HERE!
+  database: enabled
+```
+
+## 🛠️ Service Configuration
+
+The system uses JSON files to configure which service implementations to use:
+
+### Service Types
+
+| Service | Interface | Purpose |
+|---------|-----------|---------|
+| `ILogger` | `ILogger` | Logging and debugging |
+| `IEventBus` | `IEventBus` | Event-driven communication |
+| `IDatabaseService` | `IDatabaseService` | Database operations |
+| `IMonitorService` | `IMonitorService` | Network monitoring |
+| `IAlertingService` | `IAlertingService` | Alert management |
+| `INotificationService` | `INotificationService` | Push notifications |
+| `IAuthService` | `IAuthService` | Authentication |
+
+### Configuration File Structure
 
 ```json
 {
@@ -157,9 +220,98 @@ bun run build:prod
     }
   }
 }
-```text
+```
 
-## 🎯 Benefits
+## 🎯 Available Configurations
+
+| Configuration | Use Case | Services |
+|---------------|----------|----------|
+| `all-concrete.json` | Production | All concrete implementations |
+| `auth-mock-only.json` | Development | Auth mocked, rest concrete |
+| `all-mock.json` | Testing | All mock implementations |
+| `offline-development.json` | Offline Dev | Logger + EventBus concrete, rest mocked |
+| `performance-testing.json` | Performance Tests | EventBus + Monitor + Alerting concrete |
+| `database-testing.json` | Database Tests | Only database concrete |
+| `notification-testing.json` | Notification Tests | EventBus + Alerting + Notifications concrete |
+| `monitoring-testing.json` | Monitoring Tests | Logger + EventBus + Monitor + Alerting concrete |
+| `alerting-testing.json` | Alerting Tests | Logger + EventBus + Alerting + Notifications concrete |
+
+## 🔧 Creating Custom Configurations
+
+1. **Copy an existing configuration**:
+   ```bash
+   cp configs/auth-mock-only.json configs/my-custom.json
+   ```
+
+2. **Edit the configuration**:
+   ```json
+   {
+     "name": "My Custom Config",
+     "description": "Custom configuration for my specific needs",
+     "environment": "development",
+     "services": {
+       "ILogger": {
+         "module": "../src/lib/services/concrete/LoggerService",
+         "className": "LoggerService",
+         "description": "Real logger"
+       }
+     }
+   }
+   ```
+
+3. **Use your configuration**:
+   ```bash
+   CONFIG_PATH=configs/my-custom.json bun run apps/api/src/main.ts
+   ```
+
+## 🚨 Troubleshooting
+
+### Config file not found
+```bash
+# Check if the file exists
+ls configs/apps/monitor-service/development.json
+
+# Check NODE_ENV value
+echo $NODE_ENV
+
+# Try with explicit path
+CONFIG_PATH=configs/apps/monitor-service/development.json bun run apps/monitor-service/src/main.ts
+```
+
+### Wrong config being used
+```bash
+# Check what config is loaded (look at startup logs)
+bun run apps/monitor-service/src/main.ts
+
+# Logs will show:
+# "Monitor Service: Initializing..."
+# "  configPath: configs/apps/monitor-service/development.json"
+```
+
+### Need to verify config
+```bash
+# Validate JSON syntax
+cat configs/apps/monitor-service/production.json | jq .
+
+# Check what services are configured
+cat configs/apps/monitor-service/production.json | jq '.services | keys'
+```
+
+## ✅ What's Configured Automatically
+
+When you run `bun run dev`:
+
+- ✅ Logger configured
+- ✅ Event bus configured  
+- ✅ Database mocked (development) or real (production)
+- ✅ All repositories configured
+- ✅ All services initialized
+- ✅ Graceful shutdown handlers
+- ✅ Database connections managed
+
+You don't need to configure anything!
+
+## 🎉 Key Benefits
 
 - ✅ **Zero Code Changes** - Switch implementations via config only
 - ✅ **Environment Flexibility** - Different configs for different environments
@@ -169,42 +321,22 @@ bun run build:prod
 - ✅ **Maintainability** - Centralized service configuration
 - ✅ **Team Collaboration** - Share configurations via version control
 
-## 🚨 Important Notes
+## 📚 Quick Reference
 
-- **Always commit your configurations** to version control
-- **Use descriptive names** for custom configurations
-- **Test your configurations** before deploying
-- **Document custom configurations** in the README
-- **Keep configurations in sync** across team members
+| Goal | Command |
+|------|---------|
+| **Run app in dev** | `bun run apps/{app}/src/main.ts` |
+| **Run app in prod** | `NODE_ENV=production bun run apps/{app}/dist/main.js` |
+| **Use custom env** | `NODE_ENV=staging bun run apps/{app}/src/main.ts` |
+| **Use specific config** | `CONFIG_PATH=path/to/config.json bun run apps/{app}/src/main.ts` |
+| **Offline development** | `CONFIG_PATH=configs/shared/offline-development.json bun run apps/api/src/main.ts` |
+| **Full mock testing** | `CONFIG_PATH=configs/shared/all-mock.json bun run apps/api/src/main.ts` |
 
-## 🔧 Advanced Usage
+---
 
-### Environment Variables
-
+**Ready to start developing? Just run:**
 ```bash
-# Load specific configuration file
-export SERVICE_CONFIG=configs/my-custom.json
-bun run dev
+bun run apps/api/src/main.ts
+```
 
-# Load active configuration (default behavior)
-export NODE_ENV=active
-bun run dev
-```text
-
-### Programmatic Loading
-
-```typescript
-import { createContainerWithEnvironment } from "./lib/container/flexible-container";
-
-// Load specific environment
-const container = await createContainerWithEnvironment("development");
-
-// Load active configuration
-const container = await createContainerWithEnvironment("active");
-
-// Load custom file
-process.env.SERVICE_CONFIG = "configs/my-custom.json";
-const container = await createContainerWithEnvironment("active");
-```text
-
-This system makes it incredibly easy to switch between different service implementations for development, testing, and production scenarios!
+That's it! Everything else is automatic. 🎉

@@ -1,15 +1,14 @@
 ---
-description: Core Architecture, Patterns, and Technologies
-globs: "**/*"
+description: Core Architecture, Patterns, and Technologies (Template)
+globs:
 alwaysApply: true
-type: Auto Attached
 ---
 
-# Core Architecture: PWA Connection Monitor
+# Core Architecture: [PROJECT_NAME] Template
 
 ## 1. Vision & Core Technologies
 
-- **Vision**: An installable PWA for monitoring internet connections, built with an emphasis on **perfect loose coupling** for its backend services.
+- **Vision**: [DESCRIBE_YOUR_APPLICATION] - A [TYPE] application built with an emphasis on **perfect loose coupling** for its backend services.
 - **Monorepo**: The project is a Turborepo monorepo with apps in `apps/*` and shared logic in `packages/*`.
 - **Runtime**: **Bun**. All commands must use `bun` (e.g., `bun install`, `bun run dev`, `bun test`).
 - **Frontend**: SolidStart with SolidJS, located in `apps/web`.
@@ -23,27 +22,27 @@ type: Auto Attached
 
 The API layer is built with tRPC and served by the `apps/web` application.
 
-1.  **tRPC Router (`apps/web/src/server/trpc/router.ts`)**: This is the main router where all API procedures are defined. Procedures in the router should call **Services**.
-2.  **API Handler (`apps/web/src/routes/api/trpc/[...trpc].ts`)**: This SolidStart API route exposes the `appRouter` to the network.
-3.  **tRPC Client (`apps/web/src/lib/trpc.ts`)**: A pre-configured, type-safe client for frontend components to use.
+1. **tRPC Router (`apps/web/src/server/trpc/router.ts`)**: This is the main router where all API procedures are defined. Procedures in the router should call **Services**.
+2. **API Handler (`apps/web/src/routes/api/trpc/[...trpc].ts`)**: This SolidStart API route exposes the `appRouter` to the network.
+3. **tRPC Client (`apps/web/src/lib/trpc.ts`)**: A pre-configured, type-safe client for frontend components to use.
 
 ### B. Layering: Router → Service → Repository
 
 This is the **most critical pattern** for backend logic. The layers must not be skipped.
 
-1.  **Routers (`apps/web/src/server/trpc/router.ts`)**: Handle API requests via tRPC procedures. They **must only** call methods on Services.
-2.  **Services (`packages/*/src/services/`)**: Contain all business logic (e.g., `packages/monitor/src/services/MonitorService.ts`). They orchestrate operations by calling Repositories.
-3.  **Repositories (`packages/database/src/repositories/`)**: Abstract all database access. They are the **only** layer allowed to use the Prisma client.
+1. **Routers (`apps/web/src/server/trpc/router.ts`)**: Handle API requests via tRPC procedures. They **must only** call methods on Services.
+2. **Services (`packages/*/src/services/`)**: Contain all business logic (e.g., `packages/[domain]/src/services/[Domain]Service.ts`). They orchestrate operations by calling Repositories.
+3. **Repositories (`packages/database/src/repositories/`)**: Abstract all database access. They are the **only** layer allowed to use the Prisma client.
 
 ### C. Dependency Injection (DI)
 
 - For backend services, the goal is to use a DI container (defined in `packages/infrastructure`).
 - **Never manually instantiate service classes**; they should be resolved from the container.
-- Always program to interfaces (e.g., `ITargetRepository`), not concrete implementations.
+- Always program to interfaces (e.g., `I[Domain]Repository`), not concrete implementations.
 
 ### D. Event-Driven Communication (Backend Services)
 
-- Backend services (`packages/monitor`, `packages/alerting`, etc.) are designed to be loosely coupled.
+- Backend services (`packages/[domain]`, `packages/[domain]`, etc.) are designed to be loosely coupled.
 - Services **should not** call other services directly. Communication should happen via an `IEventBus`.
 
 ### E. Repository Pattern
