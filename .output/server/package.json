@@ -39,7 +39,7 @@
     "readable-stream": "3.6.2",
     "safe-buffer": "5.2.1",
     "safe-stable-stringify": "2.5.0",
-    "seroval": "1.3.2",
+    "seroval": "1.4.1",
     "seroval-plugins": "1.3.3",
     "simple-swizzle": "0.2.4",
     "solid-js": "1.9.9",
